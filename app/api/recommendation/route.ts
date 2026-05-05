@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
@@ -46,7 +46,7 @@ function inferCountryBudgetThreshold(country: any): number {
 }
 
 function readCountrySignals(country: any) {
-  const full = parseCountryFullData(country.full_data ?? null);
+  const full = materializePublicFullData(country.full_data ?? null);
   const normalizedVisa = country.visa ?? {};
   const normalizedFriction = country.friction ?? {};
   const normalizedEdu = country.education ?? {};

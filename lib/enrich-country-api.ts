@@ -3,6 +3,7 @@
  * Réutilisé par l’Explorer et le comparateur pour garder les mêmes scores.
  */
 
+import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
@@ -53,10 +54,7 @@ function normalizeHighlightFromFullData(full: Record<string, unknown>) {
 }
 
 export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCountryApi {
-  const full =
-    c.full_data && typeof c.full_data === 'object' && !Array.isArray(c.full_data)
-      ? (c.full_data as Record<string, unknown>)
-      : {}
+  const full = materializePublicFullData(c.full_data ?? null)
 
   const official = typeof full.official_score === 'number' ? full.official_score : 5
   const visa = {
@@ -66,17 +64,10 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
     business: clamp(Math.round(((c.business_visa_score as number) || 5) * 10)),
   }
 
-  const fa = full.friction_analysis as Record<string, unknown> | undefined
-  const nestedFriction =
-    fa && typeof fa.friction_score === 'number' && Number.isFinite(fa.friction_score)
-      ? fa.friction_score
-      : undefined
   const frictionScore =
     typeof full.friction_score === 'number' && Number.isFinite(full.friction_score)
       ? full.friction_score
-      : nestedFriction !== undefined
-        ? nestedFriction
-        : 50
+      : 50
   const friction = clamp(100 - frictionScore)
 
   const edu = full.education_mobility as Record<string, unknown> | undefined

@@ -1,5 +1,10 @@
 /**
- * Parse `Country.full_data` as stored in Prisma (JSON string or already materialized object where applicable).
+ * Low-level parse for `Country.full_data` (JSON string or object).
+ *
+ * For **consumer-facing reads**, prefer `materializePublicFullData()` from
+ * `@/lib/country-full-data-materialize`, or server-side merge via
+ * `buildMergedCountriesList()` / `augmentCountryDetailPayload()` so static JSON
+ * overlays apply.
  */
 
 export function parseCountryFullData(raw: unknown): Record<string, unknown> {

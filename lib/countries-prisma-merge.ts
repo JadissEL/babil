@@ -8,12 +8,16 @@
  * - Static JSON is matched by **country name** first (Prisma `id` often ≠ countries.json index).
  * - Null visa columns are backfilled from static.
  * - `full_data.friction_score` is coalesced from `friction_analysis` when missing.
+ * Client-side reads should use `materializePublicFullData` from `@/lib/country-full-data-materialize`.
  */
+
+import { cache } from 'react'
 
 import prisma from '@/lib/prisma'
 import type { LegacyCountryRecord } from '@/lib/countries-fallback'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { materializePublicFullData, normalizeFullDataFriction } from '@/lib/country-full-data-materialize'
 
 /** Subtrees the runner snapshot often omits; keep enriched JSON baseline when DB block is absent/empty */
 const STATIC_PREFERRED_BLOCKS = [
@@ -134,7 +138,7 @@ export function mergeDisplayedFullData(
     }
   }
 
-  return normalizeFullDataCoalesced(merged)
+  return normalizeFullDataFriction(merged)
 }
 
 /** Match static JSON row to a Prisma country: **name first** (IDs often diverge from countries.json order), then id. */
@@ -146,25 +150,6 @@ export function findLegacyCountryMatch(
   const byName = fallback.find((f) => countryNameMergeKey(f.name) === nk)
   if (byName) return byName
   return fallback.find((f) => f.id === db.id) ?? null
-}
-
-function frictionTopLevelWeak(v: unknown): boolean {
-  if (v === undefined || v === null) return true
-  if (typeof v === 'number') return Number.isNaN(v)
-  return false
-}
-
-/**
- * Detail pages read `full_data.friction_score`; some DB snapshots only set
- * `full_data.friction_analysis.friction_score` (same pattern as enrich-country-api).
- */
-export function normalizeFullDataCoalesced(full: Record<string, unknown>): Record<string, unknown> {
-  if (!frictionTopLevelWeak(full.friction_score)) return full
-  const fa = full.friction_analysis
-  if (!fa || typeof fa !== 'object' || Array.isArray(fa)) return full
-  const nested = (fa as Record<string, unknown>).friction_score
-  if (typeof nested !== 'number' || !Number.isFinite(nested)) return full
-  return { ...full, friction_score: nested }
 }
 
 function pickMergedScore(dbVal: unknown, staticVal: unknown): number {
@@ -194,7 +179,7 @@ export function augmentCountryDetailPayload<T extends Record<string, unknown>>(
         : {}
     full_data = mergeDisplayedFullData(staticFull, full_data)
   } else {
-    full_data = normalizeFullDataCoalesced(full_data)
+    full_data = materializePublicFullData(country.full_data)
   }
 
   const appt =
@@ -289,15 +274,12 @@ export function prismaRowToLegacy(
     work_visa_score: typeof db.work_visa_score === 'number' ? db.work_visa_score : 5,
     business_visa_score: typeof db.business_visa_score === 'number' ? db.business_visa_score : 5,
     appointment_difficulty: db.appointment_difficulty ?? 'Medium',
-    full_data: normalizeFullDataCoalesced(parseCountryFullData(db.full_data)),
+    full_data: materializePublicFullData(db.full_data),
     comments: (db.comments as LegacyCountryRecord['comments']) ?? [],
   }
 }
 
-/**
- * Prefer DB rows keyed by country name when both exist (runner / seeded data).
- */
-export async function buildMergedCountriesList(): Promise<LegacyCountryRecord[]> {
+async function fetchMergedCountriesListUncached(): Promise<LegacyCountryRecord[]> {
   let fallback: LegacyCountryRecord[] = []
   try {
     fallback = await loadFallbackCountries()
@@ -344,5 +326,15 @@ export async function buildMergedCountriesList(): Promise<LegacyCountryRecord[]>
     return fallback.length > 0 ? fallback : []
   }
 }
+
+/**
+ * Prefer DB rows keyed by country name when both exist (runner / seeded data).
+ * Use `getMergedCountriesListCached` in Server Components when the same render loads the list twice.
+ */
+export async function buildMergedCountriesList(): Promise<LegacyCountryRecord[]> {
+  return fetchMergedCountriesListUncached()
+}
+
+export const getMergedCountriesListCached = cache(fetchMergedCountriesListUncached)
 
 export { approvedComments as countryApprovedCommentsConfig }

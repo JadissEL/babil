@@ -6,7 +6,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import { buildMergedCountriesList, countryNameMergeKey } from '@/lib/countries-prisma-merge'
+import { countryNameMergeKey, getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
 import { HOMEPAGE_SHOWCASE_NAMES } from '@/lib/home-showcase-countries'
 
 export type HomeHeroSlide = {
@@ -89,9 +89,9 @@ export async function buildHomeHeroSlides(): Promise<HomeHeroSlide[]> {
     curated = []
   }
 
-  let merged: Awaited<ReturnType<typeof buildMergedCountriesList>> = []
+  let merged: Awaited<ReturnType<typeof getMergedCountriesListCached>> = []
   try {
-    merged = await buildMergedCountriesList()
+    merged = await getMergedCountriesListCached()
   } catch {
     merged = []
   }

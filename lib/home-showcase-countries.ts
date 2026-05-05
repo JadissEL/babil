@@ -5,7 +5,7 @@
 
 import type { CountryGridItem } from '@/components/country/CountryGrid'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
-import { buildMergedCountriesList, countryNameMergeKey } from '@/lib/countries-prisma-merge'
+import { countryNameMergeKey, getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import { frictionTierFromCountry, isoForCountryName, scoreToMobilityTier } from '@/lib/country-card-mappers'
 
@@ -34,10 +34,10 @@ function fallbackItem(template: (typeof SHOWCASE)[number]): CountryGridItem {
 }
 
 export async function resolveHomeShowcaseCountries(): Promise<CountryGridItem[]> {
-  let merged: Awaited<ReturnType<typeof buildMergedCountriesList>> = []
+  let merged: Awaited<ReturnType<typeof getMergedCountriesListCached>> = []
   let staticRows: Awaited<ReturnType<typeof loadFallbackCountries>> = []
   try {
-    merged = await buildMergedCountriesList()
+    merged = await getMergedCountriesListCached()
   } catch {
     merged = []
   }

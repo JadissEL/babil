@@ -3,7 +3,7 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 
 import { getAdminUser } from '@/lib/admin-auth'
-import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCuratedHighlightByCountryName } from '@/lib/country-highlights'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import prisma from '@/lib/prisma'
@@ -123,7 +123,7 @@ export async function GET() {
     for (const c of countries) {
       if (!c.full_data) continue
       try {
-        const full = parseCountryFullData(c.full_data)
+        const full = materializePublicFullData(c.full_data)
         const agentMeta = full._agent as { updatedAt?: string; completeness?: { score?: number } } | undefined
         const travelReasons = full.travel_reasons as Array<{ imageUrl?: string }> | undefined
         const ts = agentMeta?.updatedAt
