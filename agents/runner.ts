@@ -111,6 +111,9 @@ const RETRY_MAX_DELAY_MS = Number(process.env.AGENT_RETRY_MAX_DELAY_MS || 6 * 60
 const AGENT_VERBOSE_LEVEL = Number(process.env.AGENT_VERBOSE || 1)
 const MAX_RECURSION_PASSES = Number(process.env.AGENT_MAX_RECURSION_PASSES || 4)
 const COMPLETENESS_TARGET_SCORE = Number(process.env.AGENT_COMPLETENESS_TARGET || 85)
+const STABLE_SCORE_MIN_ATTEMPTS = Number(process.env.AGENT_STABLE_SCORE_MIN_ATTEMPTS || 3)
+const STABLE_SCORE_DELTA = Number(process.env.AGENT_STABLE_SCORE_DELTA || 0)
+const REENRICH_INTERVAL_HOURS = Number(process.env.AGENT_REENRICH_INTERVAL_HOURS || 24)
 
 let memoryState: AgentState = {
   tasks: [],
@@ -404,6 +407,76 @@ function resolveAdaptiveQuery(country: string, missingCritical: string[]) {
   return `${country} :: ${normalizedHints.slice(0, 3).join(' | ')}`
 }
 
+function resolveAdaptiveQueryFromSnapshot(
+  country: string,
+  missingCritical: string[],
+  fullData: Record<string, unknown>,
+) {
+  const sections = [
+    { key: 'overview', value: fullData.overview },
+    { key: 'economy', value: fullData.economy },
+    { key: 'appointment_audit', value: fullData.appointment_audit },
+    { key: 'visa_system', value: fullData.visa_system },
+    { key: 'morocco_insights', value: fullData.morocco_insights },
+    { key: 'travel_reasons', value: fullData.travel_reasons },
+    { key: 'traveler_quotes', value: fullData.traveler_quotes },
+  ]
+
+  const weakSections = sections
+    .filter((section) => {
+      const value = section.value
+      if (value == null) return true
+      if (Array.isArray(value)) return value.length === 0
+      if (typeof value === 'string') return value.trim().length === 0
+      if (typeof value === 'object') return Object.keys(value as Record<string, unknown>).length === 0
+      return false
+    })
+    .map((section) => section.key)
+
+  const coreQuery = resolveAdaptiveQuery(country, missingCritical)
+  if (weakSections.length === 0) return coreQuery
+  return `${coreQuery} | fill:${weakSections.slice(0, 3).join(',')}`
+}
+
+function pickCanonicalTask(current: CountryTask, candidate: CountryTask) {
+  const currentScore = Number(current.completenessScore || 0)
+  const candidateScore = Number(candidate.completenessScore || 0)
+  const statusRank: Record<TaskStatus, number> = {
+    running: 4,
+    queued: 3,
+    done: 2,
+    failed: 1,
+  }
+  if (statusRank[candidate.status] !== statusRank[current.status]) {
+    return statusRank[candidate.status] > statusRank[current.status] ? candidate : current
+  }
+  if (candidateScore !== currentScore) return candidateScore > currentScore ? candidate : current
+  if (candidate.attempts !== current.attempts)
+    return candidate.attempts > current.attempts ? candidate : current
+  return new Date(candidate.nextRunAt).getTime() > new Date(current.nextRunAt).getTime()
+    ? candidate
+    : current
+}
+
+function dedupeCountryTasks() {
+  const byCountry = new Map<string, CountryTask>()
+  for (const task of memoryState.tasks) {
+    const key = task.country.trim().toLowerCase()
+    const existing = byCountry.get(key)
+    if (!existing) {
+      byCountry.set(key, task)
+      continue
+    }
+    byCountry.set(key, pickCanonicalTask(existing, task))
+  }
+  const deduped = Array.from(byCountry.values())
+  const removed = memoryState.tasks.length - deduped.length
+  if (removed > 0) {
+    memoryState.tasks = deduped
+    logVerbose('deduplicated country tasks', { removed, remaining: deduped.length })
+  }
+}
+
 function mergeCountryData(
   country: string,
   region: string,
@@ -520,7 +593,11 @@ async function processCountryTask(task: CountryTask) {
   for (let pass = 1; pass <= MAX_RECURSION_PASSES; pass += 1) {
     task.pass = pass
     task.domain = pass === 1 ? 'overview' : 'community'
-    task.query = resolveAdaptiveQuery(task.country, reportPayload.report.criticalMissing)
+    task.query = resolveAdaptiveQueryFromSnapshot(
+      task.country,
+      reportPayload.report.criticalMissing,
+      snapshot.fullData,
+    )
 
     const wiki = await fetchWikipediaSummary(task.country)
     const gdp = await fetchWorldBankGdp(task.country)
@@ -595,6 +672,7 @@ async function processCountryTask(task: CountryTask) {
 async function runWorkerBatch() {
   const now = Date.now()
   const ttlCutoff = now - TASK_TTL_HOURS * 60 * 60 * 1000
+  dedupeCountryTasks()
 
   let recoveredRunning = 0
   for (const task of memoryState.tasks) {
@@ -650,6 +728,7 @@ async function runWorkerBatch() {
     })
 
     try {
+      const previousScore = task.completenessScore
       const result = await processCountryTask(task)
       task.completenessScore = result.score
       task.missingCritical = result.criticalMissing
@@ -663,6 +742,13 @@ async function runWorkerBatch() {
         result.score >= COMPLETENESS_TARGET_SCORE &&
         result.criticalMissing.length === 0
       ) {
+        task.status = 'done'
+        task.nextRunAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      } else if (
+        task.attempts >= STABLE_SCORE_MIN_ATTEMPTS &&
+        Math.abs(result.score - previousScore) <= STABLE_SCORE_DELTA
+      ) {
+        // Avoid infinite recycling when data quality plateaus for a country.
         task.status = 'done'
         task.nextRunAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
       } else {
@@ -698,12 +784,49 @@ async function runWorkerBatch() {
 async function scheduleRefresh() {
   const seeds = await fetchCountriesSeed()
   let added = 0
+  let recycled = 0
+  const now = Date.now()
+  const reEnrichCutoff = now - REENRICH_INTERVAL_HOURS * 60 * 60 * 1000
+
   for (const seed of seeds) {
-    if (getTaskByCountry(seed.country)) continue
-    enqueueCountry(seed.country, seed.region)
-    added += 1
+    const existingTask = getTaskByCountry(seed.country)
+    if (!existingTask) {
+      enqueueCountry(seed.country, seed.region)
+      added += 1
+      continue
+    }
+    if (
+      existingTask.status === 'done' &&
+      new Date(existingTask.nextRunAt).getTime() <= reEnrichCutoff
+    ) {
+      existingTask.status = 'queued'
+      existingTask.attempts = 0
+      existingTask.pass = 0
+      existingTask.nextRunAt = new Date(now).toISOString()
+      existingTask.priority = Math.max(existingTask.priority, 200)
+      recycled += 1
+    }
   }
-  logVerbose('refresh enqueue completed', { addedCountries: added, seeds: seeds.length })
+
+  if (added === 0 && recycled === 0 && memoryState.tasks.length > 0) {
+    const staleDone = memoryState.tasks
+      .filter((task) => task.status === 'done')
+      .sort((a, b) => new Date(a.nextRunAt).getTime() - new Date(b.nextRunAt).getTime())
+      .slice(0, 10)
+    for (const task of staleDone) {
+      task.status = 'queued'
+      task.attempts = 0
+      task.pass = 0
+      task.nextRunAt = new Date(now).toISOString()
+      task.priority = Math.max(task.priority, 150)
+      recycled += 1
+    }
+  }
+  logVerbose('refresh enqueue completed', {
+    addedCountries: added,
+    recycledCountries: recycled,
+    seeds: seeds.length,
+  })
 }
 
 async function main() {

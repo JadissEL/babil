@@ -310,7 +310,12 @@ export default function CountryDetailPage() {
             </div>
           </section>
 
-          <VisitReasonsSection countryName={country.name} reasons={experienceContent.reasons} />
+          <VisitReasonsSection
+            countryName={country.name}
+            reasons={experienceContent.reasons}
+            countryId={id as string}
+            previewOnly
+          />
 
           <TravelerQuotesSection countryName={country.name} quotes={experienceContent.quotes} />
 
