@@ -31,7 +31,7 @@ export default function ProbabilityPage() {
           body: JSON.stringify({ profile })
         })
         const data = await probRes.json()
-        setResults(data)
+        setResults(Array.isArray(data) && probRes.ok ? data : [])
       } catch (err) {
         console.error(err)
       } finally {

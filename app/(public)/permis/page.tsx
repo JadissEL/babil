@@ -11,11 +11,10 @@ export default function PermisPage() {
 
   useEffect(() => {
     fetch('/api/countries')
-      .then(res => res.json())
-      .then((data) => {
-        setCountries(normalizeCountriesApiListResponse(data))
-        setLoading(false)
-      })
+      .then((res) => res.json())
+      .then((data) => setCountries(normalizeCountriesApiListResponse(data)))
+      .catch(() => setCountries([]))
+      .finally(() => setLoading(false))
   }, [])
 
   const getStatusBadge = (status: string) => {

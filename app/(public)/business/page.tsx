@@ -21,11 +21,10 @@ export default function BusinessPage() {
 
   useEffect(() => {
     fetch('/api/countries')
-      .then(res => res.json())
-      .then((data) => {
-        setCountries(normalizeCountriesApiListResponse(data))
-        setLoading(false)
-      })
+      .then((res) => res.json())
+      .then((data) => setCountries(normalizeCountriesApiListResponse(data)))
+      .catch(() => setCountries([]))
+      .finally(() => setLoading(false))
   }, [])
 
   const filtered = countries.filter(c => 

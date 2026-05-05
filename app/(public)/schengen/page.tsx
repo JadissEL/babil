@@ -63,12 +63,13 @@ export default function SchengenPage() {
 
   useEffect(() => {
     fetch('/api/countries')
-      .then(res => res.json())
+      .then((res) => res.json())
       .then((data) => {
         const list = normalizeCountriesApiListResponse(data)
         setCountries(list.filter((c) => Boolean(c.schengen_flag)))
-        setLoading(false)
       })
+      .catch(() => setCountries([]))
+      .finally(() => setLoading(false))
   }, [])
 
   const filtered = countries.filter(c => 

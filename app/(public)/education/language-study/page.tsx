@@ -36,11 +36,9 @@ export default function LanguageStudyPage() {
   useEffect(() => {
     fetch('/api/countries')
       .then((res) => res.json())
-      .then((data) => {
-        setCountries(normalizeCountriesApiListResponse(data))
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+      .then((data) => setCountries(normalizeCountriesApiListResponse(data)))
+      .catch(() => setCountries([]))
+      .finally(() => setLoading(false))
   }, [])
 
   const rows = useMemo(() => {

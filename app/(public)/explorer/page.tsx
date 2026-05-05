@@ -95,11 +95,10 @@ function ExplorerPageInner() {
 
   useEffect(() => {
     fetch('/api/countries')
-      .then(res => res.json())
-      .then((data) => {
-        setCountries(normalizeCountriesApiListResponse(data))
-        setLoading(false)
-      })
+      .then((res) => res.json())
+      .then((data) => setCountries(normalizeCountriesApiListResponse(data)))
+      .catch(() => setCountries([]))
+      .finally(() => setLoading(false))
   }, [])
 
   const normalized = countries.map((c: Record<string, unknown>) => enrichCountryApiRecord(c))

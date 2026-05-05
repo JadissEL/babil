@@ -23,6 +23,7 @@ export function CompareExperience() {
     fetch('/api/countries')
       .then((r) => r.json())
       .then((d) => setRaw(normalizeCountriesApiListResponse(d)))
+      .catch(() => setRaw([]))
       .finally(() => setLoading(false))
   }, [])
 

@@ -42,11 +42,10 @@ export default function EducationPage() {
 
   useEffect(() => {
     fetch('/api/countries')
-      .then(res => res.json())
-      .then((data) => {
-        setCountries(normalizeCountriesApiListResponse(data))
-        setLoading(false)
-      })
+      .then((res) => res.json())
+      .then((data) => setCountries(normalizeCountriesApiListResponse(data)))
+      .catch(() => setCountries([]))
+      .finally(() => setLoading(false))
   }, [])
 
   const filteredCountries = countries.filter(c => 
