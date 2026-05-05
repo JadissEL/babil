@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import prisma from '../lib/prisma'
+import { parseCountryFullData } from '../lib/country-full-data-json'
 import { CONTRACT_VERSION, COUNTRY_INTELLIGENCE_CONTRACT_V2 } from '../lib/country-intelligence-contract'
 import { buildCompletenessReport, buildCoverageManifest } from '../lib/country-completeness'
 
@@ -244,15 +245,7 @@ function enqueueCountry(country: string, region: string) {
 }
 
 function parseExistingFullData(raw: string | null): Record<string, unknown> {
-  if (!raw) return {}
-  try {
-    const parsed = JSON.parse(raw) as unknown
-    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
-      ? (parsed as Record<string, unknown>)
-      : {}
-  } catch {
-    return {}
-  }
+  return parseCountryFullData(raw)
 }
 
 async function fetchWikipediaSummary(country: string) {

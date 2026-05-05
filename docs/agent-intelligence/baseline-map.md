@@ -20,7 +20,9 @@
    - `lib/countries-fallback.ts` et `data/countries.json`
 3. Enrichissements runtime UI:
    - `lib/enrich-country-api.ts`
-4. Persistance:
+4. Parse JSON `full_data` (DB string ou objet) :
+   - `lib/country-full-data-json.ts` (`parseCountryFullData`) — routes API pays, probabilité, favoris, agent health, runner.
+5. Persistance:
    - `prisma/schema.prisma` (`Country` + `full_data`)
 
 ## Matrice section UI -> champ -> source

@@ -1,17 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
-
-function parseFullData(value: unknown) {
-  if (!value) return {};
-  if (typeof value === 'object') return value;
-  if (typeof value !== 'string') return {};
-  try {
-    return JSON.parse(value);
-  } catch {
-    return {};
-  }
-}
 
 export async function GET() {
   // Primary dataset for public explorer: static JSON enriched to broad coverage.
@@ -33,7 +23,7 @@ export async function GET() {
 
     const formatted = countries.map((c: any) => ({
       ...c,
-      full_data: parseFullData(c.full_data)
+      full_data: parseCountryFullData(c.full_data)
     }));
 
     return NextResponse.json(formatted);

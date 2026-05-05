@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 
 export async function POST(req: Request) {
@@ -63,7 +65,8 @@ export async function POST(req: Request) {
     const safeIncome = Number.isFinite(income) && income >= 0 ? income : 0
     
     const results = countries.map((c: any) => {
-      const full = JSON.parse(c.full_data || '{}');
+      const full = parseCountryFullData(c.full_data ?? null);
+      const phdStudiesData = hasCountryPhdStoredData(full);
       
       // 📊 FACTEURS DE CALCUL
       
@@ -107,7 +110,7 @@ export async function POST(req: Request) {
         ? Math.min(100, Math.max(0, 100 - brutal * 10))
         : 50;
 
-      const globalScore = Math.round(
+      let globalScore = Math.round(
         (financialScore * 0.2) + 
         (profScore * 0.2) + 
         (socialScore * 0.2) + 
@@ -115,6 +118,7 @@ export async function POST(req: Request) {
         (accessibilityScore * 0.1) + 
         (riskScore * 0.1)
       );
+      if (phdStudiesData) globalScore = Math.min(100, globalScore + 3);
 
       let level = "Medium";
       if (globalScore >= 80) level = "Very High";
@@ -128,6 +132,9 @@ export async function POST(req: Request) {
       if (safeSavings > 50000) reasons.push("Votre épargne démontre une solidité financière rassurante.");
       if (Boolean(p.family_in_europe)) reasons.push("Vos attaches familiales en Europe peuvent servir de garanties.");
       if (globalScore < 50) reasons.push("Le statut d'indépendant sans revenus élevés est perçu comme un risque migratoire.");
+      if (phdStudiesData) {
+        reasons.push('Fiche pays avec bloc doctorat PhD structuré (visa long séjour / financement).');
+      }
 
       // 💡 STRATEGY LAYER
       const strategy = [];
@@ -146,7 +153,8 @@ export async function POST(req: Request) {
           finance: Math.round(financialScore),
           profession: Math.round(profScore),
           social: Math.round(socialScore),
-          acceptance: Math.round(acceptanceScore)
+          acceptance: Math.round(acceptanceScore),
+          phdStudiesData,
         }
       };
     }).sort((a: any, b: any) => b.globalScore - a.globalScore);

@@ -3,7 +3,9 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 
 import { getAdminUser } from '@/lib/admin-auth'
+import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { hasCuratedHighlightByCountryName } from '@/lib/country-highlights'
+import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import prisma from '@/lib/prisma'
 import { isDbUnavailable } from '@/lib/db-resilience'
 
@@ -116,22 +118,24 @@ export async function GET() {
     let withDataImage = 0
     let withCuratedImage = 0
     let likelyGenericFallback = 0
+    let withPhdStudiesData = 0
 
     for (const c of countries) {
       if (!c.full_data) continue
       try {
-        const full = JSON.parse(c.full_data) as {
-          _agent?: { updatedAt?: string; completeness?: { score?: number } }
-          travel_reasons?: Array<{ imageUrl?: string }>
-        }
-        const ts = full?._agent?.updatedAt
-        const completeness = full?._agent?.completeness?.score
+        const full = parseCountryFullData(c.full_data)
+        const agentMeta = full._agent as { updatedAt?: string; completeness?: { score?: number } } | undefined
+        const travelReasons = full.travel_reasons as Array<{ imageUrl?: string }> | undefined
+        const ts = agentMeta?.updatedAt
+        const completeness = agentMeta?.completeness?.score
         if (typeof completeness === 'number' && Number.isFinite(completeness)) {
           completenessTotal += completeness
           completenessCount += 1
         }
 
-        const firstReason = Array.isArray(full?.travel_reasons) ? full.travel_reasons[0] : undefined
+        if (hasCountryPhdStoredData(full)) withPhdStudiesData += 1
+
+        const firstReason = Array.isArray(travelReasons) ? travelReasons[0] : undefined
         const hasDataImage =
           typeof firstReason?.imageUrl === 'string' && firstReason.imageUrl.trim().length > 0
         const hasCurated = hasCuratedHighlightByCountryName(c.name)
@@ -162,6 +166,9 @@ export async function GET() {
         withDataImage,
         withCuratedImage,
         likelyGenericFallback,
+      },
+      educationPhd: {
+        countriesWithStructuredPhdStudies: withPhdStudiesData,
       },
     })
   } catch (error: unknown) {

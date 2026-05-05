@@ -1,17 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
-
-function parseFullData(value: unknown) {
-  if (!value) return {};
-  if (typeof value === 'object') return value;
-  if (typeof value !== 'string') return {};
-  try {
-    return JSON.parse(value);
-  } catch {
-    return {};
-  }
-}
 
 export async function GET(
   req: Request,
@@ -51,7 +41,7 @@ export async function GET(
 
     const formattedCountry = {
       ...country,
-      full_data: parseFullData(country.full_data)
+      full_data: parseCountryFullData(country.full_data)
     };
 
     return NextResponse.json(formattedCountry);

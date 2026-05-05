@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import prisma from '@/lib/prisma'
+import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function GET(req: Request) {
@@ -37,7 +38,7 @@ export async function GET(req: Request) {
       favorites.map((f) => ({
         ...f.country,
         favoritedAt: f.createdAt,
-        full_data: f.country.full_data ? JSON.parse(f.country.full_data) : {},
+        full_data: parseCountryFullData(f.country.full_data),
       })),
     )
   } catch (error) {
