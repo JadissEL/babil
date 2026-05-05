@@ -56,6 +56,12 @@ export function DelegatedApplicationsHomePromo() {
                 Le détail contractuel vous est envoyé avant validation financière · case d’acceptation obligatoire sur le
                 formulaire.
               </p>
+              <Link
+                href="/services/delegated-applications#assist-garantie"
+                className="mt-3 inline-block text-[11px] font-black uppercase tracking-wider text-primary hover:text-primary-hover"
+              >
+                Conditions complètes de la garantie →
+              </Link>
             </div>
           </div>
         </div>

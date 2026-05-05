@@ -83,7 +83,8 @@ export default function OverviewPageClient() {
     },
     {
       title: 'Assist candidatures',
-      description: 'Délégation emploi & universités : forfaits, garantie et formulaire après connexion.',
+      description:
+        'Forfaits emploi & université, garantie — suivez vos dossiers ci-dessous (détail via « Voir »).',
       icon: FileStack,
       link: '/services/delegated-applications',
       color: 'bg-rose-500',

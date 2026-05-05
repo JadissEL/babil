@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma';
+import prisma from '@/lib/prisma'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
+import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 
 export async function POST(req: Request) {
   const { userId } = auth();
@@ -53,9 +54,16 @@ export async function POST(req: Request) {
 
     let countries: any[] = []
     try {
-      countries = await prisma.country.findMany();
+      countries = await buildMergedCountriesList()
     } catch {
-      countries = await loadFallbackCountries()
+      countries = []
+    }
+    if (!countries.length) {
+      try {
+        countries = await loadFallbackCountries()
+      } catch {
+        countries = []
+      }
     }
 
     const p = profile as Record<string, unknown>

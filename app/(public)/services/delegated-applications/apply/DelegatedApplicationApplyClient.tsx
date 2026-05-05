@@ -120,7 +120,21 @@ export default function DelegatedApplicationApplyClient() {
         <p className="mt-3 text-sm font-medium text-muted">
           Référence #{doneId}. Notre équipe vous recontacte sous 24–48h à l’adresse indiquée.
         </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <p className="mt-2 text-sm font-medium text-muted">
+          Le récapitulatif que vous avez envoyé est accessible dans le tableau de bord via{' '}
+          <strong className="font-bold text-text">Voir</strong> sur la ligne de la demande.
+        </p>
+        <div className="mt-6 rounded-2xl border border-primary/25 bg-primary-soft p-5 text-left">
+          <p className="text-[10px] font-black uppercase tracking-widest text-primary">{APPLICATION_GUARANTEE_TITLE}</p>
+          <p className="mt-2 text-sm font-medium text-text">{APPLICATION_GUARANTEE_SUMMARY}</p>
+          <Link
+            href="/services/delegated-applications#assist-garantie"
+            className="mt-3 inline-block text-[11px] font-black uppercase tracking-wider text-primary hover:text-primary-hover"
+          >
+            Lire le texte complet sur le catalogue →
+          </Link>
+        </div>
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
           <Link
             href="/overview#assist-requests"
             className="rounded-xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white"
@@ -139,6 +153,12 @@ export default function DelegatedApplicationApplyClient() {
           >
             Autre forfait
           </Link>
+          <Link
+            href="/services/delegated-applications#assist-garantie"
+            className="rounded-xl border border-emerald-500/40 bg-[#e9f9f1]/80 px-6 py-3 text-xs font-black uppercase tracking-widest text-text"
+          >
+            Garantie résultats
+          </Link>
         </div>
       </div>
     )
@@ -156,6 +176,12 @@ export default function DelegatedApplicationApplyClient() {
       <div className="mb-8 rounded-2xl border border-primary/25 bg-primary-soft p-5">
         <p className="text-xs font-black uppercase tracking-widest text-primary">{APPLICATION_GUARANTEE_TITLE}</p>
         <p className="mt-2 text-sm font-medium text-text">{APPLICATION_GUARANTEE_SUMMARY}</p>
+        <Link
+          href="/services/delegated-applications#assist-garantie"
+          className="mt-3 inline-block text-[11px] font-black uppercase tracking-wider text-primary hover:text-primary-hover"
+        >
+          Texte détaillé sur la page catalogue →
+        </Link>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8 rounded-[2rem] border border-line bg-surface p-6 shadow-soft md:p-8">
@@ -329,7 +355,10 @@ export default function DelegatedApplicationApplyClient() {
           <span className="text-sm font-bold text-text">
             Je confirme avoir lu la garantie résultats (remboursement de 50&nbsp;% en l’absence de résultats éligibles
             dans le cadre contractuel) et accepte qu’un opérateur me transmette les conditions détaillées avant toute
-            facturation.
+            facturation.{' '}
+            <Link href="/services/delegated-applications#assist-garantie" className="text-primary underline underline-offset-2 hover:text-primary-hover">
+              Voir le texte complet
+            </Link>
           </span>
         </label>
 

@@ -99,7 +99,10 @@ function ComparisonTable({ pkgs }: { pkgs: DelegatedPackage[] }) {
 export function DelegatedServiceCatalog() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 pb-20 sm:px-6 lg:px-8">
-      <div className="mb-10 rounded-[2rem] border border-emerald-500/30 bg-[#e9f9f1]/80 p-6 shadow-soft md:flex md:items-start md:gap-6">
+      <div
+        id="assist-garantie"
+        className="scroll-mt-28 mb-10 rounded-[2rem] border border-emerald-500/30 bg-[#e9f9f1]/80 p-6 shadow-soft md:flex md:items-start md:gap-6"
+      >
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-success/15 text-success ring-1 ring-emerald-500/35">
           <span className="text-xl font-black">50%</span>
         </div>

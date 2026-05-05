@@ -20,6 +20,19 @@ import GoogleAd from '@/components/GoogleAd'
 
 type EducationCategory = 'languages' | 'technical' | 'short'
 
+/** Keys inside `full_data.education_mobility` (see data/countries.json). */
+const EDUCATION_MOBILITY_TAB_KEY: Record<EducationCategory, string> = {
+  languages: 'language_study',
+  technical: 'technical_training',
+  short: 'short_courses',
+}
+
+function eduText(v: unknown, fallback: string) {
+  if (v == null) return fallback
+  const s = typeof v === 'string' || typeof v === 'number' ? String(v) : ''
+  return s.trim() ? s : fallback
+}
+
 export default function EducationPage() {
   const [countries, setCountries] = useState<any[]>([])
   const [activeTab, setActiveTab] = useState<EducationCategory>('languages')
@@ -62,20 +75,20 @@ export default function EducationPage() {
 
   const getEducationData = (country: any, type: EducationCategory) => {
     const full = country.full_data || {}
-    const edu = full.education_mobility || {}
-    
-    // Fallback if data is missing
-    if (!edu[type]) {
+    const edu = full.education_mobility as Record<string, unknown> | undefined
+    const block = edu?.[EDUCATION_MOBILITY_TAB_KEY[type]]
+
+    if (!block || typeof block !== 'object') {
       return {
         access: 'Moyen',
-        bac_required: 'Dépend de l\'école',
+        bac_required: "Dépend de l'école",
         cost: 'Variable',
         visa: 'Étudiant / Tourisme',
         insight: 'Données en cours de collecte pour ce pays.',
-        opportunities: []
+        opportunities: [] as unknown[],
       }
     }
-    return edu[type]
+    return block as Record<string, unknown>
   }
 
   return (
@@ -193,6 +206,7 @@ export default function EducationPage() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filteredCountries.map((c) => {
             const data = getEducationData(c, activeTab)
+            const accessLabel = eduText(data.access, 'Moyen')
             return (
               <div
                 key={c.id}
@@ -207,14 +221,14 @@ export default function EducationPage() {
                   </div>
                   <div
                     className={`rounded-xl border px-4 py-2 text-[10px] font-black uppercase tracking-widest ${
-                      data.access === 'Facile'
+                      accessLabel === 'Facile'
                         ? 'border-emerald-500/35 bg-emerald-500/15 text-emerald-200'
-                        : data.access === 'Difficile'
+                        : accessLabel === 'Difficile'
                           ? 'border-red-500/35 bg-red-500/15 text-red-200'
                           : 'border-blue-500/35 bg-blue-500/15 text-blue-200'
                     }`}
                   >
-                    Accès: {data.access}
+                    Accès: {accessLabel}
                   </div>
                 </div>
 
@@ -224,7 +238,9 @@ export default function EducationPage() {
                       <BookOpen className="h-4 w-4 text-muted" />
                       <span className="text-xs font-bold text-muted">Bac requis</span>
                     </div>
-                    <span className="text-xs font-black text-text">{data.bac_required}</span>
+                    <span className="text-xs font-black text-text">
+                      {eduText(data.bac_required, "Dépend de l'école")}
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between rounded-2xl border border-line bg-[#f8f2e8] p-4">
@@ -232,7 +248,7 @@ export default function EducationPage() {
                       <Coins className="h-4 w-4 text-muted" />
                       <span className="text-xs font-bold text-muted">Coût estimé</span>
                     </div>
-                    <span className="text-xs font-black text-text">{data.cost}</span>
+                    <span className="text-xs font-black text-text">{eduText(data.cost, 'Variable')}</span>
                   </div>
 
                   <div className="flex items-center justify-between rounded-2xl border border-line bg-[#f8f2e8] p-4">
@@ -240,7 +256,9 @@ export default function EducationPage() {
                       <CheckCircle2 className="h-4 w-4 text-muted" />
                       <span className="text-xs font-bold text-muted">Visa</span>
                     </div>
-                    <span className="text-xs font-black text-text">{data.visa}</span>
+                    <span className="text-xs font-black text-text">
+                      {eduText(data.visa, 'Étudiant / Tourisme')}
+                    </span>
                   </div>
                 </div>
 
@@ -249,7 +267,9 @@ export default function EducationPage() {
                     <h4 className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
                       <AlertCircle className="h-3 w-3" /> Insight
                     </h4>
-                    <p className="text-sm font-bold leading-relaxed text-text">&quot;{data.insight}&quot;</p>
+                    <p className="text-sm font-bold leading-relaxed text-text">
+                      &quot;{eduText(data.insight, 'Données en cours de collecte pour ce pays.')}&quot;
+                    </p>
                   </div>
                   <Link
                     href={`/countries/${c.id}`}

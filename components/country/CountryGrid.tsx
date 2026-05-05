@@ -2,20 +2,31 @@ import { CountryCard } from '@/components/country/CountryCard'
 import type { CountryCardProps } from '@/components/country/CountryCard'
 
 /** Pays prêt pour CountryCard + clé liste */
-export type CountryGridItem = { id: string } & Omit<CountryCardProps, 'onClick' | 'countryId'>
+export type CountryGridItem = {
+  id: string
+  /** Route cible explicite ; évite d’exiger que `id` soit uniquement numérique (clés type `fr-showcase`). */
+  countryRouteId?: string | number
+} & Omit<CountryCardProps, 'onClick' | 'countryId'>
 
-/** Quand `id` est uniquement numérique, il devient aussi `countryId` sur la carte et déclenche le lien `/countries/[id]`. */
+/**
+ * Lien vers `/countries/[id]` si `countryRouteId` est défini, sinon si `id` est numérique.
+ */
 export default function CountryGrid({ countries }: { countries: CountryGridItem[] }) {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
       {countries.map((country) => {
-        const { id, ...rest } = country
-        const numeric = /^\d+$/.test(String(id))
+        const { id, countryRouteId, ...rest } = country
+        const routeTarget =
+          countryRouteId != null
+            ? String(countryRouteId)
+            : /^\d+$/.test(String(id))
+              ? String(id)
+              : undefined
         return (
           <CountryCard
             key={id}
             {...rest}
-            {...(numeric ? { countryId: id } : {})}
+            {...(routeTarget != null ? { countryId: routeTarget } : {})}
           />
         )
       })}

@@ -19,11 +19,12 @@ import GoalFilter from '@/components/filters/GoalFilter'
 import BudgetFilter from '@/components/filters/BudgetFilter'
 import RegionFilter from '@/components/filters/RegionFilter'
 import RiskFilter from '@/components/filters/RiskFilter'
-import CountryGrid, { type CountryGridItem } from '@/components/country/CountryGrid'
+import CountryGrid from '@/components/country/CountryGrid'
 import GoogleAd from '../components/GoogleAd'
 import HeroWorldCarousel from '@/components/home/HeroWorldCarousel'
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo'
-import prisma from '@/lib/prisma'
+import { buildHomeHeroSlides } from '@/lib/home-hero-slides'
+import { resolveHomeShowcaseCountries } from '@/lib/home-showcase-countries'
 
 export const metadata: Metadata = {
   title: 'VisaFlow — Mobilité internationale pour profils marocains',
@@ -33,83 +34,11 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic'
 
-const TOP_COUNTRIES_BASE: CountryGridItem[] = [
-    {
-      id: 'fr-showcase',
-      name: 'France',
-      code: 'fr',
-      score: 82,
-      visaScore: 80,
-      friction: 'Medium',
-      study: 'Strong',
-      business: 'Medium',
-    },
-    {
-      id: 'ca-showcase',
-      name: 'Canada',
-      code: 'ca',
-      score: 78,
-      visaScore: 76,
-      friction: 'Low',
-      study: 'Strong',
-      business: 'Strong',
-    },
-    {
-      id: 'de-showcase',
-      name: 'Germany',
-      code: 'de',
-      score: 76,
-      visaScore: 77,
-      friction: 'Medium',
-      study: 'Strong',
-      business: 'Strong',
-    },
-    {
-      id: 'jp-showcase',
-      name: 'Japan',
-      code: 'jp',
-      score: 74,
-      visaScore: 72,
-      friction: 'Medium',
-      study: 'Medium',
-      business: 'Medium',
-    },
-    {
-      id: 'gb-showcase',
-      name: 'United Kingdom',
-      code: 'gb',
-      score: 73,
-      visaScore: 70,
-      friction: 'High',
-      study: 'Strong',
-      business: 'Strong',
-    },
-]
-
-async function resolveTopCountries(): Promise<CountryGridItem[]> {
-  const names = TOP_COUNTRIES_BASE.map((c) => c.name)
-  try {
-    const rows = await prisma.country.findMany({
-      where: { name: { in: names } },
-      select: { id: true, name: true },
-    })
-    const idByName: Record<string, number> = Object.fromEntries(
-      rows.map((r) => [r.name, r.id]),
-    )
-    return TOP_COUNTRIES_BASE.map((row) => ({
-      ...row,
-      id:
-        typeof idByName[row.name] === 'number'
-          ? String(idByName[row.name])
-          : row.id,
-    }))
-  } catch {
-    return TOP_COUNTRIES_BASE
-  }
-}
-
 export default async function Home() {
-  const topCountries = await resolveTopCountries()
+  const [topCountries, heroSlides] = await Promise.all([
+    resolveHomeShowcaseCountries(),
+    buildHomeHeroSlides(),
+  ])
   const testimonials = [
     {
       name: 'Yassine A.',
@@ -171,7 +100,7 @@ export default async function Home() {
                 </Link>
               </div>
             </div>
-            <HeroWorldCarousel />
+            <HeroWorldCarousel slides={heroSlides} />
           </div>
         </section>
 

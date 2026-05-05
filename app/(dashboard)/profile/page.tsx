@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { 
@@ -13,7 +14,8 @@ import {
   Save,
   CheckCircle2,
   Calendar,
-  GraduationCap
+  GraduationCap,
+  FileStack
 } from 'lucide-react'
 
 export default function ProfilePage() {
@@ -109,6 +111,36 @@ export default function ProfilePage() {
           <CheckCircle2 className="h-5 w-5" /> {message}
         </div>
       )}
+
+      <section className="mb-8 rounded-[2.5rem] border border-line bg-surface p-8 shadow-card">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="rounded-2xl bg-rose-500/15 p-3 text-rose-500 ring-1 ring-rose-500/30">
+              <FileStack className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-text">Assist candidatures</h2>
+              <p className="mt-1 max-w-xl text-sm font-medium text-muted">
+                Forfaits emploi & université : consultez la grille tarifaire et retrouvez l’historique de vos dossiers délégués.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/services/delegated-applications"
+              className="inline-flex items-center justify-center rounded-2xl border border-line bg-[#f8f2e8] px-5 py-3 text-xs font-black uppercase tracking-widest text-primary hover:bg-primary-soft"
+            >
+              Catalogue & garantie
+            </Link>
+            <Link
+              href="/overview#assist-requests"
+              className="inline-flex items-center justify-center rounded-2xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-soft hover:bg-primary-hover"
+            >
+              Mes demandes
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <section className="space-y-6 rounded-[2.5rem] border border-line bg-surface p-8 shadow-card">

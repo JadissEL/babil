@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Activity,
   CheckCircle,
@@ -64,6 +64,7 @@ export default function AdminPage() {
   const [countries, setCountries] = useState<CountryEditorModel[]>([])
   const [agentHealth, setAgentHealth] = useState<AgentHealth | null>(null)
   const [assistRows, setAssistRows] = useState<AssistQueueRow[]>([])
+  const [assistFilter, setAssistFilter] = useState('')
   const [assistDetail, setAssistDetail] = useState<{ id: number; json: string } | null>(null)
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [loading, setLoading] = useState(true)
@@ -157,6 +158,27 @@ export default function AdminPage() {
       json: JSON.stringify(data?.payload ?? {}, null, 2),
     })
   }
+
+  const filteredAssistRows = useMemo(() => {
+    const q = assistFilter.trim().toLowerCase()
+    if (!q) return assistRows
+    return assistRows.filter((r) => {
+      const blob = [
+        String(r.id),
+        r.category,
+        r.packageId,
+        r.packageName,
+        r.status,
+        r.userEmail,
+        r.userName ?? '',
+        r.contactEmail ?? '',
+        r.createdAt,
+      ]
+        .join('\n')
+        .toLowerCase()
+      return blob.includes(q)
+    })
+  }, [assistRows, assistFilter])
 
   const approve = async (id: number, status: 'APPROVED' | 'REJECTED') => {
     const res = await fetch(`/api/comments/${id}`, {
@@ -365,19 +387,41 @@ export default function AdminPage() {
       {tab === 'assist' && (
         <section className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-lg font-bold text-text">File Assist candidatures ({assistRows.length})</h2>
+            <h2 className="text-lg font-bold text-text">
+              File Assist candidatures ({filteredAssistRows.length}
+              {assistFilter.trim() ? ` / ${assistRows.length}` : ''})
+            </h2>
             <Button type="button" variant="outline" onClick={() => void loadAssist()}>
               Rafraîchir
             </Button>
           </div>
 
+          {assistRows.length > 0 ? (
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-muted">
+                Filtrer
+                <input
+                  type="search"
+                  value={assistFilter}
+                  onChange={(e) => setAssistFilter(e.target.value)}
+                  placeholder="E-mail, statut, forfait, référence…"
+                  className="mt-1 w-full max-w-md rounded-xl border border-line bg-[#f8f2e8] px-3 py-2 text-sm font-medium text-text outline-none focus:ring-2 focus:ring-primary/35"
+                />
+              </label>
+            </div>
+          ) : null}
+
           {assistRows.length === 0 ? (
             <Card className="border-dashed border-line bg-surface">
               <CardContent className="p-10 text-center text-muted">Aucune demande enregistrée.</CardContent>
             </Card>
+          ) : filteredAssistRows.length === 0 ? (
+            <Card className="border-line bg-surface">
+              <CardContent className="p-10 text-center text-muted">Aucun résultat pour ce filtre.</CardContent>
+            </Card>
           ) : (
             <div className="space-y-4">
-              {assistRows.map((r) => (
+              {filteredAssistRows.map((r) => (
                 <Card key={r.id} className="border-line bg-surface">
                   <CardContent className="space-y-4 p-5">
                     <div className="flex flex-wrap items-start justify-between gap-3">

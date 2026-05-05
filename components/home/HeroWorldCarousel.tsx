@@ -1,60 +1,71 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import slides from '@/data/hero-slides.json'
+import curatedSlidesStatic from '@/data/hero-slides.json'
 
-type HeroSlide = {
-  imageUrl: string
-  place: string
-  country: string
-  continent?: string
-  durationMs?: number
-  sourceName?: string
-  sourceUrl?: string
-}
+import type { HomeHeroSlide } from '@/lib/home-hero-slides'
 
-function isVerifiedSlide(slide: HeroSlide) {
+function isRenderableSlide(slide: HomeHeroSlide) {
   return Boolean(
     slide.imageUrl?.trim() &&
       slide.place?.trim() &&
       slide.country?.trim() &&
       slide.sourceName?.trim() &&
-      slide.sourceUrl?.trim(),
+      slide.sourceUrl?.trim() &&
+      /^https?:\/\//i.test(String(slide.sourceUrl).trim()),
   )
 }
 
-const VERIFIED_SLIDES: HeroSlide[] = slides.filter((slide) => isVerifiedSlide(slide))
-
 const AUTO_SLIDE_MS = 4200
 
-export default function HeroWorldCarousel() {
+const curatedFallback = curatedSlidesStatic as HomeHeroSlide[]
+
+type Props = {
+  /** When set (e.g. from `buildHomeHeroSlides()`), includes curated JSON + merged travel highlights */
+  slides?: HomeHeroSlide[] | null
+}
+
+export default function HeroWorldCarousel({ slides }: Props) {
   const [index, setIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
-  const current = useMemo(() => VERIFIED_SLIDES[index], [index])
-  const currentDelay = Math.max(2000, current.durationMs ?? AUTO_SLIDE_MS)
+  const VERIFIED_SLIDES = useMemo(() => {
+    const raw = slides != null && slides.length > 0 ? slides : curatedFallback
+    return raw.filter(isRenderableSlide)
+  }, [slides])
 
-  const goNext = () => setIndex((prev) => (prev + 1) % VERIFIED_SLIDES.length)
-  const goPrev = () => setIndex((prev) => (prev - 1 + VERIFIED_SLIDES.length) % VERIFIED_SLIDES.length)
+  useEffect(() => {
+    setIndex((i) => {
+      if (VERIFIED_SLIDES.length === 0) return 0
+      return Math.min(i, VERIFIED_SLIDES.length - 1)
+    })
+  }, [VERIFIED_SLIDES.length])
+
+  const current = VERIFIED_SLIDES[index] ?? VERIFIED_SLIDES[0]
+  const currentDelay = Math.max(2000, current?.durationMs ?? AUTO_SLIDE_MS)
+
+  const goNext = () =>
+    setIndex((prev) => (prev + 1) % Math.max(1, VERIFIED_SLIDES.length))
+  const goPrev = () =>
+    setIndex((prev) => (prev - 1 + VERIFIED_SLIDES.length) % Math.max(1, VERIFIED_SLIDES.length))
 
   if (VERIFIED_SLIDES.length === 0) {
     return (
       <div className="relative flex h-[260px] items-center justify-center rounded-2xl border border-line bg-[#f8f2e8] p-6 text-center shadow-soft md:h-[320px]">
-        <p className="text-sm font-semibold text-muted">
-          No verified hero photos available yet.
-        </p>
+        <p className="text-sm font-semibold text-muted">No verified hero photos available yet.</p>
       </div>
     )
   }
 
   useEffect(() => {
-    if (isPaused) return
+    if (isPaused || VERIFIED_SLIDES.length === 0 || !current) return
+    const len = VERIFIED_SLIDES.length
     const timer = setTimeout(() => {
-      goNext()
+      setIndex((prev) => (prev + 1) % len)
     }, currentDelay)
 
     return () => clearTimeout(timer)
-  }, [index, isPaused, currentDelay])
+  }, [current, index, isPaused, currentDelay, VERIFIED_SLIDES.length])
 
   return (
     <div
@@ -89,7 +100,7 @@ export default function HeroWorldCarousel() {
 
       {VERIFIED_SLIDES.map((slide, slideIndex) => (
         <img
-          key={`${slide.place}-${slide.country}`}
+          key={`${slide.place}-${slide.country}-${slide.imageUrl.slice(0, 40)}`}
           src={slide.imageUrl}
           alt={`${slide.place}, ${slide.country}`}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
@@ -106,10 +117,8 @@ export default function HeroWorldCarousel() {
 
       <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/80">
-            Current destination
-          </p>
-          {current.continent ? (
+          <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Current destination</p>
+          {current?.continent ? (
             <p className="mb-1 mt-1 inline-flex rounded-full border border-white/30 bg-white/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white/90">
               {current.continent}
             </p>

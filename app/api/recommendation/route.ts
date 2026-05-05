@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma';
 import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
@@ -256,9 +256,16 @@ export async function POST(req: Request) {
     const normalizedProfile = normalizeProfile(profile);
     let countries: any[] = []
     try {
-      countries = await prisma.country.findMany();
+      countries = await buildMergedCountriesList()
     } catch {
-      countries = await loadFallbackCountries()
+      countries = []
+    }
+    if (!countries.length) {
+      try {
+        countries = await loadFallbackCountries()
+      } catch {
+        countries = []
+      }
     }
     const recommendations = countries
       .map((c: any) => computeRecommendation(c, normalizedProfile))

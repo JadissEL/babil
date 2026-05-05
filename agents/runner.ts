@@ -478,6 +478,7 @@ function mergeCountryData(
   wiki: Awaited<ReturnType<typeof fetchWikipediaSummary>>,
   gdp: Awaited<ReturnType<typeof fetchWorldBankGdp>>,
   quotes: Awaited<ReturnType<typeof loadVerifiedTravelerQuotes>>,
+  preserveScalar?: CountrySnapshot['scalar'],
 ): CountrySnapshot {
   const merged = {
     ...existing,
@@ -508,15 +509,35 @@ function mergeCountryData(
     },
   } as Record<string, unknown>
 
+  const fallbackScalar: CountrySnapshot['scalar'] = {
+    tourist_visa_score: 5.5,
+    study_visa_score: 5.5,
+    work_visa_score: 5.5,
+    business_visa_score: 5.5,
+    appointment_difficulty: 'Medium',
+  }
+
+  const pickNum = (v: unknown, d: number) =>
+    typeof v === 'number' && Number.isFinite(v) ? v : d
+
   return {
     fullData: merged,
-    scalar: {
-      tourist_visa_score: 5.5,
-      study_visa_score: 5.5,
-      work_visa_score: 5.5,
-      business_visa_score: 5.5,
-      appointment_difficulty: 'Medium',
-    },
+    scalar: preserveScalar
+      ? {
+          tourist_visa_score: pickNum(preserveScalar.tourist_visa_score, fallbackScalar.tourist_visa_score),
+          study_visa_score: pickNum(preserveScalar.study_visa_score, fallbackScalar.study_visa_score),
+          work_visa_score: pickNum(preserveScalar.work_visa_score, fallbackScalar.work_visa_score),
+          business_visa_score: pickNum(
+            preserveScalar.business_visa_score,
+            fallbackScalar.business_visa_score,
+          ),
+          appointment_difficulty:
+            typeof preserveScalar.appointment_difficulty === 'string' &&
+            preserveScalar.appointment_difficulty.trim()
+              ? preserveScalar.appointment_difficulty.trim()
+              : fallbackScalar.appointment_difficulty,
+        }
+      : fallbackScalar,
   }
 }
 
@@ -564,19 +585,34 @@ function buildCompletenessPayload(snapshot: CountrySnapshot, task: CountryTask, 
 
 async function processCountryTask(task: CountryTask) {
   const schengen = isSchengenCountry(task.country)
-  const existing = await prisma.country.findUnique({
+  const existingRow = await prisma.country.findUnique({
     where: { name: task.country },
-    select: { full_data: true },
+    select: {
+      full_data: true,
+      tourist_visa_score: true,
+      study_visa_score: true,
+      work_visa_score: true,
+      business_visa_score: true,
+      appointment_difficulty: true,
+    },
   })
 
   let snapshot: CountrySnapshot = {
-    fullData: parseExistingFullData(existing?.full_data ?? null),
+    fullData: parseExistingFullData(existingRow?.full_data ?? null),
     scalar: {
-      tourist_visa_score: 5.5,
-      study_visa_score: 5.5,
-      work_visa_score: 5.5,
-      business_visa_score: 5.5,
-      appointment_difficulty: 'Medium',
+      tourist_visa_score:
+        typeof existingRow?.tourist_visa_score === 'number' ? existingRow.tourist_visa_score : 5.5,
+      study_visa_score:
+        typeof existingRow?.study_visa_score === 'number' ? existingRow.study_visa_score : 5.5,
+      work_visa_score:
+        typeof existingRow?.work_visa_score === 'number' ? existingRow.work_visa_score : 5.5,
+      business_visa_score:
+        typeof existingRow?.business_visa_score === 'number' ? existingRow.business_visa_score : 5.5,
+      appointment_difficulty:
+        typeof existingRow?.appointment_difficulty === 'string' &&
+        existingRow.appointment_difficulty.trim()
+          ? existingRow.appointment_difficulty.trim()
+          : 'Medium',
     },
   }
 
@@ -598,7 +634,15 @@ async function processCountryTask(task: CountryTask) {
     const quotes = await loadVerifiedTravelerQuotes(task.country)
     sourceHash = hash({ wiki, gdp, quoteStatus: quotes.status })
 
-    snapshot = mergeCountryData(task.country, task.region, snapshot.fullData, wiki, gdp, quotes)
+    snapshot = mergeCountryData(
+      task.country,
+      task.region,
+      snapshot.fullData,
+      wiki,
+      gdp,
+      quotes,
+      snapshot.scalar,
+    )
     reportPayload = buildCompletenessPayload(snapshot, task, sourceHash)
 
     logVerbose2('country pass metrics', {
