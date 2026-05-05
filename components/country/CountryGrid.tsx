@@ -4,6 +4,7 @@ import type { CountryCardProps } from '@/components/country/CountryCard'
 /** Pays prêt pour CountryCard + clé liste */
 export type CountryGridItem = { id: string } & Omit<CountryCardProps, 'onClick' | 'countryId'>
 
+/** Quand `id` est uniquement numérique, il devient aussi `countryId` sur la carte et déclenche le lien `/countries/[id]`. */
 export default function CountryGrid({ countries }: { countries: CountryGridItem[] }) {
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">

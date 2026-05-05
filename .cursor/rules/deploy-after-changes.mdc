@@ -1,0 +1,19 @@
+---
+description: After substantive changes, push to GitHub and ensure production redeploy when CI/CD does not trigger it
+alwaysApply: true
+---
+
+# Push and deploy after changes
+
+When you finish **substantive** edits in this repo (features, fixes, config that affects production, or anything the user expects to see live):
+
+1. **Git**
+   - Stage, commit with a clear message, and **`git push`** to the remote branch the user uses (default: `origin/main`).
+   - Do not leave the task “done” with only local commits unless the user explicitly asked not to push.
+
+2. **Deploy**
+   - If **CI/CD** already deploys on push (GitHub Actions deploy hooks, Render/Vercel git integration auto-deploy): confirm the workflow ran or rely on platform auto-deploy after push.
+   - If redeploy is **not** reliably triggered by CI/CD (missing secrets, manual-only services, or user said deploys failed): trigger a **manual production deploy** (e.g. `vercel deploy --prod --yes` for Vercel; Render deploy hook or dashboard redeploy for Render services).
+
+3. **Scope**
+   - Applies to meaningful product/config changes—not to trivial typo-only tweaks unless the user requests a release.

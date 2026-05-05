@@ -317,7 +317,12 @@ export default function CountryDetailPage() {
             previewOnly
           />
 
-          <TravelerQuotesSection countryName={country.name} quotes={experienceContent.quotes} />
+          <TravelerQuotesSection
+            countryName={country.name}
+            quotes={experienceContent.quotes}
+            countryId={id as string}
+            previewOnly
+          />
 
           {/* Community Comments */}
           <section className="space-y-6">

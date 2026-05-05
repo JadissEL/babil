@@ -1,7 +1,37 @@
 'use client'
 
 import Link from 'next/link'
+import { useMemo, useState } from 'react'
 import { VisitReason } from '@/lib/country-experience-content'
+
+function VisitReasonImage({
+  src,
+  alt,
+  seed,
+  eager,
+}: {
+  src: string
+  alt: string
+  seed: string
+  eager: boolean
+}) {
+  const fallback = useMemo(
+    () => `https://picsum.photos/seed/${encodeURIComponent(seed)}/900/600`,
+    [seed],
+  )
+  const [current, setCurrent] = useState(src)
+  return (
+    <img
+      src={current}
+      alt={alt}
+      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      loading={eager ? 'eager' : 'lazy'}
+      onError={() => {
+        if (current !== fallback) setCurrent(fallback)
+      }}
+    />
+  )
+}
 
 type VisitReasonsSectionProps = {
   countryName: string
@@ -44,11 +74,11 @@ export function VisitReasonsSection({
             className="group overflow-hidden rounded-2xl border border-line bg-surface shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-card"
           >
             <div className="relative h-40 w-full overflow-hidden">
-              <img
+              <VisitReasonImage
                 src={reason.imageUrl}
                 alt={reason.imageAlt}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading={idx < 6 ? 'eager' : 'lazy'}
+                seed={reason.id}
+                eager={idx < 6}
               />
             </div>
             <div className="space-y-2 p-4">

@@ -14,13 +14,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render web deploy
-        if: ${{ secrets.RENDER_WEB_DEPLOY_HOOK_URL != '' }}
-        run: curl -fsS -X POST "${{ secrets.RENDER_WEB_DEPLOY_HOOK_URL }}"
+        env:
+          SECRETS_JSON: ${{ toJSON(secrets) }}
+        run: |
+          DEPLOY_HOOK_URL="$(jq -r '.RENDER_WEB_DEPLOY_HOOK_URL // empty' <<< "$SECRETS_JSON")"
+          if [ -n "$DEPLOY_HOOK_URL" ]; then
+            curl -fsS -X POST "$DEPLOY_HOOK_URL"
+          fi
 
       - name: Trigger Render agent deploy
-        if: ${{ secrets.RENDER_AGENT_DEPLOY_HOOK_URL != '' }}
-        run: curl -fsS -X POST "${{ secrets.RENDER_AGENT_DEPLOY_HOOK_URL }}"
+        env:
+          SECRETS_JSON: ${{ toJSON(secrets) }}
+        run: |
+          DEPLOY_HOOK_URL="$(jq -r '.RENDER_AGENT_DEPLOY_HOOK_URL // empty' <<< "$SECRETS_JSON")"
+          if [ -n "$DEPLOY_HOOK_URL" ]; then
+            curl -fsS -X POST "$DEPLOY_HOOK_URL"
+          fi
 
       - name: Trigger Vercel deploy
-        if: ${{ secrets.VERCEL_DEPLOY_HOOK_URL != '' }}
-        run: curl -fsS -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+        env:
+          SECRETS_JSON: ${{ toJSON(secrets) }}
+        run: |
+          DEPLOY_HOOK_URL="$(jq -r '.VERCEL_DEPLOY_HOOK_URL // empty' <<< "$SECRETS_JSON")"
+          if [ -n "$DEPLOY_HOOK_URL" ]; then
+            curl -fsS -X POST "$DEPLOY_HOOK_URL"
+          fi

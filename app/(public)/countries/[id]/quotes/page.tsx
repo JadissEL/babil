@@ -5,10 +5,10 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ChevronLeft } from 'lucide-react'
 
-import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
+import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 
-export default function CountryReasonsPage() {
+export default function CountryQuotesPage() {
   const params = useParams()
   const id = params?.id
   const [country, setCountry] = useState<any>(null)
@@ -60,7 +60,7 @@ export default function CountryReasonsPage() {
         <ChevronLeft className="h-4 w-4" /> Retour au pays
       </Link>
 
-      <VisitReasonsSection countryName={country.name} reasons={experienceContent.reasons} />
+      <TravelerQuotesSection countryName={country.name} quotes={experienceContent.quotes} />
     </div>
   )
 }

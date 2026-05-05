@@ -1,10 +1,13 @@
 'use client'
 
+import Link from 'next/link'
 import { TravelerQuote } from '@/lib/country-experience-content'
 
 type TravelerQuotesSectionProps = {
   countryName: string
   quotes: TravelerQuote[]
+  countryId?: string | number
+  previewOnly?: boolean
 }
 
 function quoteTone(sentiment: TravelerQuote['sentiment']) {
@@ -13,7 +16,12 @@ function quoteTone(sentiment: TravelerQuote['sentiment']) {
   return 'border-[#f3afaf] bg-[#fff0f0] text-danger'
 }
 
-export function TravelerQuotesSection({ countryName, quotes }: TravelerQuotesSectionProps) {
+export function TravelerQuotesSection({
+  countryName,
+  quotes,
+  countryId,
+  previewOnly = false,
+}: TravelerQuotesSectionProps) {
   if (quotes.length !== 10) {
     return (
       <section className="rounded-2xl border border-line bg-surface p-6 shadow-soft">
@@ -23,16 +31,29 @@ export function TravelerQuotesSection({ countryName, quotes }: TravelerQuotesSec
     )
   }
 
+  const maxItems = previewOnly ? 3 : 10
+  const slice = quotes.slice(0, maxItems)
+
   return (
     <section className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-black text-text">What Travelers Say About {countryName}</h2>
-        <p className="mt-1 text-sm text-muted">
-          Real, source-linked travel feedback grouped by sentiment to support better decisions.
-        </p>
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h2 className="text-2xl font-black text-text">What Travelers Say About {countryName}</h2>
+          <p className="mt-1 text-sm text-muted">
+            Real, source-linked travel feedback grouped by sentiment to support better decisions.
+          </p>
+        </div>
+        {previewOnly && countryId != null ? (
+          <Link
+            href={`/countries/${countryId}/quotes`}
+            className="shrink-0 rounded-xl border border-line bg-[#f8f2e8] px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/30 hover:bg-primary-soft"
+          >
+            Voir tout
+          </Link>
+        ) : null}
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {quotes.map((quote) => (
+        {slice.map((quote) => (
           <article key={quote.id} className={`rounded-2xl border p-4 shadow-soft ${quoteTone(quote.sentiment)}`}>
             <p className="mb-3 text-2xl font-black opacity-70">"</p>
             <p className="text-sm font-medium leading-relaxed">{quote.text}</p>

@@ -21,6 +21,7 @@ import RiskFilter from '@/components/filters/RiskFilter'
 import CountryGrid, { type CountryGridItem } from '@/components/country/CountryGrid'
 import GoogleAd from '../components/GoogleAd'
 import HeroWorldCarousel from '@/components/home/HeroWorldCarousel'
+import prisma from '@/lib/prisma'
 
 export const metadata: Metadata = {
   title: 'VisaFlow — Mobilité internationale pour profils marocains',
@@ -28,8 +29,9 @@ export const metadata: Metadata = {
     'Explorez les destinations : scores visa, friction, études et business. Filtres par objectif, budget et risque — puis approfondissez chaque pays.',
 }
 
-export default function Home() {
-  const topCountries: CountryGridItem[] = [
+export const dynamic = 'force-dynamic'
+
+const TOP_COUNTRIES_BASE: CountryGridItem[] = [
     {
       id: 'fr-showcase',
       name: 'France',
@@ -80,7 +82,32 @@ export default function Home() {
       study: 'Strong',
       business: 'Strong',
     },
-  ]
+]
+
+async function resolveTopCountries(): Promise<CountryGridItem[]> {
+  const names = TOP_COUNTRIES_BASE.map((c) => c.name)
+  try {
+    const rows = await prisma.country.findMany({
+      where: { name: { in: names } },
+      select: { id: true, name: true },
+    })
+    const idByName: Record<string, number> = Object.fromEntries(
+      rows.map((r) => [r.name, r.id]),
+    )
+    return TOP_COUNTRIES_BASE.map((row) => ({
+      ...row,
+      id:
+        typeof idByName[row.name] === 'number'
+          ? String(idByName[row.name])
+          : row.id,
+    }))
+  } catch {
+    return TOP_COUNTRIES_BASE
+  }
+}
+
+export default async function Home() {
+  const topCountries = await resolveTopCountries()
   const testimonials = [
     {
       name: 'Yassine A.',
