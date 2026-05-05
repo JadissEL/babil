@@ -157,12 +157,15 @@ export function DelegatedServiceCatalog() {
         <ComparisonTable pkgs={UNIVERSITY_PACKAGES} />
       </section>
 
-      <div className="mt-16">
+      <div className="mt-16 flex flex-wrap gap-4">
         <Link
-          href="/overview"
+          href="/overview#assist-requests"
           className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-hover"
         >
-          ← Retour au tableau de bord
+          ← Mes demandes (tableau de bord)
+        </Link>
+        <Link href="/overview" className="text-xs font-black uppercase tracking-widest text-muted hover:text-primary-hover">
+          Tableau de bord
         </Link>
       </div>
     </div>

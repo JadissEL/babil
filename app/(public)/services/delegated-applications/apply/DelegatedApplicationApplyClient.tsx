@@ -122,8 +122,14 @@ export default function DelegatedApplicationApplyClient() {
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
-            href="/overview"
+            href="/overview#assist-requests"
             className="rounded-xl bg-primary px-6 py-3 text-xs font-black uppercase tracking-widest text-white"
+          >
+            Voir mes demandes
+          </Link>
+          <Link
+            href="/overview"
+            className="rounded-xl border border-line bg-[#f8f2e8] px-6 py-3 text-xs font-black uppercase tracking-widest text-text"
           >
             Tableau de bord
           </Link>

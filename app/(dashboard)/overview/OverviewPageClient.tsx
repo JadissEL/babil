@@ -20,6 +20,8 @@ import {
   FileStack,
 } from 'lucide-react'
 
+import { MyDelegatedRequests } from '@/components/services/MyDelegatedRequests'
+
 export default function OverviewPageClient() {
   const { user } = useUser()
 
@@ -112,6 +114,10 @@ export default function OverviewPageClient() {
           Bonjour, {user?.firstName || 'Voyageur'}
         </h1>
         <p className="mt-2 font-medium text-muted">Aperçu de votre situation de mobilité sur VisaFlow.</p>
+      </div>
+
+      <div className="mb-12">
+        <MyDelegatedRequests />
       </div>
 
       <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">

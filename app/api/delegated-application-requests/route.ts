@@ -7,7 +7,38 @@ import {
   type DelegatedCategory,
   findDelegatedPackage,
 } from '@/lib/delegated-application-catalog'
+import { previewDelegatedPayload } from '@/lib/delegated-application-payload-utils'
 import { isDbUnavailable } from '@/lib/db-resilience'
+
+export async function GET() {
+  const { userId } = auth()
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  try {
+    const rows = await prisma.delegatedApplicationRequest.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    })
+    const items = rows.map((r) => {
+      const pv = previewDelegatedPayload(r.payload)
+      return {
+        id: r.id,
+        category: r.category,
+        packageId: r.packageId,
+        status: r.status,
+        createdAt: r.createdAt.toISOString(),
+        packageName: pv.packageName,
+        priceMad: pv.priceMad,
+      }
+    })
+    return NextResponse.json({ items })
+  } catch (error: unknown) {
+    if (isDbUnavailable(error)) return NextResponse.json({ items: [], degraded: true })
+    const message = error instanceof Error ? error.message : 'List failed'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
 
 function trimStr(v: unknown, max = 8000): string | null {
   if (typeof v !== 'string') return null
