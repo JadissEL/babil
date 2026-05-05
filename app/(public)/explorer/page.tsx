@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Search, Globe, SlidersHorizontal, Target } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
 import CountryGrid from '@/components/country/CountryGrid'
@@ -33,11 +34,16 @@ function explorerRegionToSelect(region: string): string {
 
 function selectToExplorerRegion(v: string): string {
   if (!v) return 'all'
-  if (v === 'schengen') return 'Schengen'
-  return v.charAt(0).toUpperCase() + v.slice(1)
+  if (v.toLowerCase() === 'schengen') return 'Schengen'
+  return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase()
 }
 
-export default function ExplorerPage() {
+function isBudgetParam(v: string | null): v is Exclude<Budget, 'all'> {
+  return v === 'low' || v === 'medium' || v === 'high'
+}
+
+function ExplorerPageInner() {
+  const searchParams = useSearchParams()
   const [countries, setCountries] = useState<any[]>([])
   const [mode, setMode] = useState<Mode>('explorer')
   const [search, setSearch] = useState('')
@@ -47,6 +53,36 @@ export default function ExplorerPage() {
   const [budget, setBudget] = useState<Budget>('all')
   const [schengenOnly, setSchengenOnly] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (!searchParams) return
+    const qRaw = searchParams.get('q') ?? searchParams.get('search')
+    try {
+      const qDecoded = decodeURIComponent(qRaw ?? '').trim()
+      if (qDecoded) setSearch(qDecoded)
+    } catch {
+      const qFall = String(qRaw ?? '').trim()
+      if (qFall) setSearch(qFall)
+    }
+
+    const reg = searchParams.get('region')
+    if (reg?.trim()) setRegion(selectToExplorerRegion(reg.trim()))
+
+    const goalParam = searchParams.get('goal')
+    if (goalParam?.trim()) setGoal(filterGoalFromSelect(goalParam.trim().toLowerCase()))
+
+    const bud = searchParams.get('budget')
+    if (isBudgetParam(bud)) setBudget(bud)
+
+    const diff = searchParams.get('difficulty')
+    if (diff && ['Low', 'Medium', 'High', 'Extreme'].includes(diff)) setDifficulty(diff)
+
+    const sch = searchParams.get('schengen')
+    if (sch === '1' || sch === 'true' || sch === 'yes') setSchengenOnly(true)
+
+    const modeParam = searchParams.get('mode')
+    if (modeParam === 'recommendation') setMode('recommendation')
+  }, [searchParams])
 
   useEffect(() => {
     fetch('/api/countries')
@@ -103,6 +139,11 @@ export default function ExplorerPage() {
             <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Global Explorer</h1>
             <p className="mt-1 text-sm font-medium text-muted">
               Intelligence terrain & mobilité pour citoyens marocains — filtre et compare les destinations.
+              Tu peux partager une vue précise avec{' '}
+              <code className="rounded-md border border-line bg-[#f8f2e8] px-1.5 py-0.5 text-[11px] font-bold text-primary">
+                /explorer?q=nom-du-pays
+              </code>
+              .
             </p>
           </div>
         </div>
@@ -195,5 +236,19 @@ export default function ExplorerPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function ExplorerPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto flex max-w-7xl justify-center px-6 py-24 sm:px-8">
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" aria-label="Loading" />
+        </div>
+      }
+    >
+      <ExplorerPageInner />
+    </Suspense>
   )
 }
