@@ -96,7 +96,7 @@ const SCHENGEN_COUNTRIES = new Set([
 const DOMAIN_HINTS: Record<Domain, string[]> = {
   overview: ['country profile overview', 'capital population quick facts'],
   economy: ['gdp latest world bank', 'economic outlook'],
-  education: ['education mobility access', 'language and training options'],
+  education: ['education mobility access', 'language training options', 'PhD doctoral study visa funding pathways'],
   business: ['business setup conditions', 'street food business opportunity'],
   driving: ['driving license conversion rules', 'license restrictions'],
   community: ['traveler quotes verified sources', 'appointment audit lived experience'],
@@ -420,6 +420,7 @@ function resolveAdaptiveQueryFromSnapshot(
     { key: 'morocco_insights', value: fullData.morocco_insights },
     { key: 'travel_reasons', value: fullData.travel_reasons },
     { key: 'traveler_quotes', value: fullData.traveler_quotes },
+    { key: 'phd_studies', value: fullData.phd_studies },
   ]
 
   const weakSections = sections
