@@ -12,7 +12,9 @@ import {
   AlertCircle, 
   Coins,
   Search,
-  BookOpen
+  BookOpen,
+  Microscope,
+  ArrowRight,
 } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
 
@@ -100,6 +102,29 @@ export default function EducationPage() {
           />
         </div>
       </div>
+
+      <Link
+        href="/explorer?goal=education"
+        className="group mb-10 flex flex-col gap-4 rounded-[2rem] border border-primary/25 bg-surface p-6 shadow-card transition-all hover:border-primary/40 hover:shadow-soft sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary ring-1 ring-primary/30">
+            <Microscope className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Volet Doctorat (PhD)</p>
+            <p className="mt-1 text-lg font-black text-text">Décision par pays : visa long séjour, financement, reconnaissance des diplômes</p>
+            <p className="mt-2 text-sm font-medium text-muted">
+              Chaque fiche pays inclut un bloc structuré{' '}
+              <code className="rounded bg-[#f8f2e8] px-1.5 py-0.5 text-xs font-bold">full_data.phd_studies</code>. Choisissez un pays ci-dessous
+              ou passez par l&apos;explorateur.
+            </p>
+          </div>
+        </div>
+        <span className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-line bg-[#f8f2e8] px-6 py-3 text-xs font-black uppercase tracking-widest text-text transition-colors group-hover:border-primary/40 group-hover:bg-primary-soft sm:justify-end">
+          Explorer <ArrowRight className="h-4 w-4" />
+        </span>
+      </Link>
 
       <div className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-3">
         <Link
@@ -226,6 +251,13 @@ export default function EducationPage() {
                     </h4>
                     <p className="text-sm font-bold leading-relaxed text-text">&quot;{data.insight}&quot;</p>
                   </div>
+                  <Link
+                    href={`/countries/${c.id}`}
+                    className="mt-4 flex items-center justify-center gap-2 rounded-2xl border border-line bg-[#f8f2e8] py-3 text-[10px] font-black uppercase tracking-widest text-primary transition-colors hover:border-primary/35 hover:bg-primary-soft"
+                  >
+                    Fiche pays <span className="text-muted">·</span> Doctorat &amp; dossier complet{' '}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
                 </div>
               </div>
             )

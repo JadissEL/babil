@@ -3,6 +3,8 @@
  * Réutilisé par l’Explorer et le comparateur pour garder les mêmes scores.
  */
 
+import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 
 export type BudgetBand = 'low' | 'medium' | 'high'
@@ -68,7 +70,7 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
   const friction = clamp(100 - frictionScore)
 
   const edu = full.education_mobility as Record<string, unknown> | undefined
-  const education = clamp(
+  const educationMobilityBuckets = clamp(
     Math.round(
       ((edu?.language_study ? 1 : 0) +
         (edu?.technical_training ? 1 : 0) +
@@ -76,6 +78,8 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
         33.33,
     ),
   )
+  const phdBonus = hasCountryPhdStoredData(full) ? 10 : 0
+  const education = clamp(educationMobilityBuckets + phdBonus)
 
   const avgVisa = Math.round((visa.tourism + visa.study + visa.work + visa.business) / 4)
   const finalScore = clamp(Math.round(avgVisa * 0.5 + friction * 0.25 + education * 0.25))

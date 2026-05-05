@@ -4,7 +4,7 @@
 
 - `app/page.tsx` : hero + top countries + points d'entrée modules.
 - `app/(public)/explorer/page.tsx` : grille pays, filtres, tri, moteur d'exploration.
-- `app/(public)/countries/[id]/page.tsx` : page pays détaillée (scores, friction, audit rendez-vous, raisons/quotes, commentaires).
+- `app/(public)/countries/[id]/page.tsx` : page pays détaillée (scores, friction, audit rendez-vous, **doctorat PhD** (`full_data.phd_studies` via `buildPhdStudies`), raisons/quotes, commentaires).
 - `app/(public)/schengen/page.tsx` : vue Schengen + comparaison.
 - `app/(public)/education/page.tsx` et sous-routes : mobilité formation.
 - `app/(public)/business/page.tsx` : business et micro-business.
@@ -38,6 +38,7 @@
   - `schengen_flag`, `full_data.friction_*`, `embassy_behavior`
 - Education:
   - `full_data.education_mobility.*`
+  - Doctorat décisionnel : `full_data.phd_studies` (`lib/country-phd-studies.ts`, composant `PhDStudiesSection`)
 - Business:
   - `full_data.visa_system.business.*`, `full_data.street_food.*`, `full_data.cbi_program`
 - Permis:

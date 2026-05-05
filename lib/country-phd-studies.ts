@@ -337,3 +337,10 @@ export function buildPhdStudies(countryName: string, fullData: Record<string, un
   const base = defaultPhdStudies(countryName)
   return mergeStored(base, fullData.phd_studies)
 }
+
+/** True when `full_data.phd_studies` is a non-empty object ( données enrichies présentes ). */
+export function hasCountryPhdStoredData(fullData: Record<string, unknown>): boolean {
+  const phd = fullData.phd_studies
+  if (phd === null || phd === undefined || typeof phd !== 'object' || Array.isArray(phd)) return false
+  return Object.keys(phd as Record<string, unknown>).length > 0
+}
