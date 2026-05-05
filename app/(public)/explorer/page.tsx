@@ -88,6 +88,8 @@ export default function ExplorerPage() {
     friction: frictionTierFromCountry(c._difficultyLabel, c._full?.friction_score),
     study: scoreToMobilityTier(c._visa.study),
     business: scoreToMobilityTier(c._visa.business),
+    highlightPlace: c._highlightPlace ?? undefined,
+    highlightImageUrl: c._highlightImageUrl ?? undefined,
   }))
 
   return (

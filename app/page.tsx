@@ -20,6 +20,7 @@ import RegionFilter from '@/components/filters/RegionFilter'
 import RiskFilter from '@/components/filters/RiskFilter'
 import CountryGrid, { type CountryGridItem } from '@/components/country/CountryGrid'
 import GoogleAd from '../components/GoogleAd'
+import HeroWorldCarousel from '@/components/home/HeroWorldCarousel'
 
 export const metadata: Metadata = {
   title: 'VisaFlow — Mobilité internationale pour profils marocains',
@@ -84,20 +85,25 @@ export default function Home() {
   return (
     <PageContainer className="py-12">
         <section className="rounded-2xl border border-line bg-surface p-8 shadow-card md:p-10">
-          <div className="inline-flex items-center gap-2 rounded-full border border-line bg-[#f8f2e8] px-3 py-1 text-[10px] font-black uppercase tracking-widest text-muted">
-            <Sparkles className="h-3.5 w-3.5 text-primary" /> Global Mobility Intelligence
-          </div>
-          <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-text md:text-5xl">Decision intelligence SaaS for visas, education, business and mobility.</h1>
-          <p className="mt-4 max-w-2xl text-sm font-medium text-muted md:text-base">
-            Data-first dashboard for Moroccan users: compare countries, understand risk and friction, and choose your best path with explainable scoring.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/recommendations" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-primary-hover">
-              Start Free Analysis <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link href="/explorer" className="inline-flex items-center gap-2 rounded-xl border border-line bg-[#f8f2e8] px-5 py-3 text-xs font-black uppercase tracking-widest text-text hover:bg-primary-soft">
-              Open Explorer
-            </Link>
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-line bg-[#f8f2e8] px-3 py-1 text-[10px] font-black uppercase tracking-widest text-muted">
+                <Sparkles className="h-3.5 w-3.5 text-primary" /> Global Mobility Intelligence
+              </div>
+              <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-text md:text-5xl">Decision intelligence SaaS for visas, education, business and mobility.</h1>
+              <p className="mt-4 max-w-2xl text-sm font-medium text-muted md:text-base">
+                Data-first dashboard for Moroccan users: compare countries, understand risk and friction, and choose your best path with explainable scoring.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/recommendations" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-primary-hover">
+                  Start Free Analysis <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/explorer" className="inline-flex items-center gap-2 rounded-xl border border-line bg-[#f8f2e8] px-5 py-3 text-xs font-black uppercase tracking-widest text-text hover:bg-primary-soft">
+                  Open Explorer
+                </Link>
+              </div>
+            </div>
+            <HeroWorldCarousel />
           </div>
         </section>
 

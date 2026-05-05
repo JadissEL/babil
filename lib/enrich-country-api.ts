@@ -25,6 +25,29 @@ export type EnrichedCountryApi = Record<string, unknown> & {
   _finalScore: number
   _budgetLevel: BudgetBand
   _difficultyLabel: string
+  _highlightPlace: string | null
+  _highlightImageUrl: string | null
+}
+
+function normalizeHighlightFromFullData(full: Record<string, unknown>) {
+  const reasons = Array.isArray(full.travel_reasons) ? full.travel_reasons : []
+  const firstReason =
+    reasons.length > 0 && reasons[0] && typeof reasons[0] === 'object'
+      ? (reasons[0] as Record<string, unknown>)
+      : null
+
+  const placeCandidate =
+    (typeof firstReason?.title === 'string' && firstReason.title.trim()) ||
+    (typeof firstReason?.imageAlt === 'string' && firstReason.imageAlt.trim()) ||
+    null
+
+  const imageCandidate =
+    (typeof firstReason?.imageUrl === 'string' && firstReason.imageUrl.trim()) || null
+
+  return {
+    place: placeCandidate,
+    imageUrl: imageCandidate,
+  }
 }
 
 export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCountryApi {
@@ -57,6 +80,7 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
   const avgVisa = Math.round((visa.tourism + visa.study + visa.work + visa.business) / 4)
   const finalScore = clamp(Math.round(avgVisa * 0.5 + friction * 0.25 + education * 0.25))
   const budgetLevel: BudgetBand = finalScore >= 72 ? 'high' : finalScore >= 52 ? 'medium' : 'low'
+  const highlight = normalizeHighlightFromFullData(full)
 
   return {
     ...c,
@@ -70,5 +94,7 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
     _finalScore: finalScore,
     _budgetLevel: budgetLevel,
     _difficultyLabel: String(c.appointment_difficulty || 'Medium'),
+    _highlightPlace: highlight.place,
+    _highlightImageUrl: highlight.imageUrl,
   } as EnrichedCountryApi
 }

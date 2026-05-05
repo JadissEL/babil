@@ -1,0 +1,44 @@
+[
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1600&q=80",
+    "place": "Marrakech Medina",
+    "country": "Morocco",
+    "continent": "Africa",
+    "durationMs": 4400
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1549144511-f099e773c147?auto=format&fit=crop&w=1600&q=80",
+    "place": "Shibuya Crossing",
+    "country": "Japan",
+    "continent": "Asia",
+    "durationMs": 3900
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=1600&q=80",
+    "place": "Lower Manhattan",
+    "country": "United States",
+    "continent": "North America",
+    "durationMs": 4600
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=1600&q=80",
+    "place": "Eiffel Tower District",
+    "country": "France",
+    "continent": "Europe",
+    "durationMs": 4200
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=1600&q=80",
+    "place": "Santorini Cliffs",
+    "country": "Greece",
+    "continent": "Europe",
+    "durationMs": 4000
+  },
+  {
+    "imageUrl": "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=1600&q=80",
+    "place": "Marina Bay",
+    "country": "Singapore",
+    "continent": "Asia",
+    "durationMs": 4300
+  }
+]
