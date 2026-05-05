@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 import type { CompareRow } from '@/lib/compare-rows'
 
 import { cn } from '@/lib/utils'
@@ -54,6 +56,19 @@ export function CompareTable({ rows, winnerId }: CompareTableProps) {
                 <td className="p-4 font-medium text-muted">{c.visaScore}</td>
                 <td className="p-4 font-medium text-muted">{c.friction}</td>
                 <td className="p-4 font-medium text-muted">{c.study}</td>
+                <td className="p-4 font-medium">
+                  {c.phdStructuredData ? (
+                    <Link
+                      href={`/countries/${c.id}`}
+                      className="font-black text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary-hover"
+                      title="Ouvrir la fiche pays — bloc Doctorat (PhD)"
+                    >
+                      Oui
+                    </Link>
+                  ) : (
+                    <span className="text-muted">—</span>
+                  )}
+                </td>
                 <td className="p-4 font-medium text-muted">{c.business}</td>
                 <td className="p-4 font-black text-primary">{c.composite}</td>
               </tr>

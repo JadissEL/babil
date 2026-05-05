@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
@@ -44,24 +46,30 @@ function inferCountryBudgetThreshold(country: any): number {
 }
 
 function readCountrySignals(country: any) {
-  const full = country.full_data ? JSON.parse(country.full_data) : {};
+  const full = parseCountryFullData(country.full_data ?? null);
   const normalizedVisa = country.visa ?? {};
   const normalizedFriction = country.friction ?? {};
   const normalizedEdu = country.education ?? {};
   const normalizedBiz = country.business ?? {};
 
-  const touristScore = toNumber(normalizedVisa.touristScore ?? country.tourist_visa_score ?? full?.official_score ?? 50, 50);
+  const frictionAnalysis = full.friction_analysis as Record<string, unknown> | undefined;
+  const appointmentAudit = full.appointment_audit as Record<string, unknown> | undefined;
+  const educationMobility = full.education_mobility as Record<string, unknown> | undefined;
+  const visaSystem = full.visa_system as Record<string, unknown> | undefined;
+  const streetFood = full.street_food as Record<string, unknown> | undefined;
+
+  const touristScore = toNumber(normalizedVisa.touristScore ?? country.tourist_visa_score ?? full.official_score ?? 50, 50);
   const studyScore = toNumber(normalizedVisa.studyScore ?? country.study_visa_score ?? 50, 50);
   const workScore = toNumber(normalizedVisa.workScore ?? country.work_visa_score ?? 50, 50);
   const businessScore = toNumber(normalizedVisa.businessScore ?? country.business_visa_score ?? 50, 50);
 
-  const rejectionRisk = clamp(toNumber(normalizedVisa.rejectionRisk ?? full?.friction_analysis?.friction_score ?? 45, 45));
+  const rejectionRisk = clamp(toNumber(normalizedVisa.rejectionRisk ?? frictionAnalysis?.friction_score ?? 45, 45));
   const appointmentDifficulty = clamp(
     toNumber(
       normalizedFriction.appointmentDifficulty ??
-      full?.appointment_audit?.official_difficulty === 'High'
+      appointmentAudit?.official_difficulty === 'High'
         ? 75
-        : full?.appointment_audit?.official_difficulty === 'Medium'
+        : appointmentAudit?.official_difficulty === 'Medium'
           ? 50
           : 35,
       50
@@ -71,7 +79,7 @@ function readCountrySignals(country: any) {
   const averageWaitDays = clamp(
     toNumber(
       normalizedFriction.averageWaitDays ??
-      (String(full?.friction_analysis?.real_delay || '').includes('mois') ? 90 : 30),
+      (String(frictionAnalysis?.real_delay || '').includes('mois') ? 90 : 30),
       30
     ),
     0,
@@ -79,18 +87,20 @@ function readCountrySignals(country: any) {
   );
 
   const transparencyScore = clamp(
-    toNumber(normalizedFriction.transparencyScore ?? full?.friction_analysis?.transparency_score ?? 50, 50)
+    toNumber(normalizedFriction.transparencyScore ?? frictionAnalysis?.transparency_score ?? 50, 50)
   );
 
   const education = {
-    languageStudy: Boolean(normalizedEdu.languageStudy ?? full?.education_mobility?.language_study),
-    technicalTraining: Boolean(normalizedEdu.technicalTraining ?? full?.education_mobility?.technical_training),
-    shortCourses: Boolean(normalizedEdu.shortCourses ?? full?.education_mobility?.short_courses),
+    languageStudy: Boolean(normalizedEdu.languageStudy ?? educationMobility?.language_study),
+    technicalTraining: Boolean(normalizedEdu.technicalTraining ?? educationMobility?.technical_training),
+    shortCourses: Boolean(normalizedEdu.shortCourses ?? educationMobility?.short_courses),
+    /** `full_data.phd_studies` renseigné (hors squelette UI uniquement) */
+    phdStudiesStructured: hasCountryPhdStoredData(full),
   };
 
   const business = {
-    canOpenBusiness: Boolean(normalizedBiz.canOpenBusiness ?? full?.visa_system?.business),
-    streetFoodFriendly: ['high', 'medium'].includes(String(full?.street_food?.opportunity || '').toLowerCase()),
+    canOpenBusiness: Boolean(normalizedBiz.canOpenBusiness ?? visaSystem?.business),
+    streetFoodFriendly: ['high', 'medium'].includes(String(streetFood?.opportunity || '').toLowerCase()),
   };
 
   return {
@@ -163,6 +173,10 @@ function computeRecommendation(country: any, profile: NormalizedProfile) {
     goalMatch += s.education.languageStudy ? 20 : -5;
     goalMatch += s.education.technicalTraining ? 20 : -10;
     goalMatch += s.education.shortCourses ? 8 : 0;
+    if (s.education.phdStudiesStructured) {
+      goalMatch += 10;
+      explanations.push('Bloc doctorat PhD structuré disponible sur la fiche pays pour affiner visa / financement.');
+    }
   } else if (profile.goal === 'BUSINESS') {
     goalMatch += s.business.canOpenBusiness ? 30 : -15;
     goalMatch += s.business.streetFoodFriendly ? 15 : 0;

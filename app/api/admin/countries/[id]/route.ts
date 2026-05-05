@@ -3,7 +3,12 @@ import type { Prisma } from '@prisma/client'
 
 import { getAdminUser } from '@/lib/admin-auth'
 import prisma from '@/lib/prisma'
+import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { isDbUnavailable } from '@/lib/db-resilience'
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return v !== null && typeof v === 'object' && !Array.isArray(v)
+}
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const admin = await getAdminUser()
@@ -39,6 +44,39 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   if (typeof body.appointment_difficulty === 'string') {
     data.appointment_difficulty = body.appointment_difficulty
+  }
+
+  const patchPayload = body.full_data_patch
+  if (patchPayload !== null && patchPayload !== undefined && isRecord(patchPayload) && 'phd_studies' in patchPayload) {
+    const nextPhd = patchPayload.phd_studies
+    try {
+      const existing = await prisma.country.findUnique({
+        where: { id },
+        select: { full_data: true },
+      })
+      if (!existing) {
+        return NextResponse.json({ error: 'Country not found' }, { status: 404 })
+      }
+
+      const base = parseCountryFullData(existing.full_data)
+      const merged: Record<string, unknown> = { ...base }
+      if (nextPhd === null) {
+        delete merged.phd_studies
+      } else if (isRecord(nextPhd)) {
+        merged.phd_studies = nextPhd
+      } else {
+        return NextResponse.json(
+          { error: 'full_data_patch.phd_studies must be a JSON object or null to remove the block' },
+          { status: 400 },
+        )
+      }
+      data.full_data = JSON.stringify(merged)
+    } catch (readErr: unknown) {
+      if (isDbUnavailable(readErr)) {
+        return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })
+      }
+      throw readErr
+    }
   }
 
   if (Object.keys(data).length === 0) {

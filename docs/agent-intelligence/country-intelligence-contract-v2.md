@@ -45,6 +45,7 @@ Source canonique implémentée: `lib/country-intelligence-contract.ts`.
   - `full_data.education_mobility.language_study`
   - `full_data.education_mobility.technical_training`
   - `full_data.education_mobility.short_courses`
+  - `full_data.phd_studies` (facultatif ; section fiche pays Doctorat + compare / recommandation STUDY)
 - business:
   - `full_data.visa_system.business.setup`
   - `full_data.street_food.opportunity`
