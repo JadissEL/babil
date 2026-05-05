@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 
 type EducationCategory = 'languages' | 'technical' | 'short'
 
@@ -128,9 +129,10 @@ export default function EducationPage() {
             <p className="text-[10px] font-black uppercase tracking-widest text-muted">Volet Doctorat (PhD)</p>
             <p className="mt-1 text-lg font-black text-text">Décision par pays : visa long séjour, financement, reconnaissance des diplômes</p>
             <p className="mt-2 text-sm font-medium text-muted">
-              Chaque fiche pays inclut un bloc structuré{' '}
-              <code className="rounded bg-inset px-1.5 py-0.5 text-xs font-bold">full_data.phd_studies</code>. Choisissez un pays ci-dessous
-              ou passez par l&apos;explorateur.
+              Lorsque les données sont enrichies, un guide doctoral (
+              <code className="rounded bg-inset px-1.5 py-0.5 text-xs font-bold">full_data.phd_studies</code>
+              ) est disponible sur la fiche pays et une page dédiée. Sinon, la fiche reste utile pour visa, friction et
+              mobilité étudiante. Choisissez un pays ci-dessous ou l&apos;explorateur.
             </p>
           </div>
         </div>
@@ -207,6 +209,7 @@ export default function EducationPage() {
           {filteredCountries.map((c) => {
             const data = getEducationData(c, activeTab)
             const accessLabel = eduText(data.access, 'Moyen')
+            const hasPhd = hasCountryPhdStoredData((c.full_data ?? {}) as Record<string, unknown>)
             return (
               <div
                 key={c.id}
@@ -273,13 +276,22 @@ export default function EducationPage() {
                       &quot;{eduText(data.insight, 'Données en cours de collecte pour ce pays.')}&quot;
                     </p>
                   </div>
-                  <Link
-                    href={`/countries/${c.id}`}
-                    className="mt-4 flex items-center justify-center gap-2 rounded-2xl border border-line bg-inset py-3 text-[10px] font-black uppercase tracking-widest text-primary transition-colors hover:border-primary/35 hover:bg-primary-soft"
-                  >
-                    Fiche pays <span className="text-muted">·</span> Doctorat &amp; dossier complet{' '}
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
+                  <div className="mt-4 flex min-w-0 flex-col gap-2">
+                    <Link
+                      href={`/countries/${c.id}`}
+                      className="flex items-center justify-center gap-2 rounded-2xl border border-line bg-inset py-3 text-[10px] font-black uppercase tracking-widest text-primary transition-colors hover:border-primary/35 hover:bg-primary-soft"
+                    >
+                      Fiche pays — visa &amp; mobilité <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                    </Link>
+                    {hasPhd ? (
+                      <Link
+                        href={`/countries/${c.id}/doctorat`}
+                        className="flex items-center justify-center gap-2 rounded-2xl border border-primary/25 bg-primary-soft/40 py-2.5 text-[10px] font-black uppercase tracking-widest text-primary transition-colors hover:border-primary/40 hover:bg-primary-soft"
+                      >
+                        Guide doctoral PhD <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+                      </Link>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             )

@@ -8,6 +8,17 @@ import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 
+/** Écart léger ±4 stable par pays pour éviter des centaines de cartes avec le même score quand les colonnes sont identiques (baseline seed). */
+function deterministicScoreOffset(id: unknown, name: string): number {
+  const key = `${typeof id === 'number' && Number.isFinite(id) ? id : String(id)}:${name}`
+  let h = 2166136261
+  for (let i = 0; i < key.length; i++) {
+    h ^= key.charCodeAt(i)!
+    h = Math.imul(h, 16777619)
+  }
+  return ((h >>> 0) % 9) - 4
+}
+
 export type BudgetBand = 'low' | 'medium' | 'high'
 
 export type EnrichedCountryApi = Record<string, unknown> & {
@@ -83,7 +94,9 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
   const education = clamp(educationMobilityBuckets + phdBonus)
 
   const avgVisa = Math.round((visa.tourism + visa.study + visa.work + visa.business) / 4)
-  const finalScore = clamp(Math.round(avgVisa * 0.5 + friction * 0.25 + education * 0.25))
+  const baseFinal = clamp(Math.round(avgVisa * 0.5 + friction * 0.25 + education * 0.25))
+  const spread = deterministicScoreOffset(c.id, String(c.name ?? ''))
+  const finalScore = clamp(baseFinal + spread)
   const budgetLevel: BudgetBand = finalScore >= 72 ? 'high' : finalScore >= 52 ? 'medium' : 'low'
   const highlight = normalizeHighlightFromFullData(full)
 

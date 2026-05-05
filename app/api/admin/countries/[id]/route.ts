@@ -47,8 +47,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 
   const patchPayload = body.full_data_patch
-  if (patchPayload !== null && patchPayload !== undefined && isRecord(patchPayload) && 'phd_studies' in patchPayload) {
-    const nextPhd = patchPayload.phd_studies
+  const touchesStructuredPatch =
+    patchPayload !== null &&
+    patchPayload !== undefined &&
+    isRecord(patchPayload) &&
+    ('phd_studies' in patchPayload || 'morocco_research_pack' in patchPayload)
+
+  if (touchesStructuredPatch) {
     try {
       const existing = await prisma.country.findUnique({
         where: { id },
@@ -60,16 +65,38 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
       const base = parseCountryFullData(existing.full_data)
       const merged: Record<string, unknown> = { ...base }
-      if (nextPhd === null) {
-        delete merged.phd_studies
-      } else if (isRecord(nextPhd)) {
-        merged.phd_studies = nextPhd
-      } else {
-        return NextResponse.json(
-          { error: 'full_data_patch.phd_studies must be a JSON object or null to remove the block' },
-          { status: 400 },
-        )
+
+      if ('phd_studies' in patchPayload) {
+        const nextPhd = patchPayload.phd_studies
+        if (nextPhd === null) {
+          delete merged.phd_studies
+        } else if (isRecord(nextPhd)) {
+          merged.phd_studies = nextPhd
+        } else {
+          return NextResponse.json(
+            { error: 'full_data_patch.phd_studies must be a JSON object or null to remove the block' },
+            { status: 400 },
+          )
+        }
       }
+
+      if ('morocco_research_pack' in patchPayload) {
+        const nextPack = patchPayload.morocco_research_pack
+        if (nextPack === null) {
+          delete merged.morocco_research_pack
+        } else if (isRecord(nextPack)) {
+          merged.morocco_research_pack = nextPack
+        } else {
+          return NextResponse.json(
+            {
+              error:
+                'full_data_patch.morocco_research_pack must be a JSON object or null to remove the block',
+            },
+            { status: 400 },
+          )
+        }
+      }
+
       data.full_data = JSON.stringify(merged)
     } catch (readErr: unknown) {
       if (isDbUnavailable(readErr)) {

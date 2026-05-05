@@ -338,9 +338,18 @@ export function buildPhdStudies(countryName: string, fullData: Record<string, un
   return mergeStored(base, fullData.phd_studies)
 }
 
-/** True when `full_data.phd_studies` is a non-empty object ( données enrichies présentes ). */
+/**
+ * Indicateur canonique pour « contenu doctoral exploitable hors squelette générique ».
+ * Vrai lorsque `full_data.phd_studies` est un objet avec au moins une clé (données persistées enrichies).
+ *
+ * Utilisations alignées : teaser pays, page `/countries/[id]/doctorat`, hub éducation,
+ * enrich-country-api (bonus score), APIs recommendation / probability, compare-rows, admin health.
+ */
 export function hasCountryPhdStoredData(fullData: Record<string, unknown>): boolean {
   const phd = fullData.phd_studies
   if (phd === null || phd === undefined || typeof phd !== 'object' || Array.isArray(phd)) return false
   return Object.keys(phd as Record<string, unknown>).length > 0
 }
+
+/** Alias sémantique UI / routage — identique à {@link hasCountryPhdStoredData}. */
+export const shouldShowCountryPhdContent = hasCountryPhdStoredData

@@ -1,3 +1,7 @@
+/**
+ * @deprecated Utilisez `npx prisma db seed` (voir package.json : `tsx prisma/seed.ts`).
+ * Conservé pour compatibilité ponctuelle uniquement.
+ */
 const { PrismaClient } = require('@prisma/client');
 const fs = require('fs');
 const path = require('path');

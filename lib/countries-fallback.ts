@@ -1,6 +1,8 @@
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 
+import { isSchengenMember } from '@/lib/schengen-members'
+
 type RawCountry = Record<string, unknown> & {
   country?: string
   region?: string
@@ -38,7 +40,7 @@ function mapCountry(raw: RawCountry, index: number): LegacyCountryRecord {
     id: index + 1,
     name: String(raw.country || `Country ${index + 1}`),
     region: String(raw.region || 'Other'),
-    schengen_flag: String(raw.region || '').toLowerCase() === 'schengen',
+    schengen_flag: isSchengenMember(String(raw.country || '')),
     tourist_visa_score: official,
     study_visa_score: training.access_bac ? 8 : 5,
     work_visa_score: visaSystem.work ? 7 : 4,

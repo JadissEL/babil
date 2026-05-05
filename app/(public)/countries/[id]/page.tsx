@@ -22,10 +22,10 @@ import {
 import GoogleAd from '@/components/GoogleAd'
 import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
 import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
-import { PhDStudiesSection } from '@/components/country/PhDStudiesSection'
+import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryTeaser'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
-import { buildPhdStudies } from '@/lib/country-phd-studies'
+import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 const toNum = (v: any, fallback = 0) => {
@@ -206,7 +206,8 @@ export default function CountryDetailPage() {
   const visaTourism = visaSystem?.tourism as Record<string, unknown> | undefined
   const visaWork = visaSystem?.work as Record<string, unknown> | undefined
   const experienceContent = buildCountryExperienceContent(country.name, full)
-  const phdModel = buildPhdStudies(country.name, full as Record<string, unknown>)
+  const showPhdTeaser = hasCountryPhdStoredData(full as Record<string, unknown>)
+  const phdModel = showPhdTeaser ? buildPhdStudies(country.name, full as Record<string, unknown>) : null
   const tourismScore = clamp(Math.round(toNum(country.tourist_visa_score, 5) * 10))
   const studyScore = clamp(Math.round(toNum(country.study_visa_score, 5) * 10))
   const workScore = clamp(Math.round(toNum(country.work_visa_score, 5) * 10))
@@ -353,7 +354,13 @@ export default function CountryDetailPage() {
             </div>
           </section>
 
-          <PhDStudiesSection countryName={country.name} model={phdModel} />
+          {showPhdTeaser && phdModel ? (
+            <PhDStudiesCountryTeaser
+              countryId={String(Array.isArray(id) ? id[0] ?? '' : id ?? '')}
+              countryName={country.name}
+              model={phdModel}
+            />
+          ) : null}
 
           <VisitReasonsSection
             countryName={country.name}

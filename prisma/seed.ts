@@ -2,6 +2,8 @@ import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 
+import { isSchengenMember } from '../lib/schengen-members';
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -15,7 +17,7 @@ async function main() {
     const countryData = {
       name: c.country,
       region: c.region,
-      schengen_flag: c.region === 'Schengen',
+      schengen_flag: isSchengenMember(String(c.country || '')),
       tourist_visa_score: c.official_score || 0,
       study_visa_score: c.education_mobility?.technical_training?.access_bac ? 8.0 : 5.0,
       work_visa_score: c.visa_system?.work ? 7.0 : 4.0,

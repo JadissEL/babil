@@ -3,6 +3,15 @@ import {
   type IntelligenceDomain,
   type CountryFieldSpec,
 } from './country-intelligence-contract'
+import { COUNTRY_MOROCCO_RESEARCH_CONTRACT } from './morocco-research-contract'
+
+/** V2 produit + pack Maroc vérifiable (complétude agent / admin). */
+export const ALL_COUNTRY_FIELD_SPECS: CountryFieldSpec[] = [
+  ...COUNTRY_INTELLIGENCE_CONTRACT_V2,
+  ...COUNTRY_MOROCCO_RESEARCH_CONTRACT,
+]
+
+export const ALL_COUNTRY_CONTRACT_FIELD_COUNT = ALL_COUNTRY_FIELD_SPECS.length
 
 type AnyObject = Record<string, unknown>
 
@@ -46,6 +55,7 @@ function emptyDomainMap(): CompletenessReport['domains'] {
     community: { score: 0, covered: 0, total: 0 },
     signals: { score: 0, covered: 0, total: 0 },
     provenance: { score: 0, covered: 0, total: 0 },
+    morocco_decision: { score: 0, covered: 0, total: 0 },
   }
 }
 
@@ -55,7 +65,7 @@ export function buildCompletenessReport(countryPayload: AnyObject): Completeness
   const criticalMissing: string[] = []
 
   let coveredFields = 0
-  for (const spec of COUNTRY_INTELLIGENCE_CONTRACT_V2) {
+  for (const spec of ALL_COUNTRY_FIELD_SPECS) {
     const value = getByPath(countryPayload, spec.path)
     const covered = hasValue(value, spec.expectedType)
     domains[spec.domain].total += 1
@@ -73,14 +83,12 @@ export function buildCompletenessReport(countryPayload: AnyObject): Completeness
     d.score = d.total === 0 ? 0 : Math.round((d.covered / d.total) * 100)
   }
 
-  const score =
-    COUNTRY_INTELLIGENCE_CONTRACT_V2.length === 0
-      ? 0
-      : Math.round((coveredFields / COUNTRY_INTELLIGENCE_CONTRACT_V2.length) * 100)
+  const totalSpecCount = ALL_COUNTRY_FIELD_SPECS.length
+  const score = totalSpecCount === 0 ? 0 : Math.round((coveredFields / totalSpecCount) * 100)
 
   return {
     score,
-    totalFields: COUNTRY_INTELLIGENCE_CONTRACT_V2.length,
+    totalFields: totalSpecCount,
     coveredFields,
     missingFields,
     criticalMissing,

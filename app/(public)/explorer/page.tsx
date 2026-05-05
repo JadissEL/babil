@@ -1,7 +1,7 @@
 'use client'
 
-import { Suspense, useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { Suspense, useCallback, useEffect, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Search, Globe, SlidersHorizontal, Target } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
 import CountryGrid from '@/components/country/CountryGrid'
@@ -13,6 +13,7 @@ import {
 } from '@/lib/country-card-mappers'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
+import { isSchengenMember } from '@/lib/schengen-members'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -51,7 +52,19 @@ function isBudgetParam(v: string | null): v is Exclude<Budget, 'all'> {
   return v === 'low' || v === 'medium' || v === 'high'
 }
 
+type UrlCommitSlice = Partial<{
+  search: string
+  region: string
+  difficulty: string
+  goal: Goal
+  budget: Budget
+  schengenOnly: boolean
+  mode: Mode
+}>
+
 function ExplorerPageInner() {
+  const pathname = usePathname()
+  const router = useRouter()
   const searchParams = useSearchParams()
   const [countries, setCountries] = useState<any[]>([])
   const [mode, setMode] = useState<Mode>('explorer')
@@ -63,34 +76,61 @@ function ExplorerPageInner() {
   const [schengenOnly, setSchengenOnly] = useState(false)
   const [loading, setLoading] = useState(true)
 
+  const commitExplorerUrl = useCallback(
+    (patch: UrlCommitSlice = {}) => {
+      const s = patch.search ?? search
+      const r = patch.region ?? region
+      const d = patch.difficulty ?? difficulty
+      const g = patch.goal ?? goal
+      const b = patch.budget ?? budget
+      const sch = patch.schengenOnly ?? schengenOnly
+      const m = patch.mode ?? mode
+
+      const params = new URLSearchParams()
+      if (s.trim()) params.set('q', s.trim())
+      if (r !== 'all') params.set('region', explorerRegionToSelect(r))
+      if (g !== 'all') params.set('goal', g)
+      if (b !== 'all') params.set('budget', b)
+      if (d !== 'all' && ['Low', 'Medium', 'High', 'Extreme'].includes(d)) params.set('difficulty', d)
+      if (sch) params.set('schengen', '1')
+      if (m === 'recommendation') params.set('mode', 'recommendation')
+      const qs = params.toString()
+      const basePath = pathname ?? '/explorer'
+      router.replace(qs ? `${basePath}?${qs}` : basePath, { scroll: false })
+    },
+    [search, region, difficulty, goal, budget, schengenOnly, mode, pathname, router],
+  )
+
+  /** URL = source de vérité après navigation ou lien externe ; réinitialise tout ce qui n’est pas dans la query. */
   useEffect(() => {
     if (!searchParams) return
+
     const qRaw = searchParams.get('q') ?? searchParams.get('search')
+    let qDecoded = ''
     try {
-      const qDecoded = decodeURIComponent(qRaw ?? '').trim()
-      if (qDecoded) setSearch(qDecoded)
+      qDecoded = decodeURIComponent(qRaw ?? '').trim()
     } catch {
-      const qFall = String(qRaw ?? '').trim()
-      if (qFall) setSearch(qFall)
+      qDecoded = String(qRaw ?? '').trim()
     }
+    setSearch(qDecoded)
 
     const reg = searchParams.get('region')
-    if (reg?.trim()) setRegion(selectToExplorerRegion(reg.trim()))
+    setRegion(reg?.trim() ? selectToExplorerRegion(reg.trim()) : 'all')
 
     const goalParam = searchParams.get('goal')
-    if (goalParam?.trim()) setGoal(filterGoalFromSelect(goalParam.trim().toLowerCase()))
+    setGoal(goalParam?.trim() ? filterGoalFromSelect(goalParam.trim().toLowerCase()) : 'all')
 
     const bud = searchParams.get('budget')
-    if (isBudgetParam(bud)) setBudget(bud)
+    setBudget(isBudgetParam(bud) ? bud : 'all')
 
     const diff = searchParams.get('difficulty')
-    if (diff && ['Low', 'Medium', 'High', 'Extreme'].includes(diff)) setDifficulty(diff)
+    setDifficulty(diff && ['Low', 'Medium', 'High', 'Extreme'].includes(diff) ? diff : 'all')
 
     const sch = searchParams.get('schengen')
-    if (sch === '1' || sch === 'true' || sch === 'yes') setSchengenOnly(true)
+    setSchengenOnly(sch === '1' || sch === 'true' || sch === 'yes')
 
     const modeParam = searchParams.get('mode')
-    if (modeParam === 'recommendation') setMode('recommendation')
+    setMode(modeParam === 'recommendation' ? 'recommendation' : 'explorer')
   }, [searchParams])
 
   useEffect(() => {
@@ -105,8 +145,10 @@ function ExplorerPageInner() {
 
   const filtered = normalized
     .filter((c: any) => {
-      const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase())
-      const matchesRegion = region === 'all' || c.region === region
+      const nameStr = String(c.name ?? '')
+      const matchesSearch = nameStr.toLowerCase().includes(search.toLowerCase())
+      const matchesRegion =
+        region === 'all' || (region === 'Schengen' ? isSchengenMember(nameStr) : c.region === region)
       const matchesDifficulty = difficulty === 'all' || String(c._difficultyLabel).toLowerCase() === difficulty.toLowerCase()
       const eduMob = c._full?.education_mobility
       const hasShortCourseModule =
@@ -124,7 +166,7 @@ function ExplorerPageInner() {
         (goal === 'education' && c._education >= 50) ||
         (goal === 'short_course' && (hasShortCourseModule || c._visa.study >= 50 || c._education >= 50))
       const matchesBudget = budget === 'all' || c._budgetLevel === budget
-      const matchesSchengen = !schengenOnly || c.schengen_flag
+      const matchesSchengen = !schengenOnly || isSchengenMember(nameStr)
       return matchesSearch && matchesRegion && matchesDifficulty && matchesGoal && matchesBudget && matchesSchengen
     })
     .sort((a: any, b: any) =>
@@ -170,21 +212,35 @@ function ExplorerPageInner() {
           className="mb-4 border-b border-line pb-4"
           goalValue={explorerGoalToFilterValue(goal)}
           regionValue={explorerRegionToSelect(region)}
-          onGoalChange={(v) => setGoal(filterGoalFromSelect(v))}
-          onRegionChange={(v) => setRegion(selectToExplorerRegion(v))}
+          onGoalChange={(v) => {
+            const g = filterGoalFromSelect(v)
+            setGoal(g)
+            commitExplorerUrl({ goal: g })
+          }}
+          onRegionChange={(v) => {
+            const nextR = selectToExplorerRegion(v)
+            setRegion(nextR)
+            commitExplorerUrl({ region: nextR })
+          }}
         />
         <div className="flex flex-wrap items-center gap-3">
           <div className="inline-flex rounded-2xl border border-line bg-inset p-1">
             <button
               type="button"
-              onClick={() => setMode('explorer')}
+              onClick={() => {
+                setMode('explorer')
+                commitExplorerUrl({ mode: 'explorer' })
+              }}
               className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'explorer' ? 'bg-primary text-white shadow-soft' : 'text-muted hover:text-primary'}`}
             >
               <SlidersHorizontal className="h-4 w-4" /> Explorer
             </button>
             <button
               type="button"
-              onClick={() => setMode('recommendation')}
+              onClick={() => {
+                setMode('recommendation')
+                commitExplorerUrl({ mode: 'recommendation' })
+              }}
               className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'recommendation' ? 'bg-primary text-white shadow-soft' : 'text-muted hover:text-primary'}`}
             >
               <Target className="h-4 w-4" /> Recommandation
@@ -199,13 +255,21 @@ function ExplorerPageInner() {
               className="w-full rounded-xl border border-line bg-surface py-2.5 pl-10 pr-3 text-sm font-medium text-text outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/40"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onBlur={() => commitExplorerUrl()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commitExplorerUrl()
+              }}
             />
           </div>
 
           <select
             className="rounded-xl border border-line bg-surface px-3 py-2.5 text-sm font-bold text-text outline-none"
             value={difficulty}
-            onChange={(e) => setDifficulty(e.target.value)}
+            onChange={(e) => {
+              const v = e.target.value
+              setDifficulty(v)
+              commitExplorerUrl({ difficulty: v })
+            }}
           >
             <option value="all">Difficulté : toutes</option>
             <option value="Low">Facile</option>
@@ -217,7 +281,11 @@ function ExplorerPageInner() {
           <select
             className="rounded-xl border border-line bg-surface px-3 py-2.5 text-sm font-bold text-text outline-none"
             value={budget}
-            onChange={(e) => setBudget(e.target.value as Budget)}
+            onChange={(e) => {
+              const v = e.target.value as Budget
+              setBudget(v)
+              commitExplorerUrl({ budget: v })
+            }}
           >
             <option value="all">Budget : tous</option>
             <option value="low">Bas</option>
@@ -226,7 +294,16 @@ function ExplorerPageInner() {
           </select>
 
           <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-inset px-3 py-2.5 text-xs font-black uppercase tracking-wider text-muted">
-            <input type="checkbox" className="rounded border-white/30" checked={schengenOnly} onChange={(e) => setSchengenOnly(e.target.checked)} />
+            <input
+              type="checkbox"
+              className="rounded border-white/30"
+              checked={schengenOnly}
+              onChange={(e) => {
+                const checked = e.target.checked
+                setSchengenOnly(checked)
+                commitExplorerUrl({ schengenOnly: checked })
+              }}
+            />
             Schengen uniquement
           </label>
         </div>

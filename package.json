@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
     "postinstall": "prisma generate",
@@ -15,9 +15,10 @@
     "db:push": "prisma db push",
     "db:setup": "npm run db:push && npm run seed",
     "start:render": "npm run db:setup && next start",
-    "seed": "node prisma/seed.js",
+    "seed": "tsx prisma/seed.ts",
     "lint": "next lint",
     "agents:start": "tsx agents/runner.ts",
+    "agent:extract-patterns": "tsx scripts/agent-extract-patterns.ts",
     "quotes:build": "tsx scripts/build-traveler-quotes.ts",
     "quotes:import": "tsx scripts/import-traveler-quotes.ts",
     "sync:render:dry": "tsx scripts/sync-countries-to-render.ts",

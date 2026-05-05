@@ -70,7 +70,19 @@ function statusPills(meta: PhdStudiesModel['meta']) {
   return { enrichment, confidenceFr }
 }
 
-export function PhDStudiesSection({ countryName, model }: { countryName: string; model: PhdStudiesModel }) {
+export function PhDStudiesSection({
+  countryName,
+  model,
+  variant = 'embedded',
+  countryDetailHref,
+}: {
+  countryName: string
+  model: PhdStudiesModel
+  /** Page dédiée : pied de section avec lien retour fiche + libellé adapté. */
+  variant?: 'embedded' | 'standalone'
+  /** Ex. `/countries/12` — affiché en mode standalone. */
+  countryDetailHref?: string
+}) {
   const { enrichment, confidenceFr } = statusPills(model.meta)
   const hasLinks = model.meta.officialLinks.length > 0
 
@@ -231,16 +243,31 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
       ) : null}
 
       <div className="mt-8 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-        <p className="text-xs font-medium text-muted">Données normalisées (comparabilité pays) — champ JSON&nbsp;</p>
+        <p className="text-xs font-medium text-muted">
+          {variant === 'standalone'
+            ? 'Structuré pour comparaison entre pays — source JSON normalisée'
+            : 'Données normalisées (comparabilité pays) — champ JSON'}
+          &nbsp;
+        </p>
         <code className="rounded-lg border border-line bg-inset px-2 py-1 font-mono text-[11px] font-bold text-text">
           full_data.phd_studies
         </code>
-        <Link
-          href="/education"
-          className="inline-flex w-fit items-center rounded-xl border border-line bg-inset px-4 py-2 text-[10px] font-black uppercase tracking-widest text-text transition-colors hover:border-primary/35 hover:bg-primary-soft sm:ml-auto"
-        >
-          Mobilité étudiante
-        </Link>
+        <div className="flex w-full flex-col gap-2 sm:ml-auto sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end">
+          {variant === 'standalone' && countryDetailHref ? (
+            <Link
+              href={countryDetailHref}
+              className="inline-flex w-fit items-center justify-center rounded-xl border border-line bg-inset px-4 py-2 text-[10px] font-black uppercase tracking-widest text-text transition-colors hover:border-primary/35 hover:bg-primary-soft"
+            >
+              Fiche pays
+            </Link>
+          ) : null}
+          <Link
+            href="/education"
+            className="inline-flex w-fit items-center justify-center rounded-xl border border-line bg-inset px-4 py-2 text-[10px] font-black uppercase tracking-widest text-text transition-colors hover:border-primary/35 hover:bg-primary-soft"
+          >
+            Mobilité étudiante
+          </Link>
+        </div>
       </div>
     </section>
   )

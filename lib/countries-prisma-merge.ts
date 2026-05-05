@@ -18,6 +18,7 @@ import type { LegacyCountryRecord } from '@/lib/countries-fallback'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { materializePublicFullData, normalizeFullDataFriction } from '@/lib/country-full-data-materialize'
+import { isSchengenMember } from '@/lib/schengen-members'
 
 /** Subtrees the runner snapshot often omits; keep enriched JSON baseline when DB block is absent/empty */
 const STATIC_PREFERRED_BLOCKS = [
@@ -29,6 +30,7 @@ const STATIC_PREFERRED_BLOCKS = [
   'driving_license',
   'morocco_insights',
   'phd_studies',
+  'morocco_research_pack',
   'travel_reasons',
   'traveler_quotes',
 ] as const
@@ -187,8 +189,10 @@ export function augmentCountryDetailPayload<T extends Record<string, unknown>>(
       ? country.appointment_difficulty
       : staticRow?.appointment_difficulty
 
+  const name = String(country.name ?? '')
   return {
     ...country,
+    schengen_flag: isSchengenMember(name),
     tourist_visa_score: pickMergedScore(country.tourist_visa_score, staticRow?.tourist_visa_score),
     study_visa_score: pickMergedScore(country.study_visa_score, staticRow?.study_visa_score),
     work_visa_score: pickMergedScore(country.work_visa_score, staticRow?.work_visa_score),
@@ -235,7 +239,7 @@ function mergeFallbackRowWithDb(f: LegacyCountryRecord, db: {
     id: db.id,
     name: db.name,
     region: db.region,
-    schengen_flag: db.schengen_flag,
+    schengen_flag: isSchengenMember(db.name),
     tourist_visa_score:
       typeof db.tourist_visa_score === 'number' ? db.tourist_visa_score : f.tourist_visa_score,
     study_visa_score:
@@ -268,7 +272,7 @@ export function prismaRowToLegacy(
     id: db.id,
     name: db.name,
     region: db.region,
-    schengen_flag: db.schengen_flag,
+    schengen_flag: isSchengenMember(db.name),
     tourist_visa_score: typeof db.tourist_visa_score === 'number' ? db.tourist_visa_score : 5,
     study_visa_score: typeof db.study_visa_score === 'number' ? db.study_visa_score : 5,
     work_visa_score: typeof db.work_visa_score === 'number' ? db.work_visa_score : 5,

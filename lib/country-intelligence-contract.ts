@@ -8,6 +8,8 @@ export type IntelligenceDomain =
   | 'community'
   | 'signals'
   | 'provenance'
+  /** Données `full_data.morocco_research_pack` (décision Maroc → pays) */
+  | 'morocco_decision'
 
 export type CountryFieldSpec = {
   key: string
@@ -76,7 +78,7 @@ export const COUNTRY_INTELLIGENCE_CONTRACT_V2: CountryFieldSpec[] = [
   { key: 'completeness_score', path: 'full_data._agent.completeness.score', domain: 'provenance', critical: true, expectedType: 'number', justification: 'Country readiness ranking for enrichment sequencing.', acquisition: 'generated' },
 ]
 
-export const CONTRACT_VERSION = 'country-intelligence-v2'
+export const CONTRACT_VERSION = 'country-intelligence-v3'
 
 export const CONTRACT_CRITICAL_KEYS = COUNTRY_INTELLIGENCE_CONTRACT_V2.filter((f) => f.critical).map(
   (f) => f.key,
