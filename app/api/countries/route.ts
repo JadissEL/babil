@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 
 import prisma from '@/lib/prisma'
-import { loadFallbackCountries } from '@/lib/countries-fallback'
-import { parseCountryFullData } from '@/lib/country-full-data-json'
-import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
+import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback'
+import { augmentPrismaCountriesForPublicPayload, buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 
 export async function GET() {
   try {
@@ -31,10 +30,16 @@ export async function GET() {
       },
     })
 
-    const formatted = countries.map((c) => ({
-      ...c,
-      full_data: parseCountryFullData(c.full_data),
-    }))
+    let mergeFallback: LegacyCountryRecord[] = []
+    try {
+      mergeFallback = await loadFallbackCountries()
+    } catch {
+      mergeFallback = []
+    }
+    const formatted = augmentPrismaCountriesForPublicPayload(
+      countries as unknown as Array<Record<string, unknown>>,
+      mergeFallback,
+    )
 
     return NextResponse.json(formatted)
   } catch (error: unknown) {

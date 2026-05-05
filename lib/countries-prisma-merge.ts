@@ -1,6 +1,13 @@
 /**
  * Builds the public countries list/detail payload: merges Prisma (runner / seed truth)
  * with static `data/countries.json` as a coverage fallback when a DB row has no counterpart.
+ *
+ * **Consistency rule for public HTTP responses:** never return raw `parseCountryFullData(prismaRow)`
+ * alone. Prefer `buildMergedCountriesList()`, `augmentCountryDetailPayload()`, or
+ * `augmentPrismaCountriesForPublicPayload()` with `loadFallbackCountries()` so:
+ * - Static JSON is matched by **country name** first (Prisma `id` often ≠ countries.json index).
+ * - Null visa columns are backfilled from static.
+ * - `full_data.friction_score` is coalesced from `friction_analysis` when missing.
  */
 
 import prisma from '@/lib/prisma'
@@ -127,7 +134,7 @@ export function mergeDisplayedFullData(
     }
   }
 
-  return merged
+  return normalizeFullDataCoalesced(merged)
 }
 
 /** Match static JSON row to a Prisma country: **name first** (IDs often diverge from countries.json order), then id. */
@@ -185,7 +192,7 @@ export function augmentCountryDetailPayload<T extends Record<string, unknown>>(
       staticRow.full_data && typeof staticRow.full_data === 'object' && !Array.isArray(staticRow.full_data)
         ? (staticRow.full_data as Record<string, unknown>)
         : {}
-    full_data = normalizeFullDataCoalesced(mergeDisplayedFullData(staticFull, full_data))
+    full_data = mergeDisplayedFullData(staticFull, full_data)
   } else {
     full_data = normalizeFullDataCoalesced(full_data)
   }
@@ -204,6 +211,14 @@ export function augmentCountryDetailPayload<T extends Record<string, unknown>>(
     appointment_difficulty: appt ?? 'Medium',
     full_data,
   }
+}
+
+/** Batch form of `augmentCountryDetailPayload` for `findMany` + `include: { country: true }`. */
+export function augmentPrismaCountriesForPublicPayload<T extends Record<string, unknown>>(
+  rows: readonly T[],
+  fallback: LegacyCountryRecord[],
+): Array<T & { full_data: Record<string, unknown> }> {
+  return rows.map((row) => augmentCountryDetailPayload(row, fallback))
 }
 
 const approvedComments = {
@@ -274,7 +289,7 @@ export function prismaRowToLegacy(
     work_visa_score: typeof db.work_visa_score === 'number' ? db.work_visa_score : 5,
     business_visa_score: typeof db.business_visa_score === 'number' ? db.business_visa_score : 5,
     appointment_difficulty: db.appointment_difficulty ?? 'Medium',
-    full_data: parseCountryFullData(db.full_data),
+    full_data: normalizeFullDataCoalesced(parseCountryFullData(db.full_data)),
     comments: (db.comments as LegacyCountryRecord['comments']) ?? [],
   }
 }

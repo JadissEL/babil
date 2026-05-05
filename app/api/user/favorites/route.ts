@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import prisma from '@/lib/prisma'
-import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback'
+import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge'
 import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function GET(req: Request) {
@@ -34,11 +35,20 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'desc' },
     })
 
+    let mergeFallback: LegacyCountryRecord[] = []
+    try {
+      mergeFallback = await loadFallbackCountries()
+    } catch {
+      mergeFallback = []
+    }
+
     return NextResponse.json(
       favorites.map((f) => ({
-        ...f.country,
+        ...augmentCountryDetailPayload(
+          f.country as unknown as Record<string, unknown>,
+          mergeFallback,
+        ),
         favoritedAt: f.createdAt,
-        full_data: parseCountryFullData(f.country.full_data),
       })),
     )
   } catch (error) {
