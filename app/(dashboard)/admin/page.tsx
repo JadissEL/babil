@@ -27,6 +27,11 @@ type AgentHealth = {
   degraded?: boolean
   failedTasks?: Array<{ id: string; country: string; domain: string; query: string; error: string }>
   queuedPreview?: Array<{ id: string; country: string; domain: string; query: string; nextRunAt: string }>
+  visualCoverage?: {
+    withDataImage: number
+    withCuratedImage: number
+    likelyGenericFallback: number
+  }
 }
 
 export default function AdminPage() {
@@ -230,6 +235,23 @@ export default function AdminPage() {
                 )}
               </div>
             </div>
+
+            {agentHealth.visualCoverage && (
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Visual data image</p>
+                  <p className="text-lg font-black text-text">{agentHealth.visualCoverage.withDataImage}</p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Curated image coverage</p>
+                  <p className="text-lg font-black text-text">{agentHealth.visualCoverage.withCuratedImage}</p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#fff0e8] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Likely generic fallback</p>
+                  <p className="text-lg font-black text-warning">{agentHealth.visualCoverage.likelyGenericFallback}</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

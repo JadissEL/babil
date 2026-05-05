@@ -1,11 +1,13 @@
 'use client'
 
 import Link from 'next/link'
+import { useMemo, useState } from 'react'
 import { Globe } from 'lucide-react'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { COUNTRY_HIGHLIGHTS } from '@/lib/country-highlights'
 import { cn } from '@/lib/utils'
 
 export type MobilityTier = 'Strong' | 'Medium' | 'Weak'
@@ -32,42 +34,14 @@ function frictionStripClass(friction: CountryCardProps['friction']) {
   return 'border-[#f3afaf] bg-[#fff0f0] text-danger'
 }
 
-const COUNTRY_HIGHLIGHTS: Record<string, { place: string; imageUrl: string }> = {
-  de: {
-    place: 'Brandenburg Gate',
-    imageUrl:
-      'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?auto=format&fit=crop&w=1600&q=80',
-  },
-  fr: {
-    place: 'Eiffel Tower',
-    imageUrl:
-      'https://images.unsplash.com/photo-1431274172761-fca41d930114?auto=format&fit=crop&w=1600&q=80',
-  },
-  ca: {
-    place: 'Moraine Lake',
-    imageUrl:
-      'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=1600&q=80',
-  },
-  jp: {
-    place: 'Mount Fuji',
-    imageUrl:
-      'https://images.unsplash.com/photo-1492571350019-22de08371fd3?auto=format&fit=crop&w=1600&q=80',
-  },
-  gb: {
-    place: 'Tower Bridge',
-    imageUrl:
-      'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80',
-  },
-  us: {
-    place: 'New York Skyline',
-    imageUrl:
-      'https://images.unsplash.com/photo-1496588152823-e9b3f88a2f0b?auto=format&fit=crop&w=1600&q=80',
-  },
-}
-
 function fallbackCountryImageUrl(countryName: string) {
   const q = encodeURIComponent(`${countryName} landmark travel photography`)
   return `https://source.unsplash.com/1600x900/?${q}`
+}
+
+function guaranteedImageUrl(countryName: string) {
+  const seed = encodeURIComponent(countryName.toLowerCase().replace(/\s+/g, '-'))
+  return `https://picsum.photos/seed/${seed}/1600/900`
 }
 
 export function CountryCard({
@@ -89,6 +63,9 @@ export function CountryCard({
   const curated = COUNTRY_HIGHLIGHTS[iso]
   const scenicImage = highlightImageUrl || curated?.imageUrl || fallbackCountryImageUrl(name)
   const scenicLabel = highlightPlace || curated?.place || `Signature place in ${name}`
+  const guaranteedSrc = useMemo(() => guaranteedImageUrl(name), [name])
+  const [imageSrc, setImageSrc] = useState(scenicImage)
+  const [fallbackUsed, setFallbackUsed] = useState(false)
 
   const card = (
     <Card
@@ -113,15 +90,26 @@ export function CountryCard({
       <CardContent className="space-y-5 p-0">
         <div className="relative h-36 overflow-hidden rounded-t-2xl border-b border-line">
           <img
-            src={scenicImage}
+            src={imageSrc}
             alt={`${scenicLabel}, ${name}`}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             loading="lazy"
+            onError={() => {
+              if (imageSrc !== guaranteedSrc) {
+                setImageSrc(guaranteedSrc)
+                setFallbackUsed(true)
+              }
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute bottom-2 left-3 rounded-full border border-white/40 bg-black/35 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white">
             {scenicLabel} - {name}
           </div>
+          {fallbackUsed ? (
+            <div className="absolute right-3 top-2 rounded-full border border-amber-200/70 bg-amber-100/90 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-amber-700">
+              Image generique
+            </div>
+          ) : null}
         </div>
 
         <div className="space-y-5 px-6 pb-6">

@@ -9,9 +9,21 @@ type HeroSlide = {
   country: string
   continent?: string
   durationMs?: number
+  sourceName?: string
+  sourceUrl?: string
 }
 
-const SLIDES: HeroSlide[] = slides
+function isVerifiedSlide(slide: HeroSlide) {
+  return Boolean(
+    slide.imageUrl?.trim() &&
+      slide.place?.trim() &&
+      slide.country?.trim() &&
+      slide.sourceName?.trim() &&
+      slide.sourceUrl?.trim(),
+  )
+}
+
+const VERIFIED_SLIDES: HeroSlide[] = slides.filter((slide) => isVerifiedSlide(slide))
 
 const AUTO_SLIDE_MS = 4200
 
@@ -19,11 +31,21 @@ export default function HeroWorldCarousel() {
   const [index, setIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
 
-  const current = useMemo(() => SLIDES[index], [index])
+  const current = useMemo(() => VERIFIED_SLIDES[index], [index])
   const currentDelay = Math.max(2000, current.durationMs ?? AUTO_SLIDE_MS)
 
-  const goNext = () => setIndex((prev) => (prev + 1) % SLIDES.length)
-  const goPrev = () => setIndex((prev) => (prev - 1 + SLIDES.length) % SLIDES.length)
+  const goNext = () => setIndex((prev) => (prev + 1) % VERIFIED_SLIDES.length)
+  const goPrev = () => setIndex((prev) => (prev - 1 + VERIFIED_SLIDES.length) % VERIFIED_SLIDES.length)
+
+  if (VERIFIED_SLIDES.length === 0) {
+    return (
+      <div className="relative flex h-[260px] items-center justify-center rounded-2xl border border-line bg-[#f8f2e8] p-6 text-center shadow-soft md:h-[320px]">
+        <p className="text-sm font-semibold text-muted">
+          No verified hero photos available yet.
+        </p>
+      </div>
+    )
+  }
 
   useEffect(() => {
     if (isPaused) return
@@ -65,7 +87,7 @@ export default function HeroWorldCarousel() {
         />
       </div>
 
-      {SLIDES.map((slide, slideIndex) => (
+      {VERIFIED_SLIDES.map((slide, slideIndex) => (
         <img
           key={`${slide.place}-${slide.country}`}
           src={slide.imageUrl}
@@ -92,11 +114,24 @@ export default function HeroWorldCarousel() {
               {current.continent}
             </p>
           ) : null}
+          <p className="mb-1 inline-flex rounded-full border border-emerald-200/60 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-emerald-50">
+            Verified location source
+          </p>
           <p className="text-lg font-black text-white md:text-xl">{current.place}</p>
           <p className="text-sm font-semibold text-white/90">{current.country}</p>
+          {current.sourceName && current.sourceUrl ? (
+            <a
+              href={current.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 inline-flex text-xs font-semibold text-white/80 underline underline-offset-2 hover:text-white"
+            >
+              Source photo: {current.sourceName}
+            </a>
+          ) : null}
         </div>
         <div className="flex gap-1.5">
-          {SLIDES.map((_, dotIndex) => (
+          {VERIFIED_SLIDES.map((_, dotIndex) => (
             <button
               key={`dot-${dotIndex}`}
               type="button"

@@ -1,22 +1,19 @@
 # Background Agents
 
-This folder contains a production-oriented starting point for autonomous country intelligence ingestion.
+This folder contains the autonomous country intelligence engine.
 
 ## What runs
 
-- `Primary Query Agent` logic:
-  - builds multi-domain query plans per country
-  - expands queries with synonym variants
-  - ranks novelty to reduce duplicates
-- `Ingestion Agent` logic:
-  - pulls public signals (Wikipedia + World Bank)
-  - validates and normalizes payloads
-  - upserts into Prisma `Country`
-  - retries failed tasks up to 3 attempts
+- `Country-first completion loop`:
+  - processes one country task at a time by priority/completeness gap
+  - recursively re-runs collection passes for the same country until saturation or target
+  - persists a coverage manifest and completeness report inside `full_data._agent`
+- `Collection + ingestion`:
+  - pulls runtime signals (Wikipedia + World Bank GDP)
+  - merges with existing country payload
   - hydrates `travel_reasons` content for country pages
   - ingests verified `traveler_quotes` from `data/traveler-quotes/*.json` with strict 10-quote / 5-3-2 validation
-
-Both are orchestrated by `agents/runner.ts` as one resilient background service.
+  - upserts into Prisma `Country`
 
 ## Run locally
 
@@ -31,13 +28,15 @@ Optional variables:
 ```bash
 AGENT_TICK_MS=30000
 AGENT_REFRESH_MS=21600000
-AGENT_WORKER_BATCH=8
+AGENT_WORKER_BATCH=1
+AGENT_MAX_RECURSION_PASSES=4
+AGENT_COMPLETENESS_TARGET=85
 ```
 
 ## Persistence
 
 - Queue/task state is persisted in `.agent-state/tasks.json`.
-- Country records are persisted in your Prisma database (`Country.full_data` includes `_agent` metadata).
+- Country records are persisted in your Prisma database (`Country.full_data` includes `_agent`, completeness, and coverage metadata).
 - Verified quote ingestion files are read from `data/traveler-quotes/`.
 
 ## Run detached in production

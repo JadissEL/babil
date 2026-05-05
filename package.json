@@ -7,8 +7,9 @@
   },
   "scripts": {
     "postinstall": "prisma generate",
+    "validate:hero": "tsx scripts/validate-hero-slides.ts",
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run validate:hero && next build",
     "start": "next start",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",

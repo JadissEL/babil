@@ -3,10 +3,12 @@ import { createHash } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import prisma from '../lib/prisma'
+import { CONTRACT_VERSION, COUNTRY_INTELLIGENCE_CONTRACT_V2 } from '../lib/country-intelligence-contract'
+import { buildCompletenessReport, buildCoverageManifest } from '../lib/country-completeness'
 
-type Domain = 'overview' | 'economy' | 'politics' | 'culture' | 'history' | 'current_events'
 type TaskStatus = 'queued' | 'running' | 'done' | 'failed'
 type QuoteSentiment = 'positive' | 'neutral' | 'negative'
+type Domain = 'overview' | 'economy' | 'education' | 'business' | 'driving' | 'community'
 
 type TravelerQuote = {
   id: string
@@ -25,7 +27,7 @@ type VisitReason = {
   imageAlt: string
 }
 
-type ResearchTask = {
+type CountryTask = {
   id: string
   country: string
   region: string
@@ -33,20 +35,34 @@ type ResearchTask = {
   query: string
   priority: number
   attempts: number
+  pass: number
   nextRunAt: string
   status: TaskStatus
+  completenessScore: number
+  missingCritical: string[]
   lastError?: string
 }
 
 type AgentState = {
-  tasks: ResearchTask[]
+  tasks: CountryTask[]
   generatedAt: string
+  contractVersion: string
+}
+
+type CountrySnapshot = {
+  fullData: Record<string, unknown>
+  scalar: {
+    tourist_visa_score: number
+    study_visa_score: number
+    work_visa_score: number
+    business_visa_score: number
+    appointment_difficulty: string
+  }
 }
 
 const STATE_DIR = path.join(process.cwd(), '.agent-state')
 const STATE_FILE = path.join(STATE_DIR, 'tasks.json')
 const QUOTES_DIR = path.join(process.cwd(), 'data', 'traveler-quotes')
-const DOMAINS: Domain[] = ['overview', 'economy', 'politics', 'culture', 'history', 'current_events']
 const SCHENGEN_COUNTRIES = new Set([
   'Austria',
   'Belgium',
@@ -76,21 +92,31 @@ const SCHENGEN_COUNTRIES = new Set([
   'Sweden',
   'Switzerland',
 ])
-const QUERY_SYNONYMS: Record<string, string[]> = {
-  gdp: ['gross domestic product', 'economic output'],
-  government: ['political system', 'state structure'],
-  current: ['latest', 'recent', 'ongoing'],
+
+const DOMAIN_HINTS: Record<Domain, string[]> = {
+  overview: ['country profile overview', 'capital population quick facts'],
+  economy: ['gdp latest world bank', 'economic outlook'],
+  education: ['education mobility access', 'language and training options'],
+  business: ['business setup conditions', 'street food business opportunity'],
+  driving: ['driving license conversion rules', 'license restrictions'],
+  community: ['traveler quotes verified sources', 'appointment audit lived experience'],
 }
 
 const TICK_MS = Number(process.env.AGENT_TICK_MS || 30_000)
 const REFRESH_MS = Number(process.env.AGENT_REFRESH_MS || 6 * 60 * 60 * 1000)
-const WORKER_BATCH = Number(process.env.AGENT_WORKER_BATCH || 8)
+const WORKER_BATCH = Number(process.env.AGENT_WORKER_BATCH || 1)
 const TASK_TTL_HOURS = Number(process.env.AGENT_TASK_TTL_HOURS || 72)
 const RETRY_BASE_DELAY_MS = Number(process.env.AGENT_RETRY_BASE_DELAY_MS || 10 * 60 * 1000)
 const RETRY_MAX_DELAY_MS = Number(process.env.AGENT_RETRY_MAX_DELAY_MS || 6 * 60 * 60 * 1000)
 const AGENT_VERBOSE_LEVEL = Number(process.env.AGENT_VERBOSE || 1)
+const MAX_RECURSION_PASSES = Number(process.env.AGENT_MAX_RECURSION_PASSES || 4)
+const COMPLETENESS_TARGET_SCORE = Number(process.env.AGENT_COMPLETENESS_TARGET || 85)
 
-let memoryState: AgentState = { tasks: [], generatedAt: new Date().toISOString() }
+let memoryState: AgentState = {
+  tasks: [],
+  generatedAt: new Date().toISOString(),
+  contractVersion: CONTRACT_VERSION,
+}
 let tickInProgress = false
 let refreshInProgress = false
 
@@ -121,61 +147,63 @@ function slugifyCountry(country: string) {
     .replace(/(^-|-$)/g, '')
 }
 
+function normalizeDomain(domain: unknown): Domain {
+  if (domain === 'economy') return 'economy'
+  if (domain === 'education') return 'education'
+  if (domain === 'business') return 'business'
+  if (domain === 'driving') return 'driving'
+  if (domain === 'community') return 'community'
+  return 'overview'
+}
+
 function isSchengenCountry(country: string) {
   return SCHENGEN_COUNTRIES.has(country)
-}
-
-function domainTemplates(country: string, domain: Domain) {
-  const templates: Record<Domain, string[]> = {
-    overview: [`${country} population latest`, `${country} capital official source`],
-    economy: [`${country} gdp current usd world bank`, `${country} top industries exports`],
-    politics: [`${country} government structure`, `${country} politics recent reforms`],
-    culture: [`${country} culture society demographics`, `${country} language religion social indicators`],
-    history: [`${country} history timeline key events`, `${country} major historical events`],
-    current_events: [`${country} latest news developments`, `${country} recent events this year`],
-  }
-  return templates[domain]
-}
-
-function expandQuery(q: string) {
-  const out = new Set([q])
-  const lower = q.toLowerCase()
-  for (const [k, vals] of Object.entries(QUERY_SYNONYMS)) {
-    if (!lower.includes(k)) continue
-    for (const v of vals) out.add(lower.replace(k, v))
-  }
-  return Array.from(out)
-}
-
-function queryNovelty(query: string, existing: ResearchTask[]) {
-  const q = query.toLowerCase()
-  const overlap = existing.reduce((acc, t) => (t.query.toLowerCase().includes(q) || q.includes(t.query.toLowerCase()) ? acc + 1 : acc), 0)
-  return 1 / (1 + overlap)
-}
-
-function generateQueries(country: string, domain: Domain, existing: ResearchTask[], gapHints: string[]) {
-  const base = domainTemplates(country, domain)
-  const hinted = gapHints.map((h) => `${country} ${h}`)
-  const all = [...base, ...hinted].flatMap(expandQuery)
-  return Array.from(new Set(all))
-    .map((q) => ({ q, score: queryNovelty(q, existing) }))
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 6)
-    .map((v) => v.q)
 }
 
 async function loadState() {
   await fs.mkdir(STATE_DIR, { recursive: true })
   try {
     const raw = await fs.readFile(STATE_FILE, 'utf8')
-    memoryState = JSON.parse(raw) as AgentState
+    const parsed = JSON.parse(raw) as Partial<AgentState>
+    const tasks = Array.isArray(parsed.tasks) ? parsed.tasks : []
+    memoryState = {
+      tasks: tasks.map((task) => ({
+        id: String(task.id || id()),
+        country: String(task.country || ''),
+        region: String(task.region || 'Other'),
+        domain: normalizeDomain(task.domain),
+        query: String(task.query || 'country-first-completion-loop'),
+        priority: Number(task.priority || 50),
+        attempts: Number(task.attempts || 0),
+        pass: Number(task.pass || 0),
+        nextRunAt: String(task.nextRunAt || new Date().toISOString()),
+        status:
+          task.status === 'running' || task.status === 'done' || task.status === 'failed'
+            ? task.status
+            : 'queued',
+        completenessScore: Number(task.completenessScore || 0),
+        missingCritical: Array.isArray(task.missingCritical)
+          ? task.missingCritical.map((v) => String(v))
+          : [],
+        lastError: task.lastError ? String(task.lastError) : undefined,
+      })),
+      generatedAt:
+        typeof parsed.generatedAt === 'string' ? parsed.generatedAt : new Date().toISOString(),
+      contractVersion:
+        typeof parsed.contractVersion === 'string' ? parsed.contractVersion : CONTRACT_VERSION,
+    }
   } catch {
-    memoryState = { tasks: [], generatedAt: new Date().toISOString() }
+    memoryState = {
+      tasks: [],
+      generatedAt: new Date().toISOString(),
+      contractVersion: CONTRACT_VERSION,
+    }
   }
 }
 
 async function saveState() {
   memoryState.generatedAt = new Date().toISOString()
+  memoryState.contractVersion = CONTRACT_VERSION
   await fs.writeFile(STATE_FILE, JSON.stringify(memoryState, null, 2), 'utf8')
 }
 
@@ -184,26 +212,43 @@ async function fetchCountriesSeed() {
   if (!res.ok) throw new Error(`restcountries ${res.status}`)
   const data = (await res.json()) as Array<{ name?: { common?: string }; region?: string }>
   return data
-    .map((c) => ({ country: String(c.name?.common || '').trim(), region: inferRegion(String(c.region || 'Other')) }))
+    .map((c) => ({
+      country: String(c.name?.common || '').trim(),
+      region: inferRegion(String(c.region || 'Other')),
+    }))
     .filter((c) => c.country.length > 0)
 }
 
-async function enqueueCountryResearch(country: string, region: string) {
-  for (const domain of DOMAINS) {
-    const queries = generateQueries(country, domain, memoryState.tasks, ['official source', 'latest update'])
-    for (const query of queries) {
-      memoryState.tasks.push({
-        id: id(),
-        country,
-        region,
-        domain,
-        query,
-        priority: domain === 'current_events' ? 90 : 60,
-        attempts: 0,
-        nextRunAt: new Date().toISOString(),
-        status: 'queued',
-      })
-    }
+function getTaskByCountry(country: string) {
+  return memoryState.tasks.find((t) => t.country === country && t.status !== 'failed')
+}
+
+function enqueueCountry(country: string, region: string) {
+  memoryState.tasks.push({
+    id: id(),
+    country,
+    region,
+    domain: 'overview',
+    query: 'country-first-completion-loop',
+    priority: 100,
+    attempts: 0,
+    pass: 0,
+    nextRunAt: new Date().toISOString(),
+    status: 'queued',
+    completenessScore: 0,
+    missingCritical: [],
+  })
+}
+
+function parseExistingFullData(raw: string | null): Record<string, unknown> {
+  if (!raw) return {}
+  try {
+    const parsed = JSON.parse(raw) as unknown
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : {}
+  } catch {
+    return {}
   }
 }
 
@@ -221,7 +266,9 @@ async function fetchWikipediaSummary(country: string) {
 }
 
 async function fetchWorldBankGdp(country: string) {
-  const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(country)}/indicator/NY.GDP.MKTP.CD?format=json&per_page=5`
+  const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(
+    country,
+  )}/indicator/NY.GDP.MKTP.CD?format=json&per_page=5`
   const res = await fetch(url)
   if (!res.ok) return null
   const payload = (await res.json()) as unknown[]
@@ -274,7 +321,9 @@ function normalizeQuotes(raw: unknown): TravelerQuote[] {
     const text = String(i.text || '').trim()
     const sourceName = String(i.sourceName || '').trim()
     const sourceUrl = String(i.sourceUrl || '').trim()
-    const sentiment = String(i.sentiment || '').trim().toLowerCase() as QuoteSentiment
+    const sentiment = String(i.sentiment || '')
+      .trim()
+      .toLowerCase() as QuoteSentiment
     const author = String(i.author || '').trim()
     if (!text || !sourceName || !sourceUrl) return
     if (sentiment !== 'positive' && sentiment !== 'neutral' && sentiment !== 'negative') return
@@ -305,97 +354,12 @@ async function loadVerifiedTravelerQuotes(country: string) {
     const raw = await fs.readFile(filePath, 'utf8')
     const parsed = JSON.parse(raw) as unknown
     const quotes = normalizeQuotes(parsed)
-    if (!hasRequiredQuoteDistribution(quotes)) return { quotes: [], status: 'invalid_distribution_or_format' as const }
+    if (!hasRequiredQuoteDistribution(quotes))
+      return { quotes: [], status: 'invalid_distribution_or_format' as const }
     return { quotes, status: 'verified' as const }
   } catch {
     return { quotes: [], status: 'collecting' as const }
   }
-}
-
-function parseExistingFullData(raw: string | null): Record<string, unknown> {
-  if (!raw) return {}
-  try {
-    const parsed = JSON.parse(raw) as unknown
-    return parsed && typeof parsed === 'object' ? (parsed as Record<string, unknown>) : {}
-  } catch {
-    return {}
-  }
-}
-
-async function upsertCountry(task: ResearchTask) {
-  const wiki = await fetchWikipediaSummary(task.country)
-  const gdp = await fetchWorldBankGdp(task.country)
-  const schengen = isSchengenCountry(task.country)
-  const quotePack = await loadVerifiedTravelerQuotes(task.country)
-
-  const existing = await prisma.country.findUnique({
-    where: { name: task.country },
-    select: { full_data: true },
-  })
-
-  const existingFullData = parseExistingFullData(existing?.full_data ?? null)
-
-  const fullData = {
-    ...existingFullData,
-    country: task.country,
-    region: task.region,
-    official_score: 5.5,
-    friction_score: 55,
-    acceptance_rate_morocco: '60%',
-    _agent: {
-      lastTaskId: task.id,
-      lastQuery: task.query,
-      domain: task.domain,
-      updatedAt: new Date().toISOString(),
-      sourceHash: hash({ wiki, gdp }),
-    },
-    overview: wiki,
-    economy: gdp,
-    travel_reasons: buildTravelReasons(task.country, task.region, typeof wiki?.extract === 'string' ? wiki.extract : null),
-    traveler_quotes: quotePack.quotes,
-    traveler_quotes_meta: {
-      status: quotePack.status,
-      required_distribution: '5_positive_3_neutral_2_negative',
-      updatedAt: new Date().toISOString(),
-      source: quotePack.status === 'verified' ? `file:${slugifyCountry(task.country)}.json` : 'pending_pipeline',
-    },
-  }
-
-  logVerbose2('upsert payload preview', {
-    country: task.country,
-    region: task.region,
-    schengen,
-    quoteStatus: quotePack.status,
-    quoteCount: quotePack.quotes.length,
-    reasonsCount: Array.isArray(fullData.travel_reasons) ? fullData.travel_reasons.length : 0,
-    wikiAvailable: Boolean(wiki?.extract),
-    gdpAvailable: Boolean(gdp?.gdp_usd),
-  })
-
-  await prisma.country.upsert({
-    where: { name: task.country },
-    update: {
-      region: task.region,
-      schengen_flag: schengen,
-      tourist_visa_score: 5.5,
-      study_visa_score: 5.5,
-      work_visa_score: 5.5,
-      business_visa_score: 5.5,
-      appointment_difficulty: 'Medium',
-      full_data: JSON.stringify(fullData),
-    },
-    create: {
-      name: task.country,
-      region: task.region,
-      schengen_flag: schengen,
-      tourist_visa_score: 5.5,
-      study_visa_score: 5.5,
-      work_visa_score: 5.5,
-      business_visa_score: 5.5,
-      appointment_difficulty: 'Medium',
-      full_data: JSON.stringify(fullData),
-    },
-  })
 }
 
 function nextRetryDelay(attempts: number) {
@@ -430,11 +394,208 @@ function logVerbose2(message: string, data?: Record<string, unknown>) {
   console.log(`[agents:verbose:2] ${message}`)
 }
 
+function resolveAdaptiveQuery(country: string, missingCritical: string[]) {
+  const hints = Object.entries(DOMAIN_HINTS)
+    .filter(([domain]) =>
+      missingCritical.some((field) => field.startsWith(`${domain}_`) || field.includes(domain)),
+    )
+    .flatMap(([, values]) => values)
+  const normalizedHints = hints.length > 0 ? hints : ['country intelligence evidence']
+  return `${country} :: ${normalizedHints.slice(0, 3).join(' | ')}`
+}
+
+function mergeCountryData(
+  country: string,
+  region: string,
+  existing: Record<string, unknown>,
+  wiki: Awaited<ReturnType<typeof fetchWikipediaSummary>>,
+  gdp: Awaited<ReturnType<typeof fetchWorldBankGdp>>,
+  quotes: Awaited<ReturnType<typeof loadVerifiedTravelerQuotes>>,
+): CountrySnapshot {
+  const merged = {
+    ...existing,
+    country,
+    region,
+    official_score:
+      typeof existing.official_score === 'number' ? existing.official_score : 5.5,
+    friction_score:
+      typeof existing.friction_score === 'number' ? existing.friction_score : 55,
+    acceptance_rate_morocco:
+      typeof existing.acceptance_rate_morocco === 'string'
+        ? existing.acceptance_rate_morocco
+        : '60%',
+    overview: wiki ?? existing.overview ?? null,
+    economy: gdp ?? existing.economy ?? null,
+    travel_reasons: Array.isArray(existing.travel_reasons)
+      ? existing.travel_reasons
+      : buildTravelReasons(country, region, typeof wiki?.extract === 'string' ? wiki.extract : null),
+    traveler_quotes: quotes.quotes.length > 0 ? quotes.quotes : existing.traveler_quotes ?? [],
+    traveler_quotes_meta: {
+      status: quotes.status,
+      required_distribution: '5_positive_3_neutral_2_negative',
+      updatedAt: new Date().toISOString(),
+      source:
+        quotes.status === 'verified'
+          ? `file:${slugifyCountry(country)}.json`
+          : 'pending_pipeline',
+    },
+  } as Record<string, unknown>
+
+  return {
+    fullData: merged,
+    scalar: {
+      tourist_visa_score: 5.5,
+      study_visa_score: 5.5,
+      work_visa_score: 5.5,
+      business_visa_score: 5.5,
+      appointment_difficulty: 'Medium',
+    },
+  }
+}
+
+function buildCompletenessPayload(snapshot: CountrySnapshot, task: CountryTask, sourceHash: string) {
+  const countryPayload = {
+    name: task.country,
+    region: task.region,
+    schengen_flag: isSchengenCountry(task.country),
+    tourist_visa_score: snapshot.scalar.tourist_visa_score,
+    study_visa_score: snapshot.scalar.study_visa_score,
+    work_visa_score: snapshot.scalar.work_visa_score,
+    business_visa_score: snapshot.scalar.business_visa_score,
+    appointment_difficulty: snapshot.scalar.appointment_difficulty,
+    full_data: snapshot.fullData,
+  }
+  const report = buildCompletenessReport(countryPayload)
+  const coverageManifest = buildCoverageManifest(report)
+
+  return {
+    report,
+    coverageManifest,
+    _agent: {
+      lastTaskId: task.id,
+      lastQuery: task.query,
+      domain: task.domain,
+      updatedAt: new Date().toISOString(),
+      sourceHash,
+      contractVersion: CONTRACT_VERSION,
+      completeness: {
+        score: report.score,
+        coveredFields: report.coveredFields,
+        totalFields: report.totalFields,
+        criticalMissing: report.criticalMissing,
+        domains: report.domains,
+      },
+      coverageManifest,
+      recursion: {
+        pass: task.pass,
+        maxPasses: MAX_RECURSION_PASSES,
+      },
+      nextResearchHints: resolveAdaptiveQuery(task.country, report.criticalMissing),
+    },
+  }
+}
+
+async function processCountryTask(task: CountryTask) {
+  const schengen = isSchengenCountry(task.country)
+  const existing = await prisma.country.findUnique({
+    where: { name: task.country },
+    select: { full_data: true },
+  })
+
+  let snapshot: CountrySnapshot = {
+    fullData: parseExistingFullData(existing?.full_data ?? null),
+    scalar: {
+      tourist_visa_score: 5.5,
+      study_visa_score: 5.5,
+      work_visa_score: 5.5,
+      business_visa_score: 5.5,
+      appointment_difficulty: 'Medium',
+    },
+  }
+
+  let bestScore = -1
+  let sourceHash = ''
+  let reportPayload = buildCompletenessPayload(snapshot, task, hash({}))
+
+  for (let pass = 1; pass <= MAX_RECURSION_PASSES; pass += 1) {
+    task.pass = pass
+    task.domain = pass === 1 ? 'overview' : 'community'
+    task.query = resolveAdaptiveQuery(task.country, reportPayload.report.criticalMissing)
+
+    const wiki = await fetchWikipediaSummary(task.country)
+    const gdp = await fetchWorldBankGdp(task.country)
+    const quotes = await loadVerifiedTravelerQuotes(task.country)
+    sourceHash = hash({ wiki, gdp, quoteStatus: quotes.status })
+
+    snapshot = mergeCountryData(task.country, task.region, snapshot.fullData, wiki, gdp, quotes)
+    reportPayload = buildCompletenessPayload(snapshot, task, sourceHash)
+
+    logVerbose2('country pass metrics', {
+      country: task.country,
+      pass,
+      score: reportPayload.report.score,
+      criticalMissing: reportPayload.report.criticalMissing.length,
+    })
+
+    if (reportPayload.report.score <= bestScore) break
+    bestScore = reportPayload.report.score
+
+    if (
+      reportPayload.report.score >= COMPLETENESS_TARGET_SCORE &&
+      reportPayload.report.criticalMissing.length === 0
+    ) {
+      break
+    }
+  }
+
+  const fullData = {
+    ...snapshot.fullData,
+    _agent: reportPayload._agent,
+  }
+
+  logVerbose2('upsert payload preview', {
+    country: task.country,
+    schengen,
+    completeness: reportPayload.report.score,
+    criticalMissing: reportPayload.report.criticalMissing.length,
+    contractFields: COUNTRY_INTELLIGENCE_CONTRACT_V2.length,
+  })
+
+  await prisma.country.upsert({
+    where: { name: task.country },
+    update: {
+      region: task.region,
+      schengen_flag: schengen,
+      tourist_visa_score: snapshot.scalar.tourist_visa_score,
+      study_visa_score: snapshot.scalar.study_visa_score,
+      work_visa_score: snapshot.scalar.work_visa_score,
+      business_visa_score: snapshot.scalar.business_visa_score,
+      appointment_difficulty: snapshot.scalar.appointment_difficulty,
+      full_data: JSON.stringify(fullData),
+    },
+    create: {
+      name: task.country,
+      region: task.region,
+      schengen_flag: schengen,
+      tourist_visa_score: snapshot.scalar.tourist_visa_score,
+      study_visa_score: snapshot.scalar.study_visa_score,
+      work_visa_score: snapshot.scalar.work_visa_score,
+      business_visa_score: snapshot.scalar.business_visa_score,
+      appointment_difficulty: snapshot.scalar.appointment_difficulty,
+      full_data: JSON.stringify(fullData),
+    },
+  })
+
+  return {
+    score: reportPayload.report.score,
+    criticalMissing: reportPayload.report.criticalMissing,
+  }
+}
+
 async function runWorkerBatch() {
   const now = Date.now()
   const ttlCutoff = now - TASK_TTL_HOURS * 60 * 60 * 1000
 
-  // Recover any tasks that were running during a previous crash.
   let recoveredRunning = 0
   for (const task of memoryState.tasks) {
     if (task.status === 'running') {
@@ -443,24 +604,24 @@ async function runWorkerBatch() {
       recoveredRunning += 1
     }
   }
-  if (recoveredRunning > 0) {
-    logVerbose('recovered running tasks', { count: recoveredRunning })
-  }
+  if (recoveredRunning > 0) logVerbose('recovered running tasks', { count: recoveredRunning })
 
-  // Purge stale done/failed tasks to keep state file bounded.
   const beforePurge = memoryState.tasks.length
   memoryState.tasks = memoryState.tasks.filter((t) => {
     if (t.status === 'queued' || t.status === 'running') return true
     return new Date(t.nextRunAt).getTime() >= ttlCutoff
   })
   const purged = beforePurge - memoryState.tasks.length
-  if (purged > 0) {
-    logVerbose('purged stale tasks', { purged })
-  }
+  if (purged > 0) logVerbose('purged stale tasks', { purged })
 
   const runnable = memoryState.tasks
     .filter((t) => t.status === 'queued' && new Date(t.nextRunAt).getTime() <= now)
-    .sort((a, b) => b.priority - a.priority)
+    .sort((a, b) => {
+      if (a.priority !== b.priority) return b.priority - a.priority
+      if (a.completenessScore !== b.completenessScore)
+        return a.completenessScore - b.completenessScore
+      return a.country.localeCompare(b.country)
+    })
     .slice(0, WORKER_BATCH)
 
   logVerbose('batch selected', {
@@ -469,60 +630,66 @@ async function runWorkerBatch() {
       ? {
           id: runnable[0].id,
           country: runnable[0].country,
-          domain: runnable[0].domain,
-          query: runnable[0].query,
+          score: runnable[0].completenessScore,
+          missingCritical: runnable[0].missingCritical.length,
         }
       : null,
-  })
-  logVerbose2('batch sample queries', {
-    queries: runnable.slice(0, 3).map((t) => ({
-      country: t.country,
-      domain: t.domain,
-      query: t.query,
-    })),
   })
 
   for (const task of runnable) {
     task.status = 'running'
     task.attempts += 1
     const startedAt = Date.now()
-    logVerbose('task start', {
+
+    logVerbose('country cycle start', {
       id: task.id,
       country: task.country,
-      domain: task.domain,
-      priority: task.priority,
       attempts: task.attempts,
-      query: task.query,
+      currentScore: task.completenessScore,
+      missingCritical: task.missingCritical.length,
     })
+
     try {
-      await upsertCountry(task)
-      task.status = 'done'
-      logVerbose('task done', {
+      const result = await processCountryTask(task)
+      task.completenessScore = result.score
+      task.missingCritical = result.criticalMissing
+      task.priority =
+        result.criticalMissing.length > 0
+          ? 1000 + (100 - Math.min(100, result.score))
+          : Math.max(10, 100 - result.score)
+      task.query = resolveAdaptiveQuery(task.country, result.criticalMissing)
+
+      if (
+        result.score >= COMPLETENESS_TARGET_SCORE &&
+        result.criticalMissing.length === 0
+      ) {
+        task.status = 'done'
+        task.nextRunAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      } else {
+        task.status = 'queued'
+        task.nextRunAt = new Date(Date.now() + nextRetryDelay(task.attempts)).toISOString()
+      }
+
+      logVerbose('country cycle result', {
         id: task.id,
         country: task.country,
-        domain: task.domain,
+        score: result.score,
+        missingCritical: result.criticalMissing.length,
+        status: task.status,
       })
-      logVerbose2('task metrics', {
+      logVerbose2('country cycle timings', {
         id: task.id,
         elapsedMs: Date.now() - startedAt,
-        query: task.query,
       })
     } catch (error) {
       task.lastError = String((error as Error)?.message || error)
       task.status = task.attempts >= 3 ? 'failed' : 'queued'
       task.nextRunAt = new Date(Date.now() + nextRetryDelay(task.attempts)).toISOString()
-      logVerbose('task failed', {
+      logVerbose('country cycle failed', {
         id: task.id,
         country: task.country,
-        domain: task.domain,
         status: task.status,
-        nextRunAt: task.nextRunAt,
         error: task.lastError,
-      })
-      logVerbose2('task failure metrics', {
-        id: task.id,
-        elapsedMs: Date.now() - startedAt,
-        query: task.query,
       })
     }
   }
@@ -530,13 +697,10 @@ async function runWorkerBatch() {
 
 async function scheduleRefresh() {
   const seeds = await fetchCountriesSeed()
-  const existingCountries = new Set(
-    memoryState.tasks.filter((t) => t.status === 'queued' || t.status === 'running').map((t) => t.country),
-  )
   let added = 0
-  for (const c of seeds) {
-    if (existingCountries.has(c.country)) continue
-    await enqueueCountryResearch(c.country, c.region)
+  for (const seed of seeds) {
+    if (getTaskByCountry(seed.country)) continue
+    enqueueCountry(seed.country, seed.region)
     added += 1
   }
   logVerbose('refresh enqueue completed', { addedCountries: added, seeds: seeds.length })
@@ -547,7 +711,9 @@ async function main() {
   await scheduleRefresh()
   await saveState()
 
-  console.log(`[agents] running - tick=${TICK_MS}ms refresh=${REFRESH_MS}ms`)
+  console.log(
+    `[agents] running - tick=${TICK_MS}ms refresh=${REFRESH_MS}ms contract=${CONTRACT_VERSION}`,
+  )
 
   const tickTimer = setInterval(async () => {
     if (tickInProgress) {
