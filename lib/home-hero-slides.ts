@@ -6,7 +6,7 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 
-import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
+import { buildMergedCountriesList, countryNameMergeKey } from '@/lib/countries-prisma-merge'
 import { HOMEPAGE_SHOWCASE_NAMES } from '@/lib/home-showcase-countries'
 
 export type HomeHeroSlide = {
@@ -95,11 +95,11 @@ export async function buildHomeHeroSlides(): Promise<HomeHeroSlide[]> {
   } catch {
     merged = []
   }
-  const byName = new Map(merged.map((c) => [c.name, c]))
+  const byName = new Map(merged.map((c) => [countryNameMergeKey(c.name), c]))
 
   const extras: HomeHeroSlide[] = []
   for (const name of HOMEPAGE_SHOWCASE_NAMES) {
-    const row = byName.get(name)
+    const row = byName.get(countryNameMergeKey(name))
     if (!row) continue
     const full =
       row.full_data && typeof row.full_data === 'object' && !Array.isArray(row.full_data)

@@ -5,7 +5,7 @@
 
 import type { CountryGridItem } from '@/components/country/CountryGrid'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
-import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
+import { buildMergedCountriesList, countryNameMergeKey } from '@/lib/countries-prisma-merge'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import { frictionTierFromCountry, isoForCountryName, scoreToMobilityTier } from '@/lib/country-card-mappers'
 
@@ -47,11 +47,12 @@ export async function resolveHomeShowcaseCountries(): Promise<CountryGridItem[]>
     staticRows = []
   }
 
-  const mergedByName = new Map(merged.map((c) => [c.name, c]))
-  const staticByName = new Map(staticRows.map((c) => [c.name, c]))
+  const mergedByName = new Map(merged.map((c) => [countryNameMergeKey(c.name), c]))
+  const staticByName = new Map(staticRows.map((c) => [countryNameMergeKey(c.name), c]))
 
   return SHOWCASE.map((template) => {
-    const row = mergedByName.get(template.name) ?? staticByName.get(template.name)
+    const key = countryNameMergeKey(template.name)
+    const row = mergedByName.get(key) ?? staticByName.get(key)
     if (!row) return fallbackItem(template)
 
     const enriched = enrichCountryApiRecord(row as Record<string, unknown>)

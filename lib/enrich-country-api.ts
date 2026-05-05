@@ -66,7 +66,17 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
     business: clamp(Math.round(((c.business_visa_score as number) || 5) * 10)),
   }
 
-  const frictionScore = typeof full.friction_score === 'number' ? full.friction_score : 50
+  const fa = full.friction_analysis as Record<string, unknown> | undefined
+  const nestedFriction =
+    fa && typeof fa.friction_score === 'number' && Number.isFinite(fa.friction_score)
+      ? fa.friction_score
+      : undefined
+  const frictionScore =
+    typeof full.friction_score === 'number' && Number.isFinite(full.friction_score)
+      ? full.friction_score
+      : nestedFriction !== undefined
+        ? nestedFriction
+        : 50
   const friction = clamp(100 - frictionScore)
 
   const edu = full.education_mobility as Record<string, unknown> | undefined

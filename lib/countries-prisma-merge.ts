@@ -17,7 +17,15 @@ const STATIC_PREFERRED_BLOCKS = [
   'street_food',
   'driving_license',
   'morocco_insights',
+  'phd_studies',
+  'travel_reasons',
+  'traveler_quotes',
 ] as const
+
+/** Match DB row to static JSON even with minor spacing / casing drift. */
+export function countryNameMergeKey(name: string): string {
+  return name.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase()
+}
 
 function isWeakBlock(v: unknown): boolean {
   if (v == null) return true
@@ -25,20 +33,101 @@ function isWeakBlock(v: unknown): boolean {
   return Object.keys(v as Record<string, unknown>).length === 0
 }
 
+function isPlainRecord(v: unknown): v is Record<string, unknown> {
+  if (v === null || typeof v !== 'object' || Array.isArray(v)) return false
+  const proto = Object.getPrototypeOf(v)
+  return proto === Object.prototype || proto === null
+}
+
+/** Empty / missing leaves the static branch can replace. */
+function isWeakLeaf(v: unknown): boolean {
+  if (v === undefined) return true
+  if (v === null) return true
+  if (typeof v === 'string') return v.trim() === ''
+  if (typeof v === 'number') return Number.isNaN(v)
+  if (Array.isArray(v)) return v.length === 0
+  return false
+}
+
 /**
- * Overlay DB `full_data` on static JSON; keep static rich blocks when the DB version is empty.
+ * Deep-merge static + DB branches: DB wins when it has real data; otherwise keep static.
+ * Avoids `{ ...static, ...db }` wiping rich static subtrees when DB only sent a partial object.
+ */
+function mergeFullDataBranches(
+  staticBranch: Record<string, unknown>,
+  dbBranch: Record<string, unknown>,
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {}
+  const keyOrderSeen: Record<string, true> = {}
+  const keys: string[] = []
+  for (const k of Object.keys(staticBranch)) {
+    if (!keyOrderSeen[k]) {
+      keyOrderSeen[k] = true
+      keys.push(k)
+    }
+  }
+  for (const k of Object.keys(dbBranch)) {
+    if (!keyOrderSeen[k]) {
+      keyOrderSeen[k] = true
+      keys.push(k)
+    }
+  }
+
+  for (const k of keys) {
+    const sv = staticBranch[k]
+    const dv = dbBranch[k]
+
+    if (isPlainRecord(sv) && isPlainRecord(dv)) {
+      const inner = mergeFullDataBranches(sv, dv)
+      if (isWeakBlock(inner) && !isWeakBlock(sv)) {
+        out[k] = sv
+      } else {
+        out[k] = inner
+      }
+      continue
+    }
+
+    if (Array.isArray(dv) && dv.length > 0) {
+      out[k] = dv
+      continue
+    }
+    if (Array.isArray(sv) && sv.length > 0) {
+      out[k] = sv
+      continue
+    }
+    if (Array.isArray(dv) || Array.isArray(sv)) {
+      out[k] = Array.isArray(dv) ? dv : sv
+      continue
+    }
+
+    if (!isWeakLeaf(dv)) {
+      out[k] = dv
+    } else if (!isWeakLeaf(sv)) {
+      out[k] = sv
+    } else {
+      out[k] = dv !== undefined ? dv : sv
+    }
+  }
+
+  return out
+}
+
+/**
+ * Overlay DB `full_data` on static JSON; deep-merge objects; keep static rich blocks when DB is empty.
  */
 export function mergeDisplayedFullData(
   staticFull: Record<string, unknown>,
   dbFull: Record<string, unknown>,
 ): Record<string, unknown> {
-  const out: Record<string, unknown> = { ...staticFull, ...dbFull }
+  const merged = mergeFullDataBranches(staticFull, dbFull)
+
   for (const key of STATIC_PREFERRED_BLOCKS) {
-    if (isWeakBlock(dbFull[key]) && staticFull[key] != null && !isWeakBlock(staticFull[key])) {
-      out[key] = staticFull[key]
+    if (isWeakBlock(merged[key]) && staticFull[key] != null && !isWeakBlock(staticFull[key])) {
+      merged[key] = staticFull[key]
     }
   }
-  return out
+
+  return merged
 }
 
 const approvedComments = {
@@ -135,16 +224,17 @@ export async function buildMergedCountriesList(): Promise<LegacyCountryRecord[]>
       return fallback
     }
 
-    const byName = new Map(prismaRows.map((r) => [r.name, r]))
+    const byName = new Map(prismaRows.map((r) => [countryNameMergeKey(r.name), r]))
 
     if (fallback.length === 0) {
       return prismaRows.map((db) => prismaRowToLegacy(db))
     }
 
     const mergedBase = fallback.map((f) => {
-      const db = byName.get(f.name)
+      const key = countryNameMergeKey(f.name)
+      const db = byName.get(key)
       if (!db) return f
-      byName.delete(f.name)
+      byName.delete(key)
       return mergeFallbackRowWithDb(f, db)
     })
 
@@ -155,7 +245,11 @@ export async function buildMergedCountriesList(): Promise<LegacyCountryRecord[]>
     const combined = [...mergedBase, ...extras]
     combined.sort((a, b) => a.id - b.id)
     return combined
-  } catch {
+  } catch (err) {
+    console.warn(
+      '[buildMergedCountriesList] Prisma failed, using static fallback:',
+      err instanceof Error ? err.message : err,
+    )
     return fallback.length > 0 ? fallback : []
   }
 }
