@@ -18,6 +18,7 @@ model User {
   profile       UserProfile?
   favorites     FavoriteCountry[]
   historyEvents UserHistoryEvent[]
+  delegatedApplicationRequests DelegatedApplicationRequest[]
 }
 
 model UserProfile {
@@ -102,6 +103,22 @@ model UserHistoryEvent {
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/** Demande de délégation candidatures emploi / université — payload JSON canonique versionné */
+model DelegatedApplicationRequest {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  category  String
+  packageId String
+  /** JSON: contact + champs métier dynamiques selon catégorie */
+  payload   String
+  status    String   @default("SUBMITTED")
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
 
 enum Role {

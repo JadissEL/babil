@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Sparkles,
   Zap,
+  FileStack,
 } from 'lucide-react'
 import PageContainer from '@/components/layout/PageContainer'
 import AppSidebar from '@/components/layout/AppSidebar'
@@ -21,6 +22,7 @@ import RiskFilter from '@/components/filters/RiskFilter'
 import CountryGrid, { type CountryGridItem } from '@/components/country/CountryGrid'
 import GoogleAd from '../components/GoogleAd'
 import HeroWorldCarousel from '@/components/home/HeroWorldCarousel'
+import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo'
 import prisma from '@/lib/prisma'
 
 export const metadata: Metadata = {
@@ -183,6 +185,8 @@ export default async function Home() {
           </div>
         </section>
 
+        <DelegatedApplicationsHomePromo />
+
         <section className="mt-8">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-black text-text">Top Countries Grid</h2>
@@ -198,6 +202,12 @@ export default async function Home() {
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <Feature href="/probability" icon={<Zap className="h-5 w-5 text-blue-400" />} title="Visa Engine" description="Deterministic scoring with explainable breakdown." />
               <Feature href="/schengen" icon={<ShieldCheck className="h-5 w-5 text-indigo-400" />} title="Schengen Hub" description="Side-by-side country friction and acceptance." />
+              <Feature
+                href="/services/delegated-applications"
+                icon={<FileStack className="h-5 w-5 text-rose-400" />}
+                title="Assist applications"
+                description="Delegated CV, motivation letters & submissions — authenticated users."
+              />
               <Feature href="/education" icon={<GraduationCap className="h-5 w-5 text-violet-400" />} title="Education" description="Languages, technical training, short courses." />
               <Feature
                 href="/community"
@@ -271,6 +281,7 @@ export default async function Home() {
             <div>
               <p className="text-sm font-black text-text">Mobility Tracks</p>
               <div className="mt-3 space-y-2 text-sm">
+                <Link href="/services/delegated-applications" className="block font-medium text-muted hover:text-primary">Assist candidatures</Link>
                 <Link href="/education" className="block font-medium text-muted hover:text-primary">Education</Link>
                 <Link href="/business" className="block font-medium text-muted hover:text-primary">Business</Link>
                 <Link href="/investment" className="block font-medium text-muted hover:text-primary">Investment</Link>

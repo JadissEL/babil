@@ -17,6 +17,7 @@ import {
   Scale,
   Activity,
   ListOrdered,
+  FileStack,
 } from 'lucide-react'
 
 export default function OverviewPageClient() {
@@ -76,6 +77,14 @@ export default function OverviewPageClient() {
       icon: Car,
       link: '/permis',
       color: 'bg-success',
+      status: 'Nouveau',
+    },
+    {
+      title: 'Assist candidatures',
+      description: 'Délégation emploi & universités : forfaits, garantie et formulaire après connexion.',
+      icon: FileStack,
+      link: '/services/delegated-applications',
+      color: 'bg-rose-500',
       status: 'Nouveau',
     },
     {

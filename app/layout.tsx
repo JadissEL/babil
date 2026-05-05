@@ -45,6 +45,12 @@ export default function RootLayout({
                   <Link href="/recommendations" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
                     Visa Engine
                   </Link>
+                  <Link
+                    href="/services/delegated-applications"
+                    className="text-sm font-semibold text-muted transition-colors hover:text-primary"
+                  >
+                    Assist
+                  </Link>
                   <Link href="/education" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
                     Education
                   </Link>
