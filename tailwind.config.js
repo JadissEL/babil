@@ -28,6 +28,8 @@ module.exports = {
         success: '#22a06b',
         warning: '#de8f1c',
         danger: '#dc4b4b',
+        /** Nested panels / table stripes on cream UI (Doctorat sections, explorer chips, etc.) */
+        inset: '#f8f2e8',
       },
       borderRadius: {
         xl: '0.9rem',

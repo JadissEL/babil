@@ -63,7 +63,24 @@ export default function ProbabilityPage() {
       case 'Very Low':
         return 'border-[#f3afaf] bg-[#fff0f0] text-danger'
       default:
-        return 'border-line bg-[#f8f2e8] text-muted'
+        return 'border-line bg-inset text-muted'
+    }
+  }
+
+  const levelLabelFr = (level: string) => {
+    switch (level) {
+      case 'Very High':
+        return 'Très haut'
+      case 'High':
+        return 'Élevé'
+      case 'Medium':
+        return 'Moyen'
+      case 'Low':
+        return 'Faible'
+      case 'Very Low':
+        return 'Très faible'
+      default:
+        return level || '—'
     }
   }
 
@@ -73,31 +90,35 @@ export default function ProbabilityPage() {
   const highRiskCountries = results.filter(r => r.globalScore < 40).slice(0, 3)
 
   return (
-    <div className="mx-auto max-w-6xl pb-20">
-      <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-center">
-        <div className="flex items-center gap-4">
-          <div className="rounded-2xl bg-primary p-3 text-white shadow-soft">
-            <Brain className="h-8 w-8" />
+    <div className="mx-auto max-w-6xl pb-16 sm:pb-20">
+      <div className="mb-8 flex flex-col justify-between gap-4 sm:mb-10 sm:gap-6 md:flex-row md:items-center">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
+            <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
           </div>
-          <div>
-            <h1 className="text-4xl font-black tracking-tight text-text">Visa Probability Engine</h1>
-            <p className="font-medium text-muted">Analyse multi-facteurs basée sur votre profil.</p>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl lg:text-4xl">
+              Moteur de probabilités visa
+            </h1>
+            <p className="text-sm font-medium text-muted sm:text-base">
+              Analyse multi-facteurs basée sur votre profil.
+            </p>
           </div>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex w-full md:w-auto">
           <button
             type="button"
             onClick={() => setShowComparison(!showComparison)}
             disabled={comparisonList.length < 2}
-            className={`flex items-center gap-2 rounded-xl px-6 py-3 font-bold transition-all ${
+            className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition-all sm:w-auto sm:px-6 ${
               comparisonList.length >= 2
                 ? 'bg-primary text-white shadow-soft hover:bg-primary-hover'
-                : 'cursor-not-allowed bg-[#f8f2e8] text-muted'
+                : 'cursor-not-allowed bg-inset text-muted'
             }`}
           >
-            <Scale className="h-5 w-5" />
-            {showComparison ? 'Masquer la comparaison' : `Comparer (${comparisonList.length})`}
+            <Scale className="h-5 w-5 shrink-0" />
+            <span className="truncate">{showComparison ? 'Masquer la comparaison' : `Comparer (${comparisonList.length})`}</span>
           </button>
         </div>
       </div>
@@ -107,7 +128,7 @@ export default function ProbabilityPage() {
           <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       ) : results.length === 0 ? (
-        <div className="mx-auto max-w-2xl rounded-[2rem] border border-line bg-surface p-12 text-center shadow-card">
+        <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface px-5 py-10 text-center shadow-card sm:rounded-[2rem] sm:p-12">
           <ShieldAlert className="mx-auto mb-6 h-16 w-16 text-warning" />
           <h2 className="mb-4 text-2xl font-black text-text">Profil incomplet</h2>
           <p className="mb-8 font-medium leading-relaxed text-muted">
@@ -149,7 +170,7 @@ export default function ProbabilityPage() {
                 {backupCountries.map((c: any) => (
                   <div
                     key={c.country}
-                    className="flex items-center justify-between rounded-xl border border-line bg-[#f8f2e8] p-3"
+                    className="flex items-center justify-between rounded-xl border border-line bg-inset p-3"
                   >
                     <span className="font-bold text-text">{c.country}</span>
                     <span className="text-xs font-black text-primary">{c.globalScore}%</span>
@@ -181,14 +202,20 @@ export default function ProbabilityPage() {
 
           {/* Comparison View */}
           {showComparison && (
-            <section className="rounded-[2.5rem] border border-line bg-surface p-10 text-text shadow-card">
-              <div className="flex justify-between items-center mb-10">
-                <h2 className="text-3xl font-black">Comparaison Détaillée</h2>
-                <button onClick={() => setComparisonList([])} className="text-sm font-bold text-muted transition-colors hover:text-primary">Vider la liste</button>
+            <section className="rounded-2xl border border-line bg-surface p-5 text-text shadow-card sm:rounded-[2.5rem] sm:p-8 md:p-10">
+              <div className="mb-6 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-center sm:justify-between">
+                <h2 className="text-xl font-black sm:text-2xl md:text-3xl">Comparaison Détaillée</h2>
+                <button
+                  type="button"
+                  onClick={() => setComparisonList([])}
+                  className="self-start text-sm font-bold text-muted transition-colors hover:text-primary sm:self-auto"
+                >
+                  Vider la liste
+                </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {results.filter(r => comparisonList.includes(r.country)).map((r: any) => (
-                  <div key={r.country} className="rounded-3xl border border-line bg-[#f8f2e8] p-6">
+                  <div key={r.country} className="rounded-3xl border border-line bg-inset p-6">
                     <h3 className="text-2xl font-black mb-6">{r.country}</h3>
                     <div className="space-y-6">
                       {Object.entries(r.breakdown).map(([key, val]: [string, any]) => (
@@ -229,32 +256,32 @@ export default function ProbabilityPage() {
                 }`}
               >
                 <div
-                  className="flex cursor-pointer flex-col items-start justify-between gap-6 p-6 md:flex-row md:items-center md:p-8"
+                  className="flex cursor-pointer flex-col items-stretch justify-between gap-4 p-5 sm:gap-6 sm:p-6 md:flex-row md:items-center md:p-8"
                   onClick={() => setExpanded(expanded === r.country ? null : r.country)}
                 >
-                  <div className="flex w-full items-center gap-6 md:w-auto">
-                    <div className="shrink-0 text-left">
-                      <h3 className="text-2xl font-black tracking-tight text-text">{r.country}</h3>
+                  <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:gap-6 md:w-auto">
+                    <div className="min-w-0 shrink-0 text-left">
+                      <h3 className="text-xl font-black tracking-tight text-text sm:text-2xl">{r.country}</h3>
                       <div
                         className={`mt-2 inline-block rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${getLevelColor(r.level)}`}
                       >
-                        {r.level}
+                        {levelLabelFr(r.level)}
                       </div>
                     </div>
 
-                    <div className="mx-4 hidden h-12 w-px bg-line md:block" />
+                    <div className="mx-4 hidden h-12 w-px shrink-0 bg-line md:block" />
 
-                    <div className="flex gap-8">
-                      <div className="text-center">
+                    <div className="flex items-center gap-6 sm:gap-8">
+                      <div className="text-left sm:text-center">
                         <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">
                           Score global
                         </div>
-                        <div className="text-3xl font-black text-text">{r.globalScore}%</div>
+                        <div className="text-2xl font-black text-text sm:text-3xl">{r.globalScore}%</div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex w-full items-center justify-between gap-6 md:w-auto">
+                  <div className="flex w-full items-center justify-between gap-3 border-t border-line pt-4 md:w-auto md:border-t-0 md:pt-0">
                     <button
                       type="button"
                       onClick={(e) => {
@@ -264,7 +291,7 @@ export default function ProbabilityPage() {
                       className={`rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition-all ${
                         comparisonList.includes(r.country)
                           ? 'bg-primary text-white shadow-soft'
-                          : 'bg-[#f8f2e8] text-muted hover:bg-primary-soft'
+                          : 'bg-inset text-muted hover:bg-primary-soft'
                       }`}
                     >
                       {comparisonList.includes(r.country) ? 'Sélectionné' : 'Comparer'}
@@ -278,7 +305,7 @@ export default function ProbabilityPage() {
                 </div>
 
                 {expanded === r.country && (
-                  <div className="border-t border-line bg-[#f8f2e8] px-6 pb-8 md:px-8 md:pb-8">
+                  <div className="border-t border-line bg-inset px-4 pb-6 sm:px-6 md:px-8 md:pb-8">
                     <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
                       {/* Breakdown */}
                       <div className="space-y-4">

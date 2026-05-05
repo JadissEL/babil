@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { auth } from '@clerk/nextjs/server'
 
-import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
+import DashboardLayoutClient from '@/components/layout/DashboardLayoutClient'
 
 export const metadata: Metadata = {
   title: {
@@ -21,11 +21,5 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     redirect('/')
   }
 
-  return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-bg text-text">
-      <DashboardSidebar />
-
-      <main className="flex-1 bg-bg px-8 py-10 lg:px-12">{children}</main>
-    </div>
-  )
+  return <DashboardLayoutClient>{children}</DashboardLayoutClient>
 }

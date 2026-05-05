@@ -14,13 +14,21 @@ import {
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 
 type Mode = 'explorer' | 'recommendation'
-type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education'
+type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
 type Budget = 'all' | 'low' | 'medium' | 'high'
 
 function filterGoalFromSelect(v: string): Goal {
   if (!v) return 'all'
-  const allowed: Exclude<Goal, 'all'>[] = ['tourism', 'study', 'work', 'business', 'education']
-  return (allowed.includes(v as Exclude<Goal, 'all'>) ? v : 'all') as Goal
+  const normalized = v.trim().toLowerCase().replace(/-/g, '_')
+  const allowed: Exclude<Goal, 'all'>[] = [
+    'tourism',
+    'study',
+    'work',
+    'business',
+    'education',
+    'short_course',
+  ]
+  return (allowed.includes(normalized as Exclude<Goal, 'all'>) ? normalized : 'all') as Goal
 }
 
 function explorerGoalToFilterValue(goal: Goal): string {
@@ -100,13 +108,21 @@ function ExplorerPageInner() {
       const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase())
       const matchesRegion = region === 'all' || c.region === region
       const matchesDifficulty = difficulty === 'all' || String(c._difficultyLabel).toLowerCase() === difficulty.toLowerCase()
+      const eduMob = c._full?.education_mobility
+      const hasShortCourseModule =
+        eduMob &&
+        typeof eduMob === 'object' &&
+        eduMob !== null &&
+        Object.prototype.hasOwnProperty.call(eduMob, 'short_courses') &&
+        !!(eduMob as Record<string, unknown>).short_courses
       const matchesGoal =
         goal === 'all' ||
         (goal === 'tourism' && c._visa.tourism >= 50) ||
         (goal === 'study' && c._visa.study >= 50) ||
         (goal === 'work' && c._visa.work >= 50) ||
         (goal === 'business' && c._visa.business >= 50) ||
-        (goal === 'education' && c._education >= 50)
+        (goal === 'education' && c._education >= 50) ||
+        (goal === 'short_course' && (hasShortCourseModule || c._visa.study >= 50 || c._education >= 50))
       const matchesBudget = budget === 'all' || c._budgetLevel === budget
       const matchesSchengen = !schengenOnly || c.schengen_flag
       return matchesSearch && matchesRegion && matchesDifficulty && matchesGoal && matchesBudget && matchesSchengen
@@ -136,11 +152,11 @@ function ExplorerPageInner() {
             <Globe className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Global Explorer</h1>
+            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Explorer global</h1>
             <p className="mt-1 text-sm font-medium text-muted">
-              Intelligence terrain & mobilité pour citoyens marocains — filtre et compare les destinations.
-              Tu peux partager une vue précise avec{' '}
-              <code className="rounded-md border border-line bg-[#f8f2e8] px-1.5 py-0.5 text-[11px] font-bold text-primary">
+              Intelligence terrain et mobilité pour citoyens marocains — filtrez et comparez les destinations.
+              Partagez une vue précise avec{' '}
+              <code className="rounded-md border border-line bg-inset px-1.5 py-0.5 text-[11px] font-bold text-primary">
                 /explorer?q=nom-du-pays
               </code>
               .
@@ -158,7 +174,7 @@ function ExplorerPageInner() {
           onRegionChange={(v) => setRegion(selectToExplorerRegion(v))}
         />
         <div className="flex flex-wrap items-center gap-3">
-          <div className="inline-flex rounded-2xl border border-line bg-[#f8f2e8] p-1">
+          <div className="inline-flex rounded-2xl border border-line bg-inset p-1">
             <button
               type="button"
               onClick={() => setMode('explorer')}
@@ -171,7 +187,7 @@ function ExplorerPageInner() {
               onClick={() => setMode('recommendation')}
               className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'recommendation' ? 'bg-primary text-white shadow-soft' : 'text-muted hover:text-primary'}`}
             >
-              <Target className="h-4 w-4" /> Recommendation
+              <Target className="h-4 w-4" /> Recommandation
             </button>
           </div>
 
@@ -191,11 +207,11 @@ function ExplorerPageInner() {
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
           >
-            <option value="all">Difficulty: All</option>
-            <option value="Low">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="High">Hard</option>
-            <option value="Extreme">Critical</option>
+            <option value="all">Difficulté : toutes</option>
+            <option value="Low">Facile</option>
+            <option value="Medium">Moyenne</option>
+            <option value="High">Difficile</option>
+            <option value="Extreme">Critique</option>
           </select>
 
           <select
@@ -203,15 +219,15 @@ function ExplorerPageInner() {
             value={budget}
             onChange={(e) => setBudget(e.target.value as Budget)}
           >
-            <option value="all">Budget: All</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="all">Budget : tous</option>
+            <option value="low">Bas</option>
+            <option value="medium">Moyen</option>
+            <option value="high">Élevé</option>
           </select>
 
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-[#f8f2e8] px-3 py-2.5 text-xs font-black uppercase tracking-wider text-muted">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-inset px-3 py-2.5 text-xs font-black uppercase tracking-wider text-muted">
             <input type="checkbox" className="rounded border-white/30" checked={schengenOnly} onChange={(e) => setSchengenOnly(e.target.checked)} />
-            Schengen only
+            Schengen uniquement
           </label>
         </div>
       </div>
@@ -244,7 +260,7 @@ export default function ExplorerPage() {
     <Suspense
       fallback={
         <div className="mx-auto flex max-w-7xl justify-center px-6 py-24 sm:px-8">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" aria-label="Loading" />
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" aria-label="Chargement" />
         </div>
       }
     >

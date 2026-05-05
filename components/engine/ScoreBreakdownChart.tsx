@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -9,6 +10,22 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts'
+
+import { cn } from '@/lib/utils'
+
+function useCompactViewport() {
+  const [compact, setCompact] = useState(false)
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)')
+    const apply = () => setCompact(mq.matches)
+    apply()
+    mq.addEventListener('change', apply)
+    return () => mq.removeEventListener('change', apply)
+  }, [])
+
+  return compact
+}
 
 export type RadarBreakdown = {
   visa: number
@@ -33,14 +50,18 @@ type ScoreBreakdownChartProps = {
 
 export function ScoreBreakdownChart({ breakdown, className }: ScoreBreakdownChartProps) {
   const data = breakdownToRadarData(breakdown)
+  const compact = useCompactViewport()
+  const height = compact ? 216 : 276
+  const tickSize = compact ? 10 : 11
+  const radiusTick = compact ? 9 : 10
 
   return (
-    <div className={className}>
-      <ResponsiveContainer width="100%" height={260}>
-        <RadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
+    <div className={cn('w-full min-w-0', className)}>
+      <ResponsiveContainer width="100%" height={height}>
+        <RadarChart cx="50%" cy="50%" outerRadius={compact ? '68%' : '75%'} data={data}>
           <PolarGrid stroke="#334155" />
-          <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-          <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#64748b', fontSize: 10 }} />
+          <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: tickSize }} />
+          <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#64748b', fontSize: radiusTick }} />
           <Radar
             name="Score"
             dataKey="value"

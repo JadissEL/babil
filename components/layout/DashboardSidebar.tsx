@@ -2,170 +2,179 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import type { LucideProps } from 'lucide-react'
-import type { ComponentType } from 'react'
-import {
-  LayoutDashboard,
-  Brain,
-  Map,
-  User,
-  Briefcase,
-  GraduationCap,
-  Car,
-  Globe,
-  CreditCard,
-  Settings,
-  ChevronRight,
-  MessageSquare,
-  MessagesSquare,
-  ShieldCheck,
-  Activity,
-  Scale,
-  Shield,
-  SwatchBook,
-} from 'lucide-react'
+import { ChevronRight, Settings, X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import {
+  dashboardNav,
+  explorerNav,
+  hrefDashboardActive,
+  normalizeDashboardPath,
+  type DashboardNavItem,
+} from '@/components/layout/dashboard-nav-config'
 
-type NavItem = { label: string; href: string; icon: ComponentType<LucideProps>; match?: 'exact' | 'prefix' }
-
-const dashboardNav: NavItem[] = [
-  { label: 'Aperçu', href: '/overview', icon: LayoutDashboard },
-  { label: 'Probability Engine', href: '/probability', icon: Brain },
-  { label: 'Moteur reco (pro)', href: '/recommendation-engine', icon: Activity },
-  { label: 'Mes Recommandations', href: '/recommendations', icon: Map },
-  { label: 'Mon Profil', href: '/profile', icon: User },
-  { label: 'Administration', href: '/admin', icon: Shield },
-  { label: 'Design System', href: '/design-system', icon: SwatchBook },
-]
-
-const explorerNav: NavItem[] = [
-  { label: 'Global Explorer', href: '/explorer', icon: Globe, match: 'prefix' },
-  { label: 'Schengen Dashboard', href: '/schengen', icon: ShieldCheck },
-  { label: 'Comparer pays', href: '/compare', icon: Scale },
-  { label: 'Communauté', href: '/community', icon: MessagesSquare },
-  { label: 'Business & Invest', href: '/business', icon: Briefcase },
-  { label: 'Investment / CBI', href: '/investment', icon: CreditCard },
-  { label: 'Éducation & Formation', href: '/education', icon: GraduationCap, match: 'prefix' },
-  { label: 'Permis International', href: '/permis', icon: Car },
-  { label: 'Modération', href: '/moderation', icon: MessageSquare },
-]
-
-function normalizePath(p: string) {
-  if (p.length > 1 && p.endsWith('/')) return p.slice(0, -1)
-  return p || '/'
+function NavLinkRow({
+  item,
+  active,
+  onNavigate,
+  variant,
+}: {
+  item: DashboardNavItem
+  active: boolean
+  onNavigate?: () => void
+  variant: 'dashboard' | 'explorer'
+}) {
+  const isOverview = item.href === '/overview'
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      className={cn(
+        'group flex items-center justify-between rounded-2xl px-4 py-3 font-bold transition-all',
+        variant === 'dashboard'
+          ? active
+            ? 'bg-primary text-white shadow-soft'
+            : 'text-muted hover:bg-primary-soft hover:text-primary'
+          : active
+            ? 'bg-primary-soft text-primary ring-1 ring-primary/20'
+            : 'text-muted hover:bg-primary-soft hover:text-primary',
+      )}
+    >
+      <div className="flex min-w-0 items-center gap-3">
+        <item.icon
+          className={cn(
+            'h-5 w-5 shrink-0',
+            variant === 'dashboard'
+              ? active
+                ? 'text-white'
+                : 'text-muted group-hover:text-primary'
+              : active
+                ? 'text-primary'
+                : 'text-muted group-hover:text-primary',
+          )}
+        />
+        <span className="truncate">{item.label}</span>
+      </div>
+      {!isOverview && (
+        <ChevronRight
+          className={cn(
+            'h-4 w-4 shrink-0 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-2',
+            active && 'translate-x-0 opacity-100',
+          )}
+        />
+      )}
+    </Link>
+  )
 }
 
-function hrefActive(normalizedPathname: string, item: NavItem): boolean {
-  const h = item.href
-  if (item.match === 'prefix') {
-    return normalizedPathname === h || normalizedPathname.startsWith(`${h}/`)
-  }
-  /** Correspondance exacte par défaut (évite /profile vs /profile/… ) */
-  return normalizedPathname === h
+function NavSections({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+  return (
+    <div className="flex flex-col gap-8">
+      <nav className="flex flex-col gap-2" aria-label="Espace tableau de bord">
+        <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-muted">Compte</div>
+        {dashboardNav.map((item) => (
+          <NavLinkRow
+            key={item.href}
+            item={item}
+            active={hrefDashboardActive(pathname, item)}
+            onNavigate={onNavigate}
+            variant="dashboard"
+          />
+        ))}
+      </nav>
+
+      <nav className="flex flex-col gap-2" aria-label="Outils mobilité">
+        <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-muted">Mobilité</div>
+        {explorerNav.map((item) => (
+          <NavLinkRow
+            key={item.href}
+            item={item}
+            active={hrefDashboardActive(pathname, item)}
+            onNavigate={onNavigate}
+            variant="explorer"
+          />
+        ))}
+      </nav>
+    </div>
+  )
 }
 
-export function DashboardSidebar() {
-  const pathname = normalizePath(usePathname() || '')
+function SettingsStub() {
+  return (
+    <div className="mt-auto border-t border-line pt-8">
+      <button
+        type="button"
+        className="group flex w-full cursor-not-allowed items-center gap-3 rounded-2xl px-4 py-3 font-bold text-muted opacity-75"
+        aria-disabled
+      >
+        <Settings className="h-5 w-5 text-muted" />
+        Paramètres
+      </button>
+    </div>
+  )
+}
+
+function BrandBlock({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <Link href="/" onClick={onNavigate} className="flex min-w-0 items-center gap-3">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary text-xl font-black text-white shadow-soft">
+        V
+      </div>
+      <div className="truncate text-xl font-black tracking-tight text-text lg:text-2xl">VisaFlow</div>
+    </Link>
+  )
+}
+
+type DashboardSidebarProps = {
+  mobileOpen?: boolean
+  onMobileClose?: () => void
+}
+
+export function DashboardSidebar({ mobileOpen = false, onMobileClose }: DashboardSidebarProps) {
+  const pathname = normalizeDashboardPath(usePathname() || '')
+  const close = () => onMobileClose?.()
 
   return (
-    <aside className="flex w-72 flex-col gap-10 border-r border-line bg-surface p-8">
-      <Link href="/" className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-xl font-black text-white shadow-soft">
-          V
+    <>
+      {/* Mobile overlay + drawer */}
+      <button
+        type="button"
+        aria-label="Fermer le menu"
+        className={cn(
+          'fixed inset-0 z-[90] bg-text/45 backdrop-blur-[2px] transition-opacity duration-300 lg:hidden',
+          mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
+        )}
+        onClick={close}
+      />
+      <aside
+        id="dashboard-mobile-nav"
+        className={cn(
+          'fixed inset-y-0 left-0 z-[100] flex w-[min(22rem,92vw)] flex-col gap-8 overflow-y-auto overscroll-contain border-r border-line bg-surface p-6 pb-8 shadow-2xl transition-transform duration-300 ease-out lg:hidden',
+          mobileOpen ? 'translate-x-0' : 'pointer-events-none -translate-x-full',
+        )}
+        aria-hidden={!mobileOpen}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <BrandBlock onNavigate={close} />
+          <button
+            type="button"
+            className="shrink-0 rounded-xl border border-line p-2 text-muted transition-colors hover:bg-primary-soft hover:text-primary"
+            onClick={close}
+            aria-label="Fermer la navigation"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
-        <div className="text-2xl font-black tracking-tight text-text">VisaFlow</div>
-      </Link>
+        <NavSections pathname={pathname} onNavigate={close} />
+        <SettingsStub />
+      </aside>
 
-      <div className="flex flex-col gap-8">
-        <nav className="flex flex-col gap-2" aria-label="Espace tableau de bord">
-          <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-muted">
-            Dashboard
-          </div>
-          {dashboardNav.map((item) => {
-            const active = hrefActive(pathname, item)
-            const isOverview = item.href === '/overview'
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'group flex items-center justify-between rounded-2xl px-4 py-3 font-bold transition-all',
-                  active
-                    ? 'bg-primary text-white shadow-soft'
-                    : 'text-muted hover:bg-primary-soft hover:text-primary',
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <item.icon
-                    className={cn(
-                      'h-5 w-5',
-                      active ? 'text-white' : 'text-muted group-hover:text-primary',
-                    )}
-                  />
-                  {item.label}
-                </div>
-                {!isOverview && (
-                  <ChevronRight
-                    className={cn(
-                      'h-4 w-4 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-2',
-                      active && 'opacity-100 translate-x-0',
-                    )}
-                  />
-                )}
-              </Link>
-            )
-          })}
-        </nav>
-
-        <nav className="flex flex-col gap-2" aria-label="Outils mobilité">
-          <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-muted">
-            Mobilité
-          </div>
-          {explorerNav.map((item) => {
-            const active = hrefActive(pathname, item)
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'group flex items-center justify-between rounded-2xl px-4 py-3 font-bold transition-all',
-                  active
-                    ? 'bg-primary-soft text-primary ring-1 ring-primary/20'
-                    : 'text-muted hover:bg-primary-soft hover:text-primary',
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <item.icon
-                    className={cn(
-                      'h-5 w-5',
-                      active ? 'text-primary' : 'text-muted group-hover:text-primary',
-                    )}
-                  />
-                  {item.label}
-                </div>
-                <ChevronRight
-                  className={cn(
-                    'h-4 w-4 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 -translate-x-2',
-                    active && 'opacity-100 translate-x-0',
-                  )}
-                />
-              </Link>
-            )
-          })}
-        </nav>
-      </div>
-
-      <div className="mt-auto border-t border-line pt-8">
-        <button
-          type="button"
-          className="group flex w-full cursor-not-allowed items-center gap-3 rounded-2xl px-4 py-3 font-bold text-muted opacity-75"
-          aria-disabled
-        >
-          <Settings className="h-5 w-5 text-muted" />
-          Paramètres
-        </button>
-      </div>
-    </aside>
+      {/* Desktop sidebar */}
+      <aside className="hidden w-72 shrink-0 flex-col gap-10 border-r border-line bg-surface p-6 lg:flex lg:p-8">
+        <BrandBlock />
+        <NavSections pathname={pathname} />
+        <SettingsStub />
+      </aside>
+    </>
   )
 }

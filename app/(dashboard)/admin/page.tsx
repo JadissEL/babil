@@ -191,7 +191,7 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center p-20 text-slate-400">
+      <div className="flex justify-center px-4 py-16 text-slate-400 sm:p-20">
         <p className="font-bold text-muted">Chargement…</p>
       </div>
     )
@@ -199,7 +199,7 @@ export default function AdminPage() {
 
   if (forbidden) {
     return (
-      <div className="mx-auto max-w-xl py-16 text-center">
+      <div className="mx-auto max-w-xl px-4 py-12 text-center sm:py-16">
         <ShieldAlert className="mx-auto mb-4 h-14 w-14 text-danger" />
         <h1 className="text-2xl font-black text-text">Accès admin refusé</h1>
         <p className="mt-2 text-muted">Cette zone est réservée aux comptes avec rôle ADMIN.</p>
@@ -211,53 +211,75 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 pb-24">
+    <div className="mx-auto max-w-6xl space-y-6 pb-20 sm:space-y-8 sm:pb-24">
       <div>
-        <h1 className="text-3xl font-black text-text">Administration</h1>
+        <h1 className="text-2xl font-black text-text sm:text-3xl">Administration</h1>
         <p className="mt-1 text-sm text-muted">Modération rapide et édition des scores pays (MVP).</p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Button variant={tab === 'comments' ? 'default' : 'outline'} type="button" onClick={() => setTab('comments')}>
-          <MessageSquare className="h-4 w-4" /> Commentaires
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <Button
+          className="w-full justify-center gap-2 sm:w-auto sm:justify-start"
+          variant={tab === 'comments' ? 'default' : 'outline'}
+          type="button"
+          onClick={() => setTab('comments')}
+        >
+          <MessageSquare className="h-4 w-4 shrink-0" /> Commentaires
         </Button>
-        <Button variant={tab === 'countries' ? 'default' : 'outline'} type="button" onClick={() => setTab('countries')}>
-          <Database className="h-4 w-4" /> Données pays
+        <Button
+          className="w-full justify-center gap-2 sm:w-auto sm:justify-start"
+          variant={tab === 'countries' ? 'default' : 'outline'}
+          type="button"
+          onClick={() => setTab('countries')}
+        >
+          <Database className="h-4 w-4 shrink-0" /> Données pays
         </Button>
-        <Button variant={tab === 'assist' ? 'default' : 'outline'} type="button" onClick={() => setTab('assist')}>
-          <FileStack className="h-4 w-4" /> Assist ({assistRows.length})
+        <Button
+          className="w-full justify-center gap-2 sm:w-auto sm:justify-start"
+          variant={tab === 'assist' ? 'default' : 'outline'}
+          type="button"
+          onClick={() => setTab('assist')}
+        >
+          <FileStack className="h-4 w-4 shrink-0" /> Assist ({assistRows.length})
         </Button>
-        <Link href="/moderation" className="inline-flex items-center gap-2 rounded-xl border border-line px-4 py-2 text-sm font-bold text-muted hover:bg-primary-soft">
+        <Link
+          href="/moderation"
+          className="inline-flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-xl border border-line px-4 py-2 text-center text-sm font-bold text-muted hover:bg-primary-soft sm:min-h-0 sm:w-auto"
+        >
           Vue modération complète
         </Link>
       </div>
 
       {agentHealth && (
         <Card>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Activity className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-black text-text">Agent Health</h2>
-              <button
-                type="button"
-                onClick={() => void loadAgentHealth()}
-                className="ml-auto rounded-lg border border-line bg-[#f8f2e8] px-3 py-1 text-[10px] font-black uppercase tracking-wider text-muted hover:bg-primary-soft"
-              >
-                Refresh now
-              </button>
-              <button
-                type="button"
-                onClick={() => setAutoRefresh((v) => !v)}
-                className={`rounded-lg border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${
-                  autoRefresh
-                    ? 'border-primary/30 bg-primary-soft text-primary'
-                    : 'border-line bg-[#f8f2e8] text-muted hover:bg-primary-soft'
-                }`}
-              >
-                Auto refresh: {autoRefresh ? 'on' : 'off'}
-              </button>
+          <CardContent className="space-y-4 p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <Activity className="h-5 w-5 shrink-0 text-primary" />
+                <h2 className="text-lg font-black text-text">Agent Health</h2>
+              </div>
+              <div className="flex flex-wrap gap-2 sm:ml-auto">
+                <button
+                  type="button"
+                  onClick={() => void loadAgentHealth()}
+                  className="rounded-lg border border-line bg-[#f8f2e8] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-muted hover:bg-primary-soft sm:py-1"
+                >
+                  Refresh now
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAutoRefresh((v) => !v)}
+                  className={`rounded-lg border px-3 py-2 text-[10px] font-black uppercase tracking-wider sm:py-1 ${
+                    autoRefresh
+                      ? 'border-primary/30 bg-primary-soft text-primary'
+                      : 'border-line bg-[#f8f2e8] text-muted hover:bg-primary-soft'
+                  }`}
+                >
+                  Auto refresh: {autoRefresh ? 'on' : 'off'}
+                </button>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-5">
               <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
                 <p className="text-[10px] font-black uppercase tracking-wider text-muted">Queued</p>
                 <p className="text-lg font-black text-text">{agentHealth.taskSummary.queued}</p>
@@ -360,12 +382,16 @@ export default function AdminPage() {
                       <span>{c.country.name}</span>
                     </div>
                     <p className="rounded-xl border border-line bg-[#f8f2e8] p-4 text-muted">&quot;{c.content}&quot;</p>
-                    <div className="flex gap-3">
-                      <Button type="button" className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-500" onClick={() => void approve(c.id, 'APPROVED')}>
-                        <CheckCircle className="h-4 w-4" /> Approuver
+                    <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                      <Button
+                        type="button"
+                        className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-500"
+                        onClick={() => void approve(c.id, 'APPROVED')}
+                      >
+                        <CheckCircle className="h-4 w-4 shrink-0" /> Approuver
                       </Button>
                       <Button type="button" variant="destructive" className="flex-1 gap-2" onClick={() => void approve(c.id, 'REJECTED')}>
-                        <XCircle className="h-4 w-4" /> Refuser
+                        <XCircle className="h-4 w-4 shrink-0" /> Refuser
                       </Button>
                     </div>
                   </CardContent>
@@ -386,12 +412,17 @@ export default function AdminPage() {
 
       {tab === 'assist' && (
         <section className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-lg font-bold text-text">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <h2 className="text-base font-bold text-text sm:text-lg">
               File Assist candidatures ({filteredAssistRows.length}
               {assistFilter.trim() ? ` / ${assistRows.length}` : ''})
             </h2>
-            <Button type="button" variant="outline" onClick={() => void loadAssist()}>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full shrink-0 sm:w-auto"
+              onClick={() => void loadAssist()}
+            >
               Rafraîchir
             </Button>
           </div>
@@ -405,7 +436,7 @@ export default function AdminPage() {
                   value={assistFilter}
                   onChange={(e) => setAssistFilter(e.target.value)}
                   placeholder="E-mail, statut, forfait, référence…"
-                  className="mt-1 w-full max-w-md rounded-xl border border-line bg-[#f8f2e8] px-3 py-2 text-sm font-medium text-text outline-none focus:ring-2 focus:ring-primary/35"
+                  className="mt-1 w-full max-w-full rounded-xl border border-line bg-[#f8f2e8] px-3 py-2 text-sm font-medium text-text outline-none focus:ring-2 focus:ring-primary/35 sm:max-w-md"
                 />
               </label>
             </div>
@@ -424,18 +455,18 @@ export default function AdminPage() {
               {filteredAssistRows.map((r) => (
                 <Card key={r.id} className="border-line bg-surface">
                   <CardContent className="space-y-4 p-5">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                      <div className="min-w-0">
                         <p className="text-[10px] font-black uppercase tracking-wider text-muted">
                           #{r.id} · {r.category}
                         </p>
-                        <p className="text-lg font-black text-text">{r.packageName}</p>
+                        <p className="break-words text-lg font-black text-text">{r.packageName}</p>
                         {typeof r.priceMad === 'number' ? (
                           <p className="text-sm font-bold text-primary">{formatPriceMad(r.priceMad)}</p>
                         ) : null}
                       </div>
                       <select
-                        className="rounded-xl border border-line bg-[#f8f2e8] px-3 py-2 text-xs font-black uppercase tracking-wider text-text"
+                        className="w-full shrink-0 rounded-xl border border-line bg-[#f8f2e8] px-3 py-2 text-xs font-black uppercase tracking-wider text-text sm:w-auto"
                         value={r.status}
                         onChange={(e) => void updateAssistStatus(r.id, e.target.value)}
                       >
@@ -447,11 +478,11 @@ export default function AdminPage() {
                       </select>
                     </div>
                     <div className="grid gap-2 text-xs text-muted md:grid-cols-2">
-                      <div>
+                      <div className="break-words">
                         <span className="font-black text-text">Client : </span>
                         {r.userName ?? '—'} ({r.userEmail})
                       </div>
-                      <div>
+                      <div className="break-all">
                         <span className="font-black text-text">Contact formulaire : </span>
                         {r.contactEmail ?? '—'}
                       </div>

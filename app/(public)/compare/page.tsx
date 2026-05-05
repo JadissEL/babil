@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function ComparePage() {
   return (
-    <PageContainer className="py-10 sm:py-12">
+    <PageContainer className="py-8 sm:py-10 lg:py-12">
       <CompareExperience />
     </PageContainer>
   )

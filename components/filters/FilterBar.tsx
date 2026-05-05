@@ -35,15 +35,16 @@ export function FilterBar({
         onValueChange={(v) => onGoalChange?.(v)}
       >
         <SelectTrigger className="w-[190px]">
-          <SelectValue placeholder="Goal" />
+          <SelectValue placeholder="Objectif" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All goals</SelectItem>
-          <SelectItem value="study">Study</SelectItem>
-          <SelectItem value="education">Education</SelectItem>
-          <SelectItem value="work">Work</SelectItem>
-          <SelectItem value="business">Business</SelectItem>
-          <SelectItem value="tourism">Tourism</SelectItem>
+          <SelectItem value="">Tous les objectifs</SelectItem>
+          <SelectItem value="study">Études longues</SelectItem>
+          <SelectItem value="education">Éducation</SelectItem>
+          <SelectItem value="work">Travail</SelectItem>
+          <SelectItem value="business">Affaires</SelectItem>
+          <SelectItem value="tourism">Tourisme</SelectItem>
+          <SelectItem value="short_course">Formation courte</SelectItem>
         </SelectContent>
       </Select>
 
@@ -53,15 +54,15 @@ export function FilterBar({
         onValueChange={(v) => onRegionChange?.(v)}
       >
         <SelectTrigger className="w-[190px]">
-          <SelectValue placeholder="Region" />
+          <SelectValue placeholder="Région" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All regions</SelectItem>
+          <SelectItem value="">Toutes les régions</SelectItem>
           <SelectItem value="schengen">Schengen</SelectItem>
           <SelectItem value="europe">Europe</SelectItem>
-          <SelectItem value="asia">Asia</SelectItem>
-          <SelectItem value="africa">Africa</SelectItem>
-          <SelectItem value="americas">Americas</SelectItem>
+          <SelectItem value="asia">Asie</SelectItem>
+          <SelectItem value="africa">Afrique</SelectItem>
+          <SelectItem value="americas">Amériques</SelectItem>
         </SelectContent>
       </Select>
     </div>

@@ -32,7 +32,7 @@ export function CountryComparePicker({
 
   return (
     <Card className="border-line bg-surface">
-      <CardContent className="space-y-4 p-5">
+      <CardContent className="space-y-3 p-4 sm:space-y-4 sm:p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <Label htmlFor="compare-search">Recherche pays</Label>
@@ -43,13 +43,13 @@ export function CountryComparePicker({
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           <Input
             id="compare-search"
-            className="pl-10"
+            className="min-h-[2.75rem] pl-10 text-base sm:min-h-0 sm:text-sm"
             placeholder="Italie, France…"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
-        <div className="max-h-72 space-y-2 overflow-y-auto pr-1">
+        <div className="max-h-[min(17.5rem,42vh)] space-y-2 overflow-y-auto overscroll-contain pr-1 sm:max-h-72">
           {filtered.map((o) => {
             const active = selectedIds.includes(o.id)
             const disabled = !active && selectedIds.length >= max
@@ -59,7 +59,7 @@ export function CountryComparePicker({
                 type="button"
                 variant={active ? 'default' : 'outline'}
                 disabled={disabled}
-                className={cn('h-auto w-full justify-between py-3 text-left', disabled && 'opacity-40')}
+                className={cn('h-auto min-h-[3rem] w-full justify-between gap-2 px-3 py-3 text-left sm:min-h-0', disabled && 'opacity-40')}
                 onClick={() => onToggle(o.id)}
               >
                 <span className="font-bold">{o.name}</span>

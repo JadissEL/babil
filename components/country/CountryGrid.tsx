@@ -13,7 +13,7 @@ export type CountryGridItem = {
  */
 export default function CountryGrid({ countries }: { countries: CountryGridItem[] }) {
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <div className="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
       {countries.map((country) => {
         const { id, countryRouteId, ...rest } = country
         const routeTarget =

@@ -83,12 +83,12 @@ export function CountryCard({
           : undefined
       }
       className={cn(
-        'group rounded-2xl border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft',
+        'group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft',
         interactive || focusableLink ? 'cursor-pointer' : undefined,
       )}
     >
-      <CardContent className="space-y-5 p-0">
-        <div className="relative h-36 overflow-hidden rounded-t-2xl border-b border-line">
+      <CardContent className="flex min-h-0 flex-1 flex-col space-y-0 p-0">
+        <div className="relative h-36 shrink-0 overflow-hidden rounded-t-2xl border-b border-line">
           <img
             src={imageSrc}
             alt={`${scenicLabel}, ${name}`}
@@ -102,8 +102,10 @@ export function CountryCard({
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          <div className="absolute bottom-2 left-3 rounded-full border border-white/40 bg-black/35 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white">
-            {scenicLabel} - {name}
+          <div className="absolute bottom-2 left-3 max-w-[calc(100%-1.25rem)] rounded-full border border-white/40 bg-black/35 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white">
+            <span className="line-clamp-2 break-words whitespace-normal">
+              {scenicLabel} - {name}
+            </span>
           </div>
           {fallbackUsed ? (
             <div className="absolute right-3 top-2 rounded-full border border-amber-200/70 bg-amber-100/90 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-amber-700">
@@ -112,15 +114,15 @@ export function CountryCard({
           ) : null}
         </div>
 
-        <div className="space-y-5 px-6 pb-6">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
+        <div className="flex min-h-0 flex-1 flex-col gap-5 px-6 pb-6 pt-5">
+          <div className="flex min-w-0 items-start justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               {iso ? (
-                <span className={cn(`fi fi-${iso}`, 'text-2xl leading-none shadow-sm')} aria-hidden />
+                <span className={cn(`fi fi-${iso}`, 'shrink-0 text-2xl leading-none shadow-sm')} aria-hidden />
               ) : (
                 <Globe className="size-6 shrink-0 text-muted" aria-hidden />
               )}
-              <h3 className="text-lg font-semibold tracking-tight text-text">{name}</h3>
+              <h3 className="min-w-0 break-words text-lg font-semibold tracking-tight text-text">{name}</h3>
             </div>
 
             <Badge className="shrink-0" variant="default">
@@ -133,7 +135,7 @@ export function CountryCard({
             <Progress value={visaScore} />
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="mt-auto flex min-w-0 flex-wrap gap-2">
             <Badge className={cn(frictionStripClass(friction), 'font-semibold')} variant="secondary">
               ⚡ {friction}
             </Badge>
@@ -151,7 +153,7 @@ export function CountryCard({
     return (
       <Link
         href={`/countries/${countryId}`}
-        className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+        className="flex h-full min-h-0 min-w-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
       >
         {card}
       </Link>

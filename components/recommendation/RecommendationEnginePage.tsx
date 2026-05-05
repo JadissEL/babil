@@ -128,19 +128,26 @@ export default function RecommendationEnginePage() {
   return (
     <div className="mx-auto max-w-6xl space-y-8 pb-24">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="rounded-2xl bg-blue-600 p-3 text-white shadow-lg shadow-blue-900/40">
-            <Activity className="h-8 w-8" />
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <div className="rounded-2xl bg-blue-600 p-2.5 text-white shadow-lg shadow-blue-900/40 sm:p-3">
+            <Activity className="h-7 w-7 sm:h-8 sm:w-8" />
           </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">Visa Probability Engine</h1>
+          <div className="min-w-0">
+            <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">
+              Moteur de probabilités et analyse
+            </h1>
             <p className="mt-1 text-sm font-medium text-slate-400">
               Analyse déterministe, graphiques radar et synthèses — même moteur que les recommandations.
             </p>
           </div>
         </div>
-        <Button variant="outline" type="button" onClick={() => void loadProfile()} className="shrink-0 gap-2">
-          <RefreshCw className="h-4 w-4" /> Recharger profil
+        <Button
+          variant="outline"
+          type="button"
+          onClick={() => void loadProfile()}
+          className="w-full shrink-0 gap-2 md:w-auto"
+        >
+          <RefreshCw className="h-4 w-4 shrink-0" /> Recharger profil
         </Button>
       </div>
 
@@ -150,8 +157,8 @@ export default function RecommendationEnginePage() {
         </p>
       )}
 
-      <Card className="border-gray-800 bg-[#111827]">
-        <CardContent className="space-y-6 p-6">
+      <Card className="min-w-0 border-gray-800 bg-[#111827]">
+        <CardContent className="space-y-6 p-4 sm:p-6">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-amber-400" aria-hidden />
             <h2 className="text-lg font-semibold text-white">Paramètres du profil</h2>
@@ -219,7 +226,12 @@ export default function RecommendationEnginePage() {
             </label>
           </div>
 
-          <Button type="button" onClick={() => void handleRun()} disabled={loading} className="gap-2">
+          <Button
+            type="button"
+            onClick={() => void handleRun()}
+            disabled={loading}
+            className="w-full gap-2 sm:w-auto"
+          >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             Lancer l&apos;analyse
           </Button>
@@ -227,9 +239,9 @@ export default function RecommendationEnginePage() {
       </Card>
 
       {results.length > 0 && chartReco?.breakdown && (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="border-gray-800 bg-[#111827]">
-            <CardContent className="space-y-4 p-6">
+        <div className="grid min-w-0 gap-6 lg:grid-cols-2">
+          <Card className="min-w-0 border-gray-800 bg-[#111827]">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <h2 className="text-lg font-semibold text-white">Radar — {chartReco.name}</h2>
                 <Select
@@ -252,8 +264,8 @@ export default function RecommendationEnginePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-800 bg-[#111827]">
-            <CardContent className="space-y-4 p-6">
+          <Card className="min-w-0 border-gray-800 bg-[#111827]">
+            <CardContent className="space-y-4 p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-white">Détail barres</h2>
               <div className="grid gap-3">
                 <MetricBar label="Visa" value={chartReco.breakdown.visa} />

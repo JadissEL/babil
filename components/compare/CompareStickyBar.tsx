@@ -15,22 +15,39 @@ export function CompareStickyBar({ names, max, onClear, onScrollToTable }: Compa
   if (names.length === 0) return null
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-4 pt-2">
-      <div className="pointer-events-auto flex w-full max-w-4xl flex-col gap-3 rounded-2xl border border-line bg-surface/95 px-4 py-3 shadow-card backdrop-blur md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2 text-sm text-muted">
-          <Scale className="h-5 w-5 shrink-0 text-primary" aria-hidden />
-          <span className="font-black text-text">
-            {names.length}/{max}
-          </span>
-          <span className="text-muted">—</span>
-          <span className="truncate font-medium">{names.join(' · ')}</span>
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2 sm:px-4 sm:pb-4">
+      <div className="pointer-events-auto flex w-full max-w-4xl flex-col gap-3 rounded-2xl border border-line bg-surface/95 px-3 py-3 shadow-card backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-4">
+        <div className="min-w-0 sm:flex sm:flex-1 sm:items-center">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted sm:text-sm">
+            <Scale className="h-5 w-5 shrink-0 text-primary" aria-hidden />
+            <span className="font-black text-text">
+              {names.length}/{max}
+            </span>
+            <span className="hidden text-muted sm:inline" aria-hidden>
+              —
+            </span>
+            <span className="w-full min-w-0 line-clamp-2 break-words font-medium leading-snug text-text sm:w-auto sm:max-w-[min(100%,28rem)]">
+              {names.join(' · ')}
+            </span>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button type="button" variant="secondary" className="text-xs font-black uppercase tracking-wider" onClick={onScrollToTable}>
-            Voir le tableau
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0 sm:flex-row sm:gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            className="text-[10px] font-black uppercase tracking-wider sm:text-xs"
+            onClick={onScrollToTable}
+          >
+            <span className="sm:hidden">Tableau</span>
+            <span className="hidden sm:inline">Voir le tableau</span>
           </Button>
-          <Button type="button" variant="outline" className="gap-1 text-xs font-black uppercase tracking-wider" onClick={onClear}>
-            <X className="h-4 w-4" /> Effacer
+          <Button
+            type="button"
+            variant="outline"
+            className="gap-1 text-[10px] font-black uppercase tracking-wider sm:text-xs"
+            onClick={onClear}
+          >
+            <X className="h-4 w-4 shrink-0" aria-hidden /> Effacer
           </Button>
         </div>
       </div>

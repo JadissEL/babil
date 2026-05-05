@@ -226,7 +226,61 @@ export function MyDelegatedRequests() {
           </Link>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-line">
+        <>
+          <ul className="space-y-3 md:hidden">
+            {items.map((r) => (
+              <li
+                key={r.id}
+                className="rounded-2xl border border-line bg-surface p-4 shadow-soft"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-muted">Réf. #{r.id}</p>
+                    <p className="mt-1 font-black text-text">{r.packageName ?? r.packageId}</p>
+                    {typeof r.priceMad === 'number' ? (
+                      <p className="mt-1 text-xs font-bold text-primary">{formatPriceMad(r.priceMad)}</p>
+                    ) : null}
+                  </div>
+                  <span className="rounded-lg border border-line bg-[#f8f2e8] px-2 py-1 text-[10px] font-black">
+                    {STATUS_FR[r.status] ?? r.status}
+                  </span>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium text-muted">
+                  <span>{categoryFr(r.category)}</span>
+                  <span aria-hidden>·</span>
+                  <time dateTime={r.createdAt}>
+                    {new Date(r.createdAt).toLocaleString('fr-FR', {
+                      dateStyle: 'short',
+                      timeStyle: 'short',
+                    })}
+                  </time>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => void toggleDetail(r.id)}
+                  className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-line bg-[#f8f2e8] py-2.5 text-[10px] font-black uppercase tracking-wider text-primary hover:bg-primary-soft"
+                >
+                  {openId === r.id ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+                  {openId === r.id ? 'Fermer le détail' : 'Voir le formulaire envoyé'}
+                </button>
+                {openId === r.id ? (
+                  <div className="mt-4 border-t border-line pt-4">
+                    {detailLoading ? (
+                      <div className="flex items-center gap-2 text-xs font-bold text-muted">
+                        <Loader2 className="h-4 w-4 animate-spin text-primary" /> Chargement du formulaire envoyé…
+                      </div>
+                    ) : detailError ? (
+                      <p className="text-xs font-bold text-danger">{detailError}</p>
+                    ) : detailPayload ? (
+                      <PayloadReadback payload={detailPayload} />
+                    ) : null}
+                  </div>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden overflow-x-auto rounded-2xl border border-line md:block">
           <table className="w-full min-w-[520px] text-left text-sm">
             <thead>
               <tr className="border-b border-line bg-[#f8f2e8]">
@@ -291,7 +345,8 @@ export function MyDelegatedRequests() {
               ))}
             </tbody>
           </table>
-        </div>
+          </div>
+        </>
       )}
     </section>
   )

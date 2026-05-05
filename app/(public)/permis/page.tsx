@@ -77,7 +77,7 @@ export default function PermisPage() {
           <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       ) : (
-        <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid auto-rows-fr grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {countries.map((c: any) => {
             const drive = c.full_data?.driving_license
             if (!drive) return null
@@ -85,52 +85,54 @@ export default function PermisPage() {
             return (
               <div
                 key={c.id}
-                className="flex flex-col overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card transition-all duration-300 hover:border-primary/30"
+                className="flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card transition-all duration-300 hover:border-primary/30"
               >
                 <div className="border-b border-line p-8">
-                  <div className="mb-4 flex items-start justify-between gap-3">
-                    <h3 className="text-2xl font-black text-text">{c.name}</h3>
-                    {getStatusBadge(drive.status)}
+                  <div className="mb-4 flex min-w-0 items-start justify-between gap-3">
+                    <h3 className="min-w-0 break-words text-2xl font-black text-text">{c.name}</h3>
+                    <div className="shrink-0">{getStatusBadge(drive.status)}</div>
                   </div>
                   <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted">
                     <Clock className="h-3 w-3" /> Durée: {drive.duration || 'N/A'}
                   </div>
                 </div>
 
-                <div className="flex-1 space-y-6 p-8">
-                  <div className="flex gap-4">
+                <div className="min-h-0 flex-1 space-y-6 overflow-y-auto p-8">
+                  <div className="flex min-w-0 gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary ring-1 ring-primary/35">
                       <Info className="h-5 w-5" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Conditions</p>
-                      <p className="text-sm font-medium leading-relaxed text-muted">{drive.conditions}</p>
+                      <p className="break-words text-sm font-medium leading-relaxed text-muted">{drive.conditions}</p>
                     </div>
                   </div>
 
-                  <div className="flex gap-4">
+                  <div className="flex min-w-0 gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e9f9f1] text-success ring-1 ring-[#94dfbd]">
                       <CreditCard className="h-5 w-5" />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">
                         Conversion
                       </p>
-                      <p className="text-sm font-medium leading-relaxed text-muted">
+                      <p className="break-words text-sm font-medium leading-relaxed text-muted">
                         {drive.conversion_possible ? 'Possible' : 'Non possible'} — {drive.conversion_details}
                       </p>
                     </div>
                   </div>
 
                   {drive.restrictions && (
-                    <div className="flex gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4">
+                    <div className="flex min-w-0 gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4">
                       <AlertTriangle className="h-5 w-5 shrink-0 text-red-400" />
-                      <p className="text-xs font-bold leading-relaxed text-danger">{drive.restrictions}</p>
+                      <p className="min-w-0 break-words text-xs font-bold leading-relaxed text-danger">
+                        {drive.restrictions}
+                      </p>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-auto border-t border-line bg-[#f8f2e8] p-8">
+                <div className="mt-auto shrink-0 border-t border-line bg-inset p-8">
                   <a
                     href={`/countries/${c.id}`}
                     className="flex w-full items-center justify-center gap-2 rounded-2xl border border-line bg-surface py-4 text-sm font-black text-text transition-colors hover:bg-primary-soft hover:border-primary/40"

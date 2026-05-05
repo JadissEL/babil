@@ -36,14 +36,14 @@ function scoreTone(score: number) {
   if (score >= 75) return 'border-[#94dfbd] bg-[#e9f9f1] text-success'
   if (score >= 55) return 'border-[#f2c27a] bg-[#fff5e7] text-warning'
   if (score >= 35) return 'border-[#f3afaf] bg-[#fff0f0] text-danger'
-  return 'border-line bg-[#f8f2e8] text-text'
+  return 'border-line bg-inset text-text'
 }
 
 function scoreLabel(score: number) {
-  if (score >= 75) return 'Easy'
-  if (score >= 55) return 'Medium'
-  if (score >= 35) return 'Hard'
-  return 'Critical'
+  if (score >= 75) return 'Facile'
+  if (score >= 55) return 'Moyenne'
+  if (score >= 35) return 'Difficile'
+  return 'Critique'
 }
 
 function barTone(score: number) {
@@ -185,22 +185,22 @@ export default function CountryDetailPage() {
 
       <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-line bg-surface p-5 shadow-card lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted">Quick decision</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted">Décision rapide</p>
           <p className="mt-1 text-sm font-bold text-text">
             {country.name} {'→'} potentiel{' '}
             {studyScore >= 70 ? 'études' : tourismScore >= 70 ? 'tourisme' : 'mixte'}, friction{' '}
-            {scoreLabel(frictionScore).toLowerCase()}.
+            {(scoreLabel(frictionScore)).toLowerCase()}.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <span className={`rounded-xl border px-4 py-2 text-xs font-black uppercase tracking-widest ${scoreTone(finalScore)}`}>
-            Final score {finalScore}/100
+            Score final {finalScore}/100
           </span>
           <Link
             href="/schengen"
-            className="rounded-xl border border-line bg-[#f8f2e8] px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/40 hover:bg-primary-soft"
+            className="rounded-xl border border-line bg-inset px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/40 hover:bg-primary-soft"
           >
-            Schengen Hub
+            Vue Schengen
           </Link>
         </div>
       </div>
@@ -227,7 +227,7 @@ export default function CountryDetailPage() {
                   className={`ml-auto flex items-center gap-2 rounded-2xl border px-5 py-3 text-sm font-black transition-all ${
                     favorited
                       ? 'border-red-500/35 bg-red-500/15 text-red-300 hover:bg-red-500/25'
-                      : 'border-line bg-[#f8f2e8] text-text hover:bg-primary-soft'
+                      : 'border-line bg-inset text-text hover:bg-primary-soft'
                   } ${favLoading ? 'opacity-60' : ''}`}
                 >
                   <Heart className={`h-4 w-4 ${favorited ? 'fill-current' : ''}`} />
@@ -247,29 +247,29 @@ export default function CountryDetailPage() {
               </div>
 
               <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-                <div className="rounded-2xl border border-line bg-[#f8f2e8] p-4 text-center">
+                <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Score réalité</div>
                   <div className="text-2xl font-black text-text">{full.brutal_reality_score}/10</div>
                 </div>
-                <div className="rounded-2xl border border-line bg-[#f8f2e8] p-4 text-center">
+                <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Acceptation</div>
                   <div className="text-2xl font-black text-text">{full.acceptance_rate_morocco}</div>
                 </div>
-                <div className="rounded-2xl border border-line bg-[#f8f2e8] p-4 text-center">
+                <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Friction RDV</div>
                   <div className="text-2xl font-black text-text">{full.friction_score}/100</div>
                 </div>
-                <div className="rounded-2xl border border-line bg-[#f8f2e8] p-4 text-center">
+                <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Confiance</div>
                   <div className="text-2xl font-black text-text">{full.confidence_score}%</div>
                 </div>
               </div>
 
               <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <ScoreBar label="Visa tourism" value={tourismScore} />
-                <ScoreBar label="Visa study" value={studyScore} />
-                <ScoreBar label="Visa work" value={workScore} />
-                <ScoreBar label="Visa business" value={businessScore} />
+                <ScoreBar label="Visa tourisme" value={tourismScore} />
+                <ScoreBar label="Visa études" value={studyScore} />
+                <ScoreBar label="Visa travail" value={workScore} />
+                <ScoreBar label="Visa affaires" value={businessScore} />
               </div>
             </div>
 
@@ -341,7 +341,7 @@ export default function CountryDetailPage() {
                 className="space-y-4 rounded-[2rem] border border-primary/25 bg-surface p-6 shadow-soft"
               >
                 <textarea
-                  className="min-h-[100px] w-full rounded-2xl border border-line bg-[#f8f2e8] p-4 font-medium text-text outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/50"
+                  className="min-h-[100px] w-full rounded-2xl border border-line bg-inset p-4 font-medium text-text outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/50"
                   placeholder="Partagez votre expérience (rendez-vous, refus, accueil…)"
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
@@ -367,7 +367,7 @@ export default function CountryDetailPage() {
                 {message && <p className="text-xs font-bold text-success">{message}</p>}
               </form>
             ) : (
-              <div className="rounded-[2rem] border border-line bg-[#f8f2e8] p-8 text-center">
+              <div className="rounded-[2rem] border border-line bg-inset p-8 text-center">
                 <p className="font-bold text-muted">Connectez-vous pour partager votre expérience.</p>
               </div>
             )}
@@ -403,7 +403,7 @@ export default function CountryDetailPage() {
           <div className="space-y-8">
             <div className="sticky top-24 rounded-[2.5rem] border border-line bg-surface p-8 shadow-card lg:top-28">
               <h3 className="mb-8 flex items-center gap-2 text-xl font-black text-text">
-                <ShieldCheck className="h-5 w-5 text-success" /> Embassy insights
+                <ShieldCheck className="h-5 w-5 text-success" /> Contexte ambassade
               </h3>
               
               <div className="space-y-8">
@@ -419,13 +419,13 @@ export default function CountryDetailPage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-muted">Tourisme</span>
-                      <span className="rounded-lg bg-[#f8f2e8] px-2 py-1 text-xs font-black text-text">
+                      <span className="rounded-lg bg-inset px-2 py-1 text-xs font-black text-text">
                         {full.visa_system?.tourism?.difficulty}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-muted">Travail</span>
-                      <span className="rounded-lg bg-[#f8f2e8] px-2 py-1 text-xs font-black text-text">
+                      <span className="rounded-lg bg-inset px-2 py-1 text-xs font-black text-text">
                         {full.visa_system?.work?.availability || 'Limitée'}
                       </span>
                     </div>
@@ -434,19 +434,22 @@ export default function CountryDetailPage() {
 
                 <div className="border-t border-line pt-8">
                   <div className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">
-                    Decision meters
+                    Synthèse des scores
                   </div>
                   <div className="space-y-3">
-                    <SidebarBar label="Visa avg" value={Math.round((tourismScore + studyScore + workScore + businessScore) / 4)} />
-                    <SidebarBar label="Friction readiness" value={frictionScore} />
-                    <SidebarBar label="Global score" value={finalScore} />
+                    <SidebarBar
+                      label="Moyenne visas"
+                      value={Math.round((tourismScore + studyScore + workScore + businessScore) / 4)}
+                    />
+                    <SidebarBar label="Lecture friction" value={frictionScore} />
+                    <SidebarBar label="Score global" value={finalScore} />
                   </div>
                 </div>
 
                 <div className="border-t border-line pt-8">
                   <div className="rounded-2xl border border-primary/30 bg-primary-soft p-4">
                     <h4 className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
-                      <CheckCircle2 className="w-3 h-3" /> Pro Tip (Darija)
+                      <CheckCircle2 className="w-3 h-3" /> Conseil (Darija)
                     </h4>
                     <p className="text-sm font-black italic text-text">
                       "{full.morocco_insights?.pro_tip}"

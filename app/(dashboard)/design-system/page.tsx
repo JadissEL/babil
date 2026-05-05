@@ -26,16 +26,16 @@ export default function DesignSystemPage() {
   const [country, setCountry] = useState('france')
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 pb-20">
+    <div className="mx-auto max-w-6xl space-y-6 pb-16 sm:space-y-8 sm:pb-20">
       <header className="space-y-2">
-        <h1 className="text-3xl font-black text-text">Design System Library</h1>
-        <p className="text-sm text-muted">
+        <h1 className="text-2xl font-black text-text sm:text-3xl">Design System Library</h1>
+        <p className="text-sm leading-relaxed text-muted">
           Source of truth for the VisaFlow light UI: colors, typography, states, and reusable components.
         </p>
       </header>
 
       <Card>
-        <CardContent className="space-y-5">
+        <CardContent className="space-y-5 p-5 sm:p-6">
           <h2 className="text-lg font-black text-text">Color Tokens</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {palette.map((token) => (
@@ -51,7 +51,7 @@ export default function DesignSystemPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 p-5 sm:p-6">
             <h2 className="text-lg font-black text-text">Buttons</h2>
             <div className="flex flex-wrap gap-3">
               <Button>Primary</Button>
@@ -64,7 +64,7 @@ export default function DesignSystemPage() {
         </Card>
 
         <Card>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 p-5 sm:p-6">
             <h2 className="text-lg font-black text-text">Badges</h2>
             <div className="flex flex-wrap gap-2">
               <Badge>Default</Badge>
@@ -79,7 +79,7 @@ export default function DesignSystemPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 p-5 sm:p-6">
             <h2 className="text-lg font-black text-text">Form Controls</h2>
             <Input placeholder="Search destination..." />
             <Select value={country} onValueChange={setCountry}>
@@ -96,7 +96,7 @@ export default function DesignSystemPage() {
         </Card>
 
         <Card>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 p-5 sm:p-6">
             <h2 className="text-lg font-black text-text">Progress Bars</h2>
             <div className="space-y-3">
               <Progress value={22} />

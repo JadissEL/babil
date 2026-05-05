@@ -46,9 +46,11 @@ export default function RecommendationsPage() {
 
   return (
     <div>
-      <div className="mb-10">
-        <h1 className="mb-2 text-4xl font-black tracking-tight text-text">Intelligence de recommandation</h1>
-        <p className="text-muted">
+      <div className="mb-8 sm:mb-10">
+        <h1 className="mb-2 text-2xl font-black tracking-tight text-text sm:text-3xl lg:text-4xl">
+          Intelligence de recommandation
+        </h1>
+        <p className="text-sm font-medium text-muted sm:text-base">
           Analyses basées sur votre profil et les données terrain — scoring déterministe et explicable.
         </p>
       </div>
@@ -58,7 +60,7 @@ export default function RecommendationsPage() {
           <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       ) : recommendations.length === 0 ? (
-        <div className="mx-auto max-w-2xl rounded-[2rem] border border-line bg-surface p-12 text-center shadow-card">
+        <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface px-6 py-10 text-center shadow-card sm:rounded-[2rem] sm:p-12">
           <AlertCircle className="mx-auto mb-6 h-16 w-16 text-primary" />
           <h2 className="mb-4 text-2xl font-black text-text">Besoin de plus d&apos;infos</h2>
           <p className="mb-8 font-medium leading-relaxed text-muted">

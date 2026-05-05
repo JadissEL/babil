@@ -75,26 +75,33 @@ export function CompareExperience() {
   }
 
   if (loading) {
-    return <div className="py-20 text-center font-bold text-muted">Chargement des pays…</div>
+    return (
+      <div className="py-16 text-center text-sm font-bold text-muted sm:py-20 sm:text-base">
+        Chargement des pays…
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-10 pb-28">
+    <div className="min-w-0 space-y-8 pb-[max(9rem,calc(7.5rem+env(safe-area-inset-bottom,0px)))] sm:space-y-10">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="rounded-2xl bg-primary p-3 text-white shadow-soft">
-            <Scale className="h-8 w-8" />
+        <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
+          <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
+            <Scale className="h-7 w-7 sm:h-8 sm:w-8" />
           </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Comparer les pays</h1>
-            <p className="mt-1 text-sm text-muted">
-              Jusqu&apos;à {MAX} destinations, même grille de scores que l&apos;Explorer. La ligne « Best » suit le score composite.
+          <div className="min-w-0">
+            <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl md:text-4xl">
+              Comparer les pays
+            </h1>
+            <p className="mt-1 text-sm leading-relaxed text-muted sm:text-[15px]">
+              Jusqu&apos;à {MAX} destinations, même grille de scores que l&apos;Explorer. La ligne « Meilleur » suit le
+              score composite.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,340px)_1fr]">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,340px)_1fr] lg:gap-8">
         <CountryComparePicker
           options={options}
           selectedIds={selectedIds}
@@ -103,8 +110,8 @@ export function CompareExperience() {
           onSearchChange={setSearch}
           onToggle={toggle}
         />
-        <div className="space-y-4">
-          <h2 className="text-lg font-bold text-text">Tableau comparatif</h2>
+        <div className="min-w-0 space-y-3 sm:space-y-4">
+          <h2 className="text-base font-bold text-text sm:text-lg">Tableau comparatif</h2>
           <CompareTable rows={rows} winnerId={winnerId} />
         </div>
       </div>

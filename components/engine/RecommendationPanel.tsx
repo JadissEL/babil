@@ -14,7 +14,7 @@ export function RecommendationPanel({ results }: { results: RecommendationResult
   return (
     <div className="space-y-6">
       {results.map((r, i) => (
-        <div key={`${r.country}-${i}`} className="rounded-xl border border-gray-800 bg-[#111827] p-4">
+        <div key={`${r.country}-${i}`} className="rounded-xl border border-gray-800 bg-[#111827] p-4 sm:p-5">
           <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex gap-3">
               {r.rank != null && (
@@ -43,9 +43,11 @@ export function RecommendationPanel({ results }: { results: RecommendationResult
             <p className="mt-3 text-xs font-medium text-red-400">{r.warnings[0]}</p>
           ) : null}
 
-          <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-gray-400">
+          <ul className="mt-3 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-gray-400 sm:pl-5">
             {r.explanation.map((e, j) => (
-              <li key={`${r.country}-${i}-${j}`}>{e}</li>
+              <li key={`${r.country}-${i}-${j}`} className="break-words">
+                {e}
+              </li>
             ))}
           </ul>
         </div>

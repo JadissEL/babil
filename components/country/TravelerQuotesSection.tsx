@@ -25,8 +25,8 @@ export function TravelerQuotesSection({
   if (quotes.length !== 10) {
     return (
       <section className="rounded-2xl border border-line bg-surface p-6 shadow-soft">
-        <h2 className="text-2xl font-black text-text">What Travelers Say About {countryName}</h2>
-        <p className="mt-2 text-sm text-muted">Traveler feedback is currently being collected.</p>
+        <h2 className="break-words text-2xl font-black text-text">Ce que disent les voyageurs · {countryName}</h2>
+        <p className="mt-2 text-sm text-muted">Les retours voyageurs sont en cours de collecte.</p>
       </section>
     )
   }
@@ -36,28 +36,31 @@ export function TravelerQuotesSection({
 
   return (
     <section className="space-y-6">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-black text-text">What Travelers Say About {countryName}</h2>
+      <div className="flex min-w-0 items-end justify-between gap-4">
+        <div className="min-w-0">
+          <h2 className="break-words text-2xl font-black text-text">Ce que disent les voyageurs · {countryName}</h2>
           <p className="mt-1 text-sm text-muted">
-            Real, source-linked travel feedback grouped by sentiment to support better decisions.
+            Avis reliés aux sources et regroupés par tonalité pour mieux décider.
           </p>
         </div>
         {previewOnly && countryId != null ? (
           <Link
             href={`/countries/${countryId}/quotes`}
-            className="shrink-0 rounded-xl border border-line bg-[#f8f2e8] px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/30 hover:bg-primary-soft"
+            className="shrink-0 rounded-xl border border-line bg-inset px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/30 hover:bg-primary-soft"
           >
             Voir tout
           </Link>
         ) : null}
       </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid auto-rows-fr grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {slice.map((quote) => (
-          <article key={quote.id} className={`rounded-2xl border p-4 shadow-soft ${quoteTone(quote.sentiment)}`}>
-            <p className="mb-3 text-2xl font-black opacity-70">"</p>
-            <p className="text-sm font-medium leading-relaxed">{quote.text}</p>
-            <div className="mt-4 border-t border-current/20 pt-3 text-xs font-bold uppercase tracking-wider">
+          <article
+            key={quote.id}
+            className={`flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border p-4 shadow-soft ${quoteTone(quote.sentiment)}`}
+          >
+            <p className="mb-3 shrink-0 text-2xl font-black opacity-70">"</p>
+            <p className="min-w-0 flex-1 break-words text-sm font-medium leading-relaxed">{quote.text}</p>
+            <div className="mt-4 min-w-0 shrink-0 border-t border-current/20 pt-3 text-xs font-bold uppercase tracking-wider break-words">
               <a href={quote.sourceUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
                 {quote.sourceName}
               </a>

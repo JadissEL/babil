@@ -22,7 +22,6 @@ import HeroWorldCarousel from '@/components/home/HeroWorldCarousel'
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo'
 import { buildHomeHeroSlides } from '@/lib/home-hero-slides'
 import { resolveHomeShowcaseCountries } from '@/lib/home-showcase-countries'
-import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate'
 
 export const metadata: Metadata = {
   title: 'VisaFlow — Mobilité internationale pour profils marocains',
@@ -284,15 +283,6 @@ export default async function Home() {
             <p>
               © {new Date().getFullYear()} VisaFlow · Réalisé par{' '}
               <span className="font-black text-text">JADISS EL ANTAKI</span>
-              {' · '}
-              <a
-                href={PAYPAL_DONATE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-bold text-primary underline decoration-primary/35 underline-offset-2 hover:text-primary-hover"
-              >
-                Soutenir via PayPal
-              </a>
             </p>
           </div>
         </footer>

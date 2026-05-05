@@ -81,12 +81,14 @@ export function CountryEditor({ country }: { country: CountryEditorModel }) {
           <Label>Difficulté RDV</Label>
           <Input value={difficulty} onChange={(e) => setDifficulty(e.target.value)} placeholder="Low / Medium / High" />
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <Button type="button" onClick={() => void save()} disabled={saving} className="gap-2">
-            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <Button type="button" onClick={() => void save()} disabled={saving} className="w-full gap-2 sm:w-auto">
+            {saving ? <Loader2 className="h-4 w-4 animate-spin shrink-0" /> : <Save className="h-4 w-4 shrink-0" />}
             Enregistrer
           </Button>
-          {msg ? <span className="text-xs font-medium text-slate-400">{msg}</span> : null}
+          {msg ? (
+            <span className="break-words text-xs font-medium text-slate-400">{msg}</span>
+          ) : null}
         </div>
       </CardContent>
     </Card>

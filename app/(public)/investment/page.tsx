@@ -62,7 +62,7 @@ export default function InvestmentPage() {
             <CreditCard className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Investment & Citizenship</h1>
+            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Investissement & nationalité</h1>
             <p className="mt-1 font-medium text-muted">
               Programmes citizenship by investment (données chargées depuis la base).
             </p>
@@ -103,52 +103,54 @@ export default function InvestmentPage() {
             </Link>
             <Link
               href="/overview"
-              className="rounded-2xl border border-line bg-[#f8f2e8] px-6 py-4 font-black text-text transition-colors hover:bg-primary-soft"
+              className="rounded-2xl border border-line bg-inset px-6 py-4 font-black text-text transition-colors hover:bg-primary-soft"
             >
-              Dashboard
+              Tableau de bord
             </Link>
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid auto-rows-fr grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
             <div
               key={p.country.id}
-              className="flex flex-col overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card transition-all duration-300 hover:border-accent/35"
+              className="flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card transition-all duration-300 hover:border-accent/35"
             >
               <div className="border-b border-line p-8">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-2xl font-black text-text">{p.country.name}</h3>
+                <div className="flex min-w-0 items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <h3 className="break-words text-2xl font-black text-text">{p.country.name}</h3>
                     <div className="mt-1 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted">
                       <Globe className="h-3 w-3" /> {p.country.region}
                     </div>
                   </div>
-                  <span className="rounded-xl border border-accent/35 bg-accent-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-accent">
+                  <span className="shrink-0 rounded-xl border border-accent/35 bg-accent-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-accent">
                     CBI
                   </span>
                 </div>
               </div>
 
-              <div className="flex-1 space-y-4 p-8">
-                <div className="flex items-center justify-between rounded-2xl border border-line bg-[#f8f2e8] p-4">
-                  <div className="flex items-center gap-3">
-                    <ShieldCheck className="h-4 w-4 text-muted" />
+              <div className="min-h-0 flex-1 space-y-4 p-8">
+                <div className="flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-line bg-inset p-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <ShieldCheck className="h-4 w-4 shrink-0 text-muted" />
                     <span className="text-xs font-bold text-muted">Coût</span>
                   </div>
-                  <span className="text-xs font-black text-text">{p.cost || '—'}</span>
+                  <span className="max-w-[58%] text-right text-xs font-black break-words text-text">{p.cost || '—'}</span>
                 </div>
 
-                <div className="flex items-center justify-between rounded-2xl border border-line bg-[#f8f2e8] p-4">
-                  <div className="flex items-center gap-3">
-                    <Clock className="h-4 w-4 text-muted" />
+                <div className="flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-line bg-inset p-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Clock className="h-4 w-4 shrink-0 text-muted" />
                     <span className="text-xs font-bold text-muted">Délai</span>
                   </div>
-                  <span className="text-xs font-black text-text">{p.processing || '—'}</span>
+                  <span className="max-w-[58%] text-right text-xs font-black break-words text-text">
+                    {p.processing || '—'}
+                  </span>
                 </div>
               </div>
 
-              <div className="mt-auto border-t border-line bg-[#f8f2e8] p-8">
+              <div className="mt-auto border-t border-line bg-inset p-8">
                 <Link
                   href={`/countries/${p.country.id}`}
                   className="flex w-full items-center justify-center gap-2 rounded-2xl border border-line bg-surface py-4 text-sm font-black text-text transition-colors hover:bg-accent-soft hover:border-accent/40"
