@@ -50,9 +50,8 @@ export async function GET(
         full_data,
       })
     }
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Lookup failed'
-    return NextResponse.json({ error: message }, { status: 500 })
+  } catch {
+    /* Missing DATABASE_URL, DB down, etc. — serve static JSON like pre-Prisma deploys. */
   }
 
   try {
