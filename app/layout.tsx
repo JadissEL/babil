@@ -114,6 +114,12 @@ export default function RootLayout({
           <main className="flex-1 pb-12">{children}</main>
           <footer className="border-t border-line bg-[#fdf8ef]/90 text-text">
             <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 sm:px-6 lg:px-8">
+              <p className="text-center text-xs font-medium text-muted">
+                <span>© {new Date().getFullYear()} VisaFlow.</span>{' '}
+                <span>
+                  Réalisé par <span className="font-black text-text">JADISS EL ANTAKI</span>.
+                </span>
+              </p>
               <a
                 href={PAYPAL_DONATE_URL}
                 target="_blank"
@@ -123,12 +129,6 @@ export default function RootLayout({
                 <Heart className="h-3.5 w-3.5 shrink-0 fill-white/95" aria-hidden />
                 PayPal · Don
               </a>
-              <p className="text-center text-xs font-medium text-muted">
-                <span>© {new Date().getFullYear()} VisaFlow.</span>{' '}
-                <span>
-                  Réalisé par <span className="font-black text-text">JADISS EL ANTAKI</span>.
-                </span>
-              </p>
             </div>
           </footer>
         </body>
