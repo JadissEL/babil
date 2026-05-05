@@ -9,17 +9,20 @@ const PHD_OUTER =
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-1 border-b border-line pb-4 last:border-0 last:pb-0 sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)] md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
-      <span className="min-w-0 self-start break-words text-sm font-bold text-muted">{label}</span>
-      <p className="min-w-0 break-words text-left text-sm font-black leading-relaxed text-text">{value}</p>
+    <div className="flex min-w-0 w-full flex-col gap-2 border-b border-line pb-4 last:border-0 last:pb-0 md:flex-row md:items-start md:gap-x-6">
+      <div className="shrink-0 text-sm font-bold leading-snug text-muted md:w-52 lg:w-56">{label}</div>
+      <p className="min-w-0 w-full break-words text-left text-sm font-black leading-relaxed text-text md:flex-1 md:basis-0">
+        {value}
+      </p>
     </div>
   )
 }
 
 function PhdPanelBody({ children }: { children: ReactNode }) {
   return (
-    <div className={`${PHD_OUTER}`}>
-      <div className="min-h-0 min-w-0 max-h-[min(32rem,60vh)] overflow-x-hidden overflow-y-auto overscroll-y-contain p-5 sm:p-6">
+    <div className={`${PHD_OUTER} w-full min-w-0`}>
+      {/* Mobile: grow with content (no inner squeeze). Desktop: cap height + scroll for very long panels. */}
+      <div className="w-full min-w-0 p-5 sm:p-6 lg:max-h-[min(40rem,72vh)] lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-y-contain">
         {children}
       </div>
     </div>
@@ -48,7 +51,7 @@ function Block({
   children: ReactNode
 }) {
   return (
-    <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
+    <div className="flex min-h-0 min-w-0 w-full flex-col gap-4">
       <MicroHeading accent>{eyebrow}</MicroHeading>
       <PhdPanelBody>{children}</PhdPanelBody>
     </div>
@@ -104,7 +107,7 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
         </div>
       </div>
 
-      <div className="grid min-w-0 auto-rows-fr grid-cols-1 gap-8 lg:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
         <Block eyebrow={`Admissions & dossier (${countryName})`}>
           <div className="min-w-0 space-y-0">
             <Row label="Prérequis & équivalences" value={model.admissions.entryRequirementsAndPriorDegrees} />
@@ -205,8 +208,8 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
 
       {hasLinks ? (
         <div className="mt-10 min-w-0">
-          <div className={`${PHD_OUTER}`}>
-            <div className="min-h-0 min-w-0 max-h-[min(22rem,45vh)] overflow-x-hidden overflow-y-auto overscroll-y-contain p-5 sm:p-6">
+          <div className={`${PHD_OUTER} w-full min-w-0`}>
+            <div className="min-w-0 w-full p-5 sm:p-6 lg:max-h-[min(26rem,50vh)] lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-y-contain">
               <MicroHeading>Sources officielles</MicroHeading>
               <ul className="mt-4 flex flex-col gap-2">
                 {model.meta.officialLinks.map((lnk, idx) => (
