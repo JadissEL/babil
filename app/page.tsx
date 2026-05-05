@@ -15,16 +15,14 @@ import {
 } from 'lucide-react'
 import PageContainer from '@/components/layout/PageContainer'
 import AppSidebar from '@/components/layout/AppSidebar'
-import GoalFilter from '@/components/filters/GoalFilter'
-import BudgetFilter from '@/components/filters/BudgetFilter'
-import RegionFilter from '@/components/filters/RegionFilter'
-import RiskFilter from '@/components/filters/RiskFilter'
+import HomeQuickFilterEngine from '@/components/home/HomeQuickFilterEngine'
 import CountryGrid from '@/components/country/CountryGrid'
 import GoogleAd from '../components/GoogleAd'
 import HeroWorldCarousel from '@/components/home/HeroWorldCarousel'
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo'
 import { buildHomeHeroSlides } from '@/lib/home-hero-slides'
 import { resolveHomeShowcaseCountries } from '@/lib/home-showcase-countries'
+import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate'
 
 export const metadata: Metadata = {
   title: 'VisaFlow — Mobilité internationale pour profils marocains',
@@ -84,19 +82,22 @@ export default async function Home() {
         <section className="rounded-2xl border border-line bg-surface p-8 shadow-card md:p-10">
           <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-line bg-[#f8f2e8] px-3 py-1 text-[10px] font-black uppercase tracking-widest text-muted">
-                <Sparkles className="h-3.5 w-3.5 text-primary" /> Global Mobility Intelligence
+              <div className="inline-flex items-center gap-2 rounded-full border border-line bg-inset px-3 py-1 text-[10px] font-black uppercase tracking-widest text-muted">
+                <Sparkles className="h-3.5 w-3.5 text-primary" /> Intelligence mobilité internationale
               </div>
-              <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-text md:text-5xl">Decision intelligence SaaS for visas, education, business and mobility.</h1>
+              <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-text md:text-5xl">
+                Aide à la décision pour visas, études, business et mobilité.
+              </h1>
               <p className="mt-4 max-w-2xl text-sm font-medium text-muted md:text-base">
-                Data-first dashboard for Moroccan users: compare countries, understand risk and friction, and choose your best path with explainable scoring.
+                Données et scores explicables pour profils marocains : comparez les pays, la friction et les risques, puis
+                choisissez un parcours réaliste.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href="/recommendations" className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-primary-hover">
-                  Start Free Analysis <ArrowRight className="h-4 w-4" />
+                  Lancer une analyse <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link href="/explorer" className="inline-flex items-center gap-2 rounded-xl border border-line bg-[#f8f2e8] px-5 py-3 text-xs font-black uppercase tracking-widest text-text hover:bg-primary-soft">
-                  Open Explorer
+                <Link href="/explorer" className="inline-flex items-center gap-2 rounded-xl border border-line bg-inset px-5 py-3 text-xs font-black uppercase tracking-widest text-text hover:bg-primary-soft">
+                  Ouvrir l&apos;Explorer
                 </Link>
               </div>
             </div>
@@ -104,22 +105,16 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="mt-8 rounded-2xl border border-line bg-surface p-4 shadow-soft">
-          <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">Quick Filter Engine</p>
-          <div className="flex flex-wrap gap-2">
-            <GoalFilter value="all" />
-            <BudgetFilter value="all" />
-            <RegionFilter value="all" />
-            <RiskFilter value="all" />
-          </div>
-        </section>
+        <HomeQuickFilterEngine />
 
         <DelegatedApplicationsHomePromo />
 
         <section className="mt-8">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-black text-text">Top Countries Grid</h2>
-            <Link href="/explorer" className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-hover">View all</Link>
+            <h2 className="text-xl font-black text-text">Pays à la une</h2>
+            <Link href="/explorer" className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-hover">
+              Tout voir
+            </Link>
           </div>
           <CountryGrid countries={topCountries} />
         </section>
@@ -127,26 +122,56 @@ export default async function Home() {
         <section className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
           <AppSidebar />
           <div className="space-y-4 rounded-2xl border border-line bg-surface p-5 shadow-soft">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Features</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Fonctionnalités</p>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              <Feature href="/probability" icon={<Zap className="h-5 w-5 text-blue-400" />} title="Visa Engine" description="Deterministic scoring with explainable breakdown." />
-              <Feature href="/schengen" icon={<ShieldCheck className="h-5 w-5 text-indigo-400" />} title="Schengen Hub" description="Side-by-side country friction and acceptance." />
+              <Feature
+                href="/probability"
+                icon={<Zap className="h-5 w-5 text-blue-400" />}
+                title="Moteur de probabilités"
+                description="Scores déterministes avec décomposition lisible pays par pays."
+              />
+              <Feature
+                href="/schengen"
+                icon={<ShieldCheck className="h-5 w-5 text-indigo-400" />}
+                title="Espace Schengen"
+                description="Friction, acceptation et comparaisons côte à côte."
+              />
               <Feature
                 href="/services/delegated-applications"
                 icon={<FileStack className="h-5 w-5 text-rose-400" />}
-                title="Assist applications"
-                description="Delegated CV, motivation letters & submissions — authenticated users."
+                title="Assist candidatures"
+                description="CV, lettres et dossiers délégués — utilisateurs connectés."
               />
-              <Feature href="/education" icon={<GraduationCap className="h-5 w-5 text-violet-400" />} title="Education" description="Languages, technical training, short courses." />
+              <Feature
+                href="/education"
+                icon={<GraduationCap className="h-5 w-5 text-violet-400" />}
+                title="Éducation"
+                description="Langues, formations techniques et cours courts à l&apos;étranger."
+              />
               <Feature
                 href="/community"
                 icon={<MessagesSquare className="h-5 w-5 text-fuchsia-400" />}
-                title="Community"
-                description="Terrain feedback and moderated comments per country."
+                title="Communauté"
+                description="Retours terrain et commentaires modérés par pays."
               />
-              <Feature href="/business" icon={<Briefcase className="h-5 w-5 text-amber-400" />} title="Business" description="Business setup and investment opportunities." />
-              <Feature href="/permis" icon={<Car className="h-5 w-5 text-emerald-400" />} title="Driving License" description="Validity and conversion per destination." />
-              <Feature href="/recommendations" icon={<BarChart3 className="h-5 w-5 text-cyan-400" />} title="Recommendation Mode" description="AI-like ranking with deterministic logic." />
+              <Feature
+                href="/business"
+                icon={<Briefcase className="h-5 w-5 text-amber-400" />}
+                title="Business"
+                description="Installation, marchés et pistes investissement."
+              />
+              <Feature
+                href="/permis"
+                icon={<Car className="h-5 w-5 text-emerald-400" />}
+                title="Permis de conduire"
+                description="Validité et conversion selon la destination."
+              />
+              <Feature
+                href="/recommendations"
+                icon={<BarChart3 className="h-5 w-5 text-cyan-400" />}
+                title="Recommandations"
+                description="Classement type IA avec logique reproduisible."
+              />
             </div>
           </div>
         </section>
@@ -154,16 +179,16 @@ export default async function Home() {
         <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-soft md:p-8">
           <div className="mb-5 flex items-end justify-between">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted">User Feedback</p>
-              <h2 className="mt-2 text-2xl font-black text-text">What users say after using VisaFlow</h2>
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted">Avis utilisateurs</p>
+              <h2 className="mt-2 text-2xl font-black text-text">Retours après utilisation</h2>
             </div>
             <Link href="/community" className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-hover">
-              See community
+              Voir la communauté
             </Link>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {testimonials.map((t) => (
-              <div key={t.name} className="rounded-xl border border-line bg-[#f8f2e8] p-4">
+              <div key={t.name} className="rounded-xl border border-line bg-inset p-4">
                 <p className="text-sm font-medium italic text-text">"{t.quote}"</p>
                 <p className="mt-4 text-sm font-black text-text">{t.name}</p>
                 <p className="text-xs font-semibold text-muted">{t.role}</p>
@@ -173,12 +198,12 @@ export default async function Home() {
         </section>
 
         <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-soft md:p-8">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted">Best Practices</p>
-          <h2 className="mt-2 text-2xl font-black text-text">Use the platform in the right order</h2>
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted">Bonnes pratiques</p>
+          <h2 className="mt-2 text-2xl font-black text-text">Enchaînez les étapes dans le bon ordre</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {bestPractices.map((item, idx) => (
-              <div key={item.title} className="rounded-xl border border-line bg-[#f8f2e8] p-4">
-                <p className="text-xs font-black uppercase tracking-widest text-primary">Step {idx + 1}</p>
+              <div key={item.title} className="rounded-xl border border-line bg-inset p-4">
+                <p className="text-xs font-black uppercase tracking-widest text-primary">Étape {idx + 1}</p>
                 <h3 className="mt-2 text-base font-black text-text">{item.title}</h3>
                 <p className="mt-2 text-sm font-medium text-muted">{item.text}</p>
               </div>
@@ -195,40 +220,80 @@ export default async function Home() {
             <div>
               <p className="text-[10px] font-black uppercase tracking-widest text-muted">VisaFlow</p>
               <p className="mt-2 text-sm font-medium text-muted">
-                Decision intelligence platform for Moroccan mobility planning across visa, education, business and relocation.
+                Plateforme d&apos;aide à la décision pour la mobilité internationale : visas, études, business et
+                installation.
               </p>
             </div>
             <div>
-              <p className="text-sm font-black text-text">Platform</p>
+              <p className="text-sm font-black text-text">Plateforme</p>
               <div className="mt-3 space-y-2 text-sm">
-                <Link href="/explorer" className="block font-medium text-muted hover:text-primary">Explorer</Link>
-                <Link href="/compare" className="block font-medium text-muted hover:text-primary">Compare</Link>
-                <Link href="/schengen" className="block font-medium text-muted hover:text-primary">Schengen</Link>
-                <Link href="/probability" className="block font-medium text-muted hover:text-primary">Probability Engine</Link>
+                <Link href="/explorer" className="block font-medium text-muted hover:text-primary">
+                  Explorer
+                </Link>
+                <Link href="/compare" className="block font-medium text-muted hover:text-primary">
+                  Comparer
+                </Link>
+                <Link href="/schengen" className="block font-medium text-muted hover:text-primary">
+                  Schengen
+                </Link>
+                <Link href="/probability" className="block font-medium text-muted hover:text-primary">
+                  Moteur de probabilités
+                </Link>
               </div>
             </div>
             <div>
-              <p className="text-sm font-black text-text">Mobility Tracks</p>
+              <p className="text-sm font-black text-text">Parcours mobilité</p>
               <div className="mt-3 space-y-2 text-sm">
-                <Link href="/services/delegated-applications" className="block font-medium text-muted hover:text-primary">Assist candidatures</Link>
-                <Link href="/education" className="block font-medium text-muted hover:text-primary">Education</Link>
-                <Link href="/business" className="block font-medium text-muted hover:text-primary">Business</Link>
-                <Link href="/investment" className="block font-medium text-muted hover:text-primary">Investment</Link>
-                <Link href="/permis" className="block font-medium text-muted hover:text-primary">Driving License</Link>
+                <Link href="/services/delegated-applications" className="block font-medium text-muted hover:text-primary">
+                  Assist candidatures
+                </Link>
+                <Link href="/education" className="block font-medium text-muted hover:text-primary">
+                  Éducation
+                </Link>
+                <Link href="/business" className="block font-medium text-muted hover:text-primary">
+                  Business
+                </Link>
+                <Link href="/investment" className="block font-medium text-muted hover:text-primary">
+                  Investissement
+                </Link>
+                <Link href="/permis" className="block font-medium text-muted hover:text-primary">
+                  Permis de conduire
+                </Link>
               </div>
             </div>
             <div>
-              <p className="text-sm font-black text-text">Account & Community</p>
+              <p className="text-sm font-black text-text">Compte & communauté</p>
               <div className="mt-3 space-y-2 text-sm">
-                <Link href="/overview" className="block font-medium text-muted hover:text-primary">Dashboard</Link>
-                <Link href="/recommendations" className="block font-medium text-muted hover:text-primary">Recommendations</Link>
-                <Link href="/community" className="block font-medium text-muted hover:text-primary">Community</Link>
-                <Link href="/moderation" className="block font-medium text-muted hover:text-primary">Moderation</Link>
+                <Link href="/overview" className="block font-medium text-muted hover:text-primary">
+                  Tableau de bord
+                </Link>
+                <Link href="/recommendations" className="block font-medium text-muted hover:text-primary">
+                  Recommandations
+                </Link>
+                <Link href="/community" className="block font-medium text-muted hover:text-primary">
+                  Communauté
+                </Link>
+                <Link href="/moderation" className="block font-medium text-muted hover:text-primary">
+                  Modération
+                </Link>
               </div>
             </div>
           </div>
-          <div className="mt-8 border-t border-line pt-4 text-xs font-semibold text-muted">
-            © {new Date().getFullYear()} VisaFlow. Built for practical and comparable mobility decisions.
+          <div className="mt-8 space-y-2 border-t border-line pt-4 text-xs font-semibold text-muted">
+            <p>Conçu pour des décisions de mobilité concrètes et comparables.</p>
+            <p>
+              © {new Date().getFullYear()} VisaFlow · Réalisé par{' '}
+              <span className="font-black text-text">JADISS EL ANTAKI</span>
+              {' · '}
+              <a
+                href={PAYPAL_DONATE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold text-primary underline decoration-primary/35 underline-offset-2 hover:text-primary-hover"
+              >
+                Soutenir via PayPal
+              </a>
+            </p>
           </div>
         </footer>
     </PageContainer>
@@ -247,7 +312,7 @@ function Feature({
   description: string
 }) {
   return (
-    <Link href={href} className="rounded-xl border border-line bg-[#f8f2e8] p-4 transition-colors hover:border-primary/30">
+    <Link href={href} className="rounded-xl border border-line bg-inset p-4 transition-colors hover:border-primary/30">
       <div className="mb-3 flex items-center gap-2">
         {icon}
         <h3 className="text-sm font-black text-text">{title}</h3>

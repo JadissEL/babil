@@ -3,7 +3,8 @@ import type { Metadata } from 'next'
 import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
-import { Globe, LayoutDashboard } from 'lucide-react'
+import { Globe, Heart, LayoutDashboard } from 'lucide-react'
+import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,9 +22,13 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="fr">
-        <body className={inter.className + ' min-h-screen bg-bg text-text antialiased'}>
+        <body
+          className={
+            inter.className + ' flex min-h-screen flex-col bg-bg text-text antialiased'
+          }
+        >
           <header className="sticky top-0 z-50 border-b border-line bg-[#fdf8ef]/90 text-text backdrop-blur">
-            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-x-4 gap-y-3 px-4 py-2 sm:px-6 lg:px-8">
               <div className="flex items-center gap-6 lg:gap-8">
                 <Link href="/" className="flex items-center gap-2">
                   <div className="rounded-lg bg-primary p-1.5 text-white shadow-soft">
@@ -40,10 +45,10 @@ export default function RootLayout({
                     Schengen
                   </Link>
                   <Link href="/compare" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
-                    Compare
+                    Comparer
                   </Link>
                   <Link href="/recommendations" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
-                    Visa Engine
+                    Moteur visa
                   </Link>
                   <Link
                     href="/services/delegated-applications"
@@ -52,40 +57,73 @@ export default function RootLayout({
                     Assist
                   </Link>
                   <Link href="/education" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
-                    Education
+                    Éducation
                   </Link>
                   <Link href="/community" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
-                    Community
+                    Communauté
                   </Link>
                   <Link href="/business" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
                     Business
                   </Link>
                   <Link href="/permis" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
-                    Driving
+                    Permis
                   </Link>
                   <Link href="/investment" className="text-sm font-semibold text-muted transition-colors hover:text-primary">
-                    Investment
+                    Investissement
                   </Link>
                 </nav>
               </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 sm:gap-3">
                   <SignedOut>
-                    <SignInButton mode="modal">
-                      <button className="rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-all hover:bg-primary-hover">
-                        Login
-                      </button>
-                    </SignInButton>
-                    <SignUpButton mode="modal">
-                      <button className="rounded-xl border border-line bg-surface px-5 py-2 text-xs font-black uppercase tracking-widest text-text transition-all hover:bg-primary-soft">
-                        Sign up
-                      </button>
-                    </SignUpButton>
+                    <>
+                      <SignInButton mode="modal">
+                        <button
+                          type="button"
+                          className="rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-all hover:bg-primary-hover"
+                        >
+                          Connexion
+                        </button>
+                      </SignInButton>
+                      <SignUpButton mode="modal">
+                        <button
+                          type="button"
+                          className="rounded-xl border border-line bg-surface px-5 py-2 text-xs font-black uppercase tracking-widest text-text transition-all hover:bg-primary-soft"
+                        >
+                          S&apos;inscrire
+                        </button>
+                      </SignUpButton>
+                      <a
+                        href={PAYPAL_DONATE_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-[#0070BA] to-[#003087] px-4 py-2 text-[11px] font-black uppercase tracking-wider text-white shadow-[0_1px_2px_rgba(0,48,135,0.25)] ring-1 ring-[#009CDE]/35 transition-[filter] hover:brightness-110 hover:shadow-md sm:tracking-widest"
+                      >
+                        <Heart className="h-3.5 w-3.5 shrink-0 fill-white/95" aria-hidden />
+                        PayPal · Don
+                      </a>
+                    </>
                   </SignedOut>
                   <SignedIn>
-                    <div className="flex items-center gap-3">
-                      <Link href="/overview" className="hidden items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:bg-primary-soft sm:flex">
-                        <LayoutDashboard className="h-4 w-4" /> Dashboard
+                    <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+                      <a
+                        href={PAYPAL_DONATE_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-[#0070BA] to-[#003087] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-white shadow-[0_1px_2px_rgba(0,48,135,0.25)] ring-1 ring-[#009CDE]/35 transition-[filter] hover:brightness-110 max-[359px]:px-2.5"
+                        title="Faire un don via PayPal"
+                      >
+                        <Heart className="h-3.5 w-3.5 shrink-0 fill-white/95" aria-hidden />
+                        <span className="hidden min-[420px]:inline">PayPal · Faire un don</span>
+                        <span className="min-[420px]:hidden">Faire un don</span>
+                      </a>
+                      <Link
+                        href="/overview"
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-2 text-[10px] font-black uppercase tracking-wider text-text transition-colors hover:bg-primary-soft sm:gap-2 sm:px-4 sm:text-xs sm:tracking-widest"
+                        title="Tableau de bord"
+                      >
+                        <LayoutDashboard className="h-4 w-4 shrink-0" />
+                        <span className="max-[380px]:sr-only">Tableau de bord</span>
                       </Link>
                       <UserButton afterSignOutUrl="/" />
                     </div>
@@ -93,7 +131,16 @@ export default function RootLayout({
                 </div>
             </div>
           </header>
-          <main className="pb-12">{children}</main>
+          <main className="flex-1 pb-12">{children}</main>
+          <footer className="border-t border-line bg-[#fdf8ef]/90 text-text">
+            <div className="mx-auto max-w-7xl px-4 py-6 text-center text-xs font-medium text-muted sm:px-6 lg:px-8">
+              <span>© {new Date().getFullYear()} VisaFlow.</span>{' '}
+              <span>
+                Réalisé par{' '}
+                <span className="font-black text-text">JADISS EL ANTAKI</span>.
+              </span>
+            </div>
+          </footer>
         </body>
       </html>
     </ClerkProvider>
