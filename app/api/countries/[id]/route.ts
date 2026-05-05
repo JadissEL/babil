@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server'
 
 import prisma from '@/lib/prisma'
-import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
-import { mergeDisplayedFullData } from '@/lib/countries-prisma-merge'
+import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge'
 
 export async function GET(
   _req: Request,
@@ -31,24 +30,13 @@ export async function GET(
     })
 
     if (country) {
-      let full_data = parseCountryFullData(country.full_data)
+      let fallback: Awaited<ReturnType<typeof loadFallbackCountries>> = []
       try {
-        const fallback = await loadFallbackCountries()
-        const staticRow = fallback.find((c) => c.id === id)
-        const staticFull =
-          staticRow?.full_data && typeof staticRow.full_data === 'object' && !Array.isArray(staticRow.full_data)
-            ? (staticRow.full_data as Record<string, unknown>)
-            : null
-        if (staticFull) {
-          full_data = mergeDisplayedFullData(staticFull, full_data)
-        }
+        fallback = await loadFallbackCountries()
       } catch {
-        /* use DB-only full_data */
+        /* DB-only merge + normalize */
       }
-      return NextResponse.json({
-        ...country,
-        full_data,
-      })
+      return NextResponse.json(augmentCountryDetailPayload(country, fallback))
     }
   } catch {
     /* Missing DATABASE_URL, DB down, etc. — serve static JSON like pre-Prisma deploys. */

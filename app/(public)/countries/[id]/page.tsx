@@ -32,6 +32,42 @@ const toNum = (v: any, fallback = 0) => {
   return Number.isFinite(n) ? n : fallback
 }
 
+function moroccoRealityText(full: Record<string, unknown>): string {
+  const mi = full.morocco_insights as Record<string, unknown> | undefined
+  const r = mi?.reality
+  return typeof r === 'string' && r.trim() ? r.trim() : 'Analyse en cours…'
+}
+
+function moroccoProTipText(full: Record<string, unknown>): string {
+  const mi = full.morocco_insights as Record<string, unknown> | undefined
+  const t = mi?.pro_tip
+  return typeof t === 'string' && t.trim() ? t.trim() : '—'
+}
+
+function fmtBrutalReality(v: unknown): string {
+  if (typeof v === 'number' && Number.isFinite(v)) return `${v}/10`
+  if (typeof v === 'string' && v.trim()) return `${v.trim()}/10`
+  return '—'
+}
+
+function fmtFrictionBlock(v: unknown): string {
+  if (typeof v === 'number' && Number.isFinite(v)) return `${v}/100`
+  if (typeof v === 'string' && v.trim()) return `${v.trim()}/100`
+  return '—'
+}
+
+function fmtConfidencePct(v: unknown): string {
+  if (typeof v === 'number' && Number.isFinite(v)) return `${Math.round(v)}%`
+  if (typeof v === 'string' && v.trim()) return (v as string).includes('%') ? (v as string).trim() : `${(v as string).trim()}%`
+  return '—'
+}
+
+function fmtAcceptanceRate(v: unknown): string {
+  if (typeof v === 'string' && v.trim()) return v.trim()
+  if (typeof v === 'number' && Number.isFinite(v)) return `${v}%`
+  return '—'
+}
+
 function scoreTone(score: number) {
   if (score >= 75) return 'border-[#94dfbd] bg-[#e9f9f1] text-success'
   if (score >= 55) return 'border-[#f2c27a] bg-[#fff5e7] text-warning'
@@ -242,26 +278,26 @@ export default function CountryDetailPage() {
               </h2>
               <div className="max-w-none">
                 <p className="text-lg font-medium italic leading-relaxed text-muted">
-                  &quot;{full.morocco_insights?.reality || 'Analyse en cours…'}&quot;
+                  &quot;{moroccoRealityText(full as Record<string, unknown>)}&quot;
                 </p>
               </div>
 
               <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
                 <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Score réalité</div>
-                  <div className="text-2xl font-black text-text">{full.brutal_reality_score}/10</div>
+                  <div className="text-2xl font-black text-text">{fmtBrutalReality(full.brutal_reality_score)}</div>
                 </div>
                 <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Acceptation</div>
-                  <div className="text-2xl font-black text-text">{full.acceptance_rate_morocco}</div>
+                  <div className="text-2xl font-black text-text">{fmtAcceptanceRate(full.acceptance_rate_morocco)}</div>
                 </div>
                 <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Friction RDV</div>
-                  <div className="text-2xl font-black text-text">{full.friction_score}/100</div>
+                  <div className="text-2xl font-black text-text">{fmtFrictionBlock(full.friction_score)}</div>
                 </div>
                 <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Confiance</div>
-                  <div className="text-2xl font-black text-text">{full.confidence_score}%</div>
+                  <div className="text-2xl font-black text-text">{fmtConfidencePct(full.confidence_score)}</div>
                 </div>
               </div>
 
@@ -411,7 +447,11 @@ export default function CountryDetailPage() {
                   <div className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">
                     Comportement consulaire
                   </div>
-                  <p className="text-sm font-bold leading-relaxed text-text">{full.embassy_behavior}</p>
+                  <p className="text-sm font-bold leading-relaxed text-text">
+                    {typeof full.embassy_behavior === 'string' && full.embassy_behavior.trim()
+                      ? full.embassy_behavior
+                      : '—'}
+                  </p>
                 </div>
 
                 <div className="border-t border-line pt-8">
@@ -420,7 +460,7 @@ export default function CountryDetailPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-muted">Tourisme</span>
                       <span className="rounded-lg bg-inset px-2 py-1 text-xs font-black text-text">
-                        {full.visa_system?.tourism?.difficulty}
+                        {full.visa_system?.tourism?.difficulty ?? '—'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -452,7 +492,7 @@ export default function CountryDetailPage() {
                       <CheckCircle2 className="w-3 h-3" /> Conseil (Darija)
                     </h4>
                     <p className="text-sm font-black italic text-text">
-                      "{full.morocco_insights?.pro_tip}"
+                      &quot;{moroccoProTipText(full as Record<string, unknown>)}&quot;
                     </p>
                   </div>
                 </div>

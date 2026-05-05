@@ -130,6 +130,82 @@ export function mergeDisplayedFullData(
   return merged
 }
 
+/** Match static JSON row to a Prisma country: **name first** (IDs often diverge from countries.json order), then id. */
+export function findLegacyCountryMatch(
+  fallback: LegacyCountryRecord[],
+  db: { id: number; name: string },
+): LegacyCountryRecord | null {
+  const nk = countryNameMergeKey(db.name)
+  const byName = fallback.find((f) => countryNameMergeKey(f.name) === nk)
+  if (byName) return byName
+  return fallback.find((f) => f.id === db.id) ?? null
+}
+
+function frictionTopLevelWeak(v: unknown): boolean {
+  if (v === undefined || v === null) return true
+  if (typeof v === 'number') return Number.isNaN(v)
+  return false
+}
+
+/**
+ * Detail pages read `full_data.friction_score`; some DB snapshots only set
+ * `full_data.friction_analysis.friction_score` (same pattern as enrich-country-api).
+ */
+export function normalizeFullDataCoalesced(full: Record<string, unknown>): Record<string, unknown> {
+  if (!frictionTopLevelWeak(full.friction_score)) return full
+  const fa = full.friction_analysis
+  if (!fa || typeof fa !== 'object' || Array.isArray(fa)) return full
+  const nested = (fa as Record<string, unknown>).friction_score
+  if (typeof nested !== 'number' || !Number.isFinite(nested)) return full
+  return { ...full, friction_score: nested }
+}
+
+function pickMergedScore(dbVal: unknown, staticVal: unknown): number {
+  if (typeof dbVal === 'number' && Number.isFinite(dbVal)) return dbVal
+  if (typeof staticVal === 'number' && Number.isFinite(staticVal)) return staticVal
+  return 5
+}
+
+/**
+ * Single-country API: same guarantees as `buildMergedCountriesList` — overlay static `data/countries.json`
+ * on DB by **country name**, fill null visa columns from static, coalesce friction score.
+ */
+export function augmentCountryDetailPayload<T extends Record<string, unknown>>(
+  country: T,
+  fallback: LegacyCountryRecord[],
+): T & { full_data: Record<string, unknown> } {
+  const staticRow = findLegacyCountryMatch(fallback, {
+    id: country.id as number,
+    name: String(country.name ?? ''),
+  })
+
+  let full_data = parseCountryFullData(country.full_data)
+  if (staticRow) {
+    const staticFull =
+      staticRow.full_data && typeof staticRow.full_data === 'object' && !Array.isArray(staticRow.full_data)
+        ? (staticRow.full_data as Record<string, unknown>)
+        : {}
+    full_data = normalizeFullDataCoalesced(mergeDisplayedFullData(staticFull, full_data))
+  } else {
+    full_data = normalizeFullDataCoalesced(full_data)
+  }
+
+  const appt =
+    typeof country.appointment_difficulty === 'string' && country.appointment_difficulty.trim() !== ''
+      ? country.appointment_difficulty
+      : staticRow?.appointment_difficulty
+
+  return {
+    ...country,
+    tourist_visa_score: pickMergedScore(country.tourist_visa_score, staticRow?.tourist_visa_score),
+    study_visa_score: pickMergedScore(country.study_visa_score, staticRow?.study_visa_score),
+    work_visa_score: pickMergedScore(country.work_visa_score, staticRow?.work_visa_score),
+    business_visa_score: pickMergedScore(country.business_visa_score, staticRow?.business_visa_score),
+    appointment_difficulty: appt ?? 'Medium',
+    full_data,
+  }
+}
+
 const approvedComments = {
   where: { status: 'APPROVED' as const },
   include: { user: { select: { name: true } } },
