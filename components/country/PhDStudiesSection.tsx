@@ -1,14 +1,42 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { GraduationCap } from 'lucide-react'
+import { AlertTriangle, GraduationCap, XCircle } from 'lucide-react'
 import type { PhdStudiesModel } from '@/lib/country-phd-studies'
+
+/** Outer shell; inner scroll avoids long JSON/text blowing card width on small screens. */
+const PHD_OUTER =
+  'min-w-0 overflow-hidden rounded-2xl border border-line bg-inset'
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 border-b border-line/80 pb-3 last:border-0 last:pb-0 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-      <span className="shrink-0 text-xs font-black uppercase tracking-widest text-muted">{label}</span>
-      <p className="text-sm font-bold leading-relaxed text-text sm:max-w-[75%] sm:text-right">{value}</p>
+    <div className="grid min-w-0 grid-cols-1 gap-x-4 gap-y-1 border-b border-line pb-4 last:border-0 last:pb-0 sm:grid-cols-[minmax(0,12rem)_minmax(0,1fr)] md:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
+      <span className="min-w-0 self-start break-words text-sm font-bold text-muted">{label}</span>
+      <p className="min-w-0 break-words text-left text-sm font-black leading-relaxed text-text">{value}</p>
     </div>
+  )
+}
+
+function PhdPanelBody({ children }: { children: ReactNode }) {
+  return (
+    <div className={`${PHD_OUTER}`}>
+      <div className="min-h-0 min-w-0 max-h-[min(32rem,60vh)] overflow-x-hidden overflow-y-auto overscroll-y-contain p-5 sm:p-6">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function MicroHeading({ children, accent = false }: { children: ReactNode; accent?: boolean }) {
+  return (
+    <p
+      className={
+        accent
+          ? 'text-xs font-black uppercase tracking-widest text-primary'
+          : 'text-xs font-black uppercase tracking-widest text-muted'
+      }
+    >
+      {children}
+    </p>
   )
 }
 
@@ -20,9 +48,9 @@ function Block({
   children: ReactNode
 }) {
   return (
-    <div className="space-y-3">
-      <h3 className="text-[11px] font-black uppercase tracking-widest text-primary">{eyebrow}</h3>
-      <div className="rounded-3xl border border-line bg-[#f8f2e8] p-5 shadow-soft">{children}</div>
+    <div className="flex h-full min-h-0 min-w-0 flex-col gap-4">
+      <MicroHeading accent>{eyebrow}</MicroHeading>
+      <PhdPanelBody>{children}</PhdPanelBody>
     </div>
   )
 }
@@ -43,41 +71,42 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
   const { enrichment, confidenceFr } = statusPills(model.meta)
   const hasLinks = model.meta.officialLinks.length > 0
 
+  const metaPill =
+    'rounded-xl border border-line bg-inset px-3 py-1.5 text-[10px] font-black uppercase tracking-widest'
+
   return (
-    <section className="rounded-[2.5rem] border border-line bg-surface p-8 shadow-card" aria-labelledby="phd-studies-heading">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex items-start gap-4">
-          <div className="rounded-2xl bg-primary/15 p-3 text-primary ring-1 ring-primary/25">
-            <GraduationCap className="h-7 w-7" aria-hidden />
-          </div>
-          <div>
-            <h2 id="phd-studies-heading" className="text-xl font-black tracking-tight text-text">
-              {model.overview.headline}
-            </h2>
-            <p className="mt-2 max-w-3xl text-sm font-medium leading-relaxed text-muted">{model.overview.executiveSummary}</p>
-            <p className="mt-3 rounded-2xl border border-primary/20 bg-primary-soft px-4 py-3 text-sm font-bold text-text">
-              {model.overview.profileFitMorocco}
-            </p>
-          </div>
+    <section
+      className="min-w-0 rounded-[2.5rem] border border-line bg-surface p-8 shadow-card"
+      aria-labelledby="phd-studies-heading"
+    >
+      <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2
+            id="phd-studies-heading"
+            className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xl font-black tracking-tight text-text"
+          >
+            <GraduationCap className="h-5 w-5 shrink-0 text-primary" aria-hidden />
+            {model.overview.headline}
+          </h2>
+          <p className="mt-4 max-w-3xl break-words text-sm font-medium leading-relaxed text-muted">
+            {model.overview.executiveSummary}
+          </p>
+          <p className="mt-4 break-words rounded-2xl border border-primary/20 bg-primary-soft px-4 py-3 text-sm font-bold leading-relaxed text-text">
+            {model.overview.profileFitMorocco}
+          </p>
         </div>
-        <div className="flex flex-shrink-0 flex-wrap gap-2">
-          <span className="rounded-xl border border-line bg-[#f8f2e8] px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-text">
-            {enrichment}
-          </span>
-          <span className="rounded-xl border border-line bg-[#f8f2e8] px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted">
-            {confidenceFr}
-          </span>
+        <div className="flex shrink-0 flex-wrap gap-2 lg:justify-end">
+          <span className={`${metaPill} text-text`}>{enrichment}</span>
+          <span className={`${metaPill} text-muted`}>{confidenceFr}</span>
           {model.meta.lastUpdated ? (
-            <span className="rounded-xl border border-line bg-[#f8f2e8] px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted">
-              Mis à jour {model.meta.lastUpdated}
-            </span>
+            <span className={`${metaPill} text-muted`}>Mis à jour {model.meta.lastUpdated}</span>
           ) : null}
         </div>
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div className="grid min-w-0 auto-rows-fr grid-cols-1 gap-8 lg:grid-cols-2">
         <Block eyebrow={`Admissions & dossier (${countryName})`}>
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-0">
             <Row label="Prérequis & équivalences" value={model.admissions.entryRequirementsAndPriorDegrees} />
             <Row label="Langue" value={model.admissions.languageRequirements} />
             <Row label="Diplômes marocains" value={model.admissions.recognitionMoroccanCredentials} />
@@ -87,7 +116,7 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
         </Block>
 
         <Block eyebrow="Programme doctoral">
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-0">
             <Row label="Durée / format" value={model.programStructure.durationAndFormat} />
             <Row label="Cours vs recherche" value={model.programStructure.courseworkVersusResearch} />
             <Row label="Encadrement & jalons" value={model.programStructure.supervisionReviewsProgress} />
@@ -96,7 +125,7 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
         </Block>
 
         <Block eyebrow="Séjour légal & titre doctoral">
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-0">
             <Row label="Voie principale études" value={model.visaImmigration.principalStudyRoute} />
             <Row label="Renouvellements / changements de statut" value={model.visaImmigration.renewalsStatusChanges} />
             <Row label="Travail autorisé (doctorant)" value={model.visaImmigration.workRightsDuringPhd} />
@@ -106,22 +135,31 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
         </Block>
 
         <Block eyebrow="Financement">
-          <Row label="Synthèse" value={model.funding.overview} />
-          <ul className="mb-4 list-inside list-disc space-y-1 text-sm font-bold text-text marker:text-primary">
-            {model.funding.fundingSources.map((src, i) => (
-              <li key={i}>{src}</li>
-            ))}
-          </ul>
-          <div className="space-y-3">
-            <Row label="Frais & scolarité" value={model.funding.tuitionFeesRange} />
-            <Row label="Coût de la vie (ordre)" value={model.funding.livingCosts} />
-            <Row label="Bourses internationales" value={model.funding.scholarshipsInternational} />
-            <Row label="Emploi doctoral" value={model.funding.employmentAsDoctoralCandidate} />
+          <div className="min-w-0 space-y-0">
+            <Row label="Synthèse" value={model.funding.overview} />
+            {model.funding.fundingSources.length > 0 ? (
+              <div className="min-w-0 border-t border-line pt-4">
+                <MicroHeading>Sources principales</MicroHeading>
+                <ul className="mt-3 list-inside list-disc space-y-2 pl-0.5 text-sm font-bold leading-relaxed text-text marker:text-primary">
+                  {model.funding.fundingSources.map((src, i) => (
+                    <li key={i} className="break-words">
+                      {src}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            <div className="min-w-0 space-y-0 border-t border-line pt-4">
+              <Row label="Frais & scolarité" value={model.funding.tuitionFeesRange} />
+              <Row label="Coût de la vie (ordre)" value={model.funding.livingCosts} />
+              <Row label="Bourses internationales" value={model.funding.scholarshipsInternational} />
+              <Row label="Emploi doctoral" value={model.funding.employmentAsDoctoralCandidate} />
+            </div>
           </div>
         </Block>
 
         <Block eyebrow="Débouchés">
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-0">
             <Row label="Piste universitaire / post-docs" value={model.careerOutcomes.academia} />
             <Row label="Hors-académie" value={model.careerOutcomes.industryPublicSector} />
             <Row label="Reconnaissance au Maroc" value={model.careerOutcomes.degreeRecognitionMorocco} />
@@ -129,7 +167,7 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
         </Block>
 
         <Block eyebrow="Pratique & installation">
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-0">
             <Row label="Logement" value={model.practicalRelocation.housing} />
             <Row label="Assurance santé" value={model.practicalRelocation.healthInsurance} />
             <Row label="Banque / admin / fiscalité" value={model.practicalRelocation.bankingAdminTaxOrientation} />
@@ -137,53 +175,66 @@ export function PhDStudiesSection({ countryName, model }: { countryName: string;
         </Block>
 
         <Block eyebrow="Écosystème recherche">
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-0">
             <Row label="Forces discipline" value={model.researchEcosystem.strengthsClusters} />
             <Row label="Langues réelles dans les labos" value={model.researchEcosystem.languageOfInstructionReality} />
           </div>
         </Block>
 
         <Block eyebrow="Risques & cohérence consulaire">
-          <Row label="Lien embassy / friction" value={model.risksFriction.appointmentEmbassyConsistency} />
-          <div className="mt-4 rounded-2xl border border-[#f3afaf]/50 bg-[#fff0f0]/80 p-4">
-            <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-danger">Points tension</p>
-            <ul className="space-y-2">
-              {model.risksFriction.frictionPoints.map((pt, i) => (
-                <li key={i} className="text-sm font-bold text-danger">
-                  {pt}
-                </li>
-              ))}
-            </ul>
+          <div className="min-w-0 space-y-0">
+            <Row label="Lien ambassade / friction" value={model.risksFriction.appointmentEmbassyConsistency} />
+            {model.risksFriction.frictionPoints.length > 0 ? (
+              <div className="mt-4 min-w-0 rounded-3xl border border-[#f3afaf] bg-[#fff0f0] p-6">
+                <h4 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-danger">
+                  <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden /> Points tension
+                </h4>
+                <ul className="space-y-3">
+                  {model.risksFriction.frictionPoints.map((pt, i) => (
+                    <li key={i} className="flex min-w-0 gap-2 text-sm font-bold leading-relaxed text-danger">
+                      <XCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                      <span className="min-w-0 break-words">{pt}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
         </Block>
       </div>
 
       {hasLinks ? (
-        <div className="mt-8 rounded-3xl border border-line bg-[#f8f2e8] p-5">
-          <p className="mb-4 text-[10px] font-black uppercase tracking-widest text-muted">Sources officielles</p>
-          <ul className="flex flex-col gap-2">
-            {model.meta.officialLinks.map((lnk, idx) => (
-              <li key={`${lnk.url}-${idx}`}>
-                <a
-                  href={lnk.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-black text-primary underline decoration-primary/35 underline-offset-4 hover:text-primary-hover"
-                >
-                  {lnk.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+        <div className="mt-10 min-w-0">
+          <div className={`${PHD_OUTER}`}>
+            <div className="min-h-0 min-w-0 max-h-[min(22rem,45vh)] overflow-x-hidden overflow-y-auto overscroll-y-contain p-5 sm:p-6">
+              <MicroHeading>Sources officielles</MicroHeading>
+              <ul className="mt-4 flex flex-col gap-2">
+                {model.meta.officialLinks.map((lnk, idx) => (
+                  <li key={`${lnk.url}-${idx}`} className="min-w-0 break-words">
+                    <a
+                      href={lnk.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-black text-primary underline decoration-primary/35 underline-offset-4 hover:text-primary-hover"
+                    >
+                      {lnk.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       ) : null}
 
-      <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-line pt-6">
+      <div className="mt-8 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
         <p className="text-xs font-medium text-muted">Données normalisées (comparabilité pays) — champ JSON&nbsp;</p>
-        <code className="rounded-lg bg-[#f8f2e8] px-2 py-1 text-[11px] font-bold text-text">full_data.phd_studies</code>
+        <code className="rounded-lg border border-line bg-inset px-2 py-1 font-mono text-[11px] font-bold text-text">
+          full_data.phd_studies
+        </code>
         <Link
           href="/education"
-          className="ml-auto rounded-xl border border-line bg-[#f8f2e8] px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/35 hover:bg-primary-soft"
+          className="inline-flex w-fit items-center rounded-xl border border-line bg-inset px-4 py-2 text-[10px] font-black uppercase tracking-widest text-text transition-colors hover:border-primary/35 hover:bg-primary-soft sm:ml-auto"
         >
           Mobilité étudiante
         </Link>
