@@ -1,0 +1,180 @@
+/* styles/main.css */
+:root {
+    --primary: #0f172a;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-soft: #eff6ff;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --border: #e2e8f0;
+    --radius: 12px;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.dark-mode {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f8fafc;
+    --text-light: #94a3b8;
+    --border: #334155;
+    --accent-soft: rgba(59, 130, 246, 0.1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    transition: background-color 0.3s;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* Navbar */
+.navbar {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-content { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+.logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 24px; align-items: center; }
+.nav-links a { text-decoration: none; color: var(--text); font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+
+/* Tabs Navigation */
+.tabs-nav {
+    display: flex;
+    gap: 8px;
+    background: var(--card);
+    padding: 8px;
+    border-radius: 16px;
+    margin: 32px 0;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.tabs-nav::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: var(--transition);
+}
+.tab-btn.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+.tab-btn:hover:not(.active) {
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+/* Strategy Boxes */
+.strategy-step {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 24px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+    transition: var(--transition);
+}
+.strategy-step:hover {
+    transform: translateX(8px);
+    border-color: var(--accent);
+}
+.step-number {
+    background: var(--accent);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+/* Sections */
+.tab-content { display: none; animation: slideUp 0.4s ease; }
+.tab-content.active { display: block; }
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.section-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 32px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+}
+
+/* Landing Section */
+.hero-landing {
+    text-align: center;
+    padding: 80px 0;
+}
+.hero-landing h1 { font-family: 'Playfair Display', serif; font-size: 3.5rem; margin-bottom: 24px; }
+.hero-landing p { font-size: 1.2rem; color: var(--text-light); max-width: 700px; margin: 0 auto 40px; }
+
+/* Morocco Reality Items */
+.insight-box {
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+.insight-box.danger { background: #fff5f5; border-left: 4px solid var(--danger); }
+.insight-box.success { background: #f0fff4; border-left: 4px solid var(--success); }
+.insight-box.warning { background: #fffaf0; border-left: 4px solid var(--warning); }
+
+/* Global Utils */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .hero-landing h1 { font-size: 2.5rem; } }
+
+.badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+.badge-green { background: #d1fae5; color: #065f46; }
+
+/* Progress Bars */
+.progress-container { width: 100%; height: 8px; background: #edf2f7; border-radius: 4px; overflow: hidden; margin: 8px 0; }
+.progress-fill { height: 100%; background: var(--accent); transition: width 1s ease; }
+
+/* Loader */
+.loader {
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 2px;
+    animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}

@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+
+  comments      Comment[]
+  profile       UserProfile?
+  favorites     FavoriteCountry[]
+  historyEvents UserHistoryEvent[]
+}
+
+model UserProfile {
+  id               Int     @id @default(autoincrement())
+  userId           String  @unique
+  income           Float?
+  savings          Float?
+  CNSS_status      Boolean @default(false)
+  marital_status   String?
+  family_in_europe Boolean @default(false)
+  goal_type        String?
+  age              Int?
+  family_details   String?
+  profession       String?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Country {
+  id                          Int     @id @default(autoincrement())
+  name                        String  @unique
+  region                      String
+  schengen_flag               Boolean @default(false)
+  tourist_visa_score          Float?
+  study_visa_score            Float?
+  work_visa_score             Float?
+  business_visa_score         Float?
+  appointment_difficulty      String?
+  visa_processing_time        String?
+  rejection_risk              String?
+  language_study_access       String?
+  technical_training_access   String?
+  short_course_access         String?
+  street_food_business_access String?
+  driving_license_status      String?
+  full_data                   String?
+
+  comments    Comment[]
+  insights    CountryInsight[]
+  favoritedBy FavoriteCountry[]
+}
+
+model Comment {
+  id        Int           @id @default(autoincrement())
+  content   String
+  status    CommentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  userId    String
+  countryId Int
+
+  country Country @relation(fields: [countryId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model CountryInsight {
+  id                  Int     @id @default(autoincrement())
+  countryId           Int
+  osint_insights      String?
+  real_world_friction String?
+  community_sentiment String?
+
+  country Country @relation(fields: [countryId], references: [id])
+}
+
+model FavoriteCountry {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  countryId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  country Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, countryId])
+}
+
+model UserHistoryEvent {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  type      String
+  payload   String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

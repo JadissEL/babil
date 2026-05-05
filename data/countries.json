@@ -1,0 +1,473 @@
+{
+  "countries": [
+    {
+      "country": "Italie",
+      "region": "Schengen",
+      "access_type": "Visa Required",
+      "stay_duration": "90 days",
+      "confidence_score": 92,
+      "official_score": 8.8,
+      "brutal_reality_score": 7.5,
+      "acceptance_rate_morocco": "82%",
+      "embassy_behavior": "Valorise énormément les liens familiaux directs prouvés par livret de famille.",
+      "friction_score": 85,
+      "friction_analysis": {
+        "official_system": "TLScontact (Casablanca/Rabat)",
+        "real_delay": "3-5 mois",
+        "user_reports_summary": "Saturation extrême à Casa, revente de créneaux par des tiers à 8h du matin.",
+        "friction_score": 85,
+        "transparency_score": 40,
+        "risk_level": "High",
+        "notes": "Le pré-paiement ne garantit plus un accès fluide."
+      },
+      "appointment_audit": {
+        "platform": "TLScontact",
+        "official_difficulty": "High",
+        "real_difficulty": "Extreme",
+        "transparency": "Low",
+        "broker_risk": "Very High",
+        "avg_wait_time": "3-5 months",
+        "issues": ["Saturation des créneaux à Casablanca", "Système de pré-paiement complexe", "Délais de 3 mois constatés"],
+        "user_reports": "Utilisation massive de 'Semsars' pour les créneaux de 8h00.",
+        "risks": ["Vente de faux rendez-vous", "Paiements non sécurisés hors plateforme"]
+      },
+      "visa_system": {
+        "tourism": { "difficulty": "Hard", "process": "TLScontact + Interview", "cost": "80 EUR + Fees" },
+        "work": { "availability": "Decreto Flussi (Quotas)", "rights": "Permis requis avant entrée", "sectors": ["Agriculture", "Construction", "Tourisme"] },
+        "business": { "rights": "Droit d'investir libre", "setup": "SRL possible avec capital min 1€", "conditions": "Nécessite visa D pour gestion active" }
+      },
+      "street_food": {
+        "opportunity": "Medium",
+        "investment_min": "15,000 EUR",
+        "barriers": "Licence 'HACCP' stricte, occupation domaine public difficile à obtenir à Rome/Milan.",
+        "demand": "Forte pour la cuisine méditerranéenne/fusion."
+      },
+      "cbi_program": null,
+      "education_mobility": {
+        "language_study": {
+          "access": "Moyen",
+          "bac_required": "Non requis",
+          "program_type": "École privée / Universitaire",
+          "estimated_cost": "Élevé",
+          "visa_type": "Étudiant / Formation",
+          "insight": "Idéal pour les écoles de mode ou design à Milan. Le visa est plus accessible si les frais sont payés d'avance.",
+          "cost": "8000 - 15000 EUR",
+          "visa": "Étudiant (D)"
+        },
+        "technical_training": {
+          "access_bac": true,
+          "access_no_bac": false,
+          "types": ["Design", "Mode", "Cuisine"],
+          "visa": "Étudiant",
+          "work_rights": "Limité (20h/semaine)",
+          "market_insight": "Excellentes opportunités en alternance dans le secteur du luxe.",
+          "access": "Moyen",
+          "bac_required": "Requis",
+          "cost": "10000 - 20000 EUR",
+          "insight": "Les formations techniques en Italie sont très réputées dans le secteur de l'artisanat de luxe."
+        },
+        "short_courses": {
+          "duration": "2-4 semaines",
+          "bac_required": "Non requis",
+          "types": ["Cuisine italienne", "Design"],
+          "visa": "Tourisme",
+          "cost": "Moyen (2000-4000 EUR)",
+          "access": "Facile",
+          "insight": "Parfait pour une montée en compétence rapide en art culinaire."
+        }
+      },
+      "driving_license": {
+        "status": "Valide (Temporaire)",
+        "international_required": true,
+        "duration": "1 an",
+        "conversion_possible": true,
+        "conversion_process": "Examen théorique requis, traduction assermentée, certificat médical.",
+        "cost": "~200 EUR",
+        "restrictions": "Interdit de conduire des véhicules professionnels sans conversion locale."
+      },
+      "morocco_insights": {
+        "darija_note": "Khass l-wraq mriygline",
+        "reality": "Le consulat de Casa est plus strict que Rabat sur les AE.",
+        "pro_tip": "Joindre le livret de famille marocain (traduit) pour prouver le lien avec le frère."
+      }
+    },
+    {
+      "country": "Espagne",
+      "region": "Schengen",
+      "access_type": "Visa Required",
+      "stay_duration": "90 days",
+      "confidence_score": 90,
+      "official_score": 6.8,
+      "brutal_reality_score": 5.5,
+      "friction_score": 88,
+      "friction_analysis": {
+        "official_system": "Visametric",
+        "real_delay": "8-12 semaines",
+        "user_reports_summary": "Saturation Visametric, quotas limités, focus extrême sur les originaux CNSS.",
+        "friction_score": 88,
+        "transparency_score": 50,
+        "risk_level": "High",
+        "notes": "L'Allemagne durcit ses contrôles sur les indépendants."
+      },
+      "acceptance_rate_morocco": "65%",
+      "embassy_behavior": "Focus obsessionnel sur l'ancrage économique au Maroc (CNSS/Relevés).",
+      "friction_score": 98,
+      "appointment_audit": {
+        "platform": "BLS International",
+        "official_difficulty": "Very High",
+        "real_difficulty": "Impossible (sans aide)",
+        "transparency": "Very Low",
+        "broker_risk": "Critical",
+        "avg_wait_time": "4-6 months",
+        "issues": ["Bots capturant les créneaux en millisecondes", "Instabilité du site web", "Vérification par appel vidéo saturée"],
+        "user_reports": "Créneaux vendus entre 1500 et 4000 MAD sur les réseaux sociaux.",
+        "risks": ["Bannissement définitif du passeport si bot détecté", "Arnaques aux faux acomptes"]
+      },
+      "visa_system": {
+        "tourism": { "difficulty": "Very Hard", "process": "BLS Intl", "cost": "80 EUR" },
+        "work": { "availability": "Limited", "rights": "Permis requis", "sectors": ["Agriculture", "Logistique"] },
+        "business": { "rights": "High", "setup": "Autónomo possible", "conditions": "Exige résidence légale préalable" }
+      },
+      "street_food": {
+        "opportunity": "High",
+        "investment_min": "10,000 EUR",
+        "barriers": "Licences municipales (Chiringuito/Stand) très demandées.",
+        "demand": "Énorme dans les zones côtières."
+      },
+      "cbi_program": null,
+      "education_mobility": {
+        "language_study": {
+          "access": "Moyen",
+          "bac_required": "Non requis",
+          "cost": "4000 - 7000 EUR",
+          "visa": "Étudiant",
+          "insight": "L'Espagne est idéale pour apprendre l'Espagnol. Les écoles privées à Malaga et Valence sont plus flexibles."
+        },
+        "technical_training": {
+          "access": "Moyen",
+          "bac_required": "Requis",
+          "cost": "5000 - 12000 EUR",
+          "visa": "Étudiant / Formation",
+          "insight": "Formations en tourisme et hôtellerie très réputées avec des débouchés locaux."
+        },
+        "short_courses": {
+          "access": "Facile",
+          "bac_required": "Non requis",
+          "cost": "Bas (1000 - 3000 EUR)",
+          "visa": "Tourisme",
+          "insight": "Stages de cuisine méditerranéenne ou cours intensifs d'été."
+        }
+      },
+      "driving_license": {
+        "status": "Valide (Temporaire)",
+        "international_required": true,
+        "duration": "6 mois",
+        "conversion_possible": true,
+        "conversion_process": "Examen de contrôle, visite médicale, taxe de conversion.",
+        "cost": "~150 EUR",
+        "restrictions": "Doit être converti après l'obtention de la résidence."
+      },
+      "morocco_insights": {
+        "darija_note": "Semsara klaw kolchi",
+        "reality": "Exigence de présence physique pour certains dépôts.",
+        "pro_tip": "Tenter les consulats de Nador ou Tétouan pour plus de fluidité."
+      }
+    },
+    {
+      "country": "France",
+      "region": "Schengen",
+      "access_type": "Visa Required",
+      "stay_duration": "90 days",
+      "confidence_score": 88,
+      "official_score": 8.2,
+      "brutal_reality_score": 6.0,
+      "acceptance_rate_morocco": "72%",
+      "embassy_behavior": "IA de pré-filtrage très stricte sur le ratio Revenus/Épargne.",
+      "friction_score": 92,
+      "friction_analysis": {
+        "official_system": "France-Visas + TLScontact",
+        "real_delay": "3-6 mois",
+        "user_reports_summary": "Attribution aléatoire créant une incertitude totale. Pas de visibilité sur les stocks.",
+        "friction_score": 92,
+        "transparency_score": 30,
+        "risk_level": "High",
+        "notes": "L'IA de filtrage bloque les IPs suspects."
+      },
+      "appointment_audit": {
+        "platform": "TLScontact",
+        "official_difficulty": "High",
+        "real_difficulty": "Random (Loterie)",
+        "transparency": "Medium",
+        "broker_risk": "High",
+        "avg_wait_time": "3-6 months",
+        "issues": ["Système d'attribution aléatoire frustrant", "Quotas quotidiens opaques", "Blocages IP fréquents"],
+        "user_reports": "Attente de plusieurs mois sans aucune visibilité sur les créneaux.",
+        "risks": ["Usurpation d'identité par des tiers proposant des RDV"]
+      },
+      "visa_system": {
+        "tourism": { "difficulty": "Hard", "process": "France-Visas + TLS", "cost": "80 EUR" },
+        "work": { "availability": "High", "rights": "Passeport Talent / Salarié", "sectors": ["Santé", "IT", "Ingénierie"] },
+        "business": { "rights": "Total", "setup": "SASU/Auto-entrepreneur", "conditions": "Changement de statut complexe" }
+      },
+      "street_food": {
+        "opportunity": "Medium",
+        "investment_min": "20,000 EUR",
+        "barriers": "Règles d'hygiène et sécurité incendie très strictes.",
+        "demand": "Forte pour la gastronomie marocaine authentique."
+      },
+      "cbi_program": null,
+      "morocco_insights": {
+        "darija_note": "RDV fih ghir l-haz",
+        "reality": "Refus Motif 13 très fréquent pour les célibataires.",
+        "pro_tip": "Avoir un historique de voyage solide avant de postuler."
+      }
+    },
+    {
+      "country": "Portugal",
+      "region": "Schengen",
+      "access_type": "Visa Required",
+      "stay_duration": "90 days",
+      "confidence_score": 85,
+      "official_score": 8.4,
+      "brutal_reality_score": 8.0,
+      "acceptance_rate_morocco": "78%",
+      "embassy_behavior": "Ouverture pragmatique pour les entrepreneurs tech et services.",
+      "friction_score": 45,
+      "friction_analysis": {
+        "official_system": "VFS Global",
+        "real_delay": "2-4 semaines",
+        "user_reports_summary": "Système stable mais centre unique à Rabat forçant les déplacements.",
+        "friction_score": 45,
+        "transparency_score": 80,
+        "risk_level": "Low",
+        "notes": "Plus fiable que ses voisins directs."
+      },
+      "appointment_audit": {
+        "platform": "VFS Global",
+        "official_difficulty": "Medium",
+        "real_difficulty": "Accessible",
+        "transparency": "High",
+        "broker_risk": "Low",
+        "avg_wait_time": "2-4 weeks",
+        "issues": ["Centre unique à Rabat", "Délais de traitement post-dépôt longs"],
+        "user_reports": "Prise de rendez-vous fluide en ligne sans intermédiaire.",
+        "risks": ["Erreurs de saisie bloquantes sur VFS"]
+      },
+      "visa_system": {
+        "tourism": { "difficulty": "Medium", "process": "VFS Global", "cost": "80 EUR" },
+        "work": { "availability": "High", "rights": "Art 88.2/89 (Manifestation d'intérêt)", "sectors": ["Tech", "Agriculture", "Services"] },
+        "business": { "rights": "Total", "setup": "Empresa na Hora (1h)", "conditions": "Visa D2 pour entrepreneurs" }
+      },
+      "street_food": {
+        "opportunity": "High",
+        "investment_min": "8,000 EUR",
+        "barriers": "Licence municipale requise. Moins de bureaucratie qu'en France.",
+        "demand": "Forte à Lisbonne et Algarve pour concept 'Moroccan Tacos'."
+      },
+      "cbi_program": {
+        "cost_min": "500,000 EUR",
+        "type": "Investment Funds / Cultural Heritage",
+        "time": "5-6 years to citizenship",
+        "family": "Included",
+        "status": "Active (Real Estate path closed 2023)"
+      },
+      "education_mobility": {
+        "language_study": {
+          "access": "Facile",
+          "bac_required": "Non requis",
+          "cost": "3000 - 6000 EUR",
+          "visa": "Étudiant (D2)",
+          "insight": "Le Portugal est l'un des pays les plus accueillants pour apprendre le Portugais ou l'Anglais. Coût de la vie imbattable en Europe de l'Ouest."
+        },
+        "technical_training": {
+          "access": "Facile",
+          "bac_required": "Non requis",
+          "cost": "4000 - 8000 EUR",
+          "visa": "Étudiant / Formation",
+          "insight": "Pénurie de main-d'œuvre qualifiée dans la tech, facilitant l'obtention d'un permis de travail post-formation."
+        },
+        "short_courses": {
+          "access": "Facile",
+          "bac_required": "Non requis",
+          "cost": "Bas (500 - 1500 EUR)",
+          "visa": "Tourisme",
+          "insight": "Idéal pour des bootcamps de surf ou de digital skills."
+        }
+      },
+      "driving_license": {
+        "status": "Conversion Directe",
+        "international_required": false,
+        "duration": "Illimitée (après conversion)",
+        "conversion_possible": true,
+        "conversion_process": "Échange direct grâce aux accords bilatéraux Maroc-Portugal.",
+        "cost": "30 EUR",
+        "restrictions": "Doit être résident pour demander l'échange."
+      },
+      "morocco_insights": {
+        "darija_note": "Fih l-khir",
+        "reality": "Consulat ouvert aux profils indépendants tech/services.",
+        "pro_tip": "Mentionner l'intention d'explorer le marché local (Prospection)."
+      }
+    },
+    {
+      "country": "Grèce",
+      "region": "Schengen",
+      "access_type": "Visa Required",
+      "stay_duration": "90 days",
+      "confidence_score": 95,
+      "official_score": 8.1,
+      "brutal_reality_score": 8.5,
+      "acceptance_rate_morocco": "88%",
+      "embassy_behavior": "Système le plus rapide et le moins soupçonneux de l'espace Schengen.",
+      "friction_score": 25,
+      "friction_analysis": {
+        "official_system": "GVCW (Rabat/Casa)",
+        "real_delay": "1-2 semaines",
+        "user_reports_summary": "Rendez-vous faciles à obtenir, peu d'intermédiaires sur ce créneau.",
+        "friction_score": 25,
+        "transparency_score": 90,
+        "risk_level": "Very Low",
+        "notes": "Idéal pour les urgences ou premiers départs."
+      },
+      "appointment_audit": {
+        "platform": "GVCW",
+        "official_difficulty": "Low",
+        "real_difficulty": "Easy",
+        "transparency": "Very High",
+        "broker_risk": "Very Low",
+        "avg_wait_time": "1-2 weeks",
+        "issues": ["Quotas quotidiens parfois atteints rapidement"],
+        "user_reports": "Rendez-vous obtenu en moins d'une semaine.",
+        "risks": ["Vols directs limités augmentant les coûts"]
+      },
+      "visa_system": {
+        "tourism": { "difficulty": "Easy", "process": "GVCW Rabat", "cost": "80 EUR" },
+        "work": { "availability": "Seasonal", "rights": "Permis saisonnier 6 mois", "sectors": ["Hôtellerie", "Cueillette"] },
+        "business": { "rights": "Possible", "setup": "Nécessite garant local ou capital élevé", "conditions": "Complexe pour les non-EU" }
+      },
+      "street_food": {
+        "opportunity": "High",
+        "investment_min": "10,000 EUR",
+        "barriers": "Concurrence forte du Souvlaki local. Emplacements touristiques chers.",
+        "demand": "Excellente pour les produits à base de pâte (Msemen, Beghrir)."
+      },
+      "cbi_program": {
+        "cost_min": "250,000 - 800,000 EUR",
+        "type": "Real Estate (Golden Visa)",
+        "time": "7 years for citizenship (Residence only initially)",
+        "family": "Included",
+        "status": "Active (Price hike in 2024 for Tier A zones)"
+      },
+      "morocco_insights": {
+        "darija_note": "Sahla mahla",
+        "reality": "Le meilleur 'brise-glace' pour un passeport vierge.",
+        "pro_tip": "Réserver un hôtel réel et non annulable pour prouver la bonne foi."
+      }
+    },
+    {
+      "country": "Japon",
+      "region": "Asia",
+      "access_type": "Visa Required",
+      "stay_duration": "90 days",
+      "confidence_score": 98,
+      "official_score": 8.5,
+      "brutal_reality_score": 9.0,
+      "friction_score": 15,
+      "friction_analysis": {
+        "official_system": "Ambassade Rabat / e-Visa",
+        "real_delay": "5-10 jours",
+        "user_reports_summary": "Système exemplaire, très peu de friction si le dossier est complet.",
+        "friction_score": 15,
+        "transparency_score": 100,
+        "risk_level": "Zero",
+        "notes": "Le Japon est le pays le plus transparent pour les Marocains en 2026."
+      },
+      "acceptance_rate_morocco": "95%",
+      "embassy_behavior": "Rigueur et respect. Si le dossier est complet, l'approbation est quasi-garantie.",
+      "friction_score": 15,
+      "appointment_audit": {
+        "platform": "Ambassade Rabat / e-Visa",
+        "official_difficulty": "Low",
+        "real_difficulty": "Easy",
+        "transparency": "Absolute",
+        "broker_risk": "None",
+        "avg_wait_time": "5 days",
+        "issues": ["Aucun"],
+        "user_reports": "Processus e-Visa fluide et sans stress.",
+        "risks": ["Barrière de la langue au guichet si non e-Visa"]
+      },
+      "visa_system": {
+        "tourism": { "difficulty": "Easy", "process": "e-Visa / Ambassade Rabat", "cost": "250 MAD" },
+        "work": { "availability": "Medium", "rights": "Visa travailleur qualifié (SSW)", "sectors": ["Restauration", "Construction", "Agriculture"] },
+        "business": { "rights": "Droit d'investir", "setup": "Visa Business Manager", "conditions": "Investissement min 5M JPY (~350k MAD)" }
+      },
+      "street_food": {
+        "opportunity": "Medium",
+        "investment_min": "30,000 EUR",
+        "barriers": "Normes d'hygiène drastiques. Emplacements Yatai (stands) limités par des licences hérititaires.",
+        "demand": "Forte pour l'exotisme (Couscous cup / Harira)."
+      },
+      "cbi_program": null,
+      "morocco_insights": {
+        "darija_note": "Ndam o l-akhlaq",
+        "reality": "Le visa le plus 'respectueux' du monde pour les Marocains.",
+        "pro_tip": "Le e-Visa est désormais disponible pour les Marocains."
+      }
+    },
+    {
+      "country": "Turquie",
+      "region": "Middle East",
+      "access_type": "Visa Free",
+      "stay_duration": "90 days",
+      "confidence_score": 100,
+      "official_score": 9.5,
+      "brutal_reality_score": 9.5,
+      "acceptance_rate_morocco": "100%",
+      "embassy_behavior": "Aucun contrôle consulaire préalable.",
+      "friction_score": 5,
+      "friction_analysis": {
+        "official_system": "Sans Visa (Entrée libre)",
+        "real_delay": "Instantané",
+        "user_reports_summary": "Aucune friction administrative préalable.",
+        "friction_score": 5,
+        "transparency_score": 100,
+        "risk_level": "Zero",
+        "notes": "Seul risque : refoulement à la frontière si profil suspect."
+      },
+      "appointment_audit": {
+        "platform": "N/A",
+        "official_difficulty": "None",
+        "real_difficulty": "Zero",
+        "transparency": "Absolute",
+        "broker_risk": "None",
+        "avg_wait_time": "0 days",
+        "issues": ["Aucun"],
+        "user_reports": "Entrée libre avec passeport valide.",
+        "risks": ["Refus d'embarquement au Maroc si profil suspect"]
+      },
+      "visa_system": {
+        "tourism": { "difficulty": "None", "process": "Passport only", "cost": "Free" },
+        "work": { "availability": "Medium", "rights": "Permis requis (Ikamet)", "sectors": ["Commerce", "Tourisme", "Immobilier"] },
+        "business": { "rights": "Excellent", "setup": "Rapide", "conditions": "Droit de propriété à 100% pour étrangers" }
+      },
+      "street_food": {
+        "opportunity": "Extreme",
+        "investment_min": "3,000 EUR",
+        "barriers": "Marché saturé mais demande infinie. Licences municipales obligatoires (Zabita).",
+        "demand": "Forte pour la fusion Maroc-Turquie."
+      },
+      "cbi_program": {
+        "cost_min": "400,000 USD",
+        "type": "Real Estate / Bank Deposit",
+        "time": "6-9 months",
+        "family": "Included",
+        "status": "Active & Very popular with Moroccans"
+      },
+      "morocco_insights": {
+        "darija_note": "Mliha bzaf",
+        "reality": "Indispensable pour créer un historique avant l'Europe.",
+        "pro_tip": "Faire 2-3 voyages courts pour 'chargement' le passeport."
+      }
+    }
+  ]
+}

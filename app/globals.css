@@ -1,0 +1,21 @@
+@import "flag-icons/css/flag-icons.min.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-base: #0b0f19;
+  --bg-card: #111827;
+  --primary: #3b82f6;
+  --success: #22c55e;
+  --warning: #facc15;
+  --danger: #ef4444;
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+}
+
+body {
+  background: #f8fafc;
+  color: #111827;
+}
