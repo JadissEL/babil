@@ -94,57 +94,57 @@ export default function ExplorerPage() {
     <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 pb-20 sm:px-8">
       <div className="mb-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-4">
-          <div className="rounded-2xl bg-blue-600 p-4 text-white shadow-lg shadow-blue-900/30">
+          <div className="rounded-2xl bg-primary p-4 text-white shadow-soft">
             <Globe className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">Global Explorer</h1>
-            <p className="mt-1 text-sm font-medium text-slate-400">
+            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Global Explorer</h1>
+            <p className="mt-1 text-sm font-medium text-muted">
               Intelligence terrain & mobilité pour citoyens marocains — filtre et compare les destinations.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="sticky top-16 z-30 rounded-2xl border border-white/10 bg-[#111827]/95 p-4 shadow-xl shadow-black/20 backdrop-blur">
+      <div className="sticky top-16 z-30 rounded-2xl border border-line bg-surface/95 p-4 shadow-card backdrop-blur">
         <FilterBar
-          className="mb-4 border-b border-white/10 pb-4"
+          className="mb-4 border-b border-line pb-4"
           goalValue={explorerGoalToFilterValue(goal)}
           regionValue={explorerRegionToSelect(region)}
           onGoalChange={(v) => setGoal(filterGoalFromSelect(v))}
           onRegionChange={(v) => setRegion(selectToExplorerRegion(v))}
         />
         <div className="flex flex-wrap items-center gap-3">
-          <div className="inline-flex rounded-2xl border border-white/10 bg-white/5 p-1">
+          <div className="inline-flex rounded-2xl border border-line bg-[#f8f2e8] p-1">
             <button
               type="button"
               onClick={() => setMode('explorer')}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'explorer' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-white'}`}
+              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'explorer' ? 'bg-primary text-white shadow-soft' : 'text-muted hover:text-primary'}`}
             >
               <SlidersHorizontal className="h-4 w-4" /> Explorer
             </button>
             <button
               type="button"
               onClick={() => setMode('recommendation')}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'recommendation' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-white'}`}
+              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'recommendation' ? 'bg-primary text-white shadow-soft' : 'text-muted hover:text-primary'}`}
             >
               <Target className="h-4 w-4" /> Recommendation
             </button>
           </div>
 
           <div className="relative min-w-64 flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <input
               type="search"
               placeholder="Chercher un pays..."
-              className="w-full rounded-xl border border-white/15 bg-white/5 py-2.5 pl-10 pr-3 text-sm font-medium text-slate-100 outline-none placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500/40"
+              className="w-full rounded-xl border border-line bg-surface py-2.5 pl-10 pr-3 text-sm font-medium text-text outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/40"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
           <select
-            className="rounded-xl border border-white/15 bg-white/5 px-3 py-2.5 text-sm font-bold text-slate-100 outline-none"
+            className="rounded-xl border border-line bg-surface px-3 py-2.5 text-sm font-bold text-text outline-none"
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
           >
@@ -156,7 +156,7 @@ export default function ExplorerPage() {
           </select>
 
           <select
-            className="rounded-xl border border-white/15 bg-white/5 px-3 py-2.5 text-sm font-bold text-slate-100 outline-none"
+            className="rounded-xl border border-line bg-surface px-3 py-2.5 text-sm font-bold text-text outline-none"
             value={budget}
             onChange={(e) => setBudget(e.target.value as Budget)}
           >
@@ -166,7 +166,7 @@ export default function ExplorerPage() {
             <option value="high">High</option>
           </select>
 
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2.5 text-xs font-black uppercase tracking-wider text-slate-300">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-[#f8f2e8] px-3 py-2.5 text-xs font-black uppercase tracking-wider text-muted">
             <input type="checkbox" className="rounded border-white/30" checked={schengenOnly} onChange={(e) => setSchengenOnly(e.target.checked)} />
             Schengen only
           </label>
@@ -177,10 +177,10 @@ export default function ExplorerPage() {
 
       {loading ? (
         <div className="flex justify-center p-20">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500" />
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       ) : gridCountries.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-[#111827] p-12 text-center text-slate-400">
+        <div className="rounded-2xl border border-line bg-surface p-12 text-center text-muted">
           <p className="text-sm font-medium">Aucun pays ne correspond à ces filtres.</p>
         </div>
       ) : (

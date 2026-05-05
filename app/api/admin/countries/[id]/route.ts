@@ -3,6 +3,7 @@ import type { Prisma } from '@prisma/client'
 
 import { getAdminUser } from '@/lib/admin-auth'
 import prisma from '@/lib/prisma'
+import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const admin = await getAdminUser()
@@ -51,6 +52,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     })
     return NextResponse.json(updated)
   } catch (error: unknown) {
+    if (isDbUnavailable(error)) {
+      return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })
+    }
     const message = error instanceof Error ? error.message : 'Update failed'
     return NextResponse.json({ error: message }, { status: 500 })
   }

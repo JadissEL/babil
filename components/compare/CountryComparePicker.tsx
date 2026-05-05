@@ -31,16 +31,16 @@ export function CountryComparePicker({
   const filtered = options.filter((o) => o.name.toLowerCase().includes(q))
 
   return (
-    <Card className="border-gray-800 bg-[#111827]">
+    <Card className="border-line bg-surface">
       <CardContent className="space-y-4 p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <Label htmlFor="compare-search">Recherche pays</Label>
-            <p className="mt-1 text-xs text-slate-500">Jusqu&apos;à {max} destinations — cliquez pour ajouter / retirer.</p>
+            <p className="mt-1 text-xs text-muted">Jusqu&apos;à {max} destinations — cliquez pour ajouter / retirer.</p>
           </div>
         </div>
         <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           <Input
             id="compare-search"
             className="pl-10"
@@ -63,7 +63,7 @@ export function CountryComparePicker({
                 onClick={() => onToggle(o.id)}
               >
                 <span className="font-bold">{o.name}</span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted">
                   {active ? 'Sélectionné' : disabled ? 'Max' : 'Ajouter'}
                 </span>
               </Button>

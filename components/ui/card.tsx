@@ -6,7 +6,10 @@ export const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('rounded-xl border border-gray-800 bg-[#111827] text-white shadow-sm', className)}
+      className={cn(
+        'rounded-2xl border border-line bg-surface text-text shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-soft',
+        className,
+      )}
       {...props}
     />
   ),
@@ -15,7 +18,7 @@ Card.displayName = 'Card'
 
 export const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('p-5 pt-5', className)} {...props} />
+    <div ref={ref} className={cn('p-6', className)} {...props} />
   ),
 )
 CardContent.displayName = 'CardContent'

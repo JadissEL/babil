@@ -22,10 +22,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-[#0B0F19] text-slate-100">
+    <div className="flex min-h-[calc(100vh-4rem)] bg-bg text-text">
       <DashboardSidebar />
 
-      <main className="flex-1 bg-[#0B0F19] px-8 py-10 lg:px-12">{children}</main>
+      <main className="flex-1 bg-bg px-8 py-10 lg:px-12">{children}</main>
     </div>
   )
 }

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: babil
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:render
+    autoDeploy: true
+
+  - type: worker
+    name: babil-agents
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm run agents:start
+    autoDeploy: true

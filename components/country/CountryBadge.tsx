@@ -1,13 +1,13 @@
 export default function CountryBadge({ label, tone = 'neutral' }: { label: string; tone?: 'success' | 'warning' | 'danger' | 'neutral' }) {
   const classes =
     tone === 'success'
-      ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+      ? 'bg-[#e9f9f1] text-success border-[#94dfbd]'
       : tone === 'warning'
-        ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+        ? 'bg-[#fff5e7] text-warning border-[#f2c27a]'
         : tone === 'danger'
-          ? 'bg-red-500/15 text-red-300 border-red-500/30'
-          : 'bg-white/5 text-slate-300 border-white/15'
+          ? 'bg-[#fff0f0] text-danger border-[#f3afaf]'
+          : 'bg-[#f8f2e8] text-muted border-line'
 
-  return <span className={`rounded-lg border px-2 py-1 text-[10px] font-black uppercase tracking-widest ${classes}`}>{label}</span>
+  return <span className={`rounded-lg border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${classes}`}>{label}</span>
 }
 

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { loadFallbackCountries } from '@/lib/countries-fallback'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
 
@@ -239,7 +240,12 @@ export async function POST(req: Request) {
 
   try {
     const normalizedProfile = normalizeProfile(profile);
-    const countries = await prisma.country.findMany();
+    let countries: any[] = []
+    try {
+      countries = await prisma.country.findMany();
+    } catch {
+      countries = await loadFallbackCountries()
+    }
     const recommendations = countries
       .map((c: any) => computeRecommendation(c, normalizedProfile))
       .sort((a, b) => b.score - a.score);

@@ -3,11 +3,11 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 
 const variants = {
-  default: 'bg-blue-600 text-white shadow-sm hover:bg-blue-500',
-  outline: 'border border-white/20 bg-transparent text-slate-100 hover:bg-white/5',
-  secondary: 'bg-white/10 text-white hover:bg-white/15',
-  ghost: 'text-slate-300 hover:bg-white/5 hover:text-white',
-  destructive: 'bg-red-600 text-white hover:bg-red-500',
+  default: 'bg-primary text-white shadow-soft hover:bg-primary-hover',
+  outline: 'border border-line bg-surface text-text hover:bg-primary-soft',
+  secondary: 'bg-accent text-white shadow-soft hover:bg-accent-hover',
+  ghost: 'text-muted hover:bg-primary-soft hover:text-primary',
+  destructive: 'bg-danger text-white hover:bg-[#c93f3f]',
 }
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -21,7 +21,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       type={type}
       disabled={disabled}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/60 disabled:pointer-events-none disabled:opacity-50',
+        'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:opacity-50',
         variants[variant],
         className,
       )}

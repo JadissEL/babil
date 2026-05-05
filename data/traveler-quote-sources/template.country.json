@@ -1,0 +1,22 @@
+{
+  "country": "France",
+  "sources": [
+    {
+      "sourceName": "Reddit r/travel",
+      "sourceUrl": "https://www.reddit.com/r/travel/",
+      "author": "reddit_user",
+      "snippets": [
+        "I loved exploring Paris on foot, but some areas were crowded in peak season.",
+        "Public transport was efficient and made day trips easy."
+      ]
+    },
+    {
+      "sourceName": "Travel Blog Example",
+      "sourceUrl": "https://example.com/france-trip-report",
+      "snippets": [
+        "Food quality was excellent almost everywhere we went.",
+        "Museum queues were long, so booking in advance helped a lot."
+      ]
+    }
+  ]
+}

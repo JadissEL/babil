@@ -22,6 +22,7 @@ import {
   Activity,
   Scale,
   Shield,
+  SwatchBook,
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -35,6 +36,7 @@ const dashboardNav: NavItem[] = [
   { label: 'Mes Recommandations', href: '/recommendations', icon: Map },
   { label: 'Mon Profil', href: '/profile', icon: User },
   { label: 'Administration', href: '/admin', icon: Shield },
+  { label: 'Design System', href: '/design-system', icon: SwatchBook },
 ]
 
 const explorerNav: NavItem[] = [
@@ -67,17 +69,17 @@ export function DashboardSidebar() {
   const pathname = normalizePath(usePathname() || '')
 
   return (
-    <aside className="flex w-72 flex-col gap-10 border-r border-white/10 bg-[#111827]/80 p-8 backdrop-blur">
+    <aside className="flex w-72 flex-col gap-10 border-r border-line bg-surface p-8">
       <Link href="/" className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-xl font-black text-white shadow-lg shadow-blue-900/40">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-xl font-black text-white shadow-soft">
           V
         </div>
-        <div className="text-2xl font-black tracking-tight text-white">VisaFlow</div>
+        <div className="text-2xl font-black tracking-tight text-text">VisaFlow</div>
       </Link>
 
       <div className="flex flex-col gap-8">
         <nav className="flex flex-col gap-2" aria-label="Espace tableau de bord">
-          <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+          <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-muted">
             Dashboard
           </div>
           {dashboardNav.map((item) => {
@@ -90,15 +92,15 @@ export function DashboardSidebar() {
                 className={cn(
                   'group flex items-center justify-between rounded-2xl px-4 py-3 font-bold transition-all',
                   active
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white',
+                    ? 'bg-primary text-white shadow-soft'
+                    : 'text-muted hover:bg-primary-soft hover:text-primary',
                 )}
               >
                 <div className="flex items-center gap-3">
                   <item.icon
                     className={cn(
                       'h-5 w-5',
-                      active ? 'text-white' : 'text-slate-500 group-hover:text-blue-400',
+                      active ? 'text-white' : 'text-muted group-hover:text-primary',
                     )}
                   />
                   {item.label}
@@ -117,7 +119,7 @@ export function DashboardSidebar() {
         </nav>
 
         <nav className="flex flex-col gap-2" aria-label="Outils mobilité">
-          <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+          <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-muted">
             Mobilité
           </div>
           {explorerNav.map((item) => {
@@ -129,15 +131,15 @@ export function DashboardSidebar() {
                 className={cn(
                   'group flex items-center justify-between rounded-2xl px-4 py-3 font-bold transition-all',
                   active
-                    ? 'bg-white/[0.08] text-white ring-1 ring-white/15'
-                    : 'text-slate-400 hover:bg-white/5 hover:text-white',
+                    ? 'bg-primary-soft text-primary ring-1 ring-primary/20'
+                    : 'text-muted hover:bg-primary-soft hover:text-primary',
                 )}
               >
                 <div className="flex items-center gap-3">
                   <item.icon
                     className={cn(
                       'h-5 w-5',
-                      active ? 'text-blue-400' : 'text-slate-500 group-hover:text-blue-400',
+                      active ? 'text-primary' : 'text-muted group-hover:text-primary',
                     )}
                   />
                   {item.label}
@@ -154,13 +156,13 @@ export function DashboardSidebar() {
         </nav>
       </div>
 
-      <div className="mt-auto border-t border-white/10 pt-8">
+      <div className="mt-auto border-t border-line pt-8">
         <button
           type="button"
-          className="group flex w-full cursor-not-allowed items-center gap-3 rounded-2xl px-4 py-3 font-bold text-slate-400 opacity-75"
+          className="group flex w-full cursor-not-allowed items-center gap-3 rounded-2xl px-4 py-3 font-bold text-muted opacity-75"
           aria-disabled
         >
-          <Settings className="h-5 w-5 text-slate-500" />
+          <Settings className="h-5 w-5 text-muted" />
           Paramètres
         </button>
       </div>

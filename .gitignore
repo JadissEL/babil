@@ -1,7 +1,13 @@
 node_modules
 # Keep environment variables out of version control
 .env
+.env.local
 .next
 dev.db
+.agent-state
+.cursor_memory
+tsconfig.tsbuildinfo
 
 /generated/prisma
+
+.vercel

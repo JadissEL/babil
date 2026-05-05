@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function GET() {
   const { userId } = auth();
@@ -12,6 +13,7 @@ export async function GET() {
     });
     return NextResponse.json(profile);
   } catch (error: any) {
+    if (isDbUnavailable(error)) return NextResponse.json(null)
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -116,6 +118,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json(profile);
   } catch (error: any) {
+    if (isDbUnavailable(error)) {
+      return NextResponse.json({ ok: true, degraded: true, profile: parsed.value })
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

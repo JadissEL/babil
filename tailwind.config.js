@@ -6,12 +6,36 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
       colors: {
-        primary: '#1e293b',
-        accent: '#3b82f6',
-        success: '#22c55e',
-        danger: '#ef4444',
-        warning: '#f59e0b',
+        bg: '#f7f3eb',
+        surface: '#fffdf8',
+        line: '#e6dccb',
+        text: '#1f2937',
+        muted: '#5f6b7a',
+        primary: {
+          DEFAULT: '#3157d5',
+          hover: '#2749bb',
+          soft: '#e7edff',
+        },
+        accent: {
+          DEFAULT: '#f27a4c',
+          hover: '#df6435',
+          soft: '#fff0e8',
+        },
+        success: '#22a06b',
+        warning: '#de8f1c',
+        danger: '#dc4b4b',
+      },
+      borderRadius: {
+        xl: '0.9rem',
+        '2xl': '1.15rem',
+      },
+      boxShadow: {
+        soft: '0 1px 2px rgba(20, 26, 36, 0.06), 0 8px 24px rgba(20, 26, 36, 0.08)',
+        card: '0 2px 6px rgba(20, 26, 36, 0.05), 0 14px 28px rgba(20, 26, 36, 0.08)',
       },
     },
   },

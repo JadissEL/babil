@@ -97,13 +97,13 @@ export function SelectTrigger({
       aria-haspopup="listbox"
       aria-expanded={ctx.open}
       className={cn(
-        'flex h-10 items-center justify-between gap-2 rounded-md border border-gray-700 bg-[#111827] px-3 py-2 text-left text-sm text-gray-100 ring-offset-background transition-colors hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/60',
+        'flex h-10 items-center justify-between gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-left text-sm text-text transition-colors hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
         className,
       )}
       onClick={() => ctx.setOpen(!ctx.open)}
     >
       <span className="truncate">{children}</span>
-      <ChevronDown className="size-4 shrink-0 opacity-60" aria-hidden />
+      <ChevronDown className="size-4 shrink-0 text-muted opacity-70" aria-hidden />
     </button>
   )
 }
@@ -134,7 +134,7 @@ export function SelectContent({
     <div
       role="listbox"
       className={cn(
-        'absolute z-50 mt-1 max-h-[min(18rem,var(--radix-select-content-available-height,18rem))] min-w-[100%] overflow-auto rounded-md border border-gray-700 bg-[#1f2937] p-1 shadow-lg',
+        'absolute z-50 mt-1 max-h-[min(18rem,var(--radix-select-content-available-height,18rem))] min-w-[100%] overflow-auto rounded-xl border border-line bg-surface p-1 shadow-card',
         className,
       )}
     >
@@ -167,8 +167,8 @@ export function SelectItem({
       role="option"
       aria-selected={ctx.value === value}
       className={cn(
-        'relative flex w-full cursor-pointer select-none rounded-sm px-2 py-1.5 text-left text-sm text-gray-100 outline-none hover:bg-white/10 data-[highlighted=true]:bg-white/10',
-        ctx.value === value && 'bg-blue-600/25',
+        'relative flex w-full cursor-pointer select-none rounded-lg px-2.5 py-1.5 text-left text-sm text-text outline-none hover:bg-primary-soft data-[highlighted=true]:bg-primary-soft',
+        ctx.value === value && 'bg-primary-soft text-primary',
       )}
       data-highlighted={ctx.value === value}
       onMouseDown={(e) => e.preventDefault()}

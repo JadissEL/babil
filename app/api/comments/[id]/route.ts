@@ -2,6 +2,7 @@ import { CommentStatus, Role } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function PATCH(
   req: Request,
@@ -11,9 +12,15 @@ export async function PATCH(
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   // Check if user is admin
-  const user = await prisma.user.findUnique({
-    where: { id: userId as string }
-  });
+  let user
+  try {
+    user = await prisma.user.findUnique({
+      where: { id: userId as string }
+    });
+  } catch (error) {
+    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
+    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+  }
 
   if (user?.role !== Role.ADMIN) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -43,6 +50,7 @@ export async function PATCH(
     });
     return NextResponse.json(comment);
   } catch (error: any) {
+    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -55,9 +63,15 @@ export async function DELETE(
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   // Check if user is admin
-  const user = await prisma.user.findUnique({
-    where: { id: userId as string }
-  });
+  let user
+  try {
+    user = await prisma.user.findUnique({
+      where: { id: userId as string }
+    });
+  } catch (error) {
+    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
+    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+  }
 
   if (user?.role !== Role.ADMIN) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -74,6 +88,7 @@ export async function DELETE(
     });
     return NextResponse.json({ success: true });
   } catch (error: any) {
+    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -28,13 +28,13 @@ export function FilterBar({
   const regionControlled = regionValue !== undefined
 
   return (
-    <div className={cn('mb-6 flex flex-wrap gap-4', className)}>
+    <div className={cn('mb-6 flex flex-wrap gap-4 rounded-2xl border border-line bg-surface p-4 shadow-soft', className)}>
       <Select
         value={goalControlled ? goalValue : undefined}
         defaultValue={goalControlled ? undefined : ''}
         onValueChange={(v) => onGoalChange?.(v)}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[190px]">
           <SelectValue placeholder="Goal" />
         </SelectTrigger>
         <SelectContent>
@@ -52,7 +52,7 @@ export function FilterBar({
         defaultValue={regionControlled ? undefined : ''}
         onValueChange={(v) => onRegionChange?.(v)}
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-[190px]">
           <SelectValue placeholder="Region" />
         </SelectTrigger>
         <SelectContent>

@@ -47,26 +47,26 @@ export default function RecommendationsPage() {
   return (
     <div>
       <div className="mb-10">
-        <h1 className="mb-2 text-4xl font-black tracking-tight text-white">Intelligence de recommandation</h1>
-        <p className="text-slate-400">
+        <h1 className="mb-2 text-4xl font-black tracking-tight text-text">Intelligence de recommandation</h1>
+        <p className="text-muted">
           Analyses basées sur votre profil et les données terrain — scoring déterministe et explicable.
         </p>
       </div>
 
       {loading ? (
         <div className="flex justify-center p-20">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500" />
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       ) : recommendations.length === 0 ? (
-        <div className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[#111827] p-12 text-center shadow-xl shadow-black/20">
-          <AlertCircle className="mx-auto mb-6 h-16 w-16 text-blue-400" />
-          <h2 className="mb-4 text-2xl font-black text-white">Besoin de plus d&apos;infos</h2>
-          <p className="mb-8 font-medium leading-relaxed text-slate-400">
+        <div className="mx-auto max-w-2xl rounded-[2rem] border border-line bg-surface p-12 text-center shadow-card">
+          <AlertCircle className="mx-auto mb-6 h-16 w-16 text-primary" />
+          <h2 className="mb-4 text-2xl font-black text-text">Besoin de plus d&apos;infos</h2>
+          <p className="mb-8 font-medium leading-relaxed text-muted">
             Complétez votre profil pour obtenir des recommandations personnalisées basées sur votre budget et vos objectifs.
           </p>
           <Link
             href="/profile"
-            className="inline-block rounded-2xl bg-blue-600 px-8 py-4 font-black text-white shadow-lg shadow-blue-900/40 transition-colors hover:bg-blue-500"
+            className="inline-block rounded-2xl bg-primary px-8 py-4 font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
           >
             Configurer mon profil
           </Link>

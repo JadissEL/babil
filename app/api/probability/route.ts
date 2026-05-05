@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { loadFallbackCountries } from '@/lib/countries-fallback'
 
 export async function POST(req: Request) {
   const { userId } = auth();
@@ -48,7 +49,12 @@ export async function POST(req: Request) {
       }
     }
 
-    const countries = await prisma.country.findMany();
+    let countries: any[] = []
+    try {
+      countries = await prisma.country.findMany();
+    } catch {
+      countries = await loadFallbackCountries()
+    }
 
     const p = profile as Record<string, unknown>
     const savings = Number(p.savings ?? 0)

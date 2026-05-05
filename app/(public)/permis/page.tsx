@@ -53,18 +53,18 @@ export default function PermisPage() {
     <div className="mx-auto max-w-7xl px-6 py-10 pb-20 sm:px-8">
       <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
         <div className="flex items-center gap-4">
-          <div className="rounded-[2rem] bg-blue-600 p-4 text-white shadow-xl shadow-blue-900/40">
+          <div className="rounded-[2rem] bg-primary p-4 text-white shadow-soft">
             <Car className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">Permis de conduire</h1>
-            <p className="mt-1 font-medium text-slate-400">
+            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Permis de conduire</h1>
+            <p className="mt-1 font-medium text-muted">
               Validité et conversion du permis marocain à l&apos;international.
             </p>
           </div>
         </div>
         <div className="flex gap-2">
-          <div className="flex items-center gap-2 rounded-xl border border-emerald-500/35 bg-emerald-500/15 px-4 py-2 text-xs font-black uppercase tracking-widest text-emerald-200">
+          <div className="flex items-center gap-2 rounded-xl border border-[#94dfbd] bg-[#e9f9f1] px-4 py-2 text-xs font-black uppercase tracking-widest text-success">
             <ShieldCheck className="h-4 w-4" /> Top conversion
           </div>
         </div>
@@ -74,7 +74,7 @@ export default function PermisPage() {
 
       {loading ? (
         <div className="flex justify-center p-20">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500" />
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       ) : (
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
@@ -85,38 +85,38 @@ export default function PermisPage() {
             return (
               <div
                 key={c.id}
-                className="flex flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#111827] shadow-xl shadow-black/20 transition-all duration-300 hover:border-blue-500/30"
+                className="flex flex-col overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card transition-all duration-300 hover:border-primary/30"
               >
-                <div className="border-b border-white/10 p-8">
+                <div className="border-b border-line p-8">
                   <div className="mb-4 flex items-start justify-between gap-3">
-                    <h3 className="text-2xl font-black text-white">{c.name}</h3>
+                    <h3 className="text-2xl font-black text-text">{c.name}</h3>
                     {getStatusBadge(drive.status)}
                   </div>
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted">
                     <Clock className="h-3 w-3" /> Durée: {drive.duration || 'N/A'}
                   </div>
                 </div>
 
                 <div className="flex-1 space-y-6 p-8">
                   <div className="flex gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/15 text-blue-400 ring-1 ring-blue-500/35">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary ring-1 ring-primary/35">
                       <Info className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-500">Conditions</p>
-                      <p className="text-sm font-medium leading-relaxed text-slate-300">{drive.conditions}</p>
+                      <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Conditions</p>
+                      <p className="text-sm font-medium leading-relaxed text-muted">{drive.conditions}</p>
                     </div>
                   </div>
 
                   <div className="flex gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/35">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#e9f9f1] text-success ring-1 ring-[#94dfbd]">
                       <CreditCard className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">
                         Conversion
                       </p>
-                      <p className="text-sm font-medium leading-relaxed text-slate-300">
+                      <p className="text-sm font-medium leading-relaxed text-muted">
                         {drive.conversion_possible ? 'Possible' : 'Non possible'} — {drive.conversion_details}
                       </p>
                     </div>
@@ -125,15 +125,15 @@ export default function PermisPage() {
                   {drive.restrictions && (
                     <div className="flex gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4">
                       <AlertTriangle className="h-5 w-5 shrink-0 text-red-400" />
-                      <p className="text-xs font-bold leading-relaxed text-red-100">{drive.restrictions}</p>
+                      <p className="text-xs font-bold leading-relaxed text-danger">{drive.restrictions}</p>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-auto border-t border-white/10 bg-white/[0.02] p-8">
+                <div className="mt-auto border-t border-line bg-[#f8f2e8] p-8">
                   <a
                     href={`/countries/${c.id}`}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 py-4 text-sm font-black text-white transition-colors hover:bg-blue-500/20 hover:border-blue-500/40"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-line bg-surface py-4 text-sm font-black text-text transition-colors hover:bg-primary-soft hover:border-primary/40"
                   >
                     Voir détails pays <MapPin className="h-4 w-4" />
                   </a>

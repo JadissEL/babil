@@ -75,19 +75,19 @@ export function CompareExperience() {
   }
 
   if (loading) {
-    return <div className="py-20 text-center font-bold text-slate-500">Chargement des pays…</div>
+    return <div className="py-20 text-center font-bold text-muted">Chargement des pays…</div>
   }
 
   return (
     <div className="space-y-10 pb-28">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
-          <div className="rounded-2xl bg-indigo-600 p-3 text-white shadow-lg shadow-indigo-900/40">
+          <div className="rounded-2xl bg-primary p-3 text-white shadow-soft">
             <Scale className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">Comparer les pays</h1>
-            <p className="mt-1 text-sm text-slate-400">
+            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Comparer les pays</h1>
+            <p className="mt-1 text-sm text-muted">
               Jusqu&apos;à {MAX} destinations, même grille de scores que l&apos;Explorer. La ligne « Best » suit le score composite.
             </p>
           </div>
@@ -104,7 +104,7 @@ export function CompareExperience() {
           onToggle={toggle}
         />
         <div className="space-y-4">
-          <h2 className="text-lg font-bold text-white">Tableau comparatif</h2>
+          <h2 className="text-lg font-bold text-text">Tableau comparatif</h2>
           <CompareTable rows={rows} winnerId={winnerId} />
         </div>
       </div>

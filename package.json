@@ -3,15 +3,22 @@
   "version": "1.0.0",
   "main": "index.js",
   "prisma": {
-    "seed": "node --loader ts-node/esm prisma/seed.ts"
+    "seed": "node prisma/seed.js"
   },
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:setup": "npm run db:push && npm run seed",
+    "start:render": "npm run db:setup && next start",
     "seed": "node prisma/seed.js",
-    "lint": "next lint"
+    "lint": "next lint",
+    "agents:start": "tsx agents/runner.ts",
+    "quotes:build": "tsx scripts/build-traveler-quotes.ts",
+    "quotes:import": "tsx scripts/import-traveler-quotes.ts"
   },
   "keywords": [],
   "author": "",
@@ -41,6 +48,7 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.4.5"
   }
 }

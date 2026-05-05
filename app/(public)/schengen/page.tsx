@@ -86,34 +86,34 @@ export default function SchengenPage() {
     <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 pb-20 sm:px-8">
       <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
         <div>
-          <h1 className="mb-2 flex items-center gap-3 text-3xl font-black tracking-tight text-white md:text-4xl">
-            <ShieldCheck className="h-9 w-9 text-blue-400 md:h-10 md:w-10" /> Schengen Intelligence
+          <h1 className="mb-2 flex items-center gap-3 text-3xl font-black tracking-tight text-text md:text-4xl">
+            <ShieldCheck className="h-9 w-9 text-primary md:h-10 md:w-10" /> Schengen Intelligence
           </h1>
-          <p className="font-medium text-slate-400">
+          <p className="font-medium text-muted">
             Analyse comparative des pays de l&apos;espace Schengen pour les citoyens marocains.
           </p>
         </div>
 
         <div className="relative w-full md:w-96">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           <input
             type="search"
             placeholder="Chercher un pays Schengen..."
-            className="w-full rounded-2xl border border-white/15 bg-white/5 py-4 pl-12 pr-4 font-medium text-slate-100 outline-none placeholder:text-slate-500 transition-all focus:ring-2 focus:ring-blue-500/40"
+            className="w-full rounded-2xl border border-line bg-surface py-4 pl-12 pr-4 font-medium text-text outline-none placeholder:text-muted transition-all focus:ring-2 focus:ring-primary/40"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-[2rem] border border-white/10 bg-[#111827]/90 p-4 shadow-xl shadow-black/20">
-        <span className="text-xs font-black uppercase tracking-widest text-slate-500">Compare (2–4)</span>
+      <div className="flex flex-wrap items-center gap-2 rounded-[2rem] border border-line bg-surface p-4 shadow-card">
+        <span className="text-xs font-black uppercase tracking-widest text-muted">Compare (2–4)</span>
         {compareCountries.map((c) => (
           <button
             key={c.id}
             type="button"
             onClick={() => toggleCompare(String(c.id))}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-black text-slate-200 hover:bg-white/10"
+            className="inline-flex items-center gap-2 rounded-xl border border-line bg-[#f8f2e8] px-3 py-1.5 text-xs font-black text-text hover:bg-primary-soft"
           >
             {flagByCountry[c.name] ? <span className={`fi fi-${flagByCountry[c.name]}`} /> : <Globe className="h-3 w-3" />}
             {c.name}
@@ -121,21 +121,21 @@ export default function SchengenPage() {
           </button>
         ))}
         {compareCountries.length === 0 && (
-          <span className="text-sm font-medium text-slate-500">Sélectionnez des pays dans le tableau pour comparer.</span>
+          <span className="text-sm font-medium text-muted">Sélectionnez des pays dans le tableau pour comparer.</span>
         )}
       </div>
 
       {compareCountries.length >= 2 && (
-        <div className="overflow-x-auto rounded-[2rem] border border-white/10 bg-[#111827]/90 p-6 shadow-xl shadow-black/20">
-          <div className="mb-4 flex items-center gap-2 font-black text-white">
-            <Scale className="h-4 w-4 text-blue-400" /> Side-by-side comparison
+        <div className="overflow-x-auto rounded-[2rem] border border-line bg-surface p-6 shadow-card">
+          <div className="mb-4 flex items-center gap-2 font-black text-text">
+            <Scale className="h-4 w-4 text-primary" /> Side-by-side comparison
           </div>
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-slate-500">
-                <th className="p-3 text-left font-black uppercase tracking-wider text-slate-400">Metric</th>
+              <tr className="text-muted">
+                <th className="p-3 text-left font-black uppercase tracking-wider text-muted">Metric</th>
                 {compareCountries.map((c) => (
-                  <th key={c.id} className="whitespace-nowrap p-3 text-left font-bold text-slate-200">
+                  <th key={c.id} className="whitespace-nowrap p-3 text-left font-bold text-text">
                     {c.name}
                   </th>
                 ))}
@@ -155,35 +155,35 @@ export default function SchengenPage() {
 
       {loading ? (
         <div className="flex justify-center p-20">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-blue-500" />
+          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-8">
-          <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#111827] shadow-xl shadow-black/25">
+          <div className="overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left">
                 <thead>
-                  <tr className="bg-[#1e293b] text-white">
-                    <th className="px-8 py-6 font-black text-[10px] uppercase tracking-widest">Pays</th>
-                    <th className="px-8 py-6 font-black text-[10px] uppercase tracking-widest">Acceptation (Maroc)</th>
-                    <th className="px-8 py-6 font-black text-[10px] uppercase tracking-widest text-center">Friction RDV</th>
-                    <th className="px-8 py-6 font-black text-[10px] uppercase tracking-widest">Niveau de Risque</th>
-                    <th className="px-8 py-6 font-black text-[10px] uppercase tracking-widest">Comportement Ambassade</th>
-                    <th className="px-4 py-6 font-black text-[10px] uppercase tracking-widest text-right">Compare</th>
+                  <tr className="bg-[#f8f2e8] text-text">
+                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest">Pays</th>
+                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest">Acceptation (Maroc)</th>
+                    <th className="px-8 py-6 text-center text-[10px] font-black uppercase tracking-widest">Friction RDV</th>
+                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest">Niveau de Risque</th>
+                    <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest">Comportement Ambassade</th>
+                    <th className="px-4 py-6 text-right text-[10px] font-black uppercase tracking-widest">Compare</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((c) => (
-                    <tr key={c.id} className="group border-b border-white/5 transition-colors hover:bg-white/[0.04]">
+                    <tr key={c.id} className="group border-b border-line transition-colors hover:bg-[#f8f2e8]">
                       <td className="px-8 py-6">
                         <Link
                           href={`/countries/${c.id}`}
-                          className="flex items-center gap-3 font-black text-white transition-colors group-hover:text-blue-400"
+                          className="flex items-center gap-3 font-black text-text transition-colors group-hover:text-primary"
                         >
                           {flagByCountry[c.name] ? (
                             <span className={`fi fi-${flagByCountry[c.name]} rounded-sm`} />
                           ) : (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 text-slate-400 transition-colors group-hover:bg-blue-500/20 group-hover:text-blue-400">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#f8f2e8] text-muted transition-colors group-hover:bg-primary-soft group-hover:text-primary">
                               <Globe className="h-4 w-4" />
                             </div>
                           )}
@@ -192,8 +192,8 @@ export default function SchengenPage() {
                       </td>
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-4">
-                          <span className="w-12 font-black text-white">{c.full_data.acceptance_rate_morocco}</span>
-                          <div className="h-2 w-32 overflow-hidden rounded-full bg-white/10">
+                          <span className="w-12 font-black text-text">{c.full_data.acceptance_rate_morocco}</span>
+                          <div className="h-2 w-32 overflow-hidden rounded-full bg-[#eadfcf]">
                             <div
                               className={`h-full rounded-full ${
                                 parseInt(c.full_data.acceptance_rate_morocco, 10) > 70
@@ -239,8 +239,8 @@ export default function SchengenPage() {
                           onClick={() => toggleCompare(String(c.id))}
                           className={`rounded-lg border px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-colors ${
                             compareIds.includes(String(c.id))
-                              ? 'border-blue-500 bg-blue-600 text-white'
-                              : 'border-white/15 bg-white/5 text-slate-300 hover:border-blue-500/40'
+                              ? 'border-primary bg-primary text-white'
+                              : 'border-line bg-[#f8f2e8] text-muted hover:border-primary/40'
                           }`}
                         >
                           Compare
@@ -262,10 +262,10 @@ export default function SchengenPage() {
 
 function CompareRow({ label, values }: { label: string; values: string[] }) {
   return (
-    <tr className="border-t border-white/10">
-      <td className="p-3 font-black text-slate-300">{label}</td>
+    <tr className="border-t border-line">
+      <td className="p-3 font-black text-muted">{label}</td>
       {values.map((value, idx) => (
-        <td key={`${label}-${idx}`} className="whitespace-nowrap p-3 font-medium text-slate-400">
+        <td key={`${label}-${idx}`} className="whitespace-nowrap p-3 font-medium text-muted">
           {value}
         </td>
       ))}

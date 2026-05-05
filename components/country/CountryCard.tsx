@@ -25,9 +25,9 @@ export type CountryCardProps = {
 }
 
 function frictionStripClass(friction: CountryCardProps['friction']) {
-  if (friction === 'Low') return 'bg-green-500'
-  if (friction === 'Medium') return 'bg-yellow-500'
-  return 'bg-red-500'
+  if (friction === 'Low') return 'border-[#94dfbd] bg-[#e9f9f1] text-success'
+  if (friction === 'Medium') return 'border-[#f2c27a] bg-[#fff5e7] text-warning'
+  return 'border-[#f3afaf] bg-[#fff0f0] text-danger'
 }
 
 export function CountryCard({
@@ -61,35 +61,37 @@ export function CountryCard({
           : undefined
       }
       className={cn(
-        'rounded-2xl border border-gray-800 bg-[#111827] shadow-sm transition-all hover:border-blue-600/35 hover:shadow-lg',
+        'rounded-2xl border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft',
         interactive || focusableLink ? 'cursor-pointer' : undefined,
       )}
     >
-      <CardContent className="space-y-4 p-5">
+      <CardContent className="space-y-5 p-6">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             {iso ? (
-              <span className={cn(`fi fi-${iso}`, 'text-xl leading-none')} aria-hidden />
+              <span className={cn(`fi fi-${iso}`, 'text-2xl leading-none shadow-sm')} aria-hidden />
             ) : (
-              <Globe className="size-6 shrink-0 text-slate-500" aria-hidden />
+              <Globe className="size-6 shrink-0 text-muted" aria-hidden />
             )}
-            <h3 className="text-lg font-semibold tracking-tight text-white">{name}</h3>
+            <h3 className="text-lg font-semibold tracking-tight text-text">{name}</h3>
           </div>
 
-          <Badge className="shrink-0 bg-blue-600 text-white">{score}/100</Badge>
+          <Badge className="shrink-0" variant="default">
+            {score}/100
+          </Badge>
         </div>
 
         <div>
-          <p className="mb-1 text-sm text-gray-400">Visa probability</p>
+          <p className="mb-2 text-sm font-medium text-muted">Visa probability</p>
           <Progress value={visaScore} />
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Badge className={cn(frictionStripClass(friction), 'text-black')} variant="secondary">
+          <Badge className={cn(frictionStripClass(friction), 'font-semibold')} variant="secondary">
             ⚡ {friction}
           </Badge>
-          <Badge variant="secondary">🎓 {study}</Badge>
-          <Badge variant="secondary">💼 {business}</Badge>
+          <Badge variant="secondary">🎓 Study: {study}</Badge>
+          <Badge variant="secondary">💼 Business: {business}</Badge>
         </div>
       </CardContent>
     </Card>
@@ -101,7 +103,7 @@ export function CountryCard({
     return (
       <Link
         href={`/countries/${countryId}`}
-        className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/70"
+        className="block rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
       >
         {card}
       </Link>

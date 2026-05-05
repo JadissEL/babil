@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { CheckCircle, Database, MessageSquare, ShieldAlert, XCircle } from 'lucide-react'
+import { Activity, CheckCircle, Database, MessageSquare, ShieldAlert, XCircle } from 'lucide-react'
 import Link from 'next/link'
 
 import { CountryEditor, type CountryEditorModel } from '@/components/admin/CountryEditor'
@@ -18,12 +18,32 @@ type PendingComment = {
   country: { name: string }
 }
 
+type AgentHealth = {
+  stateStatus: 'ok' | 'missing' | 'invalid'
+  stateGeneratedAt: string | null
+  taskSummary: { queued: number; running: number; done: number; failed: number; total: number }
+  countriesTotal?: number
+  countriesUpdatedLast24h?: number
+  degraded?: boolean
+  failedTasks?: Array<{ id: string; country: string; domain: string; query: string; error: string }>
+  queuedPreview?: Array<{ id: string; country: string; domain: string; query: string; nextRunAt: string }>
+}
+
 export default function AdminPage() {
   const [tab, setTab] = useState<Tab>('comments')
   const [forbidden, setForbidden] = useState(false)
   const [pending, setPending] = useState<PendingComment[]>([])
   const [countries, setCountries] = useState<CountryEditorModel[]>([])
+  const [agentHealth, setAgentHealth] = useState<AgentHealth | null>(null)
+  const [autoRefresh, setAutoRefresh] = useState(true)
   const [loading, setLoading] = useState(true)
+
+  const loadAgentHealth = useCallback(async () => {
+    const healthRes = await fetch('/api/admin/agents/health')
+    if (!healthRes.ok) return
+    const health = (await healthRes.json()) as AgentHealth
+    setAgentHealth(health)
+  }, [])
 
   const loadCountries = useCallback(async () => {
     const res = await fetch('/api/countries')
@@ -56,11 +76,20 @@ export default function AdminPage() {
         const data = (await res.json()) as PendingComment[]
         setPending(Array.isArray(data) ? data.filter((c) => c.status === 'PENDING') : [])
       }
+      await loadAgentHealth()
       await loadCountries()
       setLoading(false)
     }
     void boot()
-  }, [loadCountries])
+  }, [loadAgentHealth, loadCountries])
+
+  useEffect(() => {
+    if (!autoRefresh) return
+    const timer = setInterval(() => {
+      void loadAgentHealth()
+    }, 10_000)
+    return () => clearInterval(timer)
+  }, [autoRefresh, loadAgentHealth])
 
   const approve = async (id: number, status: 'APPROVED' | 'REJECTED') => {
     const res = await fetch(`/api/comments/${id}`, {
@@ -74,7 +103,7 @@ export default function AdminPage() {
   if (loading) {
     return (
       <div className="flex justify-center p-20 text-slate-400">
-        <p className="font-bold">Chargement…</p>
+        <p className="font-bold text-muted">Chargement…</p>
       </div>
     )
   }
@@ -82,10 +111,10 @@ export default function AdminPage() {
   if (forbidden) {
     return (
       <div className="mx-auto max-w-xl py-16 text-center">
-        <ShieldAlert className="mx-auto mb-4 h-14 w-14 text-red-400" />
-        <h1 className="text-2xl font-black text-white">Accès admin refusé</h1>
-        <p className="mt-2 text-slate-400">Cette zone est réservée aux comptes avec rôle ADMIN.</p>
-        <Link href="/overview" className="mt-6 inline-block text-sm font-bold text-blue-400 hover:text-blue-300">
+        <ShieldAlert className="mx-auto mb-4 h-14 w-14 text-danger" />
+        <h1 className="text-2xl font-black text-text">Accès admin refusé</h1>
+        <p className="mt-2 text-muted">Cette zone est réservée aux comptes avec rôle ADMIN.</p>
+        <Link href="/overview" className="mt-6 inline-block text-sm font-bold text-primary hover:text-primary-hover">
           Retour à l&apos;aperçu
         </Link>
       </div>
@@ -95,8 +124,8 @@ export default function AdminPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-8 pb-24">
       <div>
-        <h1 className="text-3xl font-black text-white">Administration</h1>
-        <p className="mt-1 text-sm text-slate-400">Modération rapide et édition des scores pays (MVP).</p>
+        <h1 className="text-3xl font-black text-text">Administration</h1>
+        <p className="mt-1 text-sm text-muted">Modération rapide et édition des scores pays (MVP).</p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -106,28 +135,122 @@ export default function AdminPage() {
         <Button variant={tab === 'countries' ? 'default' : 'outline'} type="button" onClick={() => setTab('countries')}>
           <Database className="h-4 w-4" /> Données pays
         </Button>
-        <Link href="/moderation" className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-4 py-2 text-sm font-bold text-slate-300 hover:bg-white/5">
+        <Link href="/moderation" className="inline-flex items-center gap-2 rounded-xl border border-line px-4 py-2 text-sm font-bold text-muted hover:bg-primary-soft">
           Vue modération complète
         </Link>
       </div>
 
+      {agentHealth && (
+        <Card>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Activity className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-black text-text">Agent Health</h2>
+              <button
+                type="button"
+                onClick={() => void loadAgentHealth()}
+                className="ml-auto rounded-lg border border-line bg-[#f8f2e8] px-3 py-1 text-[10px] font-black uppercase tracking-wider text-muted hover:bg-primary-soft"
+              >
+                Refresh now
+              </button>
+              <button
+                type="button"
+                onClick={() => setAutoRefresh((v) => !v)}
+                className={`rounded-lg border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${
+                  autoRefresh
+                    ? 'border-primary/30 bg-primary-soft text-primary'
+                    : 'border-line bg-[#f8f2e8] text-muted hover:bg-primary-soft'
+                }`}
+              >
+                Auto refresh: {autoRefresh ? 'on' : 'off'}
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+              <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                <p className="text-[10px] font-black uppercase tracking-wider text-muted">Queued</p>
+                <p className="text-lg font-black text-text">{agentHealth.taskSummary.queued}</p>
+              </div>
+              <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                <p className="text-[10px] font-black uppercase tracking-wider text-muted">Running</p>
+                <p className="text-lg font-black text-text">{agentHealth.taskSummary.running}</p>
+              </div>
+              <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                <p className="text-[10px] font-black uppercase tracking-wider text-muted">Done</p>
+                <p className="text-lg font-black text-text">{agentHealth.taskSummary.done}</p>
+              </div>
+              <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                <p className="text-[10px] font-black uppercase tracking-wider text-muted">Failed</p>
+                <p className="text-lg font-black text-text">{agentHealth.taskSummary.failed}</p>
+              </div>
+              <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                <p className="text-[10px] font-black uppercase tracking-wider text-muted">Updated 24h</p>
+                <p className="text-lg font-black text-text">{agentHealth.countriesUpdatedLast24h ?? 0}</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted">
+              state: {agentHealth.stateStatus}
+              {agentHealth.stateGeneratedAt ? ` • snapshot: ${new Date(agentHealth.stateGeneratedAt).toLocaleString()}` : ''}
+              {agentHealth.degraded ? ' • degraded mode' : ''}
+            </p>
+
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-wider text-muted">Top Failed Tasks</p>
+                {agentHealth.failedTasks && agentHealth.failedTasks.length > 0 ? (
+                  <div className="space-y-2">
+                    {agentHealth.failedTasks.map((t) => (
+                      <div key={t.id} className="rounded-lg border border-[#f3afaf] bg-[#fff0f0] p-2">
+                        <p className="text-xs font-black text-danger">
+                          {t.country} • {t.domain}
+                        </p>
+                        <p className="line-clamp-1 text-xs text-muted">{t.query}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted">No failed tasks.</p>
+                )}
+              </div>
+
+              <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                <p className="mb-2 text-[10px] font-black uppercase tracking-wider text-muted">Next Queued Tasks</p>
+                {agentHealth.queuedPreview && agentHealth.queuedPreview.length > 0 ? (
+                  <div className="space-y-2">
+                    {agentHealth.queuedPreview.map((t) => (
+                      <div key={t.id} className="rounded-lg border border-line bg-surface p-2">
+                        <p className="text-xs font-black text-text">
+                          {t.country} • {t.domain}
+                        </p>
+                        <p className="line-clamp-1 text-xs text-muted">{t.query}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted">No queued tasks.</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {tab === 'comments' && (
         <section className="space-y-4">
-          <h2 className="text-lg font-bold text-white">File d&apos;attente ({pending.length})</h2>
+          <h2 className="text-lg font-bold text-text">File d&apos;attente ({pending.length})</h2>
           {pending.length === 0 ? (
-            <Card className="border-dashed border-white/20 bg-[#111827]/60">
-              <CardContent className="p-10 text-center text-slate-500">Aucun commentaire PENDING.</CardContent>
+            <Card className="border-dashed border-line bg-surface">
+              <CardContent className="p-10 text-center text-muted">Aucun commentaire PENDING.</CardContent>
             </Card>
           ) : (
             <div className="grid gap-4">
               {pending.map((c) => (
-                <Card key={c.id} className="border-gray-800 bg-[#111827]">
+                <Card key={c.id} className="border-line bg-surface">
                   <CardContent className="space-y-4 p-5">
-                    <div className="flex flex-wrap justify-between gap-2 text-sm text-slate-400">
-                      <span className="font-bold text-white">{c.user.name || 'Anonyme'}</span>
+                    <div className="flex flex-wrap justify-between gap-2 text-sm text-muted">
+                      <span className="font-bold text-text">{c.user.name || 'Anonyme'}</span>
                       <span>{c.country.name}</span>
                     </div>
-                    <p className="rounded-xl border border-white/10 bg-[#0B0F19] p-4 text-slate-300">&quot;{c.content}&quot;</p>
+                    <p className="rounded-xl border border-line bg-[#f8f2e8] p-4 text-muted">&quot;{c.content}&quot;</p>
                     <div className="flex gap-3">
                       <Button type="button" className="flex-1 gap-2 bg-emerald-600 hover:bg-emerald-500" onClick={() => void approve(c.id, 'APPROVED')}>
                         <CheckCircle className="h-4 w-4" /> Approuver

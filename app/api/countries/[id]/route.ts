@@ -1,12 +1,35 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { loadFallbackCountries } from '@/lib/countries-fallback'
+
+function parseFullData(value: unknown) {
+  if (!value) return {};
+  if (typeof value === 'object') return value;
+  if (typeof value !== 'string') return {};
+  try {
+    return JSON.parse(value);
+  } catch {
+    return {};
+  }
+}
 
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const id = Number.parseInt(params.id, 10)
+  if (!Number.isFinite(id)) {
+    return NextResponse.json({ error: 'Invalid country id' }, { status: 400 })
+  }
+
+  // Primary source: static enriched dataset aligned with /api/countries
   try {
-    const id = parseInt(params.id);
+    const fallback = await loadFallbackCountries()
+    const country = fallback.find((c) => c.id === id)
+    if (country) return NextResponse.json(country)
+  } catch {}
+
+  try {
     const country = await prisma.country.findUnique({
       where: { id },
       include: {
@@ -28,7 +51,7 @@ export async function GET(
 
     const formattedCountry = {
       ...country,
-      full_data: JSON.parse(country.full_data || '{}')
+      full_data: parseFullData(country.full_data)
     };
 
     return NextResponse.json(formattedCountry);
