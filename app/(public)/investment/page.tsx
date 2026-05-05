@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { CreditCard, Globe, Search, Clock, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 
 function normalize(value: unknown) {
   return String(value ?? '').trim()
@@ -22,7 +23,7 @@ export default function InvestmentPage() {
     fetch('/api/countries')
       .then((res) => res.json())
       .then((data) => {
-        setCountries(data)
+        setCountries(normalizeCountriesApiListResponse(data))
         setLoading(false)
       })
       .catch(() => setLoading(false))

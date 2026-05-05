@@ -7,6 +7,7 @@ import { ChevronLeft } from 'lucide-react'
 
 import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
+import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 
 export default function CountryQuotesPage() {
   const params = useParams()
@@ -23,7 +24,7 @@ export default function CountryQuotesPage() {
         return payload
       })
       .then((data) => {
-        setCountry(data)
+        setCountry(materializeCountryApiRow(data as Record<string, unknown>))
         setLoading(false)
       })
       .catch((error) => {
@@ -48,7 +49,7 @@ export default function CountryQuotesPage() {
     )
   }
 
-  const full = country.full_data && typeof country.full_data === 'object' ? country.full_data : {}
+  const full = country.full_data as Record<string, unknown>
   const experienceContent = buildCountryExperienceContent(country.name, full)
 
   return (

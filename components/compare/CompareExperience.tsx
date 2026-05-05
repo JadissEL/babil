@@ -7,6 +7,7 @@ import { CompareStickyBar } from '@/components/compare/CompareStickyBar'
 import { CompareTable } from '@/components/compare/CompareTable'
 import { CountryComparePicker, type CountryOption } from '@/components/compare/CountryComparePicker'
 import { enrichedToCompareRow } from '@/lib/compare-rows'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 
@@ -21,7 +22,7 @@ export function CompareExperience() {
   useEffect(() => {
     fetch('/api/countries')
       .then((r) => r.json())
-      .then((d) => setRaw(Array.isArray(d) ? d : []))
+      .then((d) => setRaw(normalizeCountriesApiListResponse(d)))
       .finally(() => setLoading(false))
   }, [])
 

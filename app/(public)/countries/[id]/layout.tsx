@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 import { loadFallbackCountries } from '@/lib/countries-fallback'
+import { getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
 import prisma from '@/lib/prisma'
 
 type PageParams = { id: string }
@@ -33,7 +34,15 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
 
     if (country) return metadataFromNameRegion(country.name, country.region)
   } catch {
-    /* try static dataset */
+    /* DB error — fall through */
+  }
+
+  try {
+    const merged = await getMergedCountriesListCached()
+    const row = merged.find((c) => c.id === id)
+    if (row) return metadataFromNameRegion(row.name, row.region)
+  } catch {
+    /* ignore */
   }
 
   try {

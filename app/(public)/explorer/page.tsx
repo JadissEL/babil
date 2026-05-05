@@ -11,6 +11,7 @@ import {
   isoForCountryName,
   scoreToMobilityTier,
 } from '@/lib/country-card-mappers'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 
 type Mode = 'explorer' | 'recommendation'
@@ -95,8 +96,8 @@ function ExplorerPageInner() {
   useEffect(() => {
     fetch('/api/countries')
       .then(res => res.json())
-      .then(data => {
-        setCountries(data)
+      .then((data) => {
+        setCountries(normalizeCountriesApiListResponse(data))
         setLoading(false)
       })
   }, [])

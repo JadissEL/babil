@@ -10,6 +10,7 @@ import {
   X
 } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 
 const flagByCountry: Record<string, string> = {
   France: 'fr',
@@ -63,8 +64,9 @@ export default function SchengenPage() {
   useEffect(() => {
     fetch('/api/countries')
       .then(res => res.json())
-      .then(data => {
-        setCountries(data.filter((c: any) => c.schengen_flag))
+      .then((data) => {
+        const list = normalizeCountriesApiListResponse(data)
+        setCountries(list.filter((c) => Boolean(c.schengen_flag)))
         setLoading(false)
       })
   }, [])

@@ -24,6 +24,7 @@ import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
 import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
 import { PhDStudiesSection } from '@/components/country/PhDStudiesSection'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
+import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 import { buildPhdStudies } from '@/lib/country-phd-studies'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
@@ -199,8 +200,11 @@ export default function CountryDetailPage() {
     )
   }
 
-  const full =
-    country.full_data && typeof country.full_data === 'object' ? country.full_data : {}
+  const full = country.full_data as Record<string, unknown>
+  const appointmentAudit = full.appointment_audit as Record<string, unknown> | undefined
+  const visaSystem = full.visa_system as Record<string, unknown> | undefined
+  const visaTourism = visaSystem?.tourism as Record<string, unknown> | undefined
+  const visaWork = visaSystem?.work as Record<string, unknown> | undefined
   const experienceContent = buildCountryExperienceContent(country.name, full)
   const phdModel = buildPhdStudies(country.name, full as Record<string, unknown>)
   const tourismScore = clamp(Math.round(toNum(country.tourist_visa_score, 5) * 10))
@@ -322,15 +326,15 @@ export default function CountryDetailPage() {
               <div className="space-y-6">
                 <div className="flex items-center justify-between border-b border-line pb-4">
                   <span className="text-sm font-bold text-muted">Plateforme</span>
-                  <span className="font-black text-text">{full.appointment_audit?.platform}</span>
+                  <span className="font-black text-text">{String(appointmentAudit?.platform ?? '')}</span>
                 </div>
                 <div className="flex items-center justify-between border-b border-line pb-4">
                   <span className="text-sm font-bold text-muted">Difficulté réelle</span>
-                  <span className="font-black text-danger">{full.appointment_audit?.real_difficulty}</span>
+                  <span className="font-black text-danger">{String(appointmentAudit?.real_difficulty ?? '')}</span>
                 </div>
                 <div className="flex items-center justify-between border-b border-line pb-4">
                   <span className="text-sm font-bold text-muted">Délai moyen</span>
-                  <span className="font-black text-text">{full.appointment_audit?.avg_wait_time}</span>
+                  <span className="font-black text-text">{String(appointmentAudit?.avg_wait_time ?? '')}</span>
                 </div>
               </div>
 
@@ -339,7 +343,7 @@ export default function CountryDetailPage() {
                   <AlertTriangle className="h-4 w-4" /> Problèmes signalés (OSINT)
                 </h4>
                 <ul className="space-y-3">
-                  {(full.appointment_audit?.issues || []).map((issue: string, i: number) => (
+                  {((appointmentAudit?.issues as string[] | undefined) || []).map((issue: string, i: number) => (
                     <li key={i} className="flex gap-2 text-sm font-bold text-danger">
                       <XCircle className="mt-0.5 h-4 w-4 shrink-0" /> {issue}
                     </li>
@@ -460,13 +464,13 @@ export default function CountryDetailPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-muted">Tourisme</span>
                       <span className="rounded-lg bg-inset px-2 py-1 text-xs font-black text-text">
-                        {full.visa_system?.tourism?.difficulty ?? '—'}
+                        {(visaTourism?.difficulty as string | undefined) ?? '—'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-muted">Travail</span>
                       <span className="rounded-lg bg-inset px-2 py-1 text-xs font-black text-text">
-                        {full.visa_system?.work?.availability || 'Limitée'}
+                        {(visaWork?.availability as string | undefined) || 'Limitée'}
                       </span>
                     </div>
                   </div>

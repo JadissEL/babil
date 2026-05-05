@@ -29,3 +29,18 @@ export function normalizeFullDataFriction(full: Record<string, unknown>): Record
 export function materializePublicFullData(raw: unknown): Record<string, unknown> {
   return normalizeFullDataFriction(parseCountryFullData(raw))
 }
+
+/** One row from `GET /api/countries` or `GET /api/countries/[id]` — guarantees `full_data` is parsed + friction-normalized. */
+export function materializeCountryApiRow<T extends Record<string, unknown>>(row: T): T & { full_data: Record<string, unknown> } {
+  return { ...row, full_data: materializePublicFullData(row.full_data ?? null) }
+}
+
+/** Client-side defense after `fetch('/api/countries')` — handles non-array payloads and string `full_data`. */
+export function normalizeCountriesApiListResponse(data: unknown): Record<string, unknown>[] {
+  if (!Array.isArray(data)) return []
+  return data.map((row) =>
+    materializeCountryApiRow(
+      row !== null && typeof row === 'object' && !Array.isArray(row) ? (row as Record<string, unknown>) : {},
+    ),
+  )
+}

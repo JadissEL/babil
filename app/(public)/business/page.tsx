@@ -12,6 +12,7 @@ import {
   Store,
 } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 
 export default function BusinessPage() {
   const [countries, setCountries] = useState<any[]>([])
@@ -21,8 +22,8 @@ export default function BusinessPage() {
   useEffect(() => {
     fetch('/api/countries')
       .then(res => res.json())
-      .then(data => {
-        setCountries(data)
+      .then((data) => {
+        setCountries(normalizeCountriesApiListResponse(data))
         setLoading(false)
       })
   }, [])

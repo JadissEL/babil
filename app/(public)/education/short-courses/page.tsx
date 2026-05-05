@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Zap, Search, Globe, BookOpen, Coins, CreditCard, Timer, ArrowLeft, Layers } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 
 type CostLevel = 'all' | 'Bas' | 'Moyen' | 'Élevé'
 type BacFilter = 'all' | 'oui' | 'non'
@@ -47,7 +48,7 @@ export default function ShortCoursesPage() {
     fetch('/api/countries')
       .then((res) => res.json())
       .then((data) => {
-        setCountries(data)
+        setCountries(normalizeCountriesApiListResponse(data))
         setLoading(false)
       })
       .catch(() => setLoading(false))

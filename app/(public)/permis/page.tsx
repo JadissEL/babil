@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { Car, Clock, CreditCard, Info, AlertTriangle, ShieldCheck, MapPin } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 
 export default function PermisPage() {
   const [countries, setCountries] = useState<any[]>([])
@@ -11,8 +12,8 @@ export default function PermisPage() {
   useEffect(() => {
     fetch('/api/countries')
       .then(res => res.json())
-      .then(data => {
-        setCountries(data)
+      .then((data) => {
+        setCountries(normalizeCountriesApiListResponse(data))
         setLoading(false)
       })
   }, [])

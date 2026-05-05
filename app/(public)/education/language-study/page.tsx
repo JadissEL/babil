@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { GraduationCap, Languages, Search, Globe, BookOpen, Coins, CreditCard, ArrowLeft } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 
 type CostLevel = 'all' | 'Bas' | 'Moyen' | 'Élevé'
 type BacFilter = 'all' | 'requis' | 'non requis' | "dépend de l'école"
@@ -36,7 +37,7 @@ export default function LanguageStudyPage() {
     fetch('/api/countries')
       .then((res) => res.json())
       .then((data) => {
-        setCountries(data)
+        setCountries(normalizeCountriesApiListResponse(data))
         setLoading(false)
       })
       .catch(() => setLoading(false))

@@ -17,6 +17,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 
 type EducationCategory = 'languages' | 'technical' | 'short'
 
@@ -42,8 +43,8 @@ export default function EducationPage() {
   useEffect(() => {
     fetch('/api/countries')
       .then(res => res.json())
-      .then(data => {
-        setCountries(data)
+      .then((data) => {
+        setCountries(normalizeCountriesApiListResponse(data))
         setLoading(false)
       })
   }, [])
