@@ -21,7 +21,11 @@ function getRequiredEnv(name: string) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2))
-  const localUrl = getRequiredEnv('LOCAL_DATABASE_URL')
+  const localUrl =
+    (process.env.LOCAL_DATABASE_URL || process.env.DATABASE_URL || '').trim() ||
+    (() => {
+      throw new Error('Missing LOCAL_DATABASE_URL (or DATABASE_URL for the local/runner DB)')
+    })()
   const renderUrl = getRequiredEnv('RENDER_DATABASE_URL')
 
   const local = new PrismaClient({ datasources: { db: { url: localUrl } } })

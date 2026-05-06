@@ -11,6 +11,8 @@ Per-country enrichment with:
 - `AdvancementGate` summary stored under `full_data._agent.orchestration`.
 - Run memory persisted under `.agent-state/orchestration/{country-slug}.json` (Cycles, bounded errors).
 
+See also: [Manifest URL fetch](internal-manifest-url-fetch.md) (optional `data/agent-manifest-url-map.json` + `_agent.manifestFetch`).
+
 ## Environment
 
 | Variable | Effect |

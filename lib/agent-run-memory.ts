@@ -22,6 +22,15 @@ export type RunMemoryError = {
   phase?: string
 }
 
+export type RunMemorySourceIndexEntry = {
+  firstUsedAt: string
+  fields: string[]
+  fetchStatus: string
+  lastFetchedAt?: string
+  httpStatus?: number
+  etag?: string
+}
+
 export type RunMemory = {
   countryKey: string
   lastUpdatedAt: string
@@ -30,7 +39,10 @@ export type RunMemory = {
   improvementCycle: number
   cycles: RunMemoryCycle[]
   errors: RunMemoryError[]
-  sourcesIndex: Record<string, { firstUsedAt: string; fields: string[]; fetchStatus: string }>
+  sourcesIndex: Record<string, RunMemorySourceIndexEntry>
+  /** Linear cursor over joined manifest↔URL-map list (see `lib/agent-manifest-source-fetch.ts`). */
+  manifestFetchCursor?: number
+  manifestUrlMapVersion?: string
 }
 
 export function orchestrationSlugForCountry(country: string): string {
@@ -44,6 +56,28 @@ export function orchestrationSlugForCountry(country: string): string {
 
 function memoryPath(slug: string): string {
   return path.join(ORCH_DIR, `${slug}.json`)
+}
+
+function normalizeSourcesIndex(raw: unknown): RunMemory['sourcesIndex'] {
+  if (!raw || typeof raw !== 'object') return {}
+  const out: RunMemory['sourcesIndex'] = {}
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (!v || typeof v !== 'object') continue
+    const o = v as Record<string, unknown>
+    out[k] = {
+      firstUsedAt:
+        typeof o.firstUsedAt === 'string' && o.firstUsedAt.trim()
+          ? o.firstUsedAt.trim()
+          : new Date().toISOString(),
+      fields: Array.isArray(o.fields) ? o.fields.map((x) => String(x)) : [],
+      fetchStatus: typeof o.fetchStatus === 'string' && o.fetchStatus.trim() ? o.fetchStatus.trim() : 'unknown',
+      lastFetchedAt: typeof o.lastFetchedAt === 'string' ? o.lastFetchedAt : undefined,
+      httpStatus:
+        typeof o.httpStatus === 'number' && Number.isFinite(o.httpStatus) ? o.httpStatus : undefined,
+      etag: typeof o.etag === 'string' ? o.etag : undefined,
+    }
+  }
+  return out
 }
 
 export async function loadRunMemory(country: string): Promise<RunMemory> {
@@ -62,10 +96,13 @@ export async function loadRunMemory(country: string): Promise<RunMemory> {
       improvementCycle: typeof parsed.improvementCycle === 'number' ? parsed.improvementCycle : 0,
       cycles: Array.isArray(parsed.cycles) ? parsed.cycles.slice(-MAX_CYCLES) : [],
       errors: Array.isArray(parsed.errors) ? parsed.errors.slice(-MAX_ERRORS) : [],
-      sourcesIndex:
-        parsed.sourcesIndex && typeof parsed.sourcesIndex === 'object'
-          ? (parsed.sourcesIndex as RunMemory['sourcesIndex'])
-          : {},
+      sourcesIndex: normalizeSourcesIndex(parsed.sourcesIndex),
+      manifestFetchCursor:
+        typeof parsed.manifestFetchCursor === 'number' && Number.isFinite(parsed.manifestFetchCursor)
+          ? Math.floor(parsed.manifestFetchCursor)
+          : undefined,
+      manifestUrlMapVersion:
+        typeof parsed.manifestUrlMapVersion === 'string' ? parsed.manifestUrlMapVersion : undefined,
     }
   } catch {
     return {

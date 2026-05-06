@@ -31,6 +31,7 @@ import {
 import { appendSupervisorMetricEvent } from '../lib/agent-supervisor-metrics'
 import { loadChildKnowledge } from '../lib/agent-child-knowledge'
 import { maybeBuildCanaryChildFullData, runChildShadowCompare } from '../lib/agent-child-runner'
+import { runManifestUrlFetchBatch } from '../lib/agent-manifest-source-fetch'
 
 type TaskStatus = 'queued' | 'running' | 'done' | 'failed'
 
@@ -81,6 +82,10 @@ const AGENT_STRICT_COUNTRY_GATE = process.env.AGENT_STRICT_COUNTRY_GATE === '1'
 const AGENT_STRICT_QUALITY_MANIFEST = process.env.AGENT_STRICT_QUALITY_MANIFEST === '1'
 /** `AGENT_CHILD_MODE=shadow|canary`: shadow compares child vs supervisor metrics; canary may apply child payload when `AGENT_CHILD_CANARY_WRITE=1`. */
 const AGENT_CHILD_MODE = (process.env.AGENT_CHILD_MODE || 'off').toLowerCase()
+/** When > 0, exit after this many ms (e.g. `180000` for 3 minutes). `0` or unset = no limit. */
+const AGENT_MAX_RUNTIME_MS = Math.max(0, Math.floor(Number(process.env.AGENT_MAX_RUNTIME_MS || 0)))
+/** Set `AGENT_MANIFEST_FETCH_ENABLED=0` to skip manifest URL-map HTTP batch. */
+const AGENT_MANIFEST_FETCH_ENABLED = process.env.AGENT_MANIFEST_FETCH_ENABLED !== '0'
 
 let memoryState: AgentState = {
   tasks: [],
@@ -402,11 +407,50 @@ async function processCountryTask(task: CountryTask) {
 
   const orch = await persistOrchestrationAndRunMemory(task, snapshot, reportPayload.report, sourceHash)
 
+  let manifestFetchSummary: Record<string, unknown> | undefined
+  if (AGENT_MANIFEST_FETCH_ENABLED) {
+    try {
+      const memFetch = await loadRunMemory(task.country)
+      const mf = await runManifestUrlFetchBatch({
+        country: task.country,
+        region: task.region,
+        memory: memFetch,
+        logVerbose,
+      })
+      await saveRunMemory(memFetch)
+      if (mf.skippedReason !== 'no_map_file' || mf.results.length > 0) {
+        manifestFetchSummary = {
+          mapVersion: mf.mapVersion,
+          runAt: new Date().toISOString(),
+          totalFetchable: mf.totalFetchable,
+          cursor: mf.newCursor,
+          skippedReason: mf.skippedReason,
+          results: mf.results.map((r) => ({
+            categoryId: r.categoryId,
+            sourceLabel: r.sourceLabel,
+            url: r.url,
+            ok: r.ok,
+            httpStatus: r.httpStatus,
+            skipped: r.skipped,
+            error: r.error,
+            fetchedAt: r.fetchedAt,
+            notModified: r.notModified,
+            etag: r.etag,
+            excerpt: r.excerpt ? r.excerpt.slice(0, 2000) : undefined,
+          })),
+        }
+      }
+    } catch (err) {
+      logVerbose('manifest_url_fetch_failed', { error: String((err as Error)?.message || err) })
+    }
+  }
+
   const fullDataSupervisor: Record<string, unknown> = {
     ...snapshot.fullData,
     _agent: {
       ...reportPayload._agent,
       orchestration: orch.orchestration,
+      ...(manifestFetchSummary ? { manifestFetch: manifestFetchSummary } : {}),
     },
   }
 
@@ -710,8 +754,10 @@ async function main() {
   const sequential =
     SEQUENTIAL_WORLD_ORDER_ENABLED && !!fileOrder && fileOrder.length > 0
   console.log(
-    `[agents] running - tick=${TICK_MS}ms refresh=${REFRESH_MS}ms contract=${CONTRACT_VERSION} sequential=${sequential} worldList=${sequential ? fileOrder!.length : 'restcountries'} strictGate=${AGENT_STRICT_COUNTRY_GATE} strictQuality=${AGENT_STRICT_QUALITY_MANIFEST} childMode=${AGENT_CHILD_MODE}`,
+    `[agents] running - tick=${TICK_MS}ms refresh=${REFRESH_MS}ms contract=${CONTRACT_VERSION} sequential=${sequential} worldList=${sequential ? fileOrder!.length : 'restcountries'} strictGate=${AGENT_STRICT_COUNTRY_GATE} strictQuality=${AGENT_STRICT_QUALITY_MANIFEST} childMode=${AGENT_CHILD_MODE} maxRuntimeMs=${AGENT_MAX_RUNTIME_MS > 0 ? AGENT_MAX_RUNTIME_MS : 'none'}`,
   )
+
+  let maxRuntimeTimer: ReturnType<typeof setTimeout> | undefined
 
   const tickTimer = setInterval(async () => {
     if (tickInProgress) {
@@ -751,8 +797,14 @@ async function main() {
     }
   }, REFRESH_MS)
 
-  const shutdown = async (signal: string) => {
-    console.log(`[agents] received ${signal}, shutting down...`)
+  const shutdown = async (reason: string) => {
+    if (maxRuntimeTimer !== undefined) {
+      clearTimeout(maxRuntimeTimer)
+      maxRuntimeTimer = undefined
+    }
+    const label =
+      reason === 'SIGINT' || reason === 'SIGTERM' ? `signal ${reason}` : `reason=${reason}`
+    console.log(`[agents] shutting down (${label})...`)
     clearInterval(tickTimer)
     clearInterval(refreshTimer)
     try {
@@ -764,6 +816,12 @@ async function main() {
       console.error('[agents] shutdown failed', error)
       process.exit(1)
     }
+  }
+
+  if (AGENT_MAX_RUNTIME_MS > 0) {
+    maxRuntimeTimer = setTimeout(() => {
+      void shutdown('AGENT_MAX_RUNTIME_MS')
+    }, AGENT_MAX_RUNTIME_MS)
   }
 
   process.on('SIGINT', () => {

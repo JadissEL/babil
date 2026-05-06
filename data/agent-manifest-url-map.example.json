@@ -1,0 +1,13 @@
+{
+  "version": "1",
+  "entries": [
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "World Bank",
+      "method": "GET",
+      "urlTemplate": "https://api.worldbank.org/v2/country/{encodedCountry}/indicator/NY.GDP.MKTP.CD?format=json&per_page=2",
+      "responseKind": "json"
+    }
+  ],
+  "_comment": "Copy to data/agent-manifest-url-map.json (see .gitignore) and add rows. categoryId + sourceLabel must match lib/agent-research-sources.ts exactly. Placeholders: {country}, {region}, {slug}, {encodedCountry}."
+}
