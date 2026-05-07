@@ -10,7 +10,19 @@ on:
     - cron: "0 */6 * * *"
 
 jobs:
+  test-lib:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run test:lib
+
   deploy:
+    needs: test-lib
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Render web deploy
