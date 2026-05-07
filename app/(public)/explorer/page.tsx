@@ -13,14 +13,21 @@ import {
 } from '@/lib/country-card-mappers'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
-import { isSchengenMember } from '@/lib/schengen-members'
+import {
+  explorerRegionToFilterBarValue,
+  explorerRegionToUrlParam,
+  matchesExplorerRegionFilter,
+  matchesExplorerSchengenOnlyToggle,
+  parseExplorerRegionFilter,
+  type ExplorerRegionFilter,
+} from '@/lib/explorer-filters'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
 type Budget = 'all' | 'low' | 'medium' | 'high'
 
 function filterGoalFromSelect(v: string): Goal {
-  if (!v) return 'all'
+  if (!v || v === 'all') return 'all'
   const normalized = v.trim().toLowerCase().replace(/-/g, '_')
   const allowed: Exclude<Goal, 'all'>[] = [
     'tourism',
@@ -34,18 +41,7 @@ function filterGoalFromSelect(v: string): Goal {
 }
 
 function explorerGoalToFilterValue(goal: Goal): string {
-  return goal === 'all' ? '' : goal
-}
-
-function explorerRegionToSelect(region: string): string {
-  if (region === 'all') return ''
-  return region.toLowerCase()
-}
-
-function selectToExplorerRegion(v: string): string {
-  if (!v) return 'all'
-  if (v.toLowerCase() === 'schengen') return 'Schengen'
-  return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase()
+  return goal === 'all' ? 'all' : goal
 }
 
 function isBudgetParam(v: string | null): v is Exclude<Budget, 'all'> {
@@ -54,7 +50,7 @@ function isBudgetParam(v: string | null): v is Exclude<Budget, 'all'> {
 
 type UrlCommitSlice = Partial<{
   search: string
-  region: string
+  region: ExplorerRegionFilter
   difficulty: string
   goal: Goal
   budget: Budget
@@ -69,7 +65,7 @@ function ExplorerPageInner() {
   const [countries, setCountries] = useState<any[]>([])
   const [mode, setMode] = useState<Mode>('explorer')
   const [search, setSearch] = useState('')
-  const [region, setRegion] = useState('all')
+  const [region, setRegion] = useState<ExplorerRegionFilter>('all')
   const [difficulty, setDifficulty] = useState('all')
   const [goal, setGoal] = useState<Goal>('all')
   const [budget, setBudget] = useState<Budget>('all')
@@ -88,7 +84,7 @@ function ExplorerPageInner() {
 
       const params = new URLSearchParams()
       if (s.trim()) params.set('q', s.trim())
-      if (r !== 'all') params.set('region', explorerRegionToSelect(r))
+      if (r !== 'all') params.set('region', explorerRegionToUrlParam(r))
       if (g !== 'all') params.set('goal', g)
       if (b !== 'all') params.set('budget', b)
       if (d !== 'all' && ['Low', 'Medium', 'High', 'Extreme'].includes(d)) params.set('difficulty', d)
@@ -115,7 +111,7 @@ function ExplorerPageInner() {
     setSearch(qDecoded)
 
     const reg = searchParams.get('region')
-    setRegion(reg?.trim() ? selectToExplorerRegion(reg.trim()) : 'all')
+    setRegion(reg?.trim() ? parseExplorerRegionFilter(reg.trim()) : 'all')
 
     const goalParam = searchParams.get('goal')
     setGoal(goalParam?.trim() ? filterGoalFromSelect(goalParam.trim().toLowerCase()) : 'all')
@@ -147,8 +143,10 @@ function ExplorerPageInner() {
     .filter((c: any) => {
       const nameStr = String(c.name ?? '')
       const matchesSearch = nameStr.toLowerCase().includes(search.toLowerCase())
-      const matchesRegion =
-        region === 'all' || (region === 'Schengen' ? isSchengenMember(nameStr) : c.region === region)
+      const matchesRegion = matchesExplorerRegionFilter(region, {
+        name: nameStr,
+        region: String(c.region ?? ''),
+      })
       const matchesDifficulty = difficulty === 'all' || String(c._difficultyLabel).toLowerCase() === difficulty.toLowerCase()
       const eduMob = c._full?.education_mobility
       const hasShortCourseModule =
@@ -166,7 +164,7 @@ function ExplorerPageInner() {
         (goal === 'education' && c._education >= 50) ||
         (goal === 'short_course' && (hasShortCourseModule || c._visa.study >= 50 || c._education >= 50))
       const matchesBudget = budget === 'all' || c._budgetLevel === budget
-      const matchesSchengen = !schengenOnly || isSchengenMember(nameStr)
+      const matchesSchengen = matchesExplorerSchengenOnlyToggle(schengenOnly, { name: nameStr })
       return matchesSearch && matchesRegion && matchesDifficulty && matchesGoal && matchesBudget && matchesSchengen
     })
     .sort((a: any, b: any) =>
@@ -211,14 +209,14 @@ function ExplorerPageInner() {
         <FilterBar
           className="mb-4 border-b border-line pb-4"
           goalValue={explorerGoalToFilterValue(goal)}
-          regionValue={explorerRegionToSelect(region)}
+          regionValue={explorerRegionToFilterBarValue(region)}
           onGoalChange={(v) => {
             const g = filterGoalFromSelect(v)
             setGoal(g)
             commitExplorerUrl({ goal: g })
           }}
           onRegionChange={(v) => {
-            const nextR = selectToExplorerRegion(v)
+            const nextR = parseExplorerRegionFilter(v)
             setRegion(nextR)
             commitExplorerUrl({ region: nextR })
           }}

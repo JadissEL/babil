@@ -31,14 +31,14 @@ export function FilterBar({
     <div className={cn('mb-6 flex flex-wrap gap-4 rounded-2xl border border-line bg-surface p-4 shadow-soft', className)}>
       <Select
         value={goalControlled ? goalValue : undefined}
-        defaultValue={goalControlled ? undefined : ''}
+        defaultValue={goalControlled ? undefined : 'all'}
         onValueChange={(v) => onGoalChange?.(v)}
       >
         <SelectTrigger className="w-[190px]">
           <SelectValue placeholder="Objectif" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">Tous les objectifs</SelectItem>
+          <SelectItem value="all">Tous les objectifs</SelectItem>
           <SelectItem value="study">Études longues</SelectItem>
           <SelectItem value="education">Éducation</SelectItem>
           <SelectItem value="work">Travail</SelectItem>
@@ -50,14 +50,14 @@ export function FilterBar({
 
       <Select
         value={regionControlled ? regionValue : undefined}
-        defaultValue={regionControlled ? undefined : ''}
+        defaultValue={regionControlled ? undefined : 'all'}
         onValueChange={(v) => onRegionChange?.(v)}
       >
         <SelectTrigger className="w-[190px]">
           <SelectValue placeholder="Région" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">Toutes les régions</SelectItem>
+          <SelectItem value="all">Toutes les régions</SelectItem>
           <SelectItem value="schengen">Schengen</SelectItem>
           <SelectItem value="europe">Europe</SelectItem>
           <SelectItem value="asia">Asie</SelectItem>
