@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { Globe } from 'lucide-react'
@@ -89,10 +90,12 @@ export function CountryCard({
     >
       <CardContent className="flex min-h-0 flex-1 flex-col space-y-0 p-0">
         <div className="relative h-36 shrink-0 overflow-hidden rounded-t-2xl border-b border-line">
-          <img
+          <Image
             src={imageSrc}
             alt={`${scenicLabel}, ${name}`}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 100vw, 320px"
             loading="lazy"
             onError={() => {
               if (imageSrc !== guaranteedSrc) {

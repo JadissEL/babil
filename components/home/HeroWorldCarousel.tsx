@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import curatedSlidesStatic from '@/data/hero-slides.json'
 
@@ -99,17 +100,20 @@ export default function HeroWorldCarousel({ slides }: Props) {
       </div>
 
       {VERIFIED_SLIDES.map((slide, slideIndex) => (
-        <img
+        <Image
           key={`${slide.place}-${slide.country}-${slide.imageUrl.slice(0, 40)}`}
           src={slide.imageUrl}
           alt={`${slide.place}, ${slide.country}`}
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${
+          fill
+          className={`object-cover transition-opacity duration-700 ${
             slideIndex === index ? 'opacity-100' : 'opacity-0'
           }`}
           style={{
             animation: slideIndex === index ? `heroKenBurns ${currentDelay}ms ease-out both` : undefined,
             animationPlayState: isPaused ? 'paused' : 'running',
           }}
+          sizes="(max-width: 768px) 100vw, 896px"
+          priority={slideIndex === 0}
         />
       ))}
 

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { VisitReason } from '@/lib/country-experience-content'
@@ -21,11 +22,14 @@ function VisitReasonImage({
   )
   const [current, setCurrent] = useState(src)
   return (
-    <img
+    <Image
       src={current}
       alt={alt}
-      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      fill
+      className="object-cover transition-transform duration-500 group-hover:scale-105"
+      sizes="(max-width: 768px) 100vw, 400px"
       loading={eager ? 'eager' : 'lazy'}
+      priority={eager}
       onError={() => {
         if (current !== fallback) setCurrent(fallback)
       }}
