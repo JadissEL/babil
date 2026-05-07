@@ -19,8 +19,7 @@ jobs:
           node-version: "20"
           cache: npm
       - run: npm ci
-      - run: npm run test:lib
-      - run: npm run lint
+      - run: npm run check
 
   deploy:
     needs: test-lib

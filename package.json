@@ -17,6 +17,7 @@
     "start:render": "npm run db:setup && next start",
     "seed": "tsx prisma/seed.ts",
     "lint": "next lint",
+    "check": "npm run test:lib && npm run lint",
     "agents:start": "tsx agents/runner.ts",
     "agent:extract-patterns": "tsx scripts/agent-extract-patterns.ts",
     "agent:manifest-scaffold": "tsx scripts/scaffold-agent-manifest-url-map.ts",
@@ -24,7 +25,7 @@
     "quotes:import": "tsx scripts/import-traveler-quotes.ts",
     "sync:render:dry": "tsx scripts/sync-countries-to-render.ts",
     "sync:render:apply": "tsx scripts/sync-countries-to-render.ts --apply",
-    "test:lib": "tsx --test lib/schengen-dedupe.test.ts"
+    "test:lib": "tsx --test \"lib/**/*.test.ts\""
   },
   "keywords": [],
   "author": "",
