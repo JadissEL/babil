@@ -4,12 +4,15 @@ import type { ReactNode } from 'react'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
 import prisma from '@/lib/prisma'
+import { isSchengenMember } from '@/lib/schengen-members'
 
 type PageParams = { id: string }
 
 function metadataFromNameRegion(name: string, region: string): Metadata {
-  const title = `${name} — visa & mobilité`
-  const description = `Scores visa, friction, études, business et permis pour ${name} (${region}) — perspective Maroc / VisaFlow.`
+  const schengen = isSchengenMember(name)
+  const title = `${name} — visa & mobilité${schengen ? ' · Schengen' : ''}`
+  const regionLabel = schengen ? `${region}, espace Schengen` : region
+  const description = `Scores visa, friction, études, business et permis pour ${name} (${regionLabel}) — perspective Maroc / VisaFlow.`
   return {
     title,
     description,
