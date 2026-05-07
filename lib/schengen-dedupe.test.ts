@@ -3,7 +3,7 @@ import { describe, it } from 'node:test'
 
 import type { LegacyCountryRecord } from '@/lib/countries-fallback'
 import { dedupeSchengenMembersByCanonicalName } from '@/lib/schengen-duplicate-merge'
-import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
+import { listSchengenNormalizedLookupKeys, schengenCanonicalEnglishName } from '@/lib/schengen-members'
 
 function row(partial: Partial<LegacyCountryRecord> & { id: number; name: string }): LegacyCountryRecord {
   return {
@@ -25,6 +25,16 @@ describe('schengenCanonicalEnglishName', () => {
     assert.equal(schengenCanonicalEnglishName('Allemagne'), 'Germany')
     assert.equal(schengenCanonicalEnglishName('Germany'), 'Germany')
     assert.equal(schengenCanonicalEnglishName('Islande'), 'Iceland')
+  })
+})
+
+describe('listSchengenNormalizedLookupKeys', () => {
+  it('includes EN and FR keys used by static clients (keep data/schengen-lookup-keys.json in sync)', () => {
+    const keys = listSchengenNormalizedLookupKeys()
+    assert.ok(keys.includes('france'))
+    assert.ok(keys.includes('espagne'))
+    assert.ok(keys.includes('bulgaria'))
+    assert.ok(keys.includes('romania'))
   })
 })
 

@@ -86,6 +86,21 @@ const MERGE_KEY_TO_CANONICAL_EN: Record<string, string> = {
   suisse: 'Switzerland',
 }
 
+/**
+ * All normalized name keys (EN display names + FR aliases) accepted by {@link isSchengenMember}.
+ * Regenerate `data/schengen-lookup-keys.json` via `npm run export:schengen-keys` after editing members.
+ */
+export function listSchengenNormalizedLookupKeys(): string[] {
+  const keys = new Set<string>()
+  for (const en of SCHENGEN_COUNTRIES_ENGLISH) {
+    keys.add(normalizedNameLookupKey(en))
+  }
+  for (const alias of Object.keys(MERGE_KEY_TO_CANONICAL_EN)) {
+    keys.add(alias)
+  }
+  return Array.from(keys).sort((a, b) => a.localeCompare(b))
+}
+
 export function listSchengenCanonicalEnglish(): readonly string[] {
   return Array.from(SCHENGEN_COUNTRIES_ENGLISH).sort((a, b) => a.localeCompare(b))
 }

@@ -183,22 +183,83 @@
     <script>
         let allCountries = [];
 
+        function normalizeCountryNameKey(name) {
+            return String(name ?? '').normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
+        }
+
+        function regionKeysEqual(a, b) {
+            return String(a ?? '').trim().toLowerCase() === String(b ?? '').trim().toLowerCase();
+        }
+
+        function mapApiRowToFrictionCountry(c) {
+            const fd = c.full_data && typeof c.full_data === 'object' ? c.full_data : {};
+            const row = { ...fd };
+            if (c.name != null && (row.country == null || row.country === '')) row.country = c.name;
+            if (c.region != null && String(c.region).trim() !== '') row.region = c.region;
+            row.schengen_flag = Boolean(c.schengen_flag);
+            return row;
+        }
+
+        async function tryLoadCountriesFromApi() {
+            const bases = [];
+            if (window.location.protocol !== 'file:') bases.push('');
+            bases.push('http://localhost:3000');
+            for (const base of bases) {
+                try {
+                    const r = await fetch(`${base}/api/countries`);
+                    if (!r.ok) continue;
+                    const data = await r.json();
+                    if (Array.isArray(data) && data.length > 0) {
+                        return data.map(mapApiRowToFrictionCountry);
+                    }
+                } catch (_) {
+                    /* try next base */
+                }
+            }
+            return null;
+        }
+
+        async function loadCountriesStaticWithLookupKeys() {
+            const [cRes, kRes] = await Promise.all([
+                fetch('data/countries.json'),
+                fetch('data/schengen-lookup-keys.json'),
+            ]);
+            const cData = await cRes.json();
+            const keyPayload = await kRes.json();
+            const keys = new Set(Array.isArray(keyPayload.keys) ? keyPayload.keys : []);
+            return (cData.countries || []).map((c) => ({
+                ...c,
+                schengen_flag: keys.has(normalizeCountryNameKey(c.country)),
+            }));
+        }
+
         async function init() {
             try {
-                const response = await fetch('data/countries.json');
-                const data = await response.json();
-                allCountries = data.countries;
+                const fromApi = await tryLoadCountriesFromApi();
+                if (fromApi) {
+                    allCountries = fromApi;
+                    render(allCountries);
+                    return;
+                }
+                allCountries = await loadCountriesStaticWithLookupKeys();
                 render(allCountries);
             } catch (error) {
-                console.error("Erreur:", error);
+                console.error('Erreur:', error);
             }
         }
 
         function filterBy(region, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
             btn.classList.add('active');
-            
-            const filtered = region === 'all' ? allCountries : allCountries.filter(c => c.region === region);
+
+            let filtered;
+            if (region === 'all') {
+                filtered = allCountries;
+            } else if (region === 'Schengen') {
+                filtered = allCountries.filter((c) => c.schengen_flag);
+            } else {
+                filtered = allCountries.filter((c) => regionKeysEqual(c.region, region));
+            }
             render(filtered);
         }
 
