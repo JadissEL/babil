@@ -4,6 +4,17 @@ let comments = JSON.parse(localStorage.getItem('visa_comments')) || {};
 
 const API_URL = 'http://localhost:3000/api';
 
+/** Same rule as Next/API: Schengen = `schengen_flag` (derived from lib/schengen-members on the server), not raw `region`. */
+function legacyRegionKeysEqual(a, b) {
+    return String(a ?? '').trim().toLowerCase() === String(b ?? '').trim().toLowerCase();
+}
+
+function matchesLegacyIndexRegionFilter(c, selectedRegion) {
+    if (selectedRegion === 'all') return true;
+    if (selectedRegion === 'Schengen') return Boolean(c.schengen_flag);
+    return legacyRegionKeysEqual(c.region, selectedRegion);
+}
+
 async function init() {
     const mainContainer = document.querySelector('main');
     const originalContent = mainContainer.innerHTML;
@@ -12,11 +23,16 @@ async function init() {
     try {
         const response = await fetch(`${API_URL}/countries`);
         const data = await response.json();
-        // The API returns an array of objects where full_data is the original JSON
-        countries = data.map(c => ({
-            ...c.full_data,
-            id: c.id // Keep the database ID
-        }));
+        // Merge full_data with API scalars so Schengen uses schengen_flag (authoritative), not mis-tagged region.
+        countries = data.map((c) => {
+            const full = c.full_data && typeof c.full_data === 'object' ? c.full_data : {};
+            return {
+                ...full,
+                id: c.id,
+                region: typeof c.region === 'string' && c.region.trim() !== '' ? c.region : full.region,
+                schengen_flag: Boolean(c.schengen_flag),
+            };
+        });
         
         mainContainer.innerHTML = originalContent;
         
@@ -79,7 +95,7 @@ async function renderExplorer() {
 
     const filtered = countries.filter(c => {
         const matchesSearch = c.country.toLowerCase().includes(search);
-        const matchesRegion = region === 'all' || c.region === region;
+        const matchesRegion = matchesLegacyIndexRegionFilter(c, region);
         const matchesGoal = goal === 'all' || 
             (goal === 'tourism' && c.visa_system.tourism) ||
             (goal === 'work' && c.visa_system.work.availability !== 'Low') ||
@@ -145,7 +161,7 @@ function renderSchengenDashboard() {
     const status = document.getElementById('status').value;
     const history = document.getElementById('history').value;
 
-    const schengenData = countries.filter(c => c.region === 'Schengen').map(c => {
+    const schengenData = countries.filter((c) => c.schengen_flag).map((c) => {
         let prob = parseInt(c.acceptance_rate_morocco);
         if (status === 'public') prob += 10;
         if (history === 'schengen') prob += 15;
