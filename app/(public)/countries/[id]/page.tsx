@@ -26,6 +26,7 @@ import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryT
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+import { isSchengenMember } from '@/lib/schengen-members'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 const toNum = (v: any, fallback = 0) => {
@@ -257,7 +258,7 @@ export default function CountryDetailPage() {
               <div>
                 <h1 className="text-4xl font-black tracking-tight text-text md:text-5xl">{country.name}</h1>
                 <p className="mt-1 flex items-center gap-2 font-medium text-muted">
-                  <MapPin className="h-4 w-4" /> {country.region} {country.schengen_flag && '• Schengen'}
+                  <MapPin className="h-4 w-4" /> {country.region} {isSchengenMember(String(country.name ?? '')) && '• Schengen'}
                 </p>
               </div>
               {user && (

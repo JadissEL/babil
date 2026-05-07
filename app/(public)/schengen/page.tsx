@@ -12,6 +12,7 @@ import GoogleAd from '@/components/GoogleAd'
 import CountryFlag from '@/components/country/CountryFlag'
 import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import { isSchengenMember } from '@/lib/schengen-members'
 
 function toNum(value: any, fallback = 0) {
   const n = Number.parseInt(String(value || ''), 10)
@@ -36,7 +37,8 @@ export default function SchengenPage() {
       .then((res) => res.json())
       .then((data) => {
         const list = normalizeCountriesApiListResponse(data)
-        setCountries(list.filter((c) => Boolean(c.schengen_flag)))
+        // Same rule as Explorer + API merge: canonical membership by name, not raw schengen_flag alone.
+        setCountries(list.filter((c) => isSchengenMember(String(c.name ?? ''))))
       })
       .catch(() => setCountries([]))
       .finally(() => setLoading(false))
