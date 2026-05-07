@@ -4,44 +4,14 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { 
   ShieldCheck, 
-  Globe,
   Search, 
   Scale,
   X
 } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import CountryFlag from '@/components/country/CountryFlag'
+import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
-
-const flagByCountry: Record<string, string> = {
-  France: 'fr',
-  Italie: 'it',
-  Germany: 'de',
-  Allemagne: 'de',
-  Espagne: 'es',
-  Spain: 'es',
-  Portugal: 'pt',
-  Belgium: 'be',
-  Belgique: 'be',
-  Netherlands: 'nl',
-  Austria: 'at',
-  Greece: 'gr',
-  Sweden: 'se',
-  Denmark: 'dk',
-  Finland: 'fi',
-  Poland: 'pl',
-  Czechia: 'cz',
-  Hungary: 'hu',
-  Slovakia: 'sk',
-  Slovenia: 'si',
-  Croatia: 'hr',
-  Malta: 'mt',
-  Luxembourg: 'lu',
-  Estonia: 'ee',
-  Latvia: 'lv',
-  Lithuania: 'lt',
-  Romania: 'ro',
-  Bulgaria: 'bg',
-}
 
 function toNum(value: any, fallback = 0) {
   const n = Number.parseInt(String(value || ''), 10)
@@ -118,7 +88,7 @@ export default function SchengenPage() {
             onClick={() => toggleCompare(String(c.id))}
             className="inline-flex items-center gap-2 rounded-xl border border-line bg-inset px-3 py-1.5 text-xs font-black text-text hover:bg-primary-soft"
           >
-            {flagByCountry[c.name] ? <span className={`fi fi-${flagByCountry[c.name]}`} /> : <Globe className="h-3 w-3" />}
+            <CountryFlag iso2={iso2ForCountryNameOrEmpty(c.name)} className="!h-3 !w-4 !shadow-none rounded-sm" />
             {c.name}
             <X className="h-3 w-3 opacity-70" />
           </button>
@@ -191,11 +161,10 @@ export default function SchengenPage() {
                       href={`/countries/${c.id}`}
                       className="flex min-w-0 items-center gap-2 font-black text-text hover:text-primary"
                     >
-                      {flagByCountry[c.name] ? (
-                        <span className={`fi fi-${flagByCountry[c.name]} shrink-0 rounded-sm`} />
-                      ) : (
-                        <Globe className="h-4 w-4 shrink-0 text-muted" />
-                      )}
+                      <CountryFlag
+                        iso2={iso2ForCountryNameOrEmpty(c.name)}
+                        className="shrink-0 rounded-sm !shadow-none text-base leading-none"
+                      />
                       <span className="truncate">{c.name}</span>
                     </Link>
                     <button
@@ -264,13 +233,16 @@ export default function SchengenPage() {
                           href={`/countries/${c.id}`}
                           className="flex items-center gap-3 font-black text-text transition-colors group-hover:text-primary"
                         >
-                          {flagByCountry[c.name] ? (
-                            <span className={`fi fi-${flagByCountry[c.name]} rounded-sm`} />
-                          ) : (
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-inset text-muted transition-colors group-hover:bg-primary-soft group-hover:text-primary">
-                              <Globe className="h-4 w-4" />
-                            </div>
-                          )}
+                          {(() => {
+                            const iso = iso2ForCountryNameOrEmpty(c.name)
+                            return iso ? (
+                              <CountryFlag iso2={iso} className="rounded-sm !shadow-none" />
+                            ) : (
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-inset text-muted transition-colors group-hover:bg-primary-soft group-hover:text-primary">
+                                <CountryFlag iso2="" className="!h-4 !w-4 !shadow-none" />
+                              </div>
+                            )
+                          })()}
                           {c.name}
                         </Link>
                       </td>

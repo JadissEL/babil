@@ -42,6 +42,8 @@ function normalizedNameLookupKey(name: string): string {
  * Alias fréquent (FR ou variantes JSON) vers le nom canonique EN présent dans SCHENGEN_COUNTRIES_ENGLISH.
  */
 const MERGE_KEY_TO_CANONICAL_EN: Record<string, string> = {
+  'czech republic': 'Czechia',
+  tchéquie: 'Czechia',
   allemagne: 'Germany',
   autriche: 'Austria',
   belgique: 'Belgium',
@@ -66,6 +68,7 @@ const MERGE_KEY_TO_CANONICAL_EN: Record<string, string> = {
   malte: 'Malta',
   'pays-bas': 'Netherlands',
   'pays bas': 'Netherlands',
+  'the netherlands': 'Netherlands',
   norvège: 'Norway',
   norvege: 'Norway',
   pologne: 'Poland',
@@ -83,17 +86,25 @@ export function listSchengenCanonicalEnglish(): readonly string[] {
 }
 
 /**
- * Membre Schengen à partir du nom pays affiché en base ou dans les JSON statiques (FR / EN).
+ * Nom anglais canonique (ensemble SCHENGEN_COUNTRIES_ENGLISH) si le pays est membre Schengen, sinon null.
+ * Utilisé pour dédupliquer les lignes fusionnées (ex. Allemagne vs Germany).
  */
-export function isSchengenMember(countryName: string): boolean {
+export function schengenCanonicalEnglishName(countryName: string): string | null {
   const trimmed = countryName.normalize('NFC').trim().replace(/\s+/g, ' ')
-  if (!trimmed) return false
+  if (!trimmed) return null
 
-  if (SCHENGEN_COUNTRIES_ENGLISH.has(trimmed)) return true
+  if (SCHENGEN_COUNTRIES_ENGLISH.has(trimmed)) return trimmed
 
   const k = normalizedNameLookupKey(trimmed)
   const canonicalViaAlias = MERGE_KEY_TO_CANONICAL_EN[k]
-  if (canonicalViaAlias && SCHENGEN_COUNTRIES_ENGLISH.has(canonicalViaAlias)) return true
+  if (canonicalViaAlias && SCHENGEN_COUNTRIES_ENGLISH.has(canonicalViaAlias)) return canonicalViaAlias
 
-  return false
+  return null
+}
+
+/**
+ * Membre Schengen à partir du nom pays affiché en base ou dans les JSON statiques (FR / EN).
+ */
+export function isSchengenMember(countryName: string): boolean {
+  return schengenCanonicalEnglishName(countryName) !== null
 }

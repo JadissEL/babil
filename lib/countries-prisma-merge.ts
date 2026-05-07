@@ -17,131 +17,17 @@ import prisma from '@/lib/prisma'
 import type { LegacyCountryRecord } from '@/lib/countries-fallback'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
-import { materializePublicFullData, normalizeFullDataFriction } from '@/lib/country-full-data-materialize'
+import { materializePublicFullData } from '@/lib/country-full-data-materialize'
+import { mergeDisplayedFullData } from '@/lib/merge-displayed-full-data'
+import { dedupeSchengenMembersByCanonicalName, warnIfSchengenCardinalityExceeded } from '@/lib/schengen-duplicate-merge'
 import { isSchengenMember } from '@/lib/schengen-members'
-
-/** Subtrees the runner snapshot often omits; keep enriched JSON baseline when DB block is absent/empty */
-const STATIC_PREFERRED_BLOCKS = [
-  'education_mobility',
-  'visa_system',
-  'friction_analysis',
-  'appointment_audit',
-  'street_food',
-  'driving_license',
-  'morocco_insights',
-  'phd_studies',
-  'morocco_research_pack',
-  'travel_reasons',
-  'traveler_quotes',
-] as const
 
 /** Match DB row to static JSON even with minor spacing / casing drift. */
 export function countryNameMergeKey(name: string): string {
   return name.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase()
 }
 
-function isWeakBlock(v: unknown): boolean {
-  if (v == null) return true
-  if (typeof v !== 'object' || Array.isArray(v)) return false
-  return Object.keys(v as Record<string, unknown>).length === 0
-}
-
-function isPlainRecord(v: unknown): v is Record<string, unknown> {
-  if (v === null || typeof v !== 'object' || Array.isArray(v)) return false
-  const proto = Object.getPrototypeOf(v)
-  return proto === Object.prototype || proto === null
-}
-
-/** Empty / missing leaves the static branch can replace. */
-function isWeakLeaf(v: unknown): boolean {
-  if (v === undefined) return true
-  if (v === null) return true
-  if (typeof v === 'string') return v.trim() === ''
-  if (typeof v === 'number') return Number.isNaN(v)
-  if (Array.isArray(v)) return v.length === 0
-  return false
-}
-
-/**
- * Deep-merge static + DB branches: DB wins when it has real data; otherwise keep static.
- * Avoids `{ ...static, ...db }` wiping rich static subtrees when DB only sent a partial object.
- */
-function mergeFullDataBranches(
-  staticBranch: Record<string, unknown>,
-  dbBranch: Record<string, unknown>,
-): Record<string, unknown> {
-  const out: Record<string, unknown> = {}
-  const keyOrderSeen: Record<string, true> = {}
-  const keys: string[] = []
-  for (const k of Object.keys(staticBranch)) {
-    if (!keyOrderSeen[k]) {
-      keyOrderSeen[k] = true
-      keys.push(k)
-    }
-  }
-  for (const k of Object.keys(dbBranch)) {
-    if (!keyOrderSeen[k]) {
-      keyOrderSeen[k] = true
-      keys.push(k)
-    }
-  }
-
-  for (const k of keys) {
-    const sv = staticBranch[k]
-    const dv = dbBranch[k]
-
-    if (isPlainRecord(sv) && isPlainRecord(dv)) {
-      const inner = mergeFullDataBranches(sv, dv)
-      if (isWeakBlock(inner) && !isWeakBlock(sv)) {
-        out[k] = sv
-      } else {
-        out[k] = inner
-      }
-      continue
-    }
-
-    if (Array.isArray(dv) && dv.length > 0) {
-      out[k] = dv
-      continue
-    }
-    if (Array.isArray(sv) && sv.length > 0) {
-      out[k] = sv
-      continue
-    }
-    if (Array.isArray(dv) || Array.isArray(sv)) {
-      out[k] = Array.isArray(dv) ? dv : sv
-      continue
-    }
-
-    if (!isWeakLeaf(dv)) {
-      out[k] = dv
-    } else if (!isWeakLeaf(sv)) {
-      out[k] = sv
-    } else {
-      out[k] = dv !== undefined ? dv : sv
-    }
-  }
-
-  return out
-}
-
-/**
- * Overlay DB `full_data` on static JSON; deep-merge objects; keep static rich blocks when DB is empty.
- */
-export function mergeDisplayedFullData(
-  staticFull: Record<string, unknown>,
-  dbFull: Record<string, unknown>,
-): Record<string, unknown> {
-  const merged = mergeFullDataBranches(staticFull, dbFull)
-
-  for (const key of STATIC_PREFERRED_BLOCKS) {
-    if (isWeakBlock(merged[key]) && staticFull[key] != null && !isWeakBlock(staticFull[key])) {
-      merged[key] = staticFull[key]
-    }
-  }
-
-  return normalizeFullDataFriction(merged)
-}
+export { mergeDisplayedFullData } from '@/lib/merge-displayed-full-data'
 
 /** Match static JSON row to a Prisma country: **name first** (IDs often diverge from countries.json order), then id. */
 export function findLegacyCountryMatch(
@@ -298,13 +184,16 @@ async function fetchMergedCountriesListUncached(): Promise<LegacyCountryRecord[]
     })
 
     if (prismaRows.length === 0) {
-      return fallback
+      return dedupeSchengenMembersByCanonicalName(fallback)
     }
 
     const byName = new Map(prismaRows.map((r) => [countryNameMergeKey(r.name), r]))
 
     if (fallback.length === 0) {
-      return prismaRows.map((db) => prismaRowToLegacy(db))
+      const onlyDb = prismaRows.map((db) => prismaRowToLegacy(db))
+      const deduped = dedupeSchengenMembersByCanonicalName(onlyDb)
+      warnIfSchengenCardinalityExceeded(deduped)
+      return deduped
     }
 
     const mergedBase = fallback.map((f) => {
@@ -321,13 +210,15 @@ async function fetchMergedCountriesListUncached(): Promise<LegacyCountryRecord[]
 
     const combined = [...mergedBase, ...extras]
     combined.sort((a, b) => a.id - b.id)
-    return combined
+    const deduped = dedupeSchengenMembersByCanonicalName(combined)
+    warnIfSchengenCardinalityExceeded(deduped)
+    return deduped
   } catch (err) {
     console.warn(
       '[buildMergedCountriesList] Prisma failed, using static fallback:',
       err instanceof Error ? err.message : err,
     )
-    return fallback.length > 0 ? fallback : []
+    return fallback.length > 0 ? dedupeSchengenMembersByCanonicalName(fallback) : []
   }
 }
 

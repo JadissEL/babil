@@ -1,15 +1,18 @@
+import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
 import type { CountryCardProps, MobilityTier } from '@/components/country/CountryCard'
 
 /** Typical ISO mappings for French-facing country names — extend as needed */
 export const countryNameToIso: Record<string, string> = {
   France: 'fr',
   Italie: 'it',
+  Italy: 'it',
   Spain: 'es',
   Espagne: 'es',
   Germany: 'de',
   Allemagne: 'de',
   Portugal: 'pt',
   Netherlands: 'nl',
+  'The Netherlands': 'nl',
   Belgique: 'be',
   Belgium: 'be',
   Switzerland: 'ch',
@@ -26,28 +29,64 @@ export const countryNameToIso: Record<string, string> = {
   Morocco: 'ma',
   Maroc: 'ma',
   Austria: 'at',
+  Autriche: 'at',
   Greece: 'gr',
   Grèce: 'gr',
+  Grece: 'gr',
   Sweden: 'se',
+  Suède: 'se',
+  Suede: 'se',
   Denmark: 'dk',
+  Danemark: 'dk',
   Finland: 'fi',
+  Finlande: 'fi',
   Poland: 'pl',
+  Pologne: 'pl',
   Czechia: 'cz',
+  'Czech Republic': 'cz',
   Hungary: 'hu',
+  Hongrie: 'hu',
   Slovakia: 'sk',
+  Slovaquie: 'sk',
   Slovenia: 'si',
+  Slovénie: 'si',
+  Slovenie: 'si',
   Croatia: 'hr',
+  Croatie: 'hr',
   Malta: 'mt',
+  Malte: 'mt',
   Luxembourg: 'lu',
   Estonia: 'ee',
+  Estonie: 'ee',
   Latvia: 'lv',
+  Lettonie: 'lv',
   Lithuania: 'lt',
+  Lituanie: 'lt',
   Romania: 'ro',
   Bulgaria: 'bg',
+  Iceland: 'is',
+  Islande: 'is',
+  Norway: 'no',
+  Norvège: 'no',
+  Norvege: 'no',
+  Liechtenstein: 'li',
+  Ireland: 'ie',
+}
+
+/** ISO 3166-1 alpha-2 for flag-icons (`fi fi-xx`), with Schengen canonical EN fallback. */
+export function iso2ForCountryNameOrEmpty(name: string): string {
+  const direct = countryNameToIso[name]
+  if (direct) return direct.toLowerCase()
+  const canon = schengenCanonicalEnglishName(name)
+  if (canon) {
+    const fromCanon = countryNameToIso[canon]
+    if (fromCanon) return fromCanon.toLowerCase()
+  }
+  return ''
 }
 
 export function isoForCountryName(name: string): string {
-  return countryNameToIso[name]?.toLowerCase() ?? ''
+  return iso2ForCountryNameOrEmpty(name)
 }
 
 /** Map 0–100 visa-ish score bands to card tiers */
