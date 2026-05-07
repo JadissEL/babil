@@ -44,6 +44,16 @@ export default function HeroWorldCarousel({ slides }: Props) {
   const current = VERIFIED_SLIDES[index] ?? VERIFIED_SLIDES[0]
   const currentDelay = Math.max(2000, current?.durationMs ?? AUTO_SLIDE_MS)
 
+  useEffect(() => {
+    if (isPaused || VERIFIED_SLIDES.length === 0 || !current) return
+    const len = VERIFIED_SLIDES.length
+    const timer = setTimeout(() => {
+      setIndex((prev) => (prev + 1) % len)
+    }, currentDelay)
+
+    return () => clearTimeout(timer)
+  }, [current, index, isPaused, currentDelay, VERIFIED_SLIDES.length])
+
   const goNext = () =>
     setIndex((prev) => (prev + 1) % Math.max(1, VERIFIED_SLIDES.length))
   const goPrev = () =>
@@ -56,16 +66,6 @@ export default function HeroWorldCarousel({ slides }: Props) {
       </div>
     )
   }
-
-  useEffect(() => {
-    if (isPaused || VERIFIED_SLIDES.length === 0 || !current) return
-    const len = VERIFIED_SLIDES.length
-    const timer = setTimeout(() => {
-      setIndex((prev) => (prev + 1) % len)
-    }, currentDelay)
-
-    return () => clearTimeout(timer)
-  }, [current, index, isPaused, currentDelay, VERIFIED_SLIDES.length])
 
   return (
     <div

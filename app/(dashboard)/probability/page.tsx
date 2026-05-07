@@ -154,7 +154,9 @@ export default function ProbabilityPage() {
               <p className="text-green-100 text-sm font-bold mb-6">Score de succès estimé: {topCountry?.globalScore}%</p>
               <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
                 <p className="text-xs font-bold leading-relaxed">
-                  C'est votre meilleure porte d'entrée. Votre profil correspond à 90% aux critères d'acceptation actuels.
+                  {
+                    "C'est votre meilleure porte d'entrée. Votre profil correspond à 90% aux critères d'acceptation actuels."
+                  }
                 </p>
               </div>
             </div>

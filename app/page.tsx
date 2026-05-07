@@ -188,7 +188,11 @@ export default async function Home() {
           <div className="grid gap-4 md:grid-cols-3">
             {testimonials.map((t) => (
               <div key={t.name} className="rounded-xl border border-line bg-inset p-4">
-                <p className="text-sm font-medium italic text-text">"{t.quote}"</p>
+                <p className="text-sm font-medium italic text-text">
+                  <span className="not-italic">&ldquo;</span>
+                  {t.quote}
+                  <span className="not-italic">&rdquo;</span>
+                </p>
                 <p className="mt-4 text-sm font-black text-text">{t.name}</p>
                 <p className="text-xs font-semibold text-muted">{t.role}</p>
               </div>

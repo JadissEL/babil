@@ -58,7 +58,7 @@ export function TravelerQuotesSection({
             key={quote.id}
             className={`flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border p-4 shadow-soft ${quoteTone(quote.sentiment)}`}
           >
-            <p className="mb-3 shrink-0 text-2xl font-black opacity-70">"</p>
+            <p className="mb-3 shrink-0 text-2xl font-black opacity-70">&ldquo;</p>
             <p className="min-w-0 flex-1 break-words text-sm font-medium leading-relaxed">{quote.text}</p>
             <div className="mt-4 min-w-0 shrink-0 border-t border-current/20 pt-3 text-xs font-bold uppercase tracking-wider break-words">
               <a href={quote.sourceUrl} target="_blank" rel="noreferrer" className="underline underline-offset-2">
