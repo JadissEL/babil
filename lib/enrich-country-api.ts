@@ -5,6 +5,7 @@
 
 import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+import { isSchengenMember } from '@/lib/schengen-members'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 
@@ -100,11 +101,13 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
   const budgetLevel: BudgetBand = finalScore >= 72 ? 'high' : finalScore >= 52 ? 'medium' : 'low'
   const highlight = normalizeHighlightFromFullData(full)
 
+  const name = String(c.name ?? '')
   return {
     ...c,
     id: c.id as number,
-    name: String(c.name),
+    name,
     region: String(c.region),
+    schengen_flag: typeof c.schengen_flag === 'boolean' ? c.schengen_flag : isSchengenMember(name),
     _full: full,
     _visa: visa,
     _friction: friction,
