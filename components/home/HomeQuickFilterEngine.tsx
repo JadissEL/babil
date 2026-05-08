@@ -15,11 +15,7 @@ function buildExplorerHref(goal: string, budget: string, region: string, risk: s
   if (goal !== 'all') params.set('goal', goal)
   if (budget !== 'all') params.set('budget', budget)
   if (region !== 'all') {
-    if (region === 'Schengen') {
-      params.set('schengen', '1')
-    } else {
-      params.set('region', region.toLowerCase())
-    }
+    params.set('region', region === 'Schengen' ? 'schengen' : region.toLowerCase())
   }
   if (risk !== 'all') {
     const difficulty = risk === 'low' ? 'Low' : risk === 'medium' ? 'Medium' : 'High'

@@ -33,6 +33,7 @@ import {
 const MAX = 4
 
 type Step = 'category' | 'objective' | 'countries'
+type SuggestionPoolSource = 'all' | 'filtered' | 'fallback'
 
 function stepIndex(s: Step): number {
   return s === 'category' ? 0 : s === 'objective' ? 1 : 2
@@ -112,12 +113,14 @@ export function CompareExperience() {
     return { regionFilter, budget, difficulty, schengenOnly }
   }, [searchParams])
 
-  /** Prefer countries matching explorer-style URL params for “Top N” suggestions; fallback if the filter is too strict. */
-  const suggestionPool = useMemo(() => {
+  const { suggestionPool, suggestionPoolSource } = useMemo((): {
+    suggestionPool: EnrichedCountryApi[]
+    suggestionPoolSource: SuggestionPoolSource
+  } => {
     const { regionFilter, budget, difficulty, schengenOnly } = compareExplorerContext
     const hasConstraint =
       regionFilter !== 'all' || budget !== 'all' || difficulty !== 'all' || schengenOnly
-    if (!hasConstraint) return enriched
+    if (!hasConstraint) return { suggestionPool: enriched, suggestionPoolSource: 'all' }
     const filtered = enriched.filter((c) => {
       const name = String(c.name ?? '')
       const dbRegion = String(c.region ?? '')
@@ -131,7 +134,8 @@ export function CompareExperience() {
         return false
       return true
     })
-    return filtered.length > 0 ? filtered : enriched
+    if (filtered.length > 0) return { suggestionPool: filtered, suggestionPoolSource: 'filtered' }
+    return { suggestionPool: enriched, suggestionPoolSource: 'fallback' }
   }, [enriched, compareExplorerContext])
 
   const options: CountryOption[] = useMemo(
@@ -167,6 +171,14 @@ export function CompareExperience() {
     () => pickSuggestedCountryIds(suggestionPool, objective, MAX),
     [suggestionPool, objective],
   )
+
+  const suggestionLabel = useMemo(() => {
+    const n = Math.min(MAX, suggestionIds.length)
+    let label = `Top ${n} pour « ${objective.shortLabel} »`
+    if (suggestionPoolSource === 'filtered') label += ' — selon vos filtres'
+    if (suggestionPoolSource === 'fallback') label += ' — filtres trop restrictifs, classement élargi'
+    return label
+  }, [suggestionIds.length, objective.shortLabel, suggestionPoolSource])
 
   const applySuggestions = useCallback(() => {
     const next: number[] = []
@@ -341,7 +353,7 @@ export function CompareExperience() {
               onSearchChange={setSearch}
               onToggle={toggle}
               suggestionIds={suggestionIds}
-              suggestionLabel={`Top ${Math.min(MAX, suggestionIds.length)} pour « ${objective.shortLabel} »`}
+              suggestionLabel={suggestionLabel}
               onAddSuggestions={applySuggestions}
             />
             <div className="min-w-0 space-y-3 sm:space-y-4">

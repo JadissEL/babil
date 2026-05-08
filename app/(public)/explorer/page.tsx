@@ -233,7 +233,7 @@ function ExplorerPageInner() {
               }}
               className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'explorer' ? 'bg-primary text-white shadow-soft' : 'text-muted hover:text-primary'}`}
             >
-              <SlidersHorizontal className="h-4 w-4" /> Explorer
+              <SlidersHorizontal className="h-4 w-4" /> Liste
             </button>
             <button
               type="button"

@@ -13,15 +13,15 @@ import {
 } from 'lucide-react'
 
 const items = [
-  { href: '/overview', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/overview', label: 'Tableau de bord', icon: LayoutDashboard },
   { href: '/explorer', label: 'Explorer', icon: Globe },
   { href: '/compare', label: 'Comparer', icon: Scale },
   { href: '/schengen', label: 'Schengen', icon: ShieldCheck },
-  { href: '/probability', label: 'Visa Engine', icon: Zap },
-  { href: '/education', label: 'Education', icon: GraduationCap },
-  { href: '/community', label: 'Community', icon: MessagesSquare },
-  { href: '/business', label: 'Business', icon: Briefcase },
-  { href: '/permis', label: 'Driving License', icon: Car },
+  { href: '/probability', label: 'Moteur visa', icon: Zap },
+  { href: '/education', label: 'Éducation', icon: GraduationCap },
+  { href: '/community', label: 'Communauté', icon: MessagesSquare },
+  { href: '/business', label: 'Affaires', icon: Briefcase },
+  { href: '/permis', label: 'Permis de conduire', icon: Car },
   { href: '/moderation', label: 'Modération', icon: Gavel },
 ]
 

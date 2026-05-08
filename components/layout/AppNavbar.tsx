@@ -5,7 +5,7 @@ const links = [
   { href: '/explorer', label: 'Explorer' },
   { href: '/compare', label: 'Comparer' },
   { href: '/schengen', label: 'Schengen' },
-  { href: '/probability', label: 'Visa Engine' },
+  { href: '/probability', label: 'Moteur visa' },
 ]
 
 export default function AppNavbar() {
