@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 
 import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsIntelSection'
+import { CountryDbInsightsCollapsible } from '@/components/country/CountryDbInsightsCollapsible'
 import { IntelligenceProvenanceCollapsible } from '@/components/country/IntelligenceProvenanceCollapsible'
 import GoogleAd from '@/components/GoogleAd'
 import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
@@ -28,6 +29,7 @@ import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryT
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
+import { filterPublicCountryInsights } from '@/lib/country-db-insights'
 import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
@@ -257,6 +259,7 @@ export default function CountryDetailPage() {
   const frictionScore = enriched._friction
   const finalScore = enriched._finalScore
   const drivingIntel = materializeDrivingRightsIntel(full as Record<string, unknown>)
+  const dbInsightRows = filterPublicCountryInsights(country.insights)
 
   const economyBlock = full.economy as Record<string, unknown> | undefined
   const healthBlock = full.health as Record<string, unknown> | undefined
@@ -416,6 +419,8 @@ export default function CountryDetailPage() {
               <IntelligenceProvenanceCollapsible
                 countryId={String(Array.isArray(id) ? id[0] ?? '' : id ?? '')}
               />
+
+              <CountryDbInsightsCollapsible rows={dbInsightRows} />
 
               <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ScoreBar label="Visa tourisme" value={tourismScore} />

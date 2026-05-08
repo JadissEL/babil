@@ -125,7 +125,7 @@ Pour chaque donnée, l’analyse distingue :
 
 ## 6. `CountryInsight` — cas particulier important
 
-**Constat technique :** la relation Prisma `Country.insights` **n’est pas** `include` dans `GET /api/countries/[id]` ni dans le merge standard. Le script `sync-countries-to-render.ts` synchronise ces lignes vers un autre déploiement.
+**Constat technique :** `GET /api/countries/[id]` inclut désormais `insights` (ordre `id` desc, max 25) ; la fiche pays affiche un encart repliable **Notes terrain (base de données)** lorsque du contenu existe. Le merge liste standard reste inchangé. Le script `sync-countries-to-render.ts` synchronise ces lignes vers un autre déploiement.
 
 **Interprétation produit :** ce n’est **pas** « données inutiles » : c’est une **couche non branchée** au frontend Next actuel.
 

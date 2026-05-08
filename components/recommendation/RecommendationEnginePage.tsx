@@ -35,6 +35,7 @@ function MetricBar({ label, value }: { label: string; value: number }) {
 }
 
 export default function RecommendationEnginePage() {
+  const [age, setAge] = useState('')
   const [income, setIncome] = useState('8000')
   const [savings, setSavings] = useState('70000')
   const [cnss, setCnss] = useState(true)
@@ -62,6 +63,8 @@ export default function RecommendationEnginePage() {
       setFamilyInEU(Boolean(p.family_in_europe))
       const m = String(p.marital_status || 'SINGLE').toUpperCase()
       setMaritalStatus(m === 'MARRIED' ? 'MARRIED' : 'SINGLE')
+      const a = Number(p.age)
+      setAge(Number.isFinite(a) && a >= 16 && a <= 120 ? String(Math.round(a)) : '')
       const g = String(p.goal_type || 'TOURISM').toUpperCase()
       if ((GOALS as readonly string[]).includes(g)) setGoal(g as (typeof GOALS)[number])
     } catch {
@@ -77,13 +80,17 @@ export default function RecommendationEnginePage() {
     setLoading(true)
     setProfileHint(null)
     try {
-      const profile = {
+      const ageN = Number.parseInt(age.trim(), 10)
+      const profile: Record<string, unknown> = {
         income: Number(income) || 0,
         savings: Number(savings) || 0,
         CNSS_status: cnss,
         marital_status: maritalStatus,
         family_in_europe: familyInEU,
         goal_type: goal,
+      }
+      if (Number.isFinite(ageN) && ageN >= 16 && ageN <= 120) {
+        profile.age = ageN
       }
       const res = await fetch('/api/recommendation', {
         method: 'POST',
@@ -164,7 +171,18 @@ export default function RecommendationEnginePage() {
             <h2 className="text-lg font-semibold text-white">Paramètres du profil</h2>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="reco-age">Âge (optionnel)</Label>
+              <Input
+                id="reco-age"
+                inputMode="numeric"
+                placeholder="16–120"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+              />
+              <p className="text-[11px] leading-snug text-slate-500">Messages de contexte sur la 1ʳᵉ reco.</p>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="income">Revenu mensuel (MAD)</Label>
               <Input id="income" inputMode="numeric" value={income} onChange={(e) => setIncome(e.target.value)} />

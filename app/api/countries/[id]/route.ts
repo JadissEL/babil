@@ -27,6 +27,10 @@ export async function GET(
           },
           orderBy: { createdAt: 'desc' },
         },
+        insights: {
+          orderBy: { id: 'desc' },
+          take: 25,
+        },
       },
     })
 
