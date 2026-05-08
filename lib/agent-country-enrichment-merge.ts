@@ -7,6 +7,8 @@ import { createHash } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 
+import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot'
+
 export type QuoteSentiment = 'positive' | 'neutral' | 'negative'
 
 export type TravelerQuote = {
@@ -196,35 +198,27 @@ export function mergeCountryData(
     },
   } as Record<string, unknown>
 
-  const fallbackScalar: CountrySnapshot['scalar'] = {
-    tourist_visa_score: 5.5,
-    study_visa_score: 5.5,
-    work_visa_score: 5.5,
-    business_visa_score: 5.5,
-    appointment_difficulty: 'Medium',
-  }
+  const appointment_difficulty =
+    preserveScalar &&
+    typeof preserveScalar.appointment_difficulty === 'string' &&
+    preserveScalar.appointment_difficulty.trim()
+      ? preserveScalar.appointment_difficulty.trim()
+      : 'Medium'
 
-  const pickNum = (v: unknown, d: number) =>
-    typeof v === 'number' && Number.isFinite(v) ? v : d
+  const visaScalars = prismaVisaScalarsFromFullData(merged, {
+    tourist_visa_score: preserveScalar?.tourist_visa_score,
+    study_visa_score: preserveScalar?.study_visa_score,
+    work_visa_score: preserveScalar?.work_visa_score,
+    business_visa_score: preserveScalar?.business_visa_score,
+    street_food_business_access: merged.street_food_business_access,
+  })
 
   return {
     fullData: merged,
-    scalar: preserveScalar
-      ? {
-          tourist_visa_score: pickNum(preserveScalar.tourist_visa_score, fallbackScalar.tourist_visa_score),
-          study_visa_score: pickNum(preserveScalar.study_visa_score, fallbackScalar.study_visa_score),
-          work_visa_score: pickNum(preserveScalar.work_visa_score, fallbackScalar.work_visa_score),
-          business_visa_score: pickNum(
-            preserveScalar.business_visa_score,
-            fallbackScalar.business_visa_score,
-          ),
-          appointment_difficulty:
-            typeof preserveScalar.appointment_difficulty === 'string' &&
-            preserveScalar.appointment_difficulty.trim()
-              ? preserveScalar.appointment_difficulty.trim()
-              : fallbackScalar.appointment_difficulty,
-        }
-      : fallbackScalar,
+    scalar: {
+      ...visaScalars,
+      appointment_difficulty,
+    },
   }
 }
 

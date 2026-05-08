@@ -5,6 +5,7 @@ import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
+import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot'
 
 export async function POST(req: Request) {
   const { userId } = auth();
@@ -99,12 +100,25 @@ export async function POST(req: Request) {
         }
       }
       
-      // 4. 🌍 FACTEUR PAYS (20%)
+      // 4. 🌍 FACTEUR PAYS (20%) — taux d’acceptation + facilité visa (mêmes moteurs que enrich / compare)
       const acceptanceRaw = String(full.acceptance_rate_morocco ?? '50').replace(/%/g, '').trim()
       const acceptanceParsed = Number.parseInt(acceptanceRaw, 10)
       const acceptanceScore = Number.isFinite(acceptanceParsed)
         ? Math.min(100, Math.max(0, acceptanceParsed))
-        : 50;
+        : 50
+      const visaMerged = mergedVisaScores100WithDb(c.full_data ?? full, {
+        tourist_visa_score: c.tourist_visa_score,
+        study_visa_score: c.study_visa_score,
+        work_visa_score: c.work_visa_score,
+        business_visa_score: c.business_visa_score,
+        street_food_business_access: c.street_food_business_access,
+      })
+      const visaEase100 =
+        (visaMerged.tourism + visaMerged.study + visaMerged.work + visaMerged.business) / 4
+      const countryContextScore = Math.min(
+        100,
+        Math.max(0, acceptanceScore * 0.58 + visaEase100 * 0.42),
+      )
       
       // 5. 📅 FACTEUR RENDEZ-VOUS (10%)
       const friction = Number(full.friction_score)
@@ -119,13 +133,13 @@ export async function POST(req: Request) {
         : 50;
 
       let globalScore = Math.round(
-        (financialScore * 0.2) + 
-        (profScore * 0.2) + 
-        (socialScore * 0.2) + 
-        (acceptanceScore * 0.2) + 
-        (accessibilityScore * 0.1) + 
-        (riskScore * 0.1)
-      );
+        financialScore * 0.2 +
+          profScore * 0.2 +
+          socialScore * 0.2 +
+          countryContextScore * 0.2 +
+          accessibilityScore * 0.1 +
+          riskScore * 0.1,
+      )
       if (phdStudiesData) globalScore = Math.min(100, globalScore + 3);
 
       let level = "Medium";
@@ -162,6 +176,8 @@ export async function POST(req: Request) {
           profession: Math.round(profScore),
           social: Math.round(socialScore),
           acceptance: Math.round(acceptanceScore),
+          visaEase: Math.round(visaEase100),
+          countryContext: Math.round(countryContextScore),
           phdStudiesData,
         }
       };

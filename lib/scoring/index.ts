@@ -28,3 +28,11 @@ export {
 export { computeWorkMobility100, workMobilityToScalar01to10, type WorkMobilityInputs } from '@/lib/scoring/work-mobility'
 
 export { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
+
+export {
+  mergedModel100ToStoredScalar01to10,
+  mergedVisaScores100WithDb,
+  prismaVisaScalarsFromFullData,
+  type MergedVisaScores100,
+  type PrismaVisaScalarInput,
+} from '@/lib/scoring/prisma-visa-snapshot'
