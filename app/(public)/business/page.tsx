@@ -12,6 +12,7 @@ import {
   Store,
 } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
+import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 
 export default function BusinessPage() {
@@ -67,6 +68,7 @@ export default function BusinessPage() {
       ) : (
         <div className="grid auto-rows-fr grid-cols-1 gap-8 lg:grid-cols-2">
           {filtered.map((c) => {
+            const enriched = enrichCountryApiRecord(c)
             const full = c.full_data || {}
             const biz = full.visa_system?.business || {}
             const street = full.street_food || {}
@@ -85,8 +87,13 @@ export default function BusinessPage() {
                     </div>
                   </div>
                   <div className="shrink-0 rounded-2xl border border-line bg-surface px-4 py-2 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-muted">Score biz</div>
-                    <div className="text-xl font-black text-text">{(c.business_visa_score || 0).toFixed(1)}</div>
+                    <div className="text-[10px] font-black uppercase tracking-widest text-muted">Indice affaires</div>
+                    <div className="text-xl font-black text-text" title="0–100 — même modèle que l’Explorer / Comparer">
+                      {Number.isInteger(enriched._visa.business)
+                        ? enriched._visa.business
+                        : enriched._visa.business.toFixed(1)}
+                    </div>
+                    <div className="text-[9px] font-bold text-muted">/ 100</div>
                   </div>
                 </div>
 

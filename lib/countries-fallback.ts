@@ -2,6 +2,10 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 
 import { isSchengenMember } from '@/lib/schengen-members'
+import { businessMobilityToScalar01to10 } from '@/lib/scoring/business-mobility'
+import { studyMobilityToScalar01to10 } from '@/lib/scoring/study-mobility'
+import { tourismMobilityToScalar01to10 } from '@/lib/scoring/tourism-mobility'
+import { workMobilityToScalar01to10 } from '@/lib/scoring/work-mobility'
 
 type RawCountry = Record<string, unknown> & {
   country?: string
@@ -23,30 +27,26 @@ export type LegacyCountryRecord = {
   comments: unknown[]
 }
 
-function toNum(v: unknown, fallback = 0) {
-  const n = Number(v)
-  return Number.isFinite(n) ? n : fallback
-}
-
 function mapCountry(raw: RawCountry, index: number): LegacyCountryRecord {
-  const full = raw
-  const official = toNum(raw.official_score, 5)
-  const edu = (raw.education_mobility as Record<string, unknown>) || {}
-  const training = (edu.technical_training as Record<string, unknown>) || {}
-  const visaSystem = (raw.visa_system as Record<string, unknown>) || {}
+  const full = raw as Record<string, unknown>
   const friction = (raw.friction_analysis as Record<string, unknown>) || {}
+  const street = full.street_food as Record<string, unknown> | undefined
+  const streetOpp = typeof street?.opportunity === 'string' ? street.opportunity : null
 
   return {
     id: index + 1,
     name: String(raw.country || `Country ${index + 1}`),
     region: String(raw.region || 'Other'),
     schengen_flag: isSchengenMember(String(raw.country || '')),
-    tourist_visa_score: official,
-    study_visa_score: training.access_bac ? 8 : 5,
-    work_visa_score: visaSystem.work ? 7 : 4,
-    business_visa_score: visaSystem.business ? 7.5 : 4.5,
+    tourist_visa_score: tourismMobilityToScalar01to10({ full }),
+    study_visa_score: studyMobilityToScalar01to10({ full }),
+    work_visa_score: workMobilityToScalar01to10({ full }),
+    business_visa_score: businessMobilityToScalar01to10({
+      full,
+      streetFoodBusinessAccess: streetOpp,
+    }),
     appointment_difficulty: String(friction.risk_level || 'Medium'),
-    full_data: full,
+    full_data: raw,
     comments: [],
   }
 }
