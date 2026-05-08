@@ -27,6 +27,8 @@
     "validate:schengen-keys": "tsx scripts/validate-schengen-lookup-keys.ts",
     "sync:render:dry": "tsx scripts/sync-countries-to-render.ts",
     "sync:render:apply": "tsx scripts/sync-countries-to-render.ts --apply",
+    "db:backfill:dry": "tsx scripts/backfill-country-structured-data.ts --dry-run",
+    "db:backfill:apply": "tsx scripts/backfill-country-structured-data.ts --apply",
     "test:lib": "tsx --test \"lib/**/*.test.ts\""
   },
   "keywords": [],
