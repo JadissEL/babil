@@ -17,7 +17,7 @@ export function tourismDifficultyFriendliness01to100(raw: unknown): number {
     .trim()
     .toLowerCase()
     .normalize('NFD')
-    .replace(/\p{M}/gu, '')
+    .replace(/[\u0300-\u036f]/g, '')
   if (!t) return 50
   if (/low|facile|easy|simple|light|waiv|exempt/.test(t)) return 82
   if (/medium|moyen|moderate|standard/.test(t)) return 54

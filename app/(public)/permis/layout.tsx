@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 export const metadata: Metadata = {
   title: 'Permis de conduire à l’étranger',
   description:
-    'Validité du permis marocain, durées, conversions et restrictions par pays — repères issus des fiches pays VisaFlow.',
+    'Intelligence structurée pour titulaires du permis marocain : éligibilité, IDP, durées par statut de résidence, conversion, assurance, location et comparaison entre pays — VisaFlow.',
 }
 
 export default function PermisLayout({ children }: { children: ReactNode }) {

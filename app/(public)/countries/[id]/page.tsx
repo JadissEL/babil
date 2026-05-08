@@ -19,6 +19,7 @@ import {
   Heart
 } from 'lucide-react'
 
+import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsIntelSection'
 import GoogleAd from '@/components/GoogleAd'
 import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
 import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
@@ -26,6 +27,7 @@ import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryT
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
+import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
 
@@ -218,6 +220,7 @@ export default function CountryDetailPage() {
   const businessScore = enriched._visa.business
   const frictionScore = enriched._friction
   const finalScore = enriched._finalScore
+  const drivingIntel = materializeDrivingRightsIntel(full as Record<string, unknown>)
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-20 pt-2 sm:px-6 lg:px-8">
@@ -357,6 +360,8 @@ export default function CountryDetailPage() {
               </div>
             </div>
           </section>
+
+          <DrivingRightsIntelSection countryName={country.name} countryId={id as string} intel={drivingIntel} />
 
           {showPhdTeaser && phdModel ? (
             <PhDStudiesCountryTeaser

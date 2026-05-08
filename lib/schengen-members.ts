@@ -92,9 +92,9 @@ const MERGE_KEY_TO_CANONICAL_EN: Record<string, string> = {
  */
 export function listSchengenNormalizedLookupKeys(): string[] {
   const keys = new Set<string>()
-  for (const en of SCHENGEN_COUNTRIES_ENGLISH) {
+  SCHENGEN_COUNTRIES_ENGLISH.forEach((en) => {
     keys.add(normalizedNameLookupKey(en))
-  }
+  })
   for (const alias of Object.keys(MERGE_KEY_TO_CANONICAL_EN)) {
     keys.add(alias)
   }

@@ -49,7 +49,7 @@ export function CompareExperience() {
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [loading, setLoading] = useState(true)
 
-  const objectiveParam = searchParams.get('objective')
+  const objectiveParam = searchParams?.get('objective')
   const objective = useMemo(() => getObjectiveDefinition(objectiveParam), [objectiveParam])
 
   const [step, setStep] = useState<Step>('category')
@@ -67,7 +67,7 @@ export function CompareExperience() {
   useEffect(() => {
     if (hydratedFromUrl.current || !searchParams) return
     hydratedFromUrl.current = true
-    const o = searchParams.get('objective')
+    const o = searchParams?.get('objective')
     if (o && o in COMPARE_OBJECTIVES) {
       const def = COMPARE_OBJECTIVES[o as CompareObjectiveId]
       setCategoryId(def.categoryId)
@@ -101,14 +101,14 @@ export function CompareExperience() {
   )
 
   const compareExplorerContext = useMemo(() => {
-    const r = searchParams.get('region')
+    const r = searchParams?.get('region')
     const regionFilter: ExplorerRegionFilter = r?.trim() ? parseExplorerRegionFilter(r.trim()) : 'all'
-    const bud = searchParams.get('budget')
+    const bud = searchParams?.get('budget')
     const budget = bud === 'low' || bud === 'medium' || bud === 'high' ? bud : 'all'
-    const diff = searchParams.get('difficulty')
+    const diff = searchParams?.get('difficulty')
     const difficulty =
       diff && ['Low', 'Medium', 'High', 'Extreme'].includes(diff) ? diff : 'all'
-    const sch = searchParams.get('schengen')
+    const sch = searchParams?.get('schengen')
     const schengenOnly = sch === '1' || sch === 'true' || sch === 'yes'
     return { regionFilter, budget, difficulty, schengenOnly }
   }, [searchParams])
@@ -294,7 +294,7 @@ export function CompareExperience() {
       {step === 'objective' && categoryId && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
-            <Button type="button" variant="outline" size="sm" className="gap-1" onClick={goToCategoryStep}>
+            <Button type="button" variant="outline" className="gap-1 text-sm" onClick={goToCategoryStep}>
               <ArrowLeft className="h-4 w-4" /> Domaine
             </Button>
             <h2 className="text-lg font-black text-text sm:text-xl">2. Précisez votre objectif</h2>
@@ -326,8 +326,7 @@ export function CompareExperience() {
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
-                  className="gap-1"
+                  className="gap-1 text-sm"
                   onClick={() => {
                     setStep('objective')
                     if (objective.categoryId) setCategoryId(objective.categoryId)

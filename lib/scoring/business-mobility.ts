@@ -27,7 +27,7 @@ export function businessRightsTo01to100(raw: unknown): number {
     .trim()
     .toLowerCase()
     .normalize('NFD')
-    .replace(/\p{M}/gu, '')
+    .replace(/[\u0300-\u036f]/g, '')
   if (!t) return 50
   if (/(^|[^a-z])none|aucun|blocked|interdit|no business/.test(t)) return 16
   if (/\btotal\b/.test(t) || /libre/.test(t) || /droit d.?investir/.test(t)) return 86
@@ -44,7 +44,7 @@ export function businessSetupTo01to100(raw: unknown): number {
     .trim()
     .toLowerCase()
     .normalize('NFD')
-    .replace(/\p{M}/gu, '')
+    .replace(/[\u0300-\u036f]/g, '')
   if (!t) return 48
   if (/streamlined|simple|online|fast|e-visa|digital/.test(t)) return 78
   if (/complex|heavy|lengthy|difficult/.test(t)) return 34
@@ -65,7 +65,7 @@ export function workAvailabilityTo01to100(raw: unknown): number {
     .trim()
     .toLowerCase()
     .normalize('NFD')
-    .replace(/\p{M}/gu, '')
+    .replace(/[\u0300-\u036f]/g, '')
   if (!t) return 48
   if (/high|open|strong|available/.test(t)) return 76
   if (/moderate|medium|moyen/.test(t)) return 58
@@ -78,7 +78,7 @@ export function streetFoodOpportunityTo01to100(raw: unknown): number {
     .trim()
     .toLowerCase()
     .normalize('NFD')
-    .replace(/\p{M}/gu, '')
+    .replace(/[\u0300-\u036f]/g, '')
   if (!t) return 42
   if (/extreme/.test(t)) return 88
   if (/high|eleve|elev/.test(t)) return 78

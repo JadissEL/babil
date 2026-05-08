@@ -46,7 +46,7 @@ export function computeStudyMobility100(input: StudyMobilityInputs): number {
       ? String((tech as Record<string, unknown>).access_bac ?? '')
           .toLowerCase()
           .normalize('NFD')
-          .replace(/\p{M}/gu, '')
+          .replace(/[\u0300-\u036f]/g, '')
       : ''
   if (/non requis|sans bac|not required|no bac/.test(bacRaw)) bacBonus = 5
   else if (/parfois|sometimes/.test(bacRaw)) bacBonus = 2

@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 
+import { enrichCountryRecordWithDrivingRights } from '../lib/driving-rights-intel';
 import { isSchengenMember } from '../lib/schengen-members';
 import { businessMobilityToScalar01to10 } from '../lib/scoring/business-mobility';
 import { studyMobilityToScalar01to10 } from '../lib/scoring/study-mobility';
@@ -18,18 +19,19 @@ async function main() {
   console.log(`Starting seeding for ${countries.length} countries...`);
 
   for (const c of countries) {
+    const payload = enrichCountryRecordWithDrivingRights(c as Record<string, unknown>);
     const countryData = {
       name: c.country,
       region: c.region,
       schengen_flag: isSchengenMember(String(c.country || '')),
-      tourist_visa_score: tourismMobilityToScalar01to10({ full: c as Record<string, unknown> }),
-      study_visa_score: studyMobilityToScalar01to10({ full: c as Record<string, unknown> }),
+      tourist_visa_score: tourismMobilityToScalar01to10({ full: payload as Record<string, unknown> }),
+      study_visa_score: studyMobilityToScalar01to10({ full: payload as Record<string, unknown> }),
       business_visa_score: businessMobilityToScalar01to10({
-        full: c as Record<string, unknown>,
+        full: payload as Record<string, unknown>,
         streetFoodBusinessAccess:
           typeof c.street_food?.opportunity === 'string' ? c.street_food.opportunity : null,
       }),
-      work_visa_score: workMobilityToScalar01to10({ full: c as Record<string, unknown> }),
+      work_visa_score: workMobilityToScalar01to10({ full: payload as Record<string, unknown> }),
       appointment_difficulty: c.friction_analysis?.risk_level || 'Medium',
       visa_processing_time: c.friction_analysis?.real_delay || 'Unknown',
       rejection_risk: c.friction_analysis?.risk_level || 'Medium',
@@ -38,7 +40,7 @@ async function main() {
       short_course_access: c.education_mobility?.short_courses?.duration || 'Unknown',
       street_food_business_access: c.street_food?.opportunity || 'Unknown',
       driving_license_status: c.driving_license?.status || 'Unknown',
-      full_data: JSON.stringify(c)
+      full_data: JSON.stringify(payload)
     };
 
     await prisma.country.upsert({

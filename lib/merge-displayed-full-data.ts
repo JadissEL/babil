@@ -13,6 +13,7 @@ const STATIC_PREFERRED_BLOCKS = [
   'appointment_audit',
   'street_food',
   'driving_license',
+  'driving_rights',
   'morocco_insights',
   'phd_studies',
   'morocco_research_pack',
