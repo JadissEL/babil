@@ -27,6 +27,7 @@ describe('buildCountryPrismaPayloadFromStaticRecord', () => {
     })
     assert.equal(payload.name, 'Testland')
     const full = parseCountryFullData(payload.full_data)
+    assert.equal(full.schengen_flag, false)
     const dr = full.driving_rights as Record<string, unknown> | undefined
     assert.ok(dr && typeof dr === 'object')
     assert.equal((dr.meta as Record<string, unknown>).schemaVersion, 1)
@@ -39,5 +40,21 @@ describe('buildCountryPrismaPayloadFromStaticRecord', () => {
     const hist = bf.history as unknown[] | undefined
     assert.ok(Array.isArray(hist) && hist.length >= 1)
     assert.equal((hist[0] as Record<string, unknown>).source, 'static_seed')
+  })
+
+  it('embeds canonical schengen_flag in full_data for a Schengen member', () => {
+    const payload = buildCountryPrismaPayloadFromStaticRecord({
+      country: 'Germany',
+      region: 'Europe',
+      driving_license: {
+        status: 'Recognized',
+        duration: '6 months',
+        conversion_possible: true,
+        conversion_details: '',
+      },
+    })
+    assert.equal(payload.schengen_flag, true)
+    const full = parseCountryFullData(payload.full_data)
+    assert.equal(full.schengen_flag, true)
   })
 })

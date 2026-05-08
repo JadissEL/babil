@@ -9,6 +9,7 @@
  *   npx tsx scripts/backfill-country-structured-data.ts --apply --limit 20
  *   npx tsx scripts/backfill-country-structured-data.ts --apply --hydrate-static
  *   npx tsx scripts/backfill-country-structured-data.ts --apply --with-contract-coverage
+ *   npm run db:backfill:coverage:apply
  *
  * `--hydrate-static` merges `data/countries.json` into DB JSON by name (DB wins on conflicts),
  * then runs the same normalization — **thick rows in Postgres** without relying on API merge.
@@ -20,7 +21,8 @@ import 'dotenv/config'
 
 import prisma from '../lib/prisma'
 import { parseCountryFullData } from '../lib/country-full-data-json'
-import { materializePublicFullData } from '../lib/country-full-data-materialize'
+import { attachCanonicalSchengenFlag, materializePublicFullData } from '../lib/country-full-data-materialize'
+import { isSchengenMember } from '../lib/schengen-members'
 import {
   deriveStreetFoodBusinessAccessFromFullData,
   ensureStreetFoodBusinessAccessOnFullData,
@@ -200,7 +202,8 @@ async function main() {
     const base =
       staticFull != null ? mergeDisplayedFullData(staticFull, dbParsed) : dbParsed
     const withStreet = ensureStreetFoodBusinessAccessOnFullData(base)
-    const fullMaterialized = materializePublicFullData(withStreet)
+    const fullMaterialized = attachCanonicalSchengenFlag(materializePublicFullData(withStreet), row.name)
+    const canonicalSchengen = isSchengenMember(row.name)
 
     const streetFoodBusinessAccess = deriveStreetFoodBusinessAccessFromFullData(fullMaterialized)
     const friction = pickFrictionFields(fullMaterialized)
@@ -237,6 +240,7 @@ async function main() {
     const nextJson = JSON.stringify(full)
     const fullDataChanged = nextJson !== (row.full_data ?? '')
     const scalarChanged =
+      canonicalSchengen !== row.schengen_flag ||
       !approxEq(scalars.tourist_visa_score, numOrNan(row.tourist_visa_score)) ||
       !approxEq(scalars.study_visa_score, numOrNan(row.study_visa_score)) ||
       !approxEq(scalars.work_visa_score, numOrNan(row.work_visa_score)) ||
@@ -255,7 +259,7 @@ async function main() {
     wouldUpdate += 1
     if (dryRun) {
       console.log(
-        `[dry-run] ${row.name}: full_data=${fullDataChanged} columns=${scalarChanged} static=${staticFull != null} contract=${coverageSnapshot ? `${coverageSnapshot.score}% crit=${coverageSnapshot.criticalMissingCount}` : '—'} driving_rights.meta=${isRecord(fullMaterialized.driving_rights) ? (fullMaterialized.driving_rights as Record<string, unknown>).meta != null : false}`,
+        `[dry-run] ${row.name}: full_data=${fullDataChanged} columns=${scalarChanged} schengen=${canonicalSchengen}→db=${row.schengen_flag} static=${staticFull != null} contract=${coverageSnapshot ? `${coverageSnapshot.score}% crit=${coverageSnapshot.criticalMissingCount}` : '—'} driving_rights.meta=${isRecord(fullMaterialized.driving_rights) ? (fullMaterialized.driving_rights as Record<string, unknown>).meta != null : false}`,
       )
       continue
     }
@@ -263,6 +267,7 @@ async function main() {
     await prisma.country.update({
       where: { id: row.id },
       data: {
+        schengen_flag: canonicalSchengen,
         full_data: nextJson,
         tourist_visa_score: scalars.tourist_visa_score,
         study_visa_score: scalars.study_visa_score,

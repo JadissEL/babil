@@ -5,7 +5,7 @@
 
 import { buildContractCoverageSnapshot, DATA_BACKFILL_META_KEY } from '@/lib/contract-coverage-snapshot'
 import { enrichCountryRecordWithDrivingRights } from '@/lib/driving-rights-intel'
-import { materializePublicFullData } from '@/lib/country-full-data-materialize'
+import { attachCanonicalSchengenFlag, materializePublicFullData } from '@/lib/country-full-data-materialize'
 import {
   ensureStreetFoodBusinessAccessOnFullData,
   deriveStreetFoodBusinessAccessFromFullData,
@@ -84,7 +84,7 @@ export function buildCountryPrismaPayloadFromStaticRecord(c: Record<string, unkn
 
   const enriched = enrichCountryRecordWithDrivingRights(c) as Record<string, unknown>
   const withStreet = ensureStreetFoodBusinessAccessOnFullData(enriched)
-  const full = materializePublicFullData(withStreet)
+  const full = attachCanonicalSchengenFlag(materializePublicFullData(withStreet), name)
   const friction = frictionTriple(full)
   const edu = educationTriple(full)
   const streetFoodBusinessAccess =

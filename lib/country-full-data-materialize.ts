@@ -8,6 +8,7 @@
 
 import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel'
+import { isSchengenMember } from '@/lib/schengen-members'
 
 function frictionTopLevelWeak(v: unknown): boolean {
   if (v === undefined || v === null) return true
@@ -31,6 +32,17 @@ export function normalizeFullDataFriction(full: Record<string, unknown>): Record
 export function materializePublicFullData(raw: unknown): Record<string, unknown> {
   const parsed = parseCountryFullData(raw)
   return syncDrivingRightsIntelIntoFullData(normalizeFullDataFriction(parsed))
+}
+
+/**
+ * Writes canonical `schengen_flag` at the top level of stored `full_data` so JSON matches
+ * Prisma + explorer rules (`lib/schengen-members`), independent of stale dataset flags.
+ */
+export function attachCanonicalSchengenFlag(
+  full: Record<string, unknown>,
+  countryName: string,
+): Record<string, unknown> {
+  return { ...full, schengen_flag: isSchengenMember(countryName) }
 }
 
 /** One row from `GET /api/countries` or `GET /api/countries/[id]` — guarantees `full_data` is parsed + friction-normalized. */
