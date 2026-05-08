@@ -3,6 +3,7 @@
  * Normalizes `full_data` (driving_rights v1, friction, street_food top-level) for structure/quality.
  */
 
+import { buildContractCoverageSnapshot, DATA_BACKFILL_META_KEY } from '@/lib/contract-coverage-snapshot'
 import { enrichCountryRecordWithDrivingRights } from '@/lib/driving-rights-intel'
 import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import {
@@ -10,10 +11,7 @@ import {
   deriveStreetFoodBusinessAccessFromFullData,
 } from '@/lib/country-street-food-access'
 import { isSchengenMember } from '@/lib/schengen-members'
-import { businessMobilityToScalar01to10 } from '@/lib/scoring/business-mobility'
-import { studyMobilityToScalar01to10 } from '@/lib/scoring/study-mobility'
-import { tourismMobilityToScalar01to10 } from '@/lib/scoring/tourism-mobility'
-import { workMobilityToScalar01to10 } from '@/lib/scoring/work-mobility'
+import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot'
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === 'object' && !Array.isArray(v)
@@ -92,17 +90,34 @@ export function buildCountryPrismaPayloadFromStaticRecord(c: Record<string, unkn
   const streetFoodBusinessAccess =
     deriveStreetFoodBusinessAccessFromFullData(full) ?? 'Unknown'
 
+  const region = String(c.region ?? 'Other')
+  const appliedAt = new Date().toISOString()
+  const scalars = prismaVisaScalarsFromFullData(full, {})
+  const contractCoverage = buildContractCoverageSnapshot(
+    { name, region },
+    full,
+    scalars,
+    friction.appointment_difficulty,
+    appliedAt,
+  )
+  const fullWithMeta: Record<string, unknown> = {
+    ...full,
+    [DATA_BACKFILL_META_KEY]: {
+      version: 1,
+      lastAppliedAt: appliedAt,
+      history: [{ version: 1, appliedAt, source: 'static_seed' }],
+      contractCoverage,
+    },
+  }
+
   return {
     name,
-    region: String(c.region ?? 'Other'),
+    region,
     schengen_flag: isSchengenMember(name),
-    tourist_visa_score: tourismMobilityToScalar01to10({ full }),
-    study_visa_score: studyMobilityToScalar01to10({ full }),
-    work_visa_score: workMobilityToScalar01to10({ full }),
-    business_visa_score: businessMobilityToScalar01to10({
-      full,
-      streetFoodBusinessAccess: streetFoodBusinessAccess === 'Unknown' ? null : streetFoodBusinessAccess,
-    }),
+    tourist_visa_score: scalars.tourist_visa_score,
+    study_visa_score: scalars.study_visa_score,
+    work_visa_score: scalars.work_visa_score,
+    business_visa_score: scalars.business_visa_score,
     appointment_difficulty: friction.appointment_difficulty,
     visa_processing_time: friction.visa_processing_time,
     rejection_risk: friction.rejection_risk,
@@ -111,6 +126,6 @@ export function buildCountryPrismaPayloadFromStaticRecord(c: Record<string, unkn
     short_course_access: edu.short_course_access,
     street_food_business_access: streetFoodBusinessAccess,
     driving_license_status: drivingStatus(full),
-    full_data: JSON.stringify(full),
+    full_data: JSON.stringify(fullWithMeta),
   }
 }

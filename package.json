@@ -32,6 +32,7 @@
     "db:backfill:hydrate:dry": "tsx scripts/backfill-country-structured-data.ts --dry-run --hydrate-static",
     "db:backfill:hydrate:apply": "tsx scripts/backfill-country-structured-data.ts --apply --hydrate-static",
     "db:backfill:coverage:dry": "tsx scripts/backfill-country-structured-data.ts --dry-run --with-contract-coverage",
+    "db:report-contract": "tsx scripts/report-db-contract-summary.ts",
     "db:upsert-missing:dry": "tsx scripts/upsert-missing-countries-from-static.ts --dry-run",
     "db:upsert-missing:apply": "tsx scripts/upsert-missing-countries-from-static.ts --apply",
     "test:lib": "tsx --test \"lib/**/*.test.ts\""

@@ -28,10 +28,9 @@ import {
 import { prismaVisaScalarsFromFullData } from '../lib/scoring/prisma-visa-snapshot'
 import { loadFallbackCountries, type LegacyCountryRecord } from '../lib/countries-fallback'
 import { mergeDisplayedFullData } from '../lib/merge-displayed-full-data'
-import { buildCompletenessReport } from '../lib/country-completeness'
-import { isSchengenMember } from '../lib/schengen-members'
+import { buildContractCoverageSnapshot, DATA_BACKFILL_META_KEY } from '../lib/contract-coverage-snapshot'
 
-const BACKFILL_META_KEY = '_data_backfill'
+const BACKFILL_META_KEY = DATA_BACKFILL_META_KEY
 const BACKFILL_VERSION = 1
 
 function argFlag(name: string): boolean {
@@ -140,44 +139,6 @@ function attachBackfillMeta(
       history,
       ...(nextCoverage !== undefined ? { contractCoverage: nextCoverage } : {}),
     },
-  }
-}
-
-function buildContractCoverageSnapshot(
-  row: { name: string; region: string },
-  full: Record<string, unknown>,
-  scalars: {
-    tourist_visa_score: number
-    study_visa_score: number
-    work_visa_score: number
-    business_visa_score: number
-  },
-  appointmentDifficulty: string,
-  computedAt: string,
-): Record<string, unknown> {
-  const report = buildCompletenessReport({
-    name: row.name,
-    region: row.region,
-    schengen_flag: isSchengenMember(row.name),
-    tourist_visa_score: scalars.tourist_visa_score,
-    study_visa_score: scalars.study_visa_score,
-    work_visa_score: scalars.work_visa_score,
-    business_visa_score: scalars.business_visa_score,
-    appointment_difficulty: appointmentDifficulty,
-    full_data: full,
-  })
-  const domainScores: Record<string, number> = {}
-  for (const [k, v] of Object.entries(report.domains)) {
-    domainScores[k] = v.score
-  }
-  return {
-    score: report.score,
-    coveredFields: report.coveredFields,
-    totalFields: report.totalFields,
-    criticalMissingCount: report.criticalMissing.length,
-    criticalMissingSample: report.criticalMissing.slice(0, 30),
-    domainScores,
-    computedAt,
   }
 }
 
