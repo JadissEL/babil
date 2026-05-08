@@ -4,6 +4,7 @@ import {
   FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
   FIELD_GENERAL_POPULATION_TOTAL,
   FIELD_QUALITY_LIFE_EXPECTANCY_YEARS,
+  FIELD_WORK_UNEMPLOYMENT_RATE_PCT,
   WORLD_BANK_INDICATORS,
 } from './taxonomy-v1'
 import {
@@ -60,6 +61,12 @@ const INDICATOR_SPECS: IndicatorSpec[] = [
     fieldPath: FIELD_QUALITY_LIFE_EXPECTANCY_YEARS,
     unit: 'years',
     confidence: 0.9,
+  },
+  {
+    wbId: WORLD_BANK_INDICATORS.unemploymentTotalLaborForce,
+    fieldPath: FIELD_WORK_UNEMPLOYMENT_RATE_PCT,
+    unit: 'percent_of_labor_force',
+    confidence: 0.82,
   },
 ]
 

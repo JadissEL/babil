@@ -101,7 +101,7 @@ Collecte (connecteurs API / fichiers officiels / saisie validée)
   → Invalidation cache + complétude / contrat produit
 ```
 
-**Cette livraison** pose : tables, seed des sources, résolution déterministe, CLI pipeline, connecteur **World Bank Open Data** (population `SP.POP.TOTL`, PIB USD `NY.GDP.MKTP.CD`, PIB/hab. `NY.GDP.PCAP.CD`, espérance de vie `SP.DYN.LE00.IN`), collecte **par lots multi-pays** (jusqu’à ~40 codes ISO2 par requête et indicateur, `MRV=1`), **matérialisation** vers `full_data` (`economy.gdp_usd`, `economy.population_wb`, `economy.gdp_per_capita_usd`, `health.life_expectancy_years`), provenance optionnelle `GET /api/countries/[id]?intelligence=1`, route admin `GET /api/admin/intelligence/summary`, doc.
+**Cette livraison** pose : tables, seed des sources, résolution déterministe, CLI pipeline, connecteur **World Bank Open Data** (population `SP.POP.TOTL`, PIB USD `NY.GDP.MKTP.CD`, PIB/hab. `NY.GDP.PCAP.CD`, espérance de vie `SP.DYN.LE00.IN`, chômage `SL.UEM.TOTL.ZS`), collecte **par lots multi-pays** (jusqu’à ~40 codes ISO2 par requête et indicateur, `MRV=1`), **matérialisation** vers `full_data` (`economy.gdp_usd`, `economy.population_wb`, `economy.gdp_per_capita_usd`, `health.life_expectancy_years`, `work.unemployment_rate_pct`), provenance optionnelle `GET /api/countries/[id]?intelligence=1`, route admin `GET /api/admin/intelligence/summary`, doc.
 
 ### 3.1 World Bank (officiel, sans clé API)
 
@@ -111,7 +111,7 @@ Collecte (connecteurs API / fichiers officiels / saisie validée)
   - `npm run intelligence:world-bank -- --limit 10` — échantillon.
   - `npm run intelligence:materialize-economy` — applique les dernières observations en base vers `full_data`.
   - `npm run intelligence:world-bank:materialize` — enchaîne les deux.
-- Taxonomie des champs : `lib/intelligence-pipeline/taxonomy-v1.ts` (`general.population_total`, `economy.gdp_usd_current`, `economy.gdp_per_capita_usd_current`, `quality.life_expectancy_years`).
+- Taxonomie des champs : `lib/intelligence-pipeline/taxonomy-v1.ts` (`general.population_total`, `economy.gdp_usd_current`, `economy.gdp_per_capita_usd_current`, `quality.life_expectancy_years`, `work.unemployment_rate_pct`).
 - **Overrides ISO2** : `lib/intelligence-pipeline/country-iso-overrides.ts` pour les noms qui ne matchent pas le libellé World Bank (ex. `DR Congo` → `cd`, `South Korea` → `kr`).
 
 Les connecteurs **UN Data, OECD, …** restent à brancher sur le même modèle `CountryObservation`.

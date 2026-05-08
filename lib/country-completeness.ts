@@ -50,6 +50,7 @@ function emptyDomainMap(): CompletenessReport['domains'] {
     visa: { score: 0, covered: 0, total: 0 },
     friction: { score: 0, covered: 0, total: 0 },
     education: { score: 0, covered: 0, total: 0 },
+    work: { score: 0, covered: 0, total: 0 },
     business: { score: 0, covered: 0, total: 0 },
     driving: { score: 0, covered: 0, total: 0 },
     community: { score: 0, covered: 0, total: 0 },

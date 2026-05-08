@@ -3,6 +3,7 @@ export type IntelligenceDomain =
   | 'visa'
   | 'friction'
   | 'education'
+  | 'work'
   | 'business'
   | 'driving'
   | 'community'
@@ -75,13 +76,17 @@ export const COUNTRY_INTELLIGENCE_CONTRACT_V2: CountryFieldSpec[] = [
   { key: 'traveler_quotes_meta_status', path: 'full_data.traveler_quotes_meta.status', domain: 'provenance', critical: true, expectedType: 'string', justification: 'Verifiability state of quotes content.', acquisition: 'hybrid' },
   { key: 'overview_extract', path: 'full_data.overview.extract', domain: 'signals', critical: true, expectedType: 'string', justification: 'General summary baseline for country context.', acquisition: 'api' },
   { key: 'economy_gdp_usd', path: 'full_data.economy.gdp_usd', domain: 'signals', critical: true, expectedType: 'number', justification: 'Economy signal used in country intelligence.', acquisition: 'api' },
+  { key: 'economy_population_wb', path: 'full_data.economy.population_wb', domain: 'signals', critical: false, expectedType: 'number', justification: 'World Bank population total materialized from intelligence pipeline.', acquisition: 'api' },
+  { key: 'economy_gdp_per_capita_usd', path: 'full_data.economy.gdp_per_capita_usd', domain: 'signals', critical: false, expectedType: 'number', justification: 'Nominal GDP per capita (USD) from World Bank.', acquisition: 'api' },
+  { key: 'health_life_expectancy_years', path: 'full_data.health.life_expectancy_years', domain: 'signals', critical: false, expectedType: 'number', justification: 'Life expectancy at birth (years) from World Bank WDI.', acquisition: 'api' },
+  { key: 'work_unemployment_rate_pct', path: 'full_data.work.unemployment_rate_pct', domain: 'work', critical: false, expectedType: 'number', justification: 'Modeled unemployment (% labor force) from World Bank / ILO series.', acquisition: 'api' },
   { key: 'agent_updated_at', path: 'full_data._agent.updatedAt', domain: 'provenance', critical: true, expectedType: 'string', justification: 'Freshness and admin monitoring.', acquisition: 'generated' },
   { key: 'agent_source_hash', path: 'full_data._agent.sourceHash', domain: 'provenance', critical: false, expectedType: 'string', justification: 'Detect payload identity/update drift.', acquisition: 'generated' },
   { key: 'coverage_manifest', path: 'full_data._agent.coverageManifest', domain: 'provenance', critical: true, expectedType: 'object', justification: 'Tracks covered vs missing fields per country.', acquisition: 'generated' },
   { key: 'completeness_score', path: 'full_data._agent.completeness.score', domain: 'provenance', critical: true, expectedType: 'number', justification: 'Country readiness ranking for enrichment sequencing.', acquisition: 'generated' },
 ]
 
-export const CONTRACT_VERSION = 'country-intelligence-v3'
+export const CONTRACT_VERSION = 'country-intelligence-v4'
 
 export const CONTRACT_CRITICAL_KEYS = COUNTRY_INTELLIGENCE_CONTRACT_V2.filter((f) => f.critical).map(
   (f) => f.key,

@@ -54,6 +54,7 @@ const DOMAIN_PLAN_PRIORITY: readonly IntelligenceDomain[] = [
   'identity',
   'provenance',
   'education',
+  'work',
   'business',
   'driving',
   'community',

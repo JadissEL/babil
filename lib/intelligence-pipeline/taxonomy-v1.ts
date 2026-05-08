@@ -17,11 +17,15 @@ export const FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT = 'economy.gdp_per_capita_
 /** Espérance de vie à la naissance (années) — World Bank WDI SP.DYN.LE00.IN */
 export const FIELD_QUALITY_LIFE_EXPECTANCY_YEARS = 'quality.life_expectancy_years' as const
 
+/** Chômage (% de la population active, série modélisée OIT) — World Bank WDI SL.UEM.TOTL.ZS */
+export const FIELD_WORK_UNEMPLOYMENT_RATE_PCT = 'work.unemployment_rate_pct' as const
+
 export const WORLD_BANK_INDICATORS = {
   population: 'SP.POP.TOTL',
   gdpUsd: 'NY.GDP.MKTP.CD',
   gdpPerCapitaUsd: 'NY.GDP.PCAP.CD',
   lifeExpectancy: 'SP.DYN.LE00.IN',
+  unemploymentTotalLaborForce: 'SL.UEM.TOTL.ZS',
 } as const
 
 export const MATERIALIZE_TARGETS: Record<
@@ -32,4 +36,5 @@ export const MATERIALIZE_TARGETS: Record<
   [FIELD_GENERAL_POPULATION_TOTAL]: { fullDataPath: 'economy.population_wb', kind: 'number' },
   [FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT]: { fullDataPath: 'economy.gdp_per_capita_usd', kind: 'number' },
   [FIELD_QUALITY_LIFE_EXPECTANCY_YEARS]: { fullDataPath: 'health.life_expectancy_years', kind: 'number' },
+  [FIELD_WORK_UNEMPLOYMENT_RATE_PCT]: { fullDataPath: 'work.unemployment_rate_pct', kind: 'number' },
 }
