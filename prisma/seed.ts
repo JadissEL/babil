@@ -4,6 +4,8 @@ import path from 'path';
 
 import { isSchengenMember } from '../lib/schengen-members';
 import { businessMobilityToScalar01to10 } from '../lib/scoring/business-mobility';
+import { studyMobilityToScalar01to10 } from '../lib/scoring/study-mobility';
+import { tourismMobilityToScalar01to10 } from '../lib/scoring/tourism-mobility';
 import { workMobilityToScalar01to10 } from '../lib/scoring/work-mobility';
 
 const prisma = new PrismaClient();
@@ -20,8 +22,8 @@ async function main() {
       name: c.country,
       region: c.region,
       schengen_flag: isSchengenMember(String(c.country || '')),
-      tourist_visa_score: c.official_score || 0,
-      study_visa_score: c.education_mobility?.technical_training?.access_bac ? 8.0 : 5.0,
+      tourist_visa_score: tourismMobilityToScalar01to10({ full: c as Record<string, unknown> }),
+      study_visa_score: studyMobilityToScalar01to10({ full: c as Record<string, unknown> }),
       business_visa_score: businessMobilityToScalar01to10({
         full: c as Record<string, unknown>,
         streetFoodBusinessAccess:

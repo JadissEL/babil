@@ -5,6 +5,8 @@ import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
+import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
+import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
 import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 
@@ -61,8 +63,10 @@ function readCountrySignals(country: any) {
   const visaSystem = full.visa_system as Record<string, unknown> | undefined;
   const streetFood = full.street_food as Record<string, unknown> | undefined;
 
-  const touristScore = toNumber(normalizedVisa.touristScore ?? country.tourist_visa_score ?? full.official_score ?? 50, 50);
-  const studyScore = toNumber(normalizedVisa.studyScore ?? country.study_visa_score ?? 50, 50);
+  const modelTourism = computeTourismMobility100({ full })
+  const touristScore = mergeModelWithDbScalar01to100(modelTourism, country.tourist_visa_score, 12)
+  const modelStudy = computeStudyMobility100({ full })
+  const studyScore = mergeModelWithDbScalar01to100(modelStudy, country.study_visa_score, 12)
   const modelWork = computeWorkMobility100({ full })
   const workScore = mergeModelWithDbScalar01to100(modelWork, country.work_visa_score, 12)
   const modelBiz = computeBusinessMobility100({

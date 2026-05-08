@@ -42,8 +42,8 @@ model Country {
   name                        String  @unique
   region                      String
   schengen_flag               Boolean @default(false)
-  tourist_visa_score          Float?
-  study_visa_score            Float?
+  tourist_visa_score          Float? /// 1–10 snapshot; live score from lib/scoring/tourism-mobility in enrich
+  study_visa_score            Float? /// 1–10 snapshot; live score from lib/scoring/study-mobility in enrich
   work_visa_score             Float? /// 1–10 snapshot; live score from lib/scoring/work-mobility in enrich
   business_visa_score         Float? /// 1–10 snapshot; prefer recomputing via lib/scoring/business-mobility at read time
   appointment_difficulty      String?

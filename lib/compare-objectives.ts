@@ -321,9 +321,14 @@ export function objectiveWeightedScore(c: EnrichedCountryApi, def: CompareObject
 const KPI_META: Record<CompareKpiColumnKey, { header: string; tooltip: string }> = {
   visa_tourism: {
     header: 'Visa tourisme',
-    tooltip: 'Score 0–100 dérivé du profil tourisme (comme l’Explorer).',
+    tooltip:
+      'Score 0–100 : difficulté visa visiteur, score officiel, friction, acceptation / confiance (modèle lib/scoring/tourism-mobility).',
   },
-  visa_study: { header: 'Visa études', tooltip: 'Indicatif études / formations longues.' },
+  visa_study: {
+    header: 'Visa études',
+    tooltip:
+      'Score 0–100 : modules education_mobility (langue / technique / cours courts), friction, scores officiels, bonus PhD si données (lib/scoring/study-mobility).',
+  },
   visa_work: { header: 'Visa travail', tooltip: 'Indicatif emploi salarié / missions.' },
   visa_business: {
     header: 'Visa affaires',
@@ -380,16 +385,20 @@ function formatModuleAccess(
   return typeof a === 'string' && a.trim() ? a : '—'
 }
 
+function formatVisaScore01to100(v: number): string {
+  return Number.isInteger(v) ? String(v) : v.toFixed(1)
+}
+
 export function formatKpiValue(key: CompareKpiColumnKey, c: EnrichedCountryApi): string {
   switch (key) {
     case 'visa_tourism':
-      return String(c._visa.tourism)
+      return formatVisaScore01to100(c._visa.tourism)
     case 'visa_study':
-      return String(c._visa.study)
+      return formatVisaScore01to100(c._visa.study)
     case 'visa_work':
-      return String(c._visa.work)
+      return formatVisaScore01to100(c._visa.work)
     case 'visa_business':
-      return Number.isInteger(c._visa.business) ? String(c._visa.business) : c._visa.business.toFixed(1)
+      return formatVisaScore01to100(c._visa.business)
     case 'friction_tier':
       return frictionTierFromCountry(c._difficultyLabel, c._full?.friction_score)
     case 'study_tier':

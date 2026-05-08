@@ -7,6 +7,8 @@ import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
+import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
+import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
 import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 
@@ -71,7 +73,6 @@ function normalizeHighlightFromFullData(full: Record<string, unknown>) {
 export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCountryApi {
   const full = materializePublicFullData(c.full_data ?? null)
 
-  const official = typeof full.official_score === 'number' ? full.official_score : 5
   const streetFoodCol =
     typeof c.street_food_business_access === 'string' ? c.street_food_business_access : null
 
@@ -88,9 +89,15 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
   const workModel = computeWorkMobility100({ full })
   const workMerged = mergeModelWithDbScalar01to100(workModel, c.work_visa_score, 12)
 
+  const tourismModel = computeTourismMobility100({ full })
+  const tourismMerged = mergeModelWithDbScalar01to100(tourismModel, c.tourist_visa_score, 12)
+
+  const studyModel = computeStudyMobility100({ full })
+  const studyMerged = mergeModelWithDbScalar01to100(studyModel, c.study_visa_score, 12)
+
   const visa = {
-    tourism: clamp(Math.round(((c.tourist_visa_score as number) || official || 5) * 10)),
-    study: clamp(Math.round(((c.study_visa_score as number) || 5) * 10)),
+    tourism: clamp(Math.round(tourismMerged * 10) / 10),
+    study: clamp(Math.round(studyMerged * 10) / 10),
     work: clamp(Math.round(workMerged * 10) / 10),
     business: clamp(Math.round(businessMerged * 10) / 10),
   }
