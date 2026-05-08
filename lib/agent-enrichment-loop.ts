@@ -21,6 +21,7 @@ import {
   loadVerifiedTravelerQuotes,
   mergeCountryData,
 } from './agent-country-enrichment-merge'
+import { syncDrivingRightsIntelIntoFullData } from './driving-rights-intel'
 
 export type EnrichmentLoopTask = {
   id: string
@@ -109,7 +110,11 @@ export async function runEnrichmentPassLoop(
     }) => void
   },
 ): Promise<EnrichmentLoopResult> {
-  let snapshot = snapshotInit
+  // Pass-0 completeness uses `snapshot` before the first merge; materialize v1 from legacy `driving_license` here so all callers (runner, child) agree.
+  let snapshot: CountrySnapshot = {
+    ...snapshotInit,
+    fullData: syncDrivingRightsIntelIntoFullData(snapshotInit.fullData),
+  }
   let bestScore = -1
   let sourceHash = ''
   let reportPayload = buildCompletenessPayload(snapshot, task, hashEnrichmentInputs({}), {

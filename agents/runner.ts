@@ -227,15 +227,12 @@ function hydrateAgentFullDataFromPrismaRow(
 ): Record<string, unknown> {
   const top = fullData.street_food_business_access
   const hasTop = typeof top === 'string' && top.trim().length > 0
-  let next = fullData
-  if (!hasTop) {
-    const col = row?.street_food_business_access
-    if (typeof col === 'string' && col.trim()) {
-      next = { ...fullData, street_food_business_access: col.trim() }
-    }
+  if (hasTop) return fullData
+  const col = row?.street_food_business_access
+  if (typeof col === 'string' && col.trim()) {
+    return { ...fullData, street_food_business_access: col.trim() }
   }
-  // Pass-0 completeness + first adaptive query use snapshotInit before mergeCountryData runs.
-  return syncDrivingRightsIntelIntoFullData(next)
+  return fullData
 }
 
 function nextRetryDelay(attempts: number) {
