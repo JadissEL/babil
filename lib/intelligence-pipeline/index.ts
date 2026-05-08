@@ -18,6 +18,7 @@ export {
   FIELD_GENERAL_POPULATION_TOTAL,
   FIELD_ECONOMY_GDP_USD_CURRENT,
   FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
+  FIELD_QUALITY_LIFE_EXPECTANCY_YEARS,
   WORLD_BANK_INDICATORS,
   MATERIALIZE_TARGETS,
 } from './taxonomy-v1'
@@ -26,6 +27,9 @@ export {
   fetchWorldBankCountryIso2Map,
   resolveIso2ForBabilCountryName,
   fetchWorldBankLatestDatum,
+  fetchWorldBankLatestDataForCountriesBatch,
+  wbBatchRowsToDatumMap,
+  chunkIso2ForWorldBank,
   type WbDatum,
 } from './world-bank-client'
 export { iso2FromIntelligenceOverride, COUNTRY_ISO2_OVERRIDES } from './country-iso-overrides'

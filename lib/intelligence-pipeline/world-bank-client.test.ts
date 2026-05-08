@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { normalizeCountryMatchKey } from './country-match-key'
-import { resolveIso2ForBabilCountryName } from './world-bank-client'
+import {
+  chunkIso2ForWorldBank,
+  resolveIso2ForBabilCountryName,
+  wbBatchRowsToDatumMap,
+} from './world-bank-client'
 
 describe('normalizeCountryMatchKey', () => {
   it('lowercases and collapses spaces', () => {
@@ -28,5 +32,42 @@ describe('resolveIso2ForBabilCountryName', () => {
 
   it('returns null when unmapped', () => {
     assert.equal(resolveIso2ForBabilCountryName('Unknownland', new Map()), null)
+  })
+})
+
+describe('wbBatchRowsToDatumMap', () => {
+  it('maps ISO2 from country.id to first row per country', () => {
+    const m = wbBatchRowsToDatumMap([
+      { country: { id: 'MA' }, date: '2022', value: 37_000_000 },
+      { country: { id: 'FR' }, date: '2023', value: 68_000_000 },
+      { country: { id: 'ABC' }, date: '2020', value: 1 },
+    ])
+    assert.equal(m.get('ma')?.value, 37_000_000)
+    assert.equal(m.get('ma')?.date, '2022')
+    assert.equal(m.get('fr')?.value, 68_000_000)
+    assert.equal(m.has('abc'), false)
+  })
+
+  it('ignores rows without a 2-letter country id', () => {
+    const m = wbBatchRowsToDatumMap([
+      { country: { id: 'WORLD' }, date: '2020', value: 1 },
+      { country: {}, date: '2020', value: 2 },
+    ])
+    assert.equal(m.size, 0)
+  })
+})
+
+describe('chunkIso2ForWorldBank', () => {
+  it('splits list into chunks of max size', () => {
+    const iso = ['aa', 'bb', 'cc', 'dd', 'ee']
+    assert.deepEqual(chunkIso2ForWorldBank(iso, 2), [
+      ['aa', 'bb'],
+      ['cc', 'dd'],
+      ['ee'],
+    ])
+  })
+
+  it('returns empty when input empty', () => {
+    assert.deepEqual(chunkIso2ForWorldBank([], 40), [])
   })
 })

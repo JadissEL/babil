@@ -64,6 +64,49 @@ export function resolveIso2ForBabilCountryName(
 
 export type WbDatum = { value: number | null; date: string }
 
+type WbIndicatorObservationRow = {
+  country?: { id?: string }
+  date: string
+  value: number | null
+}
+
+/** Parse la liste d’observations WB (multi-pays) en carte ISO2 minuscule → dernière valeur. */
+export function wbBatchRowsToDatumMap(rows: WbIndicatorObservationRow[]): Map<string, WbDatum> {
+  const out = new Map<string, WbDatum>()
+  for (const row of rows) {
+    const id = row.country?.id?.trim().toLowerCase()
+    if (!id || id.length !== 2) continue
+    if (!out.has(id)) out.set(id, { value: row.value, date: row.date })
+  }
+  return out
+}
+
+/**
+ * Une requête pour plusieurs pays (codes ISO2) et un indicateur — `MRV=1` (dernière année dispo par pays).
+ * @see https://datahelpdesk.worldbank.org/knowledgebase/articles/898581
+ */
+export async function fetchWorldBankLatestDataForCountriesBatch(
+  iso2LowercaseList: readonly string[],
+  indicator: string,
+): Promise<Map<string, WbDatum>> {
+  if (iso2LowercaseList.length === 0) return new Map()
+  const codes = iso2LowercaseList.map((c) => c.trim().toUpperCase()).join(';')
+  const url = `https://api.worldbank.org/v2/country/${codes}/indicator/${encodeURIComponent(indicator)}?format=json&per_page=20000&MRV=1`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`World Bank batch ${indicator} HTTP ${res.status}`)
+  const data = (await res.json()) as [unknown, WbIndicatorObservationRow[] | null]
+  const rows = data[1] ?? []
+  return wbBatchRowsToDatumMap(rows)
+}
+
+export function chunkIso2ForWorldBank(iso2List: readonly string[], maxPerChunk = 40): string[][] {
+  const chunks: string[][] = []
+  for (let i = 0; i < iso2List.length; i += maxPerChunk) {
+    chunks.push(iso2List.slice(i, i + maxPerChunk))
+  }
+  return chunks
+}
+
 /** Dernière valeur disponible pour un indicateur (MRV = most recent values). */
 export async function fetchWorldBankLatestDatum(
   iso2: string,

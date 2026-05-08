@@ -3,15 +3,18 @@ import {
   FIELD_ECONOMY_GDP_USD_CURRENT,
   FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
   FIELD_GENERAL_POPULATION_TOTAL,
+  FIELD_QUALITY_LIFE_EXPECTANCY_YEARS,
   WORLD_BANK_INDICATORS,
 } from './taxonomy-v1'
 import {
+  chunkIso2ForWorldBank,
   fetchWorldBankCountryIso2Map,
-  fetchWorldBankLatestDatum,
+  fetchWorldBankLatestDataForCountriesBatch,
   resolveIso2ForBabilCountryName,
 } from './world-bank-client'
 
-const DELAY_MS = 120
+const BATCH_DELAY_MS = 200
+const ISO2_PER_BATCH = 40
 
 function sleep(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms))
@@ -22,11 +25,46 @@ export type WorldBankCollectorResult = {
   countriesMatched: number
   countriesSkippedNoIso: number
   errors: number
+  /** Nombre d’appels HTTP indicateur×lot (plus bas que 1 requête / pays / indicateur). */
+  apiBatchCalls: number
 }
 
+type IndicatorSpec = {
+  wbId: string
+  fieldPath: string
+  unit: string
+  confidence: number
+}
+
+const INDICATOR_SPECS: IndicatorSpec[] = [
+  {
+    wbId: WORLD_BANK_INDICATORS.population,
+    fieldPath: FIELD_GENERAL_POPULATION_TOTAL,
+    unit: 'persons',
+    confidence: 0.92,
+  },
+  {
+    wbId: WORLD_BANK_INDICATORS.gdpUsd,
+    fieldPath: FIELD_ECONOMY_GDP_USD_CURRENT,
+    unit: 'current_usd',
+    confidence: 0.9,
+  },
+  {
+    wbId: WORLD_BANK_INDICATORS.gdpPerCapitaUsd,
+    fieldPath: FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
+    unit: 'current_usd_per_capita',
+    confidence: 0.88,
+  },
+  {
+    wbId: WORLD_BANK_INDICATORS.lifeExpectancy,
+    fieldPath: FIELD_QUALITY_LIFE_EXPECTANCY_YEARS,
+    unit: 'years',
+    confidence: 0.9,
+  },
+]
+
 /**
- * Collecte population, PIB nominal (USD) et PIB/hab. depuis l’API World Bank pour chaque pays en base.
- * Écrit des `CountryObservation` (append-only). Idempotent côté données : nouvelle ligne par run.
+ * Collecte indicateurs World Bank par **requêtes multi-pays** (lots ISO2), puis écrit `CountryObservation`.
  */
 export async function runWorldBankCollector(
   runId: string,
@@ -46,11 +84,8 @@ export async function runWorldBankCollector(
     select: { id: true, name: true },
   })
 
-  let observationsWritten = 0
-  let countriesMatched = 0
+  const resolved: Array<{ countryId: number; iso2: string }> = []
   let countriesSkippedNoIso = 0
-  let errors = 0
-  const observedAt = new Date()
 
   for (const c of countries) {
     const iso2 = resolveIso2ForBabilCountryName(c.name, wbMap)
@@ -58,86 +93,54 @@ export async function runWorldBankCollector(
       countriesSkippedNoIso += 1
       continue
     }
-    countriesMatched += 1
+    resolved.push({ countryId: c.id, iso2 })
+  }
 
-    try {
-      await sleep(DELAY_MS)
-      const pop = await fetchWorldBankLatestDatum(iso2, WORLD_BANK_INDICATORS.population)
-      await sleep(DELAY_MS)
-      const gdp = await fetchWorldBankLatestDatum(iso2, WORLD_BANK_INDICATORS.gdpUsd)
-      await sleep(DELAY_MS)
-      const gdpPc = await fetchWorldBankLatestDatum(iso2, WORLD_BANK_INDICATORS.gdpPerCapitaUsd)
+  const countriesMatched = resolved.length
+  const uniqueIso2 = Array.from(new Set(resolved.map((r) => r.iso2)))
+  const isoChunks = chunkIso2ForWorldBank(uniqueIso2, ISO2_PER_BATCH)
 
-      if (pop && pop.value != null && Number.isFinite(pop.value)) {
-        await prisma.countryObservation.create({
-          data: {
-            countryId: c.id,
-            fieldPath: FIELD_GENERAL_POPULATION_TOTAL,
-            valueJson: JSON.stringify({
-              value: pop.value,
-              year: Number(pop.date),
-              indicator: WORLD_BANK_INDICATORS.population,
-              iso2,
-            }),
-            valueNumeric: pop.value,
-            unit: 'persons',
-            confidence: 0.92,
-            observedAt,
-            sourceId: source.id,
-            runId,
-            rawPayload: JSON.stringify({ wb: pop }),
-          },
-        })
-        observationsWritten += 1
+  let observationsWritten = 0
+  let errors = 0
+  let apiBatchCalls = 0
+  const observedAt = new Date()
+
+  for (const spec of INDICATOR_SPECS) {
+    for (const chunk of isoChunks) {
+      try {
+        await sleep(BATCH_DELAY_MS)
+        apiBatchCalls += 1
+        const dataMap = await fetchWorldBankLatestDataForCountriesBatch(chunk, spec.wbId)
+        const chunkSet = new Set(chunk)
+        for (const { countryId, iso2 } of resolved) {
+          if (!chunkSet.has(iso2)) continue
+          const d = dataMap.get(iso2)
+          if (!d || d.value == null || !Number.isFinite(d.value)) continue
+
+          await prisma.countryObservation.create({
+            data: {
+              countryId,
+              fieldPath: spec.fieldPath,
+              valueJson: JSON.stringify({
+                value: d.value,
+                year: Number(d.date),
+                indicator: spec.wbId,
+                iso2,
+              }),
+              valueNumeric: d.value,
+              unit: spec.unit,
+              confidence: spec.confidence,
+              observedAt,
+              sourceId: source.id,
+              runId,
+              rawPayload: JSON.stringify({ wb: d }),
+            },
+          })
+          observationsWritten += 1
+        }
+      } catch {
+        errors += 1
       }
-
-      if (gdp && gdp.value != null && Number.isFinite(gdp.value)) {
-        await prisma.countryObservation.create({
-          data: {
-            countryId: c.id,
-            fieldPath: FIELD_ECONOMY_GDP_USD_CURRENT,
-            valueJson: JSON.stringify({
-              value: gdp.value,
-              year: Number(gdp.date),
-              indicator: WORLD_BANK_INDICATORS.gdpUsd,
-              iso2,
-            }),
-            valueNumeric: gdp.value,
-            unit: 'current_usd',
-            confidence: 0.9,
-            observedAt,
-            sourceId: source.id,
-            runId,
-            rawPayload: JSON.stringify({ wb: gdp }),
-          },
-        })
-        observationsWritten += 1
-      }
-
-      if (gdpPc && gdpPc.value != null && Number.isFinite(gdpPc.value)) {
-        await prisma.countryObservation.create({
-          data: {
-            countryId: c.id,
-            fieldPath: FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
-            valueJson: JSON.stringify({
-              value: gdpPc.value,
-              year: Number(gdpPc.date),
-              indicator: WORLD_BANK_INDICATORS.gdpPerCapitaUsd,
-              iso2,
-            }),
-            valueNumeric: gdpPc.value,
-            unit: 'current_usd_per_capita',
-            confidence: 0.88,
-            observedAt,
-            sourceId: source.id,
-            runId,
-            rawPayload: JSON.stringify({ wb: gdpPc }),
-          },
-        })
-        observationsWritten += 1
-      }
-    } catch {
-      errors += 1
     }
   }
 
@@ -146,5 +149,6 @@ export async function runWorldBankCollector(
     countriesMatched,
     countriesSkippedNoIso,
     errors,
+    apiBatchCalls,
   }
 }

@@ -4,8 +4,8 @@ import { setDeep } from './merge-observations'
 import { INTELLIGENCE_TAXONOMY_VERSION, MATERIALIZE_TARGETS } from './taxonomy-v1'
 
 /**
- * Applique les dernières observations économie/population WB dans `full_data`
- * (chemins `economy.gdp_usd`, `economy.population_wb`).
+ * Applique les dernières observations intelligence (économie, population WB, espérance de vie, etc.)
+ * définies dans `MATERIALIZE_TARGETS` vers `full_data`.
  */
 export async function materializeEconomyObservationsForCountry(countryId: number): Promise<boolean> {
   const paths = Object.keys(MATERIALIZE_TARGETS)
