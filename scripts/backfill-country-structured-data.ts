@@ -8,9 +8,13 @@
  *   npx tsx scripts/backfill-country-structured-data.ts --apply
  *   npx tsx scripts/backfill-country-structured-data.ts --apply --limit 20
  *   npx tsx scripts/backfill-country-structured-data.ts --apply --hydrate-static
+ *   npx tsx scripts/backfill-country-structured-data.ts --apply --with-contract-coverage
  *
  * `--hydrate-static` merges `data/countries.json` into DB JSON by name (DB wins on conflicts),
  * then runs the same normalization — **thick rows in Postgres** without relying on API merge.
+ *
+ * `--with-contract-coverage` stores `full_data._data_backfill.contractCoverage` (intelligence contract
+ * score + domain breakdown + sample of critical missing keys) for **quality tracking** in DB.
  */
 import 'dotenv/config'
 
@@ -24,6 +28,8 @@ import {
 import { prismaVisaScalarsFromFullData } from '../lib/scoring/prisma-visa-snapshot'
 import { loadFallbackCountries, type LegacyCountryRecord } from '../lib/countries-fallback'
 import { mergeDisplayedFullData } from '../lib/merge-displayed-full-data'
+import { buildCompletenessReport } from '../lib/country-completeness'
+import { isSchengenMember } from '../lib/schengen-members'
 
 const BACKFILL_META_KEY = '_data_backfill'
 const BACKFILL_VERSION = 1
@@ -106,23 +112,72 @@ function pickEducationFields(full: Record<string, unknown>): {
 function attachBackfillMeta(
   full: Record<string, unknown>,
   appliedAt: string,
-  opts: { hydrateStatic: boolean },
+  opts: { hydrateStatic: boolean; contractCoverage?: Record<string, unknown> },
 ): Record<string, unknown> {
   const prev = full[BACKFILL_META_KEY]
+  const prevBf = isRecord(prev) ? prev : {}
   const history = isRecord(prev) && Array.isArray(prev.history) ? [...(prev.history as unknown[])] : []
   history.push({
     version: BACKFILL_VERSION,
     appliedAt,
     ...(opts.hydrateStatic ? { hydrateStatic: true as const } : {}),
+    ...(opts.contractCoverage ? { contractCoverage: true as const } : {}),
   })
   if (history.length > 12) history.splice(0, history.length - 12)
+
+  const nextCoverage =
+    opts.contractCoverage !== undefined
+      ? opts.contractCoverage
+      : prevBf.contractCoverage !== undefined
+        ? prevBf.contractCoverage
+        : undefined
+
   return {
     ...full,
     [BACKFILL_META_KEY]: {
       version: BACKFILL_VERSION,
       lastAppliedAt: appliedAt,
       history,
+      ...(nextCoverage !== undefined ? { contractCoverage: nextCoverage } : {}),
     },
+  }
+}
+
+function buildContractCoverageSnapshot(
+  row: { name: string; region: string },
+  full: Record<string, unknown>,
+  scalars: {
+    tourist_visa_score: number
+    study_visa_score: number
+    work_visa_score: number
+    business_visa_score: number
+  },
+  appointmentDifficulty: string,
+  computedAt: string,
+): Record<string, unknown> {
+  const report = buildCompletenessReport({
+    name: row.name,
+    region: row.region,
+    schengen_flag: isSchengenMember(row.name),
+    tourist_visa_score: scalars.tourist_visa_score,
+    study_visa_score: scalars.study_visa_score,
+    work_visa_score: scalars.work_visa_score,
+    business_visa_score: scalars.business_visa_score,
+    appointment_difficulty: appointmentDifficulty,
+    full_data: full,
+  })
+  const domainScores: Record<string, number> = {}
+  for (const [k, v] of Object.entries(report.domains)) {
+    domainScores[k] = v.score
+  }
+  return {
+    score: report.score,
+    coveredFields: report.coveredFields,
+    totalFields: report.totalFields,
+    criticalMissingCount: report.criticalMissing.length,
+    criticalMissingSample: report.criticalMissing.slice(0, 30),
+    domainScores,
+    computedAt,
   }
 }
 
@@ -144,6 +199,7 @@ async function main() {
   const apply = argFlag('--apply')
   const limit = argNumber('--limit')
   const hydrateStatic = argFlag('--hydrate-static')
+  const withContractCoverage = argFlag('--with-contract-coverage')
 
   if (!dryRun && !apply) {
     console.error('Specify --dry-run (preview) or --apply (write).')
@@ -183,18 +239,14 @@ async function main() {
     const base =
       staticFull != null ? mergeDisplayedFullData(staticFull, dbParsed) : dbParsed
     const withStreet = ensureStreetFoodBusinessAccessOnFullData(base)
-    let full = materializePublicFullData(withStreet)
-    if (apply) {
-      full = attachBackfillMeta(full, appliedAt, { hydrateStatic: hydrateStatic && staticFull != null })
-    }
+    const fullMaterialized = materializePublicFullData(withStreet)
 
-    const nextJson = JSON.stringify(full)
-    const streetFoodBusinessAccess = deriveStreetFoodBusinessAccessFromFullData(full)
-    const friction = pickFrictionFields(full)
-    const edu = pickEducationFields(full)
-    const driving_license_status = pickDrivingLicenseStatus(full)
+    const streetFoodBusinessAccess = deriveStreetFoodBusinessAccessFromFullData(fullMaterialized)
+    const friction = pickFrictionFields(fullMaterialized)
+    const edu = pickEducationFields(fullMaterialized)
+    const driving_license_status = pickDrivingLicenseStatus(fullMaterialized)
 
-    const scalars = prismaVisaScalarsFromFullData(full, {
+    const scalars = prismaVisaScalarsFromFullData(fullMaterialized, {
       tourist_visa_score: row.tourist_visa_score,
       study_visa_score: row.study_visa_score,
       work_visa_score: row.work_visa_score,
@@ -202,6 +254,26 @@ async function main() {
       street_food_business_access: row.street_food_business_access,
     })
 
+    const coverageSnapshot =
+      withContractCoverage
+        ? buildContractCoverageSnapshot(
+            row,
+            fullMaterialized,
+            scalars,
+            friction.appointment_difficulty,
+            appliedAt,
+          )
+        : null
+
+    let full = fullMaterialized
+    if (apply) {
+      full = attachBackfillMeta(fullMaterialized, appliedAt, {
+        hydrateStatic: hydrateStatic && staticFull != null,
+        contractCoverage: coverageSnapshot ?? undefined,
+      })
+    }
+
+    const nextJson = JSON.stringify(full)
     const fullDataChanged = nextJson !== (row.full_data ?? '')
     const scalarChanged =
       !approxEq(scalars.tourist_visa_score, numOrNan(row.tourist_visa_score)) ||
@@ -222,7 +294,7 @@ async function main() {
     wouldUpdate += 1
     if (dryRun) {
       console.log(
-        `[dry-run] ${row.name}: full_data=${fullDataChanged} columns=${scalarChanged} static=${staticFull != null} driving_rights.meta=${isRecord(full.driving_rights) ? (full.driving_rights as Record<string, unknown>).meta != null : false}`,
+        `[dry-run] ${row.name}: full_data=${fullDataChanged} columns=${scalarChanged} static=${staticFull != null} contract=${coverageSnapshot ? `${coverageSnapshot.score}% crit=${coverageSnapshot.criticalMissingCount}` : '—'} driving_rights.meta=${isRecord(fullMaterialized.driving_rights) ? (fullMaterialized.driving_rights as Record<string, unknown>).meta != null : false}`,
       )
       continue
     }
