@@ -3,6 +3,10 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import prisma from '../lib/prisma'
 import { parseCountryFullData } from '../lib/country-full-data-json'
+import {
+  deriveStreetFoodBusinessAccessFromFullData,
+  ensureStreetFoodBusinessAccessOnFullData,
+} from '../lib/country-street-food-access'
 import { CONTRACT_VERSION } from '../lib/country-intelligence-contract'
 import { isSchengenMember } from '../lib/schengen-members'
 import type { CompletenessReport } from '../lib/country-completeness'
@@ -487,6 +491,9 @@ async function processCountryTask(task: CountryTask) {
     fullDataForUpsert = canaryPayload.fullData
   }
 
+  fullDataForUpsert = ensureStreetFoodBusinessAccessOnFullData(fullDataForUpsert)
+  const streetFoodBusinessAccess = deriveStreetFoodBusinessAccessFromFullData(fullDataForUpsert)
+
   const childKnowledge = await loadChildKnowledge()
 
   logVerbose2('upsert payload preview', {
@@ -509,6 +516,7 @@ async function processCountryTask(task: CountryTask) {
       work_visa_score: snapshot.scalar.work_visa_score,
       business_visa_score: snapshot.scalar.business_visa_score,
       appointment_difficulty: snapshot.scalar.appointment_difficulty,
+      ...(streetFoodBusinessAccess ? { street_food_business_access: streetFoodBusinessAccess } : {}),
       full_data: JSON.stringify(fullDataForUpsert),
     },
     create: {
@@ -520,6 +528,7 @@ async function processCountryTask(task: CountryTask) {
       work_visa_score: snapshot.scalar.work_visa_score,
       business_visa_score: snapshot.scalar.business_visa_score,
       appointment_difficulty: snapshot.scalar.appointment_difficulty,
+      ...(streetFoodBusinessAccess ? { street_food_business_access: streetFoodBusinessAccess } : {}),
       full_data: JSON.stringify(fullDataForUpsert),
     },
   })
