@@ -4,6 +4,7 @@ import type { Prisma } from '@prisma/client'
 import { getAdminUser } from '@/lib/admin-auth'
 import prisma from '@/lib/prisma'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { isDbUnavailable } from '@/lib/db-resilience'
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -97,7 +98,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         }
       }
 
-      data.full_data = JSON.stringify(merged)
+      data.full_data = JSON.stringify(materializePublicFullData(merged))
     } catch (readErr: unknown) {
       if (isDbUnavailable(readErr)) {
         return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })

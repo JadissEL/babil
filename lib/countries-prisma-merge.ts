@@ -65,7 +65,7 @@ export function augmentCountryDetailPayload<T extends Record<string, unknown>>(
       staticRow.full_data && typeof staticRow.full_data === 'object' && !Array.isArray(staticRow.full_data)
         ? (staticRow.full_data as Record<string, unknown>)
         : {}
-    full_data = mergeDisplayedFullData(staticFull, full_data)
+    full_data = materializePublicFullData(mergeDisplayedFullData(staticFull, full_data))
   } else {
     full_data = materializePublicFullData(country.full_data)
   }
@@ -134,7 +134,7 @@ function mergeFallbackRowWithDb(f: LegacyCountryRecord, db: {
     business_visa_score:
       typeof db.business_visa_score === 'number' ? db.business_visa_score : f.business_visa_score,
     appointment_difficulty: db.appointment_difficulty ?? f.appointment_difficulty,
-    full_data: mergeDisplayedFullData(staticFull, dbFull),
+    full_data: materializePublicFullData(mergeDisplayedFullData(staticFull, dbFull)),
     comments: (db.comments as LegacyCountryRecord['comments']) ?? [],
   }
 }
