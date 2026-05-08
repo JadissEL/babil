@@ -1,23 +1,53 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Scale } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { ArrowLeft, ChevronRight, Scale } from 'lucide-react'
 
 import { CompareStickyBar } from '@/components/compare/CompareStickyBar'
 import { CompareTable } from '@/components/compare/CompareTable'
 import { CountryComparePicker, type CountryOption } from '@/components/compare/CountryComparePicker'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { enrichedToCompareRow } from '@/lib/compare-rows'
+import {
+  COMPARE_CATEGORIES,
+  COMPARE_OBJECTIVES,
+  type CompareCategoryId,
+  type CompareObjectiveId,
+  getObjectiveDefinition,
+  listObjectivesForCategory,
+  pickSuggestedCountryIds,
+  recommendationForWinner,
+} from '@/lib/compare-objectives'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 
 const MAX = 4
 
+type Step = 'category' | 'objective' | 'countries'
+
+function stepIndex(s: Step): number {
+  return s === 'category' ? 0 : s === 'objective' ? 1 : 2
+}
+
 export function CompareExperience() {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+
   const [raw, setRaw] = useState<Record<string, unknown>[]>([])
   const [search, setSearch] = useState('')
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [loading, setLoading] = useState(true)
+
+  const objectiveParam = searchParams.get('objective')
+  const objective = useMemo(() => getObjectiveDefinition(objectiveParam), [objectiveParam])
+
+  const [step, setStep] = useState<Step>('category')
+  const [categoryId, setCategoryId] = useState<CompareCategoryId | null>(null)
+  const hydratedFromUrl = useRef(false)
 
   useEffect(() => {
     fetch('/api/countries')
@@ -26,6 +56,23 @@ export function CompareExperience() {
       .catch(() => setRaw([]))
       .finally(() => setLoading(false))
   }, [])
+
+  useEffect(() => {
+    if (hydratedFromUrl.current || !searchParams) return
+    hydratedFromUrl.current = true
+    const o = searchParams.get('objective')
+    if (o && o in COMPARE_OBJECTIVES) {
+      const def = COMPARE_OBJECTIVES[o as CompareObjectiveId]
+      setCategoryId(def.categoryId)
+      setStep('countries')
+    }
+  }, [searchParams])
+
+  const goToCategoryStep = useCallback(() => {
+    setStep('category')
+    setCategoryId(null)
+    router.replace(pathname ?? '/compare', { scroll: false })
+  }, [pathname, router])
 
   const enriched = useMemo(
     () => raw.map((c) => enrichCountryApiRecord(c)),
@@ -43,6 +90,16 @@ export function CompareExperience() {
     return m
   }, [enriched])
 
+  const commitObjective = useCallback(
+    (id: CompareObjectiveId) => {
+      const params = new URLSearchParams(searchParams?.toString() ?? '')
+      params.set('objective', id)
+      router.replace(`${pathname ?? '/compare'}?${params.toString()}`, { scroll: false })
+      setStep('countries')
+    },
+    [pathname, router, searchParams],
+  )
+
   const toggle = useCallback((id: number) => {
     setSelectedIds((prev) => {
       if (prev.includes(id)) return prev.filter((x) => x !== id)
@@ -51,12 +108,26 @@ export function CompareExperience() {
     })
   }, [])
 
+  const suggestionIds = useMemo(
+    () => pickSuggestedCountryIds(enriched, objective, MAX),
+    [enriched, objective],
+  )
+
+  const applySuggestions = useCallback(() => {
+    const next: number[] = []
+    for (const id of suggestionIds) {
+      if (next.length >= MAX) break
+      if (!next.includes(id)) next.push(id)
+    }
+    setSelectedIds(next)
+  }, [suggestionIds])
+
   const rows = useMemo(() => {
     return selectedIds
       .map((id) => byId.get(id))
       .filter(Boolean)
-      .map((c) => enrichedToCompareRow(c as EnrichedCountryApi))
-  }, [selectedIds, byId])
+      .map((c) => enrichedToCompareRow(c as EnrichedCountryApi, objective))
+  }, [selectedIds, byId, objective])
 
   const winnerId = useMemo(() => {
     if (rows.length === 0) return null
@@ -67,6 +138,10 @@ export function CompareExperience() {
     return best.id
   }, [rows])
 
+  const winnerName = winnerId != null ? rows.find((r) => r.id === winnerId)?.name : null
+  const recommendation =
+    rows.length >= 2 && winnerName ? recommendationForWinner(winnerName, objective) : null
+
   const names = useMemo(
     () => selectedIds.map((id) => options.find((o) => o.id === id)?.name).filter(Boolean) as string[],
     [selectedIds, options],
@@ -75,6 +150,8 @@ export function CompareExperience() {
   const scrollToTable = () => {
     document.getElementById('compare-table-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+
+  const objectivesInCategory = categoryId ? listObjectivesForCategory(categoryId) : []
 
   if (loading) {
     return (
@@ -96,29 +173,143 @@ export function CompareExperience() {
               Comparer les pays
             </h1>
             <p className="mt-1 text-sm leading-relaxed text-muted sm:text-[15px]">
-              Jusqu&apos;à {MAX} destinations, même grille de scores que l&apos;Explorer. La ligne « Meilleur » suit le
-              score composite.
+              Choisissez d&apos;abord votre objectif : le score et les colonnes s&apos;adaptent. Puis jusqu&apos;à{' '}
+              {MAX} pays.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,340px)_1fr] lg:gap-8">
-        <CountryComparePicker
-          options={options}
-          selectedIds={selectedIds}
-          max={MAX}
-          search={search}
-          onSearchChange={setSearch}
-          onToggle={toggle}
-        />
-        <div className="min-w-0 space-y-3 sm:space-y-4">
-          <h2 className="text-base font-bold text-text sm:text-lg">Tableau comparatif</h2>
-          <CompareTable rows={rows} winnerId={winnerId} />
-        </div>
-      </div>
+      <nav
+        aria-label="Étapes"
+        className="flex flex-wrap items-center gap-2 text-xs font-black uppercase tracking-widest text-muted sm:gap-3"
+      >
+        {(['category', 'objective', 'countries'] as const).map((s, i) => (
+          <span key={s} className="flex items-center gap-2">
+            {i > 0 ? <ChevronRight className="h-3 w-3 opacity-50" aria-hidden /> : null}
+            <span
+              className={cn(
+                'rounded-full px-3 py-1',
+                stepIndex(step) >= i ? 'bg-primary text-white' : 'bg-inset text-muted',
+              )}
+            >
+              {i + 1}. {s === 'category' ? 'Domaine' : s === 'objective' ? 'Objectif' : 'Pays & résultats'}
+            </span>
+          </span>
+        ))}
+      </nav>
 
-      <CompareStickyBar names={names} max={MAX} onClear={() => setSelectedIds([])} onScrollToTable={scrollToTable} />
+      {step === 'category' && (
+        <div className="space-y-4">
+          <h2 className="text-lg font-black text-text sm:text-xl">1. Quel est votre domaine ?</h2>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {COMPARE_CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  setCategoryId(cat.id)
+                  setStep('objective')
+                }}
+                className="rounded-2xl border border-line bg-surface p-4 text-left shadow-soft transition-all hover:border-primary/40 hover:bg-primary-soft/30 sm:p-5"
+              >
+                <span className="text-base font-black text-text sm:text-lg">{cat.label}</span>
+                <p className="mt-2 text-sm font-medium text-muted">{cat.description}</p>
+                <span className="mt-3 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                  Continuer <ChevronRight className="h-3 w-3" />
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {step === 'objective' && categoryId && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="button" variant="outline" size="sm" className="gap-1" onClick={goToCategoryStep}>
+              <ArrowLeft className="h-4 w-4" /> Domaine
+            </Button>
+            <h2 className="text-lg font-black text-text sm:text-xl">2. Précisez votre objectif</h2>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {objectivesInCategory.map((o) => (
+              <button
+                key={o.id}
+                type="button"
+                onClick={() => commitObjective(o.id)}
+                className={cn(
+                  'rounded-2xl border border-line bg-surface p-4 text-left shadow-soft transition-all hover:border-primary/40 sm:p-5',
+                  objective.id === o.id && 'ring-2 ring-primary',
+                )}
+              >
+                <span className="text-base font-black text-text">{o.label}</span>
+                <p className="mt-2 text-sm font-medium text-muted">{o.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {step === 'countries' && (
+        <div className="space-y-6">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="gap-1"
+                  onClick={() => {
+                    setStep('objective')
+                    if (objective.categoryId) setCategoryId(objective.categoryId)
+                  }}
+                >
+                  <ArrowLeft className="h-4 w-4" /> Objectif
+                </Button>
+                <span className="rounded-full bg-primary-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                  {objective.shortLabel}
+                </span>
+              </div>
+              <h2 className="text-lg font-black text-text sm:text-xl">3. Choisissez les pays</h2>
+              <p className="max-w-2xl text-sm font-medium text-muted">{objective.description}</p>
+            </div>
+          </div>
+
+          <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,340px)_1fr] lg:gap-8">
+            <CountryComparePicker
+              options={options}
+              selectedIds={selectedIds}
+              max={MAX}
+              search={search}
+              onSearchChange={setSearch}
+              onToggle={toggle}
+              suggestionIds={suggestionIds}
+              suggestionLabel={`Top ${Math.min(MAX, suggestionIds.length)} pour « ${objective.shortLabel} »`}
+              onAddSuggestions={applySuggestions}
+            />
+            <div className="min-w-0 space-y-3 sm:space-y-4">
+              <h3 className="text-base font-bold text-text sm:text-lg">Tableau comparatif</h3>
+              <CompareTable
+                rows={rows}
+                winnerId={winnerId}
+                objectiveLabel={objective.label}
+                scoringRationale={objective.scoringRationale}
+                recommendation={recommendation}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <CompareStickyBar
+        names={names}
+        max={MAX}
+        objectiveShortLabel={step === 'countries' ? objective.shortLabel : undefined}
+        onClear={() => setSelectedIds([])}
+        onScrollToTable={scrollToTable}
+      />
     </div>
   )
 }

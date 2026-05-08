@@ -6,11 +6,14 @@ import { cn } from '@/lib/utils'
 
 export type CompareTableProps = {
   rows: CompareRow[]
-  /** id du pays avec le meilleur score composite */
   winnerId: number | null
+  objectiveLabel: string
+  scoringRationale: string
+  /** e.g. 2+ countries and a winner */
+  recommendation: string | null
 }
 
-function CompareMobileCards({ rows, winnerId }: CompareTableProps) {
+function CompareMobileCards({ rows, winnerId }: Pick<CompareTableProps, 'rows' | 'winnerId'>) {
   return (
     <div className="space-y-3 md:hidden">
       {rows.map((c) => {
@@ -34,38 +37,27 @@ function CompareMobileCards({ rows, winnerId }: CompareTableProps) {
               </div>
               <span className="shrink-0 text-lg font-black text-primary">{c.composite}</span>
             </div>
-            <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
-              <div>
-                <dt className="text-[10px] font-black uppercase tracking-widest text-muted">Visa</dt>
-                <dd className="mt-0.5 font-bold text-text">{c.visaScore}</dd>
-              </div>
-              <div>
-                <dt className="text-[10px] font-black uppercase tracking-widest text-muted">Friction</dt>
-                <dd className="mt-0.5 font-medium text-muted">{c.friction}</dd>
-              </div>
-              <div>
-                <dt className="text-[10px] font-black uppercase tracking-widest text-muted">Études</dt>
-                <dd className="mt-0.5 font-medium text-muted">{c.study}</dd>
-              </div>
-              <div>
-                <dt className="text-[10px] font-black uppercase tracking-widest text-muted">Business</dt>
-                <dd className="mt-0.5 font-medium text-muted">{c.business}</dd>
-              </div>
-              <div className="col-span-2">
-                <dt className="text-[10px] font-black uppercase tracking-widest text-muted">PhD (fiche)</dt>
-                <dd className="mt-0.5">
-                  {c.phdStructuredData ? (
-                    <Link
-                      href={`/countries/${c.id}`}
-                      className="font-black text-primary underline decoration-primary/30 underline-offset-2"
-                    >
-                      Voir la fiche pays
-                    </Link>
-                  ) : (
-                    <span className="text-muted">—</span>
-                  )}
-                </dd>
-              </div>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-muted">Score objectif</p>
+            <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+              {c.kpis.map((k) => (
+                <div key={k.key} className={k.key === 'phd' ? 'col-span-2' : ''}>
+                  <dt className="text-[10px] font-black uppercase tracking-widest text-muted" title={k.tooltip}>
+                    {k.header}
+                  </dt>
+                  <dd className="mt-0.5 font-medium text-text">
+                    {k.key === 'phd' && k.value === 'Oui' ? (
+                      <Link
+                        href={`/countries/${c.id}`}
+                        className="font-black text-primary underline decoration-primary/30 underline-offset-2"
+                      >
+                        Voir fiche
+                      </Link>
+                    ) : (
+                      k.value
+                    )}
+                  </dd>
+                </div>
+              ))}
             </dl>
           </div>
         )
@@ -74,7 +66,13 @@ function CompareMobileCards({ rows, winnerId }: CompareTableProps) {
   )
 }
 
-export function CompareTable({ rows, winnerId }: CompareTableProps) {
+export function CompareTable({
+  rows,
+  winnerId,
+  objectiveLabel,
+  scoringRationale,
+  recommendation,
+}: CompareTableProps) {
   if (rows.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-line bg-inset p-8 text-center text-muted sm:p-12">
@@ -83,20 +81,40 @@ export function CompareTable({ rows, winnerId }: CompareTableProps) {
     )
   }
 
+  const headers = rows[0]?.kpis ?? []
+
   return (
-    <div id="compare-table-anchor" className="min-w-0">
+    <div id="compare-table-anchor" className="min-w-0 space-y-4">
+      <div className="rounded-2xl border border-line bg-inset p-4 text-sm leading-relaxed text-text shadow-soft sm:p-5">
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted">Objectif · {objectiveLabel}</p>
+        <p className="mt-2 font-medium text-text">{scoringRationale}</p>
+        {recommendation ? (
+          <p className="mt-3 border-t border-line pt-3 text-sm font-bold text-primary">{recommendation}</p>
+        ) : null}
+      </div>
+
       <CompareMobileCards rows={rows} winnerId={winnerId} />
+
       <div className="hidden overflow-x-auto rounded-2xl border border-line bg-surface shadow-card md:block">
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead>
             <tr className="border-b border-line bg-inset">
               <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted">Pays</th>
-              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted">Visa (0–100)</th>
-              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted">Friction</th>
-              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted">Études</th>
-              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted">PhD (data)</th>
-              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted">Business</th>
-              <th className="p-4 text-[10px] font-black uppercase tracking-widest text-muted">Score</th>
+              {headers.map((h) => (
+                <th
+                  key={h.key}
+                  className="p-4 text-[10px] font-black uppercase tracking-widest text-muted"
+                  title={h.tooltip}
+                >
+                  {h.header}
+                </th>
+              ))}
+              <th
+                className="p-4 text-[10px] font-black uppercase tracking-widest text-muted"
+                title="Score 0–100 selon les poids de votre objectif (voir encadré ci-dessus)."
+              >
+                Score objectif
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -120,23 +138,21 @@ export function CompareTable({ rows, winnerId }: CompareTableProps) {
                       <span className="font-bold text-text">{c.name}</span>
                     </div>
                   </td>
-                  <td className="p-4 font-medium text-muted">{c.visaScore}</td>
-                  <td className="p-4 font-medium text-muted">{c.friction}</td>
-                  <td className="p-4 font-medium text-muted">{c.study}</td>
-                  <td className="p-4 font-medium">
-                    {c.phdStructuredData ? (
-                      <Link
-                        href={`/countries/${c.id}`}
-                        className="font-black text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary-hover"
-                        title="Ouvrir la fiche pays — bloc Doctorat (PhD)"
-                      >
-                        Oui
-                      </Link>
-                    ) : (
-                      <span className="text-muted">—</span>
-                    )}
-                  </td>
-                  <td className="p-4 font-medium text-muted">{c.business}</td>
+                  {c.kpis.map((k) => (
+                    <td key={k.key} className="p-4 font-medium text-muted" title={k.tooltip}>
+                      {k.key === 'phd' && k.value === 'Oui' ? (
+                        <Link
+                          href={`/countries/${c.id}`}
+                          className="font-black text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary-hover"
+                          title="Fiche pays — bloc doctorat"
+                        >
+                          Oui
+                        </Link>
+                      ) : (
+                        k.value
+                      )}
+                    </td>
+                  ))}
                   <td className="p-4 font-black text-primary">{c.composite}</td>
                 </tr>
               )

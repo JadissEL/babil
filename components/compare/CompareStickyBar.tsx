@@ -7,11 +7,12 @@ import { Button } from '@/components/ui/button'
 export type CompareStickyBarProps = {
   names: string[]
   max: number
+  objectiveShortLabel?: string
   onClear: () => void
   onScrollToTable: () => void
 }
 
-export function CompareStickyBar({ names, max, onClear, onScrollToTable }: CompareStickyBarProps) {
+export function CompareStickyBar({ names, max, objectiveShortLabel, onClear, onScrollToTable }: CompareStickyBarProps) {
   if (names.length === 0) return null
 
   return (
@@ -27,6 +28,12 @@ export function CompareStickyBar({ names, max, onClear, onScrollToTable }: Compa
               —
             </span>
             <span className="w-full min-w-0 line-clamp-2 break-words font-medium leading-snug text-text sm:w-auto sm:max-w-[min(100%,28rem)]">
+              {objectiveShortLabel ? (
+                <>
+                  <span className="font-black text-primary">{objectiveShortLabel}</span>
+                  <span className="text-muted"> · </span>
+                </>
+              ) : null}
               {names.join(' · ')}
             </span>
           </div>

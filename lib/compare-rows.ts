@@ -1,34 +1,39 @@
-import type { MobilityTier } from '@/components/country/CountryCard'
-import { frictionTierFromCountry, isoForCountryName, scoreToMobilityTier } from '@/lib/country-card-mappers'
+import { isoForCountryName } from '@/lib/country-card-mappers'
+
+import type { CompareKpiColumnKey } from '@/lib/compare-objectives'
+import {
+  buildKpiCells,
+  objectiveWeightedScore,
+  type CompareObjectiveDefinition,
+} from '@/lib/compare-objectives'
 
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
-import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+
+export type CompareKpiCell = {
+  key: CompareKpiColumnKey
+  header: string
+  tooltip: string
+  value: string
+}
 
 export type CompareRow = {
   id: number
   name: string
   code: string
-  visaScore: number
-  friction: 'Low' | 'Medium' | 'High'
-  study: MobilityTier
-  business: MobilityTier
-  /** `full_data.phd_studies` non vide — voir fiche pays */
-  phdStructuredData: boolean
-  /** Score composite aligné sur la grille Explorer */
+  /** Score 0–100 pour l’objectif choisi (poids configurables). */
   composite: number
+  kpis: CompareKpiCell[]
 }
 
-export function enrichedToCompareRow(c: EnrichedCountryApi): CompareRow {
-  const visaScore = Math.round((c._visa.tourism + c._visa.study + c._visa.work + c._visa.business) / 4)
+export function enrichedToCompareRow(
+  c: EnrichedCountryApi,
+  objective: CompareObjectiveDefinition,
+): CompareRow {
   return {
     id: c.id,
     name: c.name,
     code: isoForCountryName(c.name),
-    visaScore,
-    friction: frictionTierFromCountry(c._difficultyLabel, c._full?.friction_score),
-    study: scoreToMobilityTier(c._visa.study),
-    business: scoreToMobilityTier(c._visa.business),
-    phdStructuredData: hasCountryPhdStoredData(c._full),
-    composite: c._finalScore,
+    composite: objectiveWeightedScore(c, objective),
+    kpis: buildKpiCells(c, objective.kpiColumns),
   }
 }
