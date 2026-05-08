@@ -73,6 +73,36 @@ function fmtAcceptanceRate(v: unknown): string {
   return '—'
 }
 
+function readFiniteNumber(v: unknown): number | null {
+  if (typeof v !== 'number' || !Number.isFinite(v)) return null
+  return v
+}
+
+function fmtIntlFrInteger(n: number): string {
+  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n)
+}
+
+function fmtUsdCompact(n: number): string {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'USD',
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(n)
+}
+
+function fmtUsdInteger(n: number): string {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(n)
+}
+
+function fmtLifeExpectancyYears(n: number): string {
+  return `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(n)} ans`
+}
+
 function scoreTone(score: number) {
   if (score >= 75) return 'border-[#94dfbd] bg-[#e9f9f1] text-success'
   if (score >= 55) return 'border-[#f2c27a] bg-[#fff5e7] text-warning'
@@ -222,6 +252,19 @@ export default function CountryDetailPage() {
   const finalScore = enriched._finalScore
   const drivingIntel = materializeDrivingRightsIntel(full as Record<string, unknown>)
 
+  const economyBlock = full.economy as Record<string, unknown> | undefined
+  const healthBlock = full.health as Record<string, unknown> | undefined
+  const intelMeta = full._intelligence as Record<string, unknown> | undefined
+  const popWb = readFiniteNumber(economyBlock?.population_wb)
+  const gdpUsd = readFiniteNumber(economyBlock?.gdp_usd)
+  const gdpCap = readFiniteNumber(economyBlock?.gdp_per_capita_usd)
+  const lifeExp = readFiniteNumber(healthBlock?.life_expectancy_years)
+  const hasWbIndicators = [popWb, gdpUsd, gdpCap, lifeExp].some((v) => v != null)
+  const intelUpdated =
+    typeof intelMeta?.economy_materialized_at === 'string' && intelMeta.economy_materialized_at.trim()
+      ? intelMeta.economy_materialized_at.trim()
+      : null
+
   return (
     <div className="mx-auto max-w-6xl px-4 pb-20 pt-2 sm:px-6 lg:px-8">
       <Link
@@ -312,6 +355,49 @@ export default function CountryDetailPage() {
                   <div className="text-2xl font-black text-text">{fmtConfidencePct(full.confidence_score)}</div>
                 </div>
               </div>
+
+              {hasWbIndicators ? (
+                <div className="mt-8 rounded-2xl border border-primary/20 bg-primary-soft/40 p-5">
+                  <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-primary">
+                    Indicateurs (World Bank, matérialisés)
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {popWb != null ? (
+                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Population</div>
+                        <div className="text-sm font-black text-text">{fmtIntlFrInteger(popWb)}</div>
+                      </div>
+                    ) : null}
+                    {gdpUsd != null ? (
+                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">PIB (USD)</div>
+                        <div className="text-sm font-black text-text">{fmtUsdCompact(gdpUsd)}</div>
+                      </div>
+                    ) : null}
+                    {gdpCap != null ? (
+                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">PIB / hab.</div>
+                        <div className="text-sm font-black text-text">{fmtUsdInteger(gdpCap)}</div>
+                      </div>
+                    ) : null}
+                    {lifeExp != null ? (
+                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Espérance de vie</div>
+                        <div className="text-sm font-black text-text">{fmtLifeExpectancyYears(lifeExp)}</div>
+                      </div>
+                    ) : null}
+                  </div>
+                  {intelUpdated ? (
+                    <p className="mt-3 text-[10px] font-medium text-muted">
+                      Dernière mise à jour des indicateurs :{' '}
+                      {new Date(intelUpdated).toLocaleString('fr-FR', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
 
               <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ScoreBar label="Visa tourisme" value={tourismScore} />

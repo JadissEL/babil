@@ -68,7 +68,7 @@ Le détail exact des clés doit **s’aligner** sur une **taxonomy versionnée**
 
 ### 2.5 Automatisation
 
-- **Jobs** : ex. Vercel Cron / GitHub Actions / worker Render appelant `npm run intelligence:pipeline` (à brancher sur votre hébergement).
+- **Jobs** : Vercel Cron → `GET /api/cron/intelligence-pipeline` (variable d’environnement **`CRON_SECRET`**, en-tête `Authorization: Bearer …`) ; fichier `vercel.json` (dimanche 04:00 UTC). Pour les gros volumes ou si la fonction dépasse le délai max, utiliser le workflow GitHub **Intelligence pipeline (weekly)** (`.github/workflows/intelligence-pipeline-weekly.yml`) avec le secret `DATABASE_URL`, ou un worker Render exécutant `npm run intelligence:world-bank:materialize`. Query `?mode=materialize` : matérialisation seule (sans nouvelle collecte WB).
 - **Cache** : cache HTTP/API pour lectures publiques ; invalidation après run réussi de matérialisation.
 - **Retry** : au niveau connecteur (backoff, idempotence par `runId` + clé naturelle observation).
 - **Monitoring** : statut `EnrichmentRun`, logs applicatifs, alerte si `PARTIAL` / `FAILED`.
@@ -136,7 +136,7 @@ Les connecteurs **UN Data, OECD, …** restent à brancher sur le même modèle 
 4. Étendre la **taxonomie** (`taxonomy-v1`) pour études, travail, qualité de vie, créateurs, sport.
 5. Ajouter connecteurs **OECD / UN / ILO** avec quotas et cache.
 6. Matérialisation **multi-domaines** (au-delà de `economy.*`) + exposition UI des sources.
-7. Jobs planifiés (cron) + alertes sur `EnrichmentRun` en échec.
+7. Jobs planifiés : configurer **`CRON_SECRET`** sur Vercel (cron configuré dans `vercel.json`) et/ou activer le workflow hebdomadaire GitHub avec **`DATABASE_URL`** ; surveiller `EnrichmentRun` en échec.
 
 ---
 

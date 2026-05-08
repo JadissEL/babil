@@ -1,0 +1,30 @@
+# Collecte World Bank + matérialisation vers `full_data`.
+# Requis : secret repository `DATABASE_URL` (PostgreSQL Babil).
+# Évite les limites de durée des fonctions serverless pour les gros runs.
+
+name: Intelligence pipeline (weekly)
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+jobs:
+  intelligence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Seed intelligence sources
+        run: npm run intelligence:seed-sources
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: World Bank collect + materialize
+        run: npm run intelligence:world-bank:materialize
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
