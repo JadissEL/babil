@@ -3,9 +3,12 @@
 import { useState, useEffect } from 'react'
 import { Brain, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Lightbulb, TrendingUp, Scale, Star, ShieldAlert } from 'lucide-react'
 
+import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+
 export default function ProbabilityPage() {
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [comparisonList, setComparisonList] = useState<string[]>([])
   const [showComparison, setShowComparison] = useState(false)
@@ -18,13 +21,12 @@ export default function ProbabilityPage() {
         const profile = await profileRes.json()
 
         if (!profile || profile.error) {
-          // If no profile, show error or use default for demo?
-          // The user requested to finalize recommendations based on profile.
-          // I'll set a state for missing profile.
+          setProfileUsed(null)
           setLoading(false)
           return
         }
 
+        setProfileUsed(profile)
         const probRes = await fetch('/api/probability', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -143,6 +145,8 @@ export default function ProbabilityPage() {
         </div>
       ) : (
         <div className="space-y-12">
+          {profileUsed ? <ProfileContextBanner profile={profileUsed} variant="probability" /> : null}
+
           {/* Global Output Section */}
           <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-3xl text-white shadow-xl shadow-green-100">

@@ -9,6 +9,7 @@ import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
 import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
 import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
+import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
 
@@ -282,9 +283,30 @@ export async function POST(req: Request) {
     }
     const recommendations = countries
       .map((c: any) => computeRecommendation(c, normalizedProfile))
-      .sort((a, b) => b.score - a.score);
+      .sort((a, b) => b.score - a.score)
 
-    return NextResponse.json(recommendations.slice(0, 10));
+    const profileRecord =
+      profile && typeof profile === 'object' && profile !== null
+        ? (profile as Record<string, unknown>)
+        : {}
+    const narrativePrimary: string[] = []
+    const narrativeSecondary: string[] = []
+    appendProfileContextNarratives(profileRecord, {
+      primary: narrativePrimary,
+      secondary: narrativeSecondary,
+    })
+    const narrativePrefix = [...narrativePrimary, ...narrativeSecondary]
+    let top = recommendations[0]
+    if (narrativePrefix.length > 0 && top) {
+      top = {
+        ...top,
+        explanation: [...narrativePrefix, ...(top.explanation ?? [])].slice(0, 12),
+      }
+    }
+    const rest = recommendations.slice(1)
+    const merged = top ? [top, ...rest] : recommendations
+
+    return NextResponse.json(merged.slice(0, 10));
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

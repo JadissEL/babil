@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
 
 import RecommendationPanel from '@/components/engine/RecommendationPanel'
+import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
 import type { ApiRecommendation } from '@/lib/recommendation-ui'
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
 
 export default function RecommendationsPage() {
   const [recommendations, setRecommendations] = useState<ApiRecommendation[]>([])
   const [loading, setLoading] = useState(true)
+  const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null)
 
   useEffect(() => {
     const loadData = async () => {
@@ -19,10 +21,12 @@ export default function RecommendationsPage() {
         const profile = await profileRes.json()
 
         if (!profile || profile.error) {
+          setProfileUsed(null)
           setLoading(false)
           return
         }
 
+        setProfileUsed(profile)
         const recoRes = await fetch('/api/recommendation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -74,7 +78,10 @@ export default function RecommendationsPage() {
           </Link>
         </div>
       ) : (
-        <RecommendationPanel results={panelRows} />
+        <>
+          {profileUsed ? <ProfileContextBanner profile={profileUsed} variant="recommendation" /> : null}
+          <RecommendationPanel results={panelRows} />
+        </>
       )}
     </div>
   )
