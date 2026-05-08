@@ -36,6 +36,8 @@
     "db:report-contract": "tsx scripts/report-db-contract-summary.ts",
     "db:upsert-missing:dry": "tsx scripts/upsert-missing-countries-from-static.ts --dry-run",
     "db:upsert-missing:apply": "tsx scripts/upsert-missing-countries-from-static.ts --apply",
+    "intelligence:seed-sources": "tsx scripts/intelligence-enrichment-pipeline.ts --seed-sources-only",
+    "intelligence:pipeline": "tsx scripts/intelligence-enrichment-pipeline.ts",
     "test:lib": "tsx --test \"lib/**/*.test.ts\""
   },
   "keywords": [],

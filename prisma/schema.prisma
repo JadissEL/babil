@@ -56,9 +56,72 @@ model Country {
   driving_license_status      String?
   full_data                   String?
 
-  comments    Comment[]
-  insights    CountryInsight[]
-  favoritedBy FavoriteCountry[]
+  comments      Comment[]
+  insights      CountryInsight[]
+  favoritedBy   FavoriteCountry[]
+  observations  CountryObservation[]
+}
+
+// --- Country Intelligence System (multi-source, append-only facts) ---
+
+enum IntelligenceSourceTier {
+  TIER_A_OFFICIAL
+  TIER_B_MULTILATERAL
+  TIER_C_CURATED
+}
+
+/** Registre des sources fiables (APIs officielles, organisations internationales, jeux curatés). */
+model IntelligenceSource {
+  id           String                 @id @default(cuid())
+  slug         String                 @unique
+  name         String
+  tier         IntelligenceSourceTier
+  baseUrl      String?
+  licenseNote  String?
+  createdAt    DateTime               @default(now())
+  observations CountryObservation[]
+}
+
+/** Exécution traçable du pipeline (collecte → validation → persistance). */
+model EnrichmentRun {
+  id            String   @id @default(cuid())
+  startedAt     DateTime @default(now())
+  finishedAt    DateTime?
+  status        String   @default("PENDING")
+  trigger       String   @default("manual")
+  errorSummary  String?
+  statsJson     String?
+  observations  CountryObservation[]
+
+  @@index([startedAt])
+  @@index([status])
+}
+
+/**
+ * Fait atomique sur un pays (append-only). `fieldPath` = taxonomie stable (ex. general.population).
+ * Résolution multi-sources : voir lib/intelligence-pipeline/merge-observations.ts
+ */
+model CountryObservation {
+  id           String   @id @default(cuid())
+  countryId    Int
+  fieldPath    String
+  valueJson    String
+  valueNumeric Float?
+  unit         String?
+  confidence   Float    @default(0.7)
+  observedAt   DateTime @default(now())
+  sourceId     String
+  runId        String?
+  rawPayload   String?
+
+  country Country            @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  source  IntelligenceSource @relation(fields: [sourceId], references: [id], onDelete: Restrict)
+  run     EnrichmentRun?     @relation(fields: [runId], references: [id], onDelete: SetNull)
+
+  @@index([countryId, fieldPath])
+  @@index([sourceId])
+  @@index([runId])
+  @@index([observedAt])
 }
 
 model Comment {
