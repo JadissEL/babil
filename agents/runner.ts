@@ -215,6 +215,21 @@ function parseExistingFullData(raw: string | null): Record<string, unknown> {
   return parseCountryFullData(raw)
 }
 
+/** Prisma columns used by scoring but sometimes omitted from `full_data` JSON. */
+function hydrateAgentFullDataFromPrismaRow(
+  fullData: Record<string, unknown>,
+  row: { street_food_business_access?: string | null } | null | undefined,
+): Record<string, unknown> {
+  const top = fullData.street_food_business_access
+  const hasTop = typeof top === 'string' && top.trim().length > 0
+  if (hasTop) return fullData
+  const col = row?.street_food_business_access
+  if (typeof col === 'string' && col.trim()) {
+    return { ...fullData, street_food_business_access: col.trim() }
+  }
+  return fullData
+}
+
 function nextRetryDelay(attempts: number) {
   const factor = Math.max(0, attempts - 1)
   const delay = RETRY_BASE_DELAY_MS * Math.pow(2, factor)
@@ -365,11 +380,15 @@ async function processCountryTask(task: CountryTask) {
       work_visa_score: true,
       business_visa_score: true,
       appointment_difficulty: true,
+      street_food_business_access: true,
     },
   })
 
   const snapshotInit: CountrySnapshot = {
-    fullData: parseExistingFullData(existingRow?.full_data ?? null),
+    fullData: hydrateAgentFullDataFromPrismaRow(
+      parseExistingFullData(existingRow?.full_data ?? null),
+      existingRow,
+    ),
     scalar: {
       tourist_visa_score:
         typeof existingRow?.tourist_visa_score === 'number' ? existingRow.tourist_visa_score : 5.5,
