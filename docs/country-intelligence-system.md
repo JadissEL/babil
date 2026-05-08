@@ -83,6 +83,7 @@ Le détail exact des clés doit **s’aligner** sur une **taxonomy versionnée**
 ### 2.7 UX
 
 - Pages pays / compare : bandeau « Données mises à jour le … » et liste **sources** (agrégées depuis observations gagnantes).
+- API détail : `GET /api/countries/[id]?intelligence=1` ajoute `intelligence_provenance` (chemins, `observedAt`, confiance, source slug/nom/tier).
 - Filtres par objectif : inchangés côté route, enrichis par métadonnées de confiance.
 
 ---
@@ -100,7 +101,19 @@ Collecte (connecteurs API / fichiers officiels / saisie validée)
   → Invalidation cache + complétude / contrat produit
 ```
 
-**Cette livraison** pose : tables, seed des sources, résolution déterministe, CLI pipeline « stub », route admin `GET /api/admin/intelligence/summary`, doc — **sans** connecteurs réseau obligatoires (à brancher : World Bank API, UN Data, OECD, etc., avec clés et quotas).
+**Cette livraison** pose : tables, seed des sources, résolution déterministe, CLI pipeline, connecteur **World Bank Open Data** (population `SP.POP.TOTL`, PIB USD `NY.GDP.MKTP.CD`), **matérialisation** vers `full_data.economy.gdp_usd` + `full_data.economy.population_wb`, provenance optionnelle `GET /api/countries/[id]?intelligence=1`, route admin `GET /api/admin/intelligence/summary`, doc.
+
+### 3.1 World Bank (officiel, sans clé API)
+
+- Résolution **ISO2** : carte des noms anglais World Bank + mapping existant `country-card-mappers` + canon Schengen.
+- Commandes :
+  - `npm run intelligence:world-bank` — collecte pour tous les pays (long ; délai ~120 ms entre appels).
+  - `npm run intelligence:world-bank -- --limit 10` — échantillon.
+  - `npm run intelligence:materialize-economy` — applique les dernières observations en base vers `full_data`.
+  - `npm run intelligence:world-bank:materialize` — enchaîne les deux.
+- Taxonomie des champs : `lib/intelligence-pipeline/taxonomy-v1.ts` (`general.population_total`, `economy.gdp_usd_current`).
+
+Les connecteurs **UN Data, OECD, …** restent à brancher sur le même modèle `CountryObservation`.
 
 ---
 
@@ -118,10 +131,11 @@ Collecte (connecteurs API / fichiers officiels / saisie validée)
 
 1. Appliquer la migration : `npx prisma migrate deploy` (ou `npx prisma migrate dev` en local), puis `npx prisma generate`.
 2. Initialiser le catalogue sources : `npm run intelligence:seed-sources`.
-3. Définir la **v1 de la taxonomie** des chemins pour 20–30 champs à forte valeur.
-4. Implémenter **un** connecteur officiel (ex. indicateur World Bank par code ISO) + mapping ISO ↔ pays Babil.
-5. Écrire la **matérialisation** observations → `full_data` (merge profond contrôlé).
-6. Exposer **provenance** sur l’API détail pays (champ optionnel `_provenance`).
+3. Lancer une collecte test : `npm run intelligence:world-bank -- --limit 5` puis `npm run intelligence:materialize-economy`.
+4. Étendre la **taxonomie** (`taxonomy-v1`) pour études, travail, qualité de vie, créateurs, sport.
+5. Ajouter connecteurs **OECD / UN / ILO** avec quotas et cache.
+6. Matérialisation **multi-domaines** (au-delà de `economy.*`) + exposition UI des sources.
+7. Jobs planifiés (cron) + alertes sur `EnrichmentRun` en échec.
 
 ---
 

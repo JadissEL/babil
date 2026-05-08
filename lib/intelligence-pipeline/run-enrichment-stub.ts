@@ -1,24 +1,27 @@
 /**
  * Country Intelligence pipeline — orchestration entrypoints.
- * Connecteurs réseau : implémenter hors repo ou derrière feature flags + quotas.
  */
 
 import prisma from '@/lib/prisma'
+import { materializeEconomyObservationsForAllCountries } from './materialize-economy-observations'
 import { DEFAULT_INTELLIGENCE_SOURCES } from './default-sources'
+import type { WorldBankCollectorResult } from './world-bank-collector'
+import { runWorldBankCollector } from './world-bank-collector'
 
 export type PipelineResult = {
   runId: string
   status: 'SUCCEEDED' | 'PARTIAL' | 'FAILED'
   observationsWritten: number
+  materializedCountries?: number
+  worldBank?: WorldBankCollectorResult
   errorSummary?: string
 }
 
-/**
- * Crée un run, exécute les étapes synchrones disponibles, finalise le run.
- * Aujourd’hui : **aucune collecte réseau** — point d’accroche pour connecteurs.
- */
-export async function runEnrichmentPipelineStub(args: {
+export async function runEnrichmentPipeline(args: {
   trigger?: string
+  worldBank?: boolean
+  materializeEconomy?: boolean
+  worldBankLimit?: number
 }): Promise<PipelineResult> {
   const trigger = args.trigger ?? 'manual'
   const run = await prisma.enrichmentRun.create({
@@ -27,21 +30,43 @@ export async function runEnrichmentPipelineStub(args: {
 
   let observationsWritten = 0
   let errorSummary: string | undefined
+  let worldBank: WorldBankCollectorResult | undefined
+  let materializedCountries: number | undefined
 
   try {
-    // Phase suivante : await runCollectors(run.id) — World Bank, etc.
+    if (args.worldBank) {
+      worldBank = await runWorldBankCollector(run.id, { limit: args.worldBankLimit })
+      observationsWritten += worldBank.observationsWritten
+    }
+
+    if (args.materializeEconomy) {
+      const m = await materializeEconomyObservationsForAllCountries()
+      materializedCountries = m.updated
+    }
+
+    const partial = worldBank != null && worldBank.errors > 0
+
     await prisma.enrichmentRun.update({
       where: { id: run.id },
       data: {
-        status: 'SUCCEEDED',
+        status: partial ? 'PARTIAL' : 'SUCCEEDED',
         finishedAt: new Date(),
         statsJson: JSON.stringify({
           observationsWritten,
-          note: 'stub: no network collectors wired; use observations API or batch importers',
+          materializedCountries,
+          worldBank,
+          worldBankOnly: args.worldBank && !args.materializeEconomy,
         }),
       },
     })
-    return { runId: run.id, status: 'SUCCEEDED', observationsWritten }
+
+    return {
+      runId: run.id,
+      status: partial ? 'PARTIAL' : 'SUCCEEDED',
+      observationsWritten,
+      materializedCountries,
+      worldBank,
+    }
   } catch (e) {
     errorSummary = e instanceof Error ? e.message : String(e)
     await prisma.enrichmentRun.update({
@@ -50,11 +75,23 @@ export async function runEnrichmentPipelineStub(args: {
         status: 'FAILED',
         finishedAt: new Date(),
         errorSummary,
-        statsJson: JSON.stringify({ observationsWritten }),
+        statsJson: JSON.stringify({ observationsWritten, materializedCountries, worldBank }),
       },
     })
-    return { runId: run.id, status: 'FAILED', observationsWritten, errorSummary }
+    return {
+      runId: run.id,
+      status: 'FAILED',
+      observationsWritten,
+      materializedCountries,
+      worldBank,
+      errorSummary,
+    }
   }
+}
+
+/** @deprecated Utiliser `runEnrichmentPipeline({})` — conservé pour compat scripts. */
+export async function runEnrichmentPipelineStub(args: { trigger?: string }): Promise<PipelineResult> {
+  return runEnrichmentPipeline({ trigger: args.trigger })
 }
 
 export async function seedIntelligenceSources(): Promise<number> {

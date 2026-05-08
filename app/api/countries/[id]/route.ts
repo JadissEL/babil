@@ -3,9 +3,10 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge'
+import { getIntelligenceProvenanceForCountry } from '@/lib/intelligence-pipeline/provenance'
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: { id: string } },
 ) {
   const id = Number.parseInt(params.id, 10)
@@ -36,7 +37,18 @@ export async function GET(
       } catch {
         /* DB-only merge + normalize */
       }
-      return NextResponse.json(augmentCountryDetailPayload(country, fallback))
+      const url = new URL(req.url)
+      const intelligence = url.searchParams.get('intelligence') === '1'
+      let payload: Record<string, unknown> = augmentCountryDetailPayload(country, fallback)
+      if (intelligence) {
+        try {
+          const intelligence_provenance = await getIntelligenceProvenanceForCountry(country.id)
+          payload = { ...payload, intelligence_provenance }
+        } catch {
+          payload = { ...payload, intelligence_provenance: [] }
+        }
+      }
+      return NextResponse.json(payload)
     }
   } catch {
     /* Missing DATABASE_URL, DB down, etc. — serve static JSON like pre-Prisma deploys. */
