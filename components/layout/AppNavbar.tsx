@@ -3,6 +3,7 @@ import { Globe } from 'lucide-react'
 
 const links = [
   { href: '/explorer', label: 'Explorer' },
+  { href: '/compare', label: 'Comparer' },
   { href: '/schengen', label: 'Schengen' },
   { href: '/probability', label: 'Visa Engine' },
 ]

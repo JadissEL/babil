@@ -15,7 +15,7 @@ import {
 const items = [
   { href: '/overview', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/explorer', label: 'Explorer', icon: Globe },
-  { href: '/compare', label: 'Compare', icon: Scale },
+  { href: '/compare', label: 'Comparer', icon: Scale },
   { href: '/schengen', label: 'Schengen', icon: ShieldCheck },
   { href: '/probability', label: 'Visa Engine', icon: Zap },
   { href: '/education', label: 'Education', icon: GraduationCap },

@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Scale } from 'lucide-react'
 import GoalFilter from '@/components/filters/GoalFilter'
 import BudgetFilter from '@/components/filters/BudgetFilter'
 import RegionFilter from '@/components/filters/RegionFilter'
 import RiskFilter from '@/components/filters/RiskFilter'
+import { compareHrefForExplorerGoal } from '@/lib/explorer-goal-to-compare-objective'
 
 /** Maps home quick filters → Explorer search params (explorer already applies them). */
 function buildExplorerHref(goal: string, budget: string, region: string, risk: string): string {
@@ -39,6 +40,8 @@ export default function HomeQuickFilterEngine() {
     [goal, budget, region, risk],
   )
 
+  const compareHref = useMemo(() => compareHrefForExplorerGoal(goal), [goal])
+
   return (
     <section className="mt-8 rounded-2xl border border-line bg-surface p-4 shadow-soft">
       <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">Quick Filter Engine</p>
@@ -49,13 +52,22 @@ export default function HomeQuickFilterEngine() {
           <RegionFilter value={region} onChange={setRegion} />
           <RiskFilter value={risk} onChange={setRisk} />
         </div>
-        <Link
-          href={resultsHref}
-          className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-colors hover:bg-primary-hover sm:w-auto"
-        >
-          View results
-          <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
-        </Link>
+        <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row">
+          <Link
+            href={compareHref}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary-soft/60 px-5 py-2.5 text-xs font-black uppercase tracking-widest text-primary shadow-soft transition-colors hover:bg-primary-soft sm:w-auto"
+          >
+            <Scale className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            Comparer
+          </Link>
+          <Link
+            href={resultsHref}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-colors hover:bg-primary-hover sm:w-auto"
+          >
+            View results
+            <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          </Link>
+        </div>
       </div>
     </section>
   )
