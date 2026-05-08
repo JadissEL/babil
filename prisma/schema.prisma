@@ -44,8 +44,8 @@ model Country {
   schengen_flag               Boolean @default(false)
   tourist_visa_score          Float?
   study_visa_score            Float?
-  work_visa_score             Float?
-  business_visa_score         Float?
+  work_visa_score             Float? /// 1–10 snapshot; live score from lib/scoring/work-mobility in enrich
+  business_visa_score         Float? /// 1–10 snapshot; prefer recomputing via lib/scoring/business-mobility at read time
   appointment_difficulty      String?
   visa_processing_time        String?
   rejection_risk              String?

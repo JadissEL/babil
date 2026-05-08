@@ -25,6 +25,7 @@ import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSectio
 import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryTeaser'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
+import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
 
@@ -209,12 +210,14 @@ export default function CountryDetailPage() {
   const experienceContent = buildCountryExperienceContent(country.name, full)
   const showPhdTeaser = hasCountryPhdStoredData(full as Record<string, unknown>)
   const phdModel = showPhdTeaser ? buildPhdStudies(country.name, full as Record<string, unknown>) : null
-  const tourismScore = clamp(Math.round(toNum(country.tourist_visa_score, 5) * 10))
-  const studyScore = clamp(Math.round(toNum(country.study_visa_score, 5) * 10))
-  const workScore = clamp(Math.round(toNum(country.work_visa_score, 5) * 10))
-  const businessScore = clamp(Math.round(toNum(country.business_visa_score, 5) * 10))
-  const frictionScore = clamp(100 - toNum(full.friction_score, 50))
-  const finalScore = clamp(Math.round((tourismScore + studyScore + workScore + businessScore) / 4 * 0.65 + frictionScore * 0.35))
+  const row = materializeCountryApiRow(country)
+  const enriched = enrichCountryApiRecord(row)
+  const tourismScore = enriched._visa.tourism
+  const studyScore = enriched._visa.study
+  const workScore = enriched._visa.work
+  const businessScore = enriched._visa.business
+  const frictionScore = enriched._friction
+  const finalScore = enriched._finalScore
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-20 pt-2 sm:px-6 lg:px-8">
@@ -525,7 +528,7 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
     <div>
       <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted">
         <span>{label}</span>
-        <span className="text-text">{value}</span>
+        <span className="text-text">{Number.isInteger(value) ? value : value.toFixed(1)}</span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-[#eadfcf]">
         <div className={`h-full ${barTone(value)}`} style={{ width: `${value}%` }} />
@@ -539,7 +542,7 @@ function SidebarBar({ label, value }: { label: string; value: number }) {
     <div>
       <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted">
         <span>{label}</span>
-        <span className="text-muted">{value}</span>
+        <span className="text-muted">{Number.isInteger(value) ? value : value.toFixed(1)}</span>
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#eadfcf]">
         <div className={`h-full ${barTone(value)}`} style={{ width: `${value}%` }} />

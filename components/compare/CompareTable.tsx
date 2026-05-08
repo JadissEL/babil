@@ -35,7 +35,7 @@ function CompareMobileCards({ rows, winnerId }: Pick<CompareTableProps, 'rows' |
                 )}
                 <span className="font-black text-text">{c.name}</span>
               </div>
-              <span className="shrink-0 text-lg font-black text-primary">{c.composite}</span>
+              <span className="shrink-0 text-lg font-black text-primary">{c.composite.toFixed(1)}</span>
             </div>
             <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-muted">Score objectif</p>
             <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
@@ -153,7 +153,7 @@ export function CompareTable({
                       )}
                     </td>
                   ))}
-                  <td className="p-4 font-black text-primary">{c.composite}</td>
+                  <td className="p-4 font-black text-primary">{c.composite.toFixed(1)}</td>
                 </tr>
               )
             })}

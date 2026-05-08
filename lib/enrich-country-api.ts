@@ -6,6 +6,9 @@
 import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
+import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
+import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
+import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 
@@ -69,11 +72,27 @@ export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCoun
   const full = materializePublicFullData(c.full_data ?? null)
 
   const official = typeof full.official_score === 'number' ? full.official_score : 5
+  const streetFoodCol =
+    typeof c.street_food_business_access === 'string' ? c.street_food_business_access : null
+
+  const businessModel = computeBusinessMobility100({
+    full,
+    streetFoodBusinessAccess: streetFoodCol,
+  })
+  const businessMerged = mergeModelWithDbScalar01to100(
+    businessModel,
+    c.business_visa_score,
+    12,
+  )
+
+  const workModel = computeWorkMobility100({ full })
+  const workMerged = mergeModelWithDbScalar01to100(workModel, c.work_visa_score, 12)
+
   const visa = {
     tourism: clamp(Math.round(((c.tourist_visa_score as number) || official || 5) * 10)),
     study: clamp(Math.round(((c.study_visa_score as number) || 5) * 10)),
-    work: clamp(Math.round(((c.work_visa_score as number) || 5) * 10)),
-    business: clamp(Math.round(((c.business_visa_score as number) || 5) * 10)),
+    work: clamp(Math.round(workMerged * 10) / 10),
+    business: clamp(Math.round(businessMerged * 10) / 10),
   }
 
   const frictionScore =

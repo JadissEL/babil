@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 import { isSchengenMember } from '../lib/schengen-members';
+import { businessMobilityToScalar01to10 } from '../lib/scoring/business-mobility';
+import { workMobilityToScalar01to10 } from '../lib/scoring/work-mobility';
 
 const prisma = new PrismaClient();
 
@@ -20,8 +22,12 @@ async function main() {
       schengen_flag: isSchengenMember(String(c.country || '')),
       tourist_visa_score: c.official_score || 0,
       study_visa_score: c.education_mobility?.technical_training?.access_bac ? 8.0 : 5.0,
-      work_visa_score: c.visa_system?.work ? 7.0 : 4.0,
-      business_visa_score: c.visa_system?.business ? 7.5 : 4.5,
+      business_visa_score: businessMobilityToScalar01to10({
+        full: c as Record<string, unknown>,
+        streetFoodBusinessAccess:
+          typeof c.street_food?.opportunity === 'string' ? c.street_food.opportunity : null,
+      }),
+      work_visa_score: workMobilityToScalar01to10({ full: c as Record<string, unknown> }),
       appointment_difficulty: c.friction_analysis?.risk_level || 'Medium',
       visa_processing_time: c.friction_analysis?.real_delay || 'Unknown',
       rejection_risk: c.friction_analysis?.risk_level || 'Medium',

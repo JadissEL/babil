@@ -4,6 +4,9 @@ import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
+import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
+import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
+import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
 
@@ -60,8 +63,14 @@ function readCountrySignals(country: any) {
 
   const touristScore = toNumber(normalizedVisa.touristScore ?? country.tourist_visa_score ?? full.official_score ?? 50, 50);
   const studyScore = toNumber(normalizedVisa.studyScore ?? country.study_visa_score ?? 50, 50);
-  const workScore = toNumber(normalizedVisa.workScore ?? country.work_visa_score ?? 50, 50);
-  const businessScore = toNumber(normalizedVisa.businessScore ?? country.business_visa_score ?? 50, 50);
+  const modelWork = computeWorkMobility100({ full })
+  const workScore = mergeModelWithDbScalar01to100(modelWork, country.work_visa_score, 12)
+  const modelBiz = computeBusinessMobility100({
+    full,
+    streetFoodBusinessAccess:
+      typeof country.street_food_business_access === 'string' ? country.street_food_business_access : null,
+  })
+  const businessScore = mergeModelWithDbScalar01to100(modelBiz, country.business_visa_score, 12)
 
   const rejectionRisk = clamp(toNumber(normalizedVisa.rejectionRisk ?? frictionAnalysis?.friction_score ?? 45, 45));
   const appointmentDifficulty = clamp(

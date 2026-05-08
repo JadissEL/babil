@@ -314,7 +314,8 @@ export function objectiveWeightedScore(c: EnrichedCountryApi, def: CompareObject
     }
   }
   if (den <= 0) return c._finalScore
-  return Math.max(0, Math.min(100, Math.round(num / den)))
+  const raw = num / den
+  return Math.max(0, Math.min(100, Math.round(raw * 10) / 10))
 }
 
 const KPI_META: Record<CompareKpiColumnKey, { header: string; tooltip: string }> = {
@@ -324,7 +325,11 @@ const KPI_META: Record<CompareKpiColumnKey, { header: string; tooltip: string }>
   },
   visa_study: { header: 'Visa études', tooltip: 'Indicatif études / formations longues.' },
   visa_work: { header: 'Visa travail', tooltip: 'Indicatif emploi salarié / missions.' },
-  visa_business: { header: 'Visa affaires', tooltip: 'Indicatif déplacements professionnels.' },
+  visa_business: {
+    header: 'Visa affaires',
+    tooltip:
+      'Score 0–100 : modèle multi-indicateurs (droits affaires, friction, scores officiels, acceptation Maroc, micro-entreprise / street food). Les valeurs DB sont fusionnées seulement si elles divergent fortement.',
+  },
   friction_tier: {
     header: 'Friction RDV',
     tooltip: 'Facilité perçue des rendez-vous et délais (tiers Low / Medium / High).',
@@ -384,7 +389,7 @@ export function formatKpiValue(key: CompareKpiColumnKey, c: EnrichedCountryApi):
     case 'visa_work':
       return String(c._visa.work)
     case 'visa_business':
-      return String(c._visa.business)
+      return Number.isInteger(c._visa.business) ? String(c._visa.business) : c._visa.business.toFixed(1)
     case 'friction_tier':
       return frictionTierFromCountry(c._difficultyLabel, c._full?.friction_score)
     case 'study_tier':
