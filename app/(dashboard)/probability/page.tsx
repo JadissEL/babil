@@ -1,9 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Brain, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Lightbulb, TrendingUp, Scale, Star, ShieldAlert } from 'lucide-react'
+import { Brain, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Lightbulb, TrendingUp, Scale, Star, ShieldAlert, Info } from 'lucide-react'
 
 import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+import {
+  describeTopCountrySignals,
+  orderedProbabilityBreakdown,
+  type ProbabilityCountrySignals,
+} from '@/lib/probability-result-display'
 
 export default function ProbabilityPage() {
   const [results, setResults] = useState<any[]>([])
@@ -158,9 +163,7 @@ export default function ProbabilityPage() {
               <p className="text-green-100 text-sm font-bold mb-6">Score de succès estimé: {topCountry?.globalScore}%</p>
               <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
                 <p className="text-xs font-bold leading-relaxed">
-                  {
-                    "C'est votre meilleure porte d'entrée. Votre profil correspond à 90% aux critères d'acceptation actuels."
-                  }
+                  {describeTopCountrySignals(topCountry?.countrySignals as ProbabilityCountrySignals | undefined)}
                 </p>
               </div>
             </div>
@@ -224,17 +227,19 @@ export default function ProbabilityPage() {
                   <div key={r.country} className="rounded-3xl border border-line bg-inset p-6">
                     <h3 className="text-2xl font-black mb-6">{r.country}</h3>
                     <div className="space-y-6">
-                      {Object.entries(r.breakdown).map(([key, val]: [string, any]) => (
-                        <div key={key}>
-                          <div className="mb-2 flex justify-between text-xs font-bold uppercase tracking-widest text-muted">
-                            <span>{key}</span>
-                            <span>{val}%</span>
+                      {orderedProbabilityBreakdown(r.breakdown as Record<string, unknown>).map(
+                        ({ key, label, value }) => (
+                          <div key={key}>
+                            <div className="mb-2 flex justify-between text-xs font-bold uppercase tracking-widest text-muted">
+                              <span>{label}</span>
+                              <span>{value}%</span>
+                            </div>
+                            <div className="h-1.5 overflow-hidden rounded-full bg-[#eadfcf]">
+                              <div className="h-full bg-blue-500 rounded-full" style={{ width: `${value}%` }}></div>
+                            </div>
                           </div>
-                          <div className="h-1.5 overflow-hidden rounded-full bg-[#eadfcf]">
-                            <div className="h-full bg-blue-500 rounded-full" style={{ width: `${val}%` }}></div>
-                          </div>
-                        </div>
-                      ))}
+                        ),
+                      )}
                       <div className="border-t border-line pt-6">
                         <div className="text-4xl font-black text-center">{r.globalScore}%</div>
                         <div className="mt-2 text-center text-[10px] font-black uppercase tracking-widest text-muted">Probabilité Totale</div>
@@ -268,10 +273,17 @@ export default function ProbabilityPage() {
                   <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:gap-6 md:w-auto">
                     <div className="min-w-0 shrink-0 text-left">
                       <h3 className="text-xl font-black tracking-tight text-text sm:text-2xl">{r.country}</h3>
-                      <div
-                        className={`mt-2 inline-block rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${getLevelColor(r.level)}`}
-                      >
-                        {levelLabelFr(r.level)}
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <div
+                          className={`inline-block rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${getLevelColor(r.level)}`}
+                        >
+                          {levelLabelFr(r.level)}
+                        </div>
+                        {r.hasPhdStudies ? (
+                          <span className="rounded-full border border-primary/40 bg-primary-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                            Bloc PhD
+                          </span>
+                        ) : null}
                       </div>
                     </div>
 
@@ -312,62 +324,77 @@ export default function ProbabilityPage() {
 
                 {expanded === r.country && (
                   <div className="border-t border-line bg-inset px-4 pb-6 sm:px-6 md:px-8 md:pb-8">
-                    <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-                      {/* Breakdown */}
-                      <div className="space-y-4">
-                        <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
-                          <TrendingUp className="h-4 w-4" /> Facteurs
-                        </h4>
-                        <div className="space-y-4 rounded-2xl border border-line bg-surface p-6">
-                          {Object.entries(r.breakdown).map(([key, val]: [string, any]) => (
-                            <div key={key} className="space-y-2">
-                              <div className="flex justify-between text-xs font-bold capitalize text-muted">
-                                <span>{key}</span>
-                                <span>{val}%</span>
+                    <div className="mt-8 space-y-8">
+                      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                        {/* Breakdown */}
+                        <div className="space-y-4">
+                          <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
+                            <TrendingUp className="h-4 w-4" /> Facteurs
+                          </h4>
+                          <div className="space-y-4 rounded-2xl border border-line bg-surface p-6">
+                            {orderedProbabilityBreakdown(r.breakdown as Record<string, unknown>).map(
+                              ({ key, label, value }) => (
+                                <div key={key} className="space-y-2">
+                                  <div className="flex justify-between text-xs font-bold text-muted">
+                                    <span>{label}</span>
+                                    <span>{value}%</span>
+                                  </div>
+                                  <div className="h-2 overflow-hidden rounded-full bg-[#eadfcf]">
+                                    <div className="h-full rounded-full bg-blue-500" style={{ width: `${value}%` }} />
+                                  </div>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Reasons */}
+                        <div className="space-y-4">
+                          <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
+                            <AlertCircle className="h-4 w-4" /> Analyse critique
+                          </h4>
+                          <div className="space-y-3">
+                            {r.reasons.map((reason: string, i: number) => (
+                              <div
+                                key={i}
+                                className="flex gap-3 rounded-2xl border border-line bg-surface p-4 text-sm font-medium leading-relaxed text-muted"
+                              >
+                                <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />
+                                {reason}
                               </div>
-                              <div className="h-2 overflow-hidden rounded-full bg-[#eadfcf]">
-                                <div className="h-full rounded-full bg-blue-500" style={{ width: `${val}%` }} />
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Strategy */}
+                        <div className="space-y-4">
+                          <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
+                            <Lightbulb className="h-4 w-4" /> Stratégie
+                          </h4>
+                          <div className="space-y-3">
+                            {r.strategy.map((s: string, i: number) => (
+                              <div
+                                key={i}
+                                className="flex gap-3 rounded-2xl border border-primary/30 bg-primary-soft p-5 text-sm font-bold text-text shadow-soft"
+                              >
+                                <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/70 text-[10px]">
+                                  {i + 1}
+                                </div>
+                                {s}
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
                       </div>
 
-                      {/* Reasons */}
                       <div className="space-y-4">
                         <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
-                          <AlertCircle className="h-4 w-4" /> Analyse critique
+                          <Info className="h-4 w-4" /> Signaux issus de la fiche pays
                         </h4>
-                        <div className="space-y-3">
-                          {r.reasons.map((reason: string, i: number) => (
-                            <div
-                              key={i}
-                              className="flex gap-3 rounded-2xl border border-line bg-surface p-4 text-sm font-medium leading-relaxed text-muted"
-                            >
-                              <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-400" />
-                              {reason}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Strategy */}
-                      <div className="space-y-4">
-                        <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
-                          <Lightbulb className="h-4 w-4" /> Stratégie
-                        </h4>
-                        <div className="space-y-3">
-                          {r.strategy.map((s: string, i: number) => (
-                            <div
-                              key={i}
-                              className="flex gap-3 rounded-2xl border border-primary/30 bg-primary-soft p-5 text-sm font-bold text-text shadow-soft"
-                            >
-                              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/70 text-[10px]">
-                                {i + 1}
-                              </div>
-                              {s}
-                            </div>
-                          ))}
+                        <div className="rounded-2xl border border-line bg-surface p-5 text-sm font-medium leading-relaxed text-muted">
+                          <p>
+                            {describeTopCountrySignals(r.countrySignals as ProbabilityCountrySignals | undefined)}
+                          </p>
                         </div>
                       </div>
                     </div>

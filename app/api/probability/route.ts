@@ -167,11 +167,22 @@ export async function POST(req: Request) {
 
       appendProfileContextNarratives(p, { primary: reasons, secondary: strategy })
 
+      const acceptanceLabel =
+        typeof full.acceptance_rate_morocco === 'string' && full.acceptance_rate_morocco.trim()
+          ? full.acceptance_rate_morocco.trim()
+          : null
+
       return {
         id: c.id,
         country: c.name,
         globalScore,
         level,
+        hasPhdStudies: phdStudiesData,
+        countrySignals: {
+          acceptance_rate_morocco: acceptanceLabel,
+          friction_score: Number.isFinite(friction) ? Math.round(friction) : null,
+          brutal_reality_score: Number.isFinite(brutal) ? brutal : null,
+        },
         reasons,
         strategy,
         breakdown: {
@@ -181,8 +192,9 @@ export async function POST(req: Request) {
           acceptance: Math.round(acceptanceScore),
           visaEase: Math.round(visaEase100),
           countryContext: Math.round(countryContextScore),
-          phdStudiesData,
-        }
+          appointmentEase: Math.round(accessibilityScore),
+          riskImmigration: Math.round(riskScore),
+        },
       };
     }).sort((a: any, b: any) => b.globalScore - a.globalScore);
 

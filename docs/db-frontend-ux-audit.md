@@ -238,9 +238,9 @@ Admin
 ## 13. Plan d’amélioration UX basé sur les données **déjà** stockées (priorisé)
 
 1. **Historique de navigation** : exploiter `UserHistoryEvent` pour un carrousel « Reprendre » (sans nouveau stockage). — **Fait** : section « Reprendre vos recherches » sur le tableau de bord (`/overview`), à partir des événements `VIEW_COUNTRY`.
-2. **Transparence scores & profil** : le moteur de probabilité enrichit les `reasons` / `strategy` avec **âge** et **objectif** (`goal_type`) — sans changer les pondérations numériques. **UI** : bandeau « Profil pris en compte » sur `/probability` et `/recommendations`. **Reco** : mêmes textes préfixés sur l’explication du **premier** pays classé. Extension possible : expliciter acceptation / friction par pays dans l’UI.
+2. **Transparence scores & profil** : le moteur de probabilité enrichit les `reasons` / `strategy` avec **âge** et **objectif** (`goal_type`) — sans changer les pondérations numériques. **UI** : bandeau « Profil pris en compte » sur `/probability` et `/recommendations`. **Reco** : mêmes textes préfixés sur l’explication du **premier** pays classé. **Probabilités** : réponse API avec `countrySignals` (acceptation texte, friction, réalité terrain) + breakdown étendu (`appointmentEase`, `riskImmigration`) ; carte « Meilleur choix » et détail pays explicites. Extension possible : parité côté moteur **recommandation** (hors préfixe narratif).
 3. **Provenance intelligence** : bloc repliable « Sources des données intelligence » sur fiche pays (chargement paresseux `?intelligence=1`). Lien admin pour power users inchangé.
-4. **CountryInsight** : décision produit unique — soit intégration UI, soit migration vers observations versionnées ; pas suppression silencieuse.
+4. **CountryInsight** : **Fait** — `GET /api/countries/[id]` inclut `insights` ; encart repliable sur la fiche pays. Suite possible : migration vers observations versionnées si besoin unifié ; pas suppression silencieuse.
 
 ---
 

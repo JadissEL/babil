@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Binoculars, ChevronDown, ChevronUp } from 'lucide-react'
+import { Newspaper, ChevronDown, ChevronUp } from 'lucide-react'
 
 import type { CountryDbInsightPublic } from '@/lib/country-db-insights'
 
@@ -41,7 +41,7 @@ export function CountryDbInsightsCollapsible({ rows }: { rows: CountryDbInsightP
         className="flex w-full items-center justify-between gap-3 text-left"
       >
         <span className="flex items-center gap-2 text-sm font-black text-text">
-          <Binoculars className="h-4 w-4 shrink-0 text-primary" />
+          <Newspaper className="h-4 w-4 shrink-0 text-primary" />
           Notes terrain (base de données)
         </span>
         {open ? (
