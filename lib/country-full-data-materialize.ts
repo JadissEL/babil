@@ -1,11 +1,13 @@
 /**
- * Parsed `full_data` plus friction coalescence — **no Prisma**, safe for client bundles.
+ * Parsed `full_data` plus friction coalescence and **driving_rights v1** materialization from legacy
+ * `driving_license` when needed — **no Prisma**, safe for client bundles.
  * Prefer `augmentCountryDetailPayload` / `buildMergedCountriesList` on the server when possible;
  * use `materializePublicFullData` everywhere `full_data` is consumed so nested-only friction
  * scores still resolve.
  */
 
 import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel'
 
 function frictionTopLevelWeak(v: unknown): boolean {
   if (v === undefined || v === null) return true
@@ -27,7 +29,8 @@ export function normalizeFullDataFriction(full: Record<string, unknown>): Record
  * Parse stored `full_data` (JSON string or plain object) and normalize fields used across UI/API.
  */
 export function materializePublicFullData(raw: unknown): Record<string, unknown> {
-  return normalizeFullDataFriction(parseCountryFullData(raw))
+  const parsed = parseCountryFullData(raw)
+  return syncDrivingRightsIntelIntoFullData(normalizeFullDataFriction(parsed))
 }
 
 /** One row from `GET /api/countries` or `GET /api/countries/[id]` — guarantees `full_data` is parsed + friction-normalized. */
