@@ -71,8 +71,22 @@ export function CompareExperience() {
   const goToCategoryStep = useCallback(() => {
     setStep('category')
     setCategoryId(null)
+    setSelectedIds([])
     router.replace(pathname ?? '/compare', { scroll: false })
   }, [pathname, router])
+
+  const objectiveIdRef = useRef<string | null>(null)
+  useEffect(() => {
+    const id = objective.id
+    if (objectiveIdRef.current === null) {
+      objectiveIdRef.current = id
+      return
+    }
+    if (objectiveIdRef.current !== id) {
+      setSelectedIds([])
+      objectiveIdRef.current = id
+    }
+  }, [objective.id])
 
   const enriched = useMemo(
     () => raw.map((c) => enrichCountryApiRecord(c)),

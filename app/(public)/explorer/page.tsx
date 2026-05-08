@@ -1,8 +1,9 @@
 'use client'
 
 import { Suspense, useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Search, Globe, SlidersHorizontal, Target } from 'lucide-react'
+import { Search, Globe, SlidersHorizontal, Target, Scale } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
 import CountryGrid from '@/components/country/CountryGrid'
 import { FilterBar } from '@/components/filters/FilterBar'
@@ -21,6 +22,7 @@ import {
   parseExplorerRegionFilter,
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
+import { compareHrefForExplorerGoal } from '@/lib/explorer-goal-to-compare-objective'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -244,6 +246,14 @@ function ExplorerPageInner() {
               <Target className="h-4 w-4" /> Recommandation
             </button>
           </div>
+
+          <Link
+            href={compareHrefForExplorerGoal(goal)}
+            className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary-soft/50 px-3 py-2 text-xs font-black uppercase tracking-wider text-primary transition-colors hover:border-primary/50 hover:bg-primary-soft"
+          >
+            <Scale className="h-4 w-4 shrink-0" aria-hidden />
+            Comparer
+          </Link>
 
           <div className="relative min-w-64 flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
