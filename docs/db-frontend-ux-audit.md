@@ -238,10 +238,9 @@ Admin
 ## 13. Plan d’amélioration UX basé sur les données **déjà** stockées (priorisé)
 
 1. **Historique de navigation** : exploiter `UserHistoryEvent` pour un carrousel « Reprendre » (sans nouveau stockage). — **Fait** : section « Reprendre vos recherches » sur le tableau de bord (`/overview`), à partir des événements `VIEW_COUNTRY`.
-2. **Transparence scores** : afficher 2–3 facteurs issus de `full_data` déjà lus par proba/reco (acceptation, friction, doctorat).
-3. **Profil** : utiliser `age` / `goal_type` dans les textes explicatifs du score (même si la pondération reste simple au début).
+2. **Transparence scores & profil** : le moteur de probabilité enrichit les `reasons` / `strategy` avec **âge** et **objectif** (`goal_type`) — sans changer les pondérations numériques. Extension possible : expliciter acceptation / friction par pays dans l’UI.
+3. **Provenance intelligence** : bloc repliable « Sources des données intelligence » sur fiche pays (chargement paresseux `?intelligence=1`). Lien admin pour power users inchangé.
 4. **CountryInsight** : décision produit unique — soit intégration UI, soit migration vers observations versionnées ; pas suppression silencieuse.
-5. **Intelligence** : provenance courte sur fiche pays (lien admin pour power users).
 
 ---
 

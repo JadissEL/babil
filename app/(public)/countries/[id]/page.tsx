@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 
 import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsIntelSection'
+import { IntelligenceProvenanceCollapsible } from '@/components/country/IntelligenceProvenanceCollapsible'
 import GoogleAd from '@/components/GoogleAd'
 import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
 import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
@@ -411,6 +412,10 @@ export default function CountryDetailPage() {
                   ) : null}
                 </div>
               ) : null}
+
+              <IntelligenceProvenanceCollapsible
+                countryId={String(Array.isArray(id) ? id[0] ?? '' : id ?? '')}
+              />
 
               <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ScoreBar label="Visa tourisme" value={tourismScore} />

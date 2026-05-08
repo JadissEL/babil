@@ -7,6 +7,56 @@ import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot'
 
+/** Messages pédagogiques (âge, objectif) — n’altèrent pas les pondérations numériques du score global. */
+function pushProfileContextNarrative(
+  profile: Record<string, unknown>,
+  reasons: string[],
+  strategy: string[],
+): void {
+  const age = Number(profile.age)
+  if (Number.isFinite(age) && age >= 16 && age <= 120) {
+    if (age <= 23) {
+      reasons.push(
+        "Âge indiqué plutôt jeune : pour les études ou un premier long séjour, anticipez des justificatifs de financement et d'hébergement solides.",
+      )
+    } else if (age >= 55) {
+      reasons.push(
+        'Parcours plus expérimenté : la stabilité des revenus, la couverture santé et les liens avec le Maroc peuvent être examinés de près.',
+      )
+    }
+  }
+
+  const g = String(profile.goal_type ?? '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+
+  if (!g) return
+
+  if (g.includes('tour') || g.includes('tourism')) {
+    reasons.push(
+      'Objectif tourisme : gardez une cohérence entre durée du séjour, moyens et itinéraire pour renforcer la crédibilité du dossier.',
+    )
+  }
+  if (g.includes('etud') || g.includes('study') || g.includes('formation') || g.includes('cours')) {
+    reasons.push(
+      "Objectif études / formation : vérifiez sur la fiche pays les blocs admission et visa étudiant avant de vous engager sur une destination.",
+    )
+    strategy.push('Comparez les sections « éducation » et doctorat des fiches pays retenues.')
+  }
+  if (g.includes('travail') || g.includes('work')) {
+    reasons.push(
+      "Objectif travail : la cohérence emploi / diplômes / employeur identifiable pèse fortement dans l'appréciation du risque.",
+    )
+  }
+  if (g.includes('business') || g.includes('affair') || g.includes('invest')) {
+    reasons.push(
+      "Objectif affaires ou investissement : documentez l'activité réelle (société, revenus, partenariats).",
+    )
+  }
+}
+
 export async function POST(req: Request) {
   const { userId } = auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -163,6 +213,8 @@ export async function POST(req: Request) {
       if (safeSavings < 50000) strategy.push("Augmentez votre épargne bloquée pour atteindre le seuil de 70k MAD.");
       if (!Boolean(p.CNSS_status)) strategy.push("Régularisez votre situation CNSS au moins 6 mois avant la demande.");
       strategy.push("Privilégiez une demande hors période de haute saison pour éviter la saturation des rendez-vous.");
+
+      pushProfileContextNarrative(p, reasons, strategy)
 
       return {
         id: c.id,
