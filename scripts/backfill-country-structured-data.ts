@@ -7,6 +7,10 @@
  *   npx tsx scripts/backfill-country-structured-data.ts --dry-run
  *   npx tsx scripts/backfill-country-structured-data.ts --apply
  *   npx tsx scripts/backfill-country-structured-data.ts --apply --limit 20
+ *   npx tsx scripts/backfill-country-structured-data.ts --apply --hydrate-static
+ *
+ * `--hydrate-static` merges `data/countries.json` into DB JSON by name (DB wins on conflicts),
+ * then runs the same normalization — **thick rows in Postgres** without relying on API merge.
  */
 import 'dotenv/config'
 
@@ -18,6 +22,8 @@ import {
   ensureStreetFoodBusinessAccessOnFullData,
 } from '../lib/country-street-food-access'
 import { prismaVisaScalarsFromFullData } from '../lib/scoring/prisma-visa-snapshot'
+import { loadFallbackCountries, type LegacyCountryRecord } from '../lib/countries-fallback'
+import { mergeDisplayedFullData } from '../lib/merge-displayed-full-data'
 
 const BACKFILL_META_KEY = '_data_backfill'
 const BACKFILL_VERSION = 1
@@ -97,10 +103,18 @@ function pickEducationFields(full: Record<string, unknown>): {
   return { language_study_access, technical_training_access, short_course_access }
 }
 
-function attachBackfillMeta(full: Record<string, unknown>, appliedAt: string): Record<string, unknown> {
+function attachBackfillMeta(
+  full: Record<string, unknown>,
+  appliedAt: string,
+  opts: { hydrateStatic: boolean },
+): Record<string, unknown> {
   const prev = full[BACKFILL_META_KEY]
   const history = isRecord(prev) && Array.isArray(prev.history) ? [...(prev.history as unknown[])] : []
-  history.push({ version: BACKFILL_VERSION, appliedAt })
+  history.push({
+    version: BACKFILL_VERSION,
+    appliedAt,
+    ...(opts.hydrateStatic ? { hydrateStatic: true as const } : {}),
+  })
   if (history.length > 12) history.splice(0, history.length - 12)
   return {
     ...full,
@@ -110,6 +124,10 @@ function attachBackfillMeta(full: Record<string, unknown>, appliedAt: string): R
       history,
     },
   }
+}
+
+function countryNameMergeKey(name: string): string {
+  return name.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase()
 }
 
 function approxEq(a: number, b: number): boolean {
@@ -125,10 +143,25 @@ async function main() {
   const dryRun = argFlag('--dry-run')
   const apply = argFlag('--apply')
   const limit = argNumber('--limit')
+  const hydrateStatic = argFlag('--hydrate-static')
 
   if (!dryRun && !apply) {
     console.error('Specify --dry-run (preview) or --apply (write).')
     process.exit(1)
+  }
+
+  let staticByName = new Map<string, LegacyCountryRecord>()
+  if (hydrateStatic) {
+    try {
+      const fallback = await loadFallbackCountries()
+      staticByName = new Map(
+        fallback.map((r) => [countryNameMergeKey(r.name), r] as const),
+      )
+      console.log(`--hydrate-static: loaded ${staticByName.size} countries from data/countries.json`)
+    } catch (e) {
+      console.error('Failed to load data/countries.json:', e)
+      process.exit(1)
+    }
   }
 
   const rows = await prisma.country.findMany({
@@ -141,11 +174,18 @@ async function main() {
   const appliedAt = new Date().toISOString()
 
   for (const row of rows) {
-    const base = parseCountryFullData(row.full_data)
+    const dbParsed = parseCountryFullData(row.full_data)
+    const staticRow = hydrateStatic ? staticByName.get(countryNameMergeKey(row.name)) : undefined
+    const staticFull =
+      staticRow?.full_data && typeof staticRow.full_data === 'object' && !Array.isArray(staticRow.full_data)
+        ? (staticRow.full_data as Record<string, unknown>)
+        : null
+    const base =
+      staticFull != null ? mergeDisplayedFullData(staticFull, dbParsed) : dbParsed
     const withStreet = ensureStreetFoodBusinessAccessOnFullData(base)
     let full = materializePublicFullData(withStreet)
     if (apply) {
-      full = attachBackfillMeta(full, appliedAt)
+      full = attachBackfillMeta(full, appliedAt, { hydrateStatic: hydrateStatic && staticFull != null })
     }
 
     const nextJson = JSON.stringify(full)
@@ -182,7 +222,7 @@ async function main() {
     wouldUpdate += 1
     if (dryRun) {
       console.log(
-        `[dry-run] ${row.name}: full_data=${fullDataChanged} columns=${scalarChanged} driving_rights.meta=${isRecord(full.driving_rights) ? (full.driving_rights as Record<string, unknown>).meta != null : false}`,
+        `[dry-run] ${row.name}: full_data=${fullDataChanged} columns=${scalarChanged} static=${staticFull != null} driving_rights.meta=${isRecord(full.driving_rights) ? (full.driving_rights as Record<string, unknown>).meta != null : false}`,
       )
       continue
     }

@@ -29,6 +29,8 @@
     "sync:render:apply": "tsx scripts/sync-countries-to-render.ts --apply",
     "db:backfill:dry": "tsx scripts/backfill-country-structured-data.ts --dry-run",
     "db:backfill:apply": "tsx scripts/backfill-country-structured-data.ts --apply",
+    "db:backfill:hydrate:dry": "tsx scripts/backfill-country-structured-data.ts --dry-run --hydrate-static",
+    "db:backfill:hydrate:apply": "tsx scripts/backfill-country-structured-data.ts --apply --hydrate-static",
     "test:lib": "tsx --test \"lib/**/*.test.ts\""
   },
   "keywords": [],
