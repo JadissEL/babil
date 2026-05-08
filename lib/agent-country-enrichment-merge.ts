@@ -8,6 +8,7 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 
 import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot'
+import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel'
 
 export type QuoteSentiment = 'positive' | 'neutral' | 'negative'
 
@@ -198,6 +199,8 @@ export function mergeCountryData(
     },
   } as Record<string, unknown>
 
+  const mergedWithDriving = syncDrivingRightsIntelIntoFullData(merged)
+
   const appointment_difficulty =
     preserveScalar &&
     typeof preserveScalar.appointment_difficulty === 'string' &&
@@ -205,16 +208,16 @@ export function mergeCountryData(
       ? preserveScalar.appointment_difficulty.trim()
       : 'Medium'
 
-  const visaScalars = prismaVisaScalarsFromFullData(merged, {
+  const visaScalars = prismaVisaScalarsFromFullData(mergedWithDriving, {
     tourist_visa_score: preserveScalar?.tourist_visa_score,
     study_visa_score: preserveScalar?.study_visa_score,
     work_visa_score: preserveScalar?.work_visa_score,
     business_visa_score: preserveScalar?.business_visa_score,
-    street_food_business_access: merged.street_food_business_access,
+    street_food_business_access: mergedWithDriving.street_food_business_access,
   })
 
   return {
-    fullData: merged,
+    fullData: mergedWithDriving,
     scalar: {
       ...visaScalars,
       appointment_difficulty,

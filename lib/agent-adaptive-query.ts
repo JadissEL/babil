@@ -10,7 +10,11 @@ const DOMAIN_HINTS: Record<Domain, string[]> = {
   economy: ['gdp latest world bank', 'economic outlook'],
   education: ['education mobility access', 'language training options', 'PhD doctoral study visa funding pathways'],
   business: ['business setup conditions', 'street food business opportunity'],
-  driving: ['driving license conversion rules', 'license restrictions'],
+  driving: [
+    'Morocco driving license international driving permit IDP Geneva Vienna convention',
+    'foreign driving license exchange conversion transport ministry official site',
+    'visitor tourist student work permit resident driving license validity months',
+  ],
   community: ['traveler quotes verified sources', 'appointment audit lived experience'],
 }
 
@@ -41,6 +45,8 @@ export function resolveAdaptiveQueryFromSnapshot(
     { key: 'travel_reasons', value: fullData.travel_reasons },
     { key: 'traveler_quotes', value: fullData.traveler_quotes },
     { key: 'phd_studies', value: fullData.phd_studies },
+    { key: 'driving_license', value: fullData.driving_license },
+    { key: 'driving_rights', value: fullData.driving_rights },
   ]
 
   const weakSections = sections

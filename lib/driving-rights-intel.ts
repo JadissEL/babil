@@ -403,6 +403,14 @@ export function materializeDrivingRightsIntel(fullData: unknown): DrivingRightsI
   return parseStoredDrivingRightsPatch(dr, base)
 }
 
+/** Persist recomputed v1 intel on `full_data` (merges legacy `driving_license` + optional `driving_rights` patch). */
+export function syncDrivingRightsIntelIntoFullData(fullData: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...fullData,
+    driving_rights: materializeDrivingRightsIntel(fullData),
+  }
+}
+
 export function deriveDrivingRightsVisual(intel: DrivingRightsIntelV1): DrivingRightsVisual {
   const e = intel.eligibility
   if (e.moroccanLicenseRecognized === false) return 'prohibited'

@@ -6,6 +6,7 @@ import {
   drivingRightsFromLegacy,
   enrichCountryRecordWithDrivingRights,
   materializeDrivingRightsIntel,
+  syncDrivingRightsIntelIntoFullData,
 } from '@/lib/driving-rights-intel'
 
 describe('drivingRightsFromLegacy', () => {
@@ -58,5 +59,15 @@ describe('enrichCountryRecordWithDrivingRights', () => {
     const out = enrichCountryRecordWithDrivingRights(row)
     assert.equal((out.driving_rights as { meta: { schemaVersion: number } }).meta.schemaVersion, 1)
     assert.equal(out.country, 'X')
+  })
+})
+
+describe('syncDrivingRightsIntelIntoFullData', () => {
+  it('attaches driving_rights v1 to full_data', () => {
+    const out = syncDrivingRightsIntelIntoFullData({
+      driving_license: { status: 'Valide', international_required: true },
+    })
+    assert.ok(out.driving_rights)
+    assert.equal((out.driving_rights as { meta: { schemaVersion: number } }).meta.schemaVersion, 1)
   })
 })
