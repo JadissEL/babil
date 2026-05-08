@@ -1,10 +1,10 @@
 'use client'
 
 const options = [
-  { value: 'all', label: 'All Risks' },
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' },
+  { value: 'all', label: 'Tous les niveaux' },
+  { value: 'low', label: 'Faible' },
+  { value: 'medium', label: 'Moyen' },
+  { value: 'high', label: 'Élevé' },
 ]
 
 export default function RiskFilter({ value = 'all', onChange }: { value?: string; onChange?: (value: string) => void }) {

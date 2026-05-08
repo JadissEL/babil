@@ -22,7 +22,7 @@ import {
   parseExplorerRegionFilter,
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
-import { compareHrefForExplorerGoal } from '@/lib/explorer-goal-to-compare-objective'
+import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-objective'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -248,7 +248,13 @@ function ExplorerPageInner() {
           </div>
 
           <Link
-            href={compareHrefForExplorerGoal(goal)}
+            href={compareHrefForExplorerPageState({
+              goal,
+              budget,
+              region,
+              difficulty,
+              schengenOnly,
+            })}
             className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary-soft/50 px-3 py-2 text-xs font-black uppercase tracking-wider text-primary transition-colors hover:border-primary/50 hover:bg-primary-soft"
           >
             <Scale className="h-4 w-4 shrink-0" aria-hidden />

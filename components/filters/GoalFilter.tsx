@@ -3,12 +3,12 @@
 type Option = { value: string; label: string }
 
 const options: Option[] = [
-  { value: 'all', label: 'All Goals' },
-  { value: 'tourism', label: 'Tourism' },
-  { value: 'study', label: 'Study' },
-  { value: 'work', label: 'Work' },
-  { value: 'business', label: 'Business' },
-  { value: 'short_course', label: 'Short Course' },
+  { value: 'all', label: 'Tous les objectifs' },
+  { value: 'tourism', label: 'Tourisme' },
+  { value: 'study', label: 'Études' },
+  { value: 'work', label: 'Travail' },
+  { value: 'business', label: 'Affaires' },
+  { value: 'short_course', label: 'Séjour court' },
 ]
 
 export default function GoalFilter({ value = 'all', onChange }: { value?: string; onChange?: (value: string) => void }) {

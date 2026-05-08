@@ -1,12 +1,12 @@
 'use client'
 
 const options = [
-  { value: 'all', label: 'All Regions' },
+  { value: 'all', label: 'Toutes les régions' },
   { value: 'Schengen', label: 'Schengen' },
   { value: 'Europe', label: 'Europe' },
-  { value: 'Africa', label: 'Africa' },
-  { value: 'Asia', label: 'Asia' },
-  { value: 'Americas', label: 'Americas' },
+  { value: 'Africa', label: 'Afrique' },
+  { value: 'Asia', label: 'Asie' },
+  { value: 'Americas', label: 'Amériques' },
 ]
 
 export default function RegionFilter({ value = 'all', onChange }: { value?: string; onChange?: (value: string) => void }) {

@@ -7,7 +7,7 @@ import GoalFilter from '@/components/filters/GoalFilter'
 import BudgetFilter from '@/components/filters/BudgetFilter'
 import RegionFilter from '@/components/filters/RegionFilter'
 import RiskFilter from '@/components/filters/RiskFilter'
-import { compareHrefForExplorerGoal } from '@/lib/explorer-goal-to-compare-objective'
+import { compareHrefForHomeQuickFilters } from '@/lib/explorer-goal-to-compare-objective'
 
 /** Maps home quick filters → Explorer search params (explorer already applies them). */
 function buildExplorerHref(goal: string, budget: string, region: string, risk: string): string {
@@ -40,11 +40,14 @@ export default function HomeQuickFilterEngine() {
     [goal, budget, region, risk],
   )
 
-  const compareHref = useMemo(() => compareHrefForExplorerGoal(goal), [goal])
+  const compareHref = useMemo(
+    () => compareHrefForHomeQuickFilters(goal, budget, region, risk),
+    [goal, budget, region, risk],
+  )
 
   return (
     <section className="mt-8 rounded-2xl border border-line bg-surface p-4 shadow-soft">
-      <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">Quick Filter Engine</p>
+      <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">Filtres rapides</p>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <GoalFilter value={goal} onChange={setGoal} />
@@ -64,7 +67,7 @@ export default function HomeQuickFilterEngine() {
             href={resultsHref}
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-colors hover:bg-primary-hover sm:w-auto"
           >
-            View results
+            Voir les résultats
             <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />
           </Link>
         </div>

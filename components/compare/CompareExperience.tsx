@@ -23,6 +23,12 @@ import {
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
+import {
+  matchesExplorerRegionFilter,
+  matchesExplorerSchengenOnlyToggle,
+  parseExplorerRegionFilter,
+  type ExplorerRegionFilter,
+} from '@/lib/explorer-filters'
 
 const MAX = 4
 
@@ -93,6 +99,41 @@ export function CompareExperience() {
     [raw],
   )
 
+  const compareExplorerContext = useMemo(() => {
+    const r = searchParams.get('region')
+    const regionFilter: ExplorerRegionFilter = r?.trim() ? parseExplorerRegionFilter(r.trim()) : 'all'
+    const bud = searchParams.get('budget')
+    const budget = bud === 'low' || bud === 'medium' || bud === 'high' ? bud : 'all'
+    const diff = searchParams.get('difficulty')
+    const difficulty =
+      diff && ['Low', 'Medium', 'High', 'Extreme'].includes(diff) ? diff : 'all'
+    const sch = searchParams.get('schengen')
+    const schengenOnly = sch === '1' || sch === 'true' || sch === 'yes'
+    return { regionFilter, budget, difficulty, schengenOnly }
+  }, [searchParams])
+
+  /** Prefer countries matching explorer-style URL params for “Top N” suggestions; fallback if the filter is too strict. */
+  const suggestionPool = useMemo(() => {
+    const { regionFilter, budget, difficulty, schengenOnly } = compareExplorerContext
+    const hasConstraint =
+      regionFilter !== 'all' || budget !== 'all' || difficulty !== 'all' || schengenOnly
+    if (!hasConstraint) return enriched
+    const filtered = enriched.filter((c) => {
+      const name = String(c.name ?? '')
+      const dbRegion = String(c.region ?? '')
+      if (!matchesExplorerRegionFilter(regionFilter, { name, region: dbRegion })) return false
+      if (!matchesExplorerSchengenOnlyToggle(schengenOnly, { name })) return false
+      if (budget !== 'all' && c._budgetLevel !== budget) return false
+      if (
+        difficulty !== 'all' &&
+        String(c._difficultyLabel).toLowerCase() !== difficulty.toLowerCase()
+      )
+        return false
+      return true
+    })
+    return filtered.length > 0 ? filtered : enriched
+  }, [enriched, compareExplorerContext])
+
   const options: CountryOption[] = useMemo(
     () => enriched.map((c) => ({ id: c.id, name: c.name })).sort((a, b) => a.name.localeCompare(b.name)),
     [enriched],
@@ -123,8 +164,8 @@ export function CompareExperience() {
   }, [])
 
   const suggestionIds = useMemo(
-    () => pickSuggestedCountryIds(enriched, objective, MAX),
-    [enriched, objective],
+    () => pickSuggestedCountryIds(suggestionPool, objective, MAX),
+    [suggestionPool, objective],
   )
 
   const applySuggestions = useCallback(() => {
