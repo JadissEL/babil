@@ -111,7 +111,8 @@ Collecte (connecteurs API / fichiers officiels / saisie validée)
   - `npm run intelligence:world-bank -- --limit 10` — échantillon.
   - `npm run intelligence:materialize-economy` — applique les dernières observations en base vers `full_data`.
   - `npm run intelligence:world-bank:materialize` — enchaîne les deux.
-- Taxonomie des champs : `lib/intelligence-pipeline/taxonomy-v1.ts` (`general.population_total`, `economy.gdp_usd_current`).
+- Taxonomie des champs : `lib/intelligence-pipeline/taxonomy-v1.ts` (`general.population_total`, `economy.gdp_usd_current`, `economy.gdp_per_capita_usd_current`).
+- **Overrides ISO2** : `lib/intelligence-pipeline/country-iso-overrides.ts` pour les noms qui ne matchent pas le libellé World Bank (ex. `DR Congo` → `cd`, `South Korea` → `kr`).
 
 Les connecteurs **UN Data, OECD, …** restent à brancher sur le même modèle `CountryObservation`.
 

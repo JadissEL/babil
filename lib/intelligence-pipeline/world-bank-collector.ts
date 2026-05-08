@@ -1,6 +1,7 @@
 import prisma from '@/lib/prisma'
 import {
   FIELD_ECONOMY_GDP_USD_CURRENT,
+  FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
   FIELD_GENERAL_POPULATION_TOTAL,
   WORLD_BANK_INDICATORS,
 } from './taxonomy-v1'
@@ -24,7 +25,7 @@ export type WorldBankCollectorResult = {
 }
 
 /**
- * Collecte population + PIB nominal (USD) depuis l’API World Bank pour chaque pays en base.
+ * Collecte population, PIB nominal (USD) et PIB/hab. depuis l’API World Bank pour chaque pays en base.
  * Écrit des `CountryObservation` (append-only). Idempotent côté données : nouvelle ligne par run.
  */
 export async function runWorldBankCollector(
@@ -64,6 +65,8 @@ export async function runWorldBankCollector(
       const pop = await fetchWorldBankLatestDatum(iso2, WORLD_BANK_INDICATORS.population)
       await sleep(DELAY_MS)
       const gdp = await fetchWorldBankLatestDatum(iso2, WORLD_BANK_INDICATORS.gdpUsd)
+      await sleep(DELAY_MS)
+      const gdpPc = await fetchWorldBankLatestDatum(iso2, WORLD_BANK_INDICATORS.gdpPerCapitaUsd)
 
       if (pop && pop.value != null && Number.isFinite(pop.value)) {
         await prisma.countryObservation.create({
@@ -106,6 +109,29 @@ export async function runWorldBankCollector(
             sourceId: source.id,
             runId,
             rawPayload: JSON.stringify({ wb: gdp }),
+          },
+        })
+        observationsWritten += 1
+      }
+
+      if (gdpPc && gdpPc.value != null && Number.isFinite(gdpPc.value)) {
+        await prisma.countryObservation.create({
+          data: {
+            countryId: c.id,
+            fieldPath: FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
+            valueJson: JSON.stringify({
+              value: gdpPc.value,
+              year: Number(gdpPc.date),
+              indicator: WORLD_BANK_INDICATORS.gdpPerCapitaUsd,
+              iso2,
+            }),
+            valueNumeric: gdpPc.value,
+            unit: 'current_usd_per_capita',
+            confidence: 0.88,
+            observedAt,
+            sourceId: source.id,
+            runId,
+            rawPayload: JSON.stringify({ wb: gdpPc }),
           },
         })
         observationsWritten += 1

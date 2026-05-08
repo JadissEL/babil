@@ -1,14 +1,7 @@
 import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
 import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
-
-/** Clé stable pour rapprocher un nom pays Babil avec le répertoire World Bank (anglais). */
-export function normalizeCountryMatchKey(name: string): string {
-  return name
-    .normalize('NFC')
-    .trim()
-    .replace(/\s+/g, ' ')
-    .toLowerCase()
-}
+import { iso2FromIntelligenceOverride } from './country-iso-overrides'
+import { normalizeCountryMatchKey } from './country-match-key'
 
 type WbCountryRow = {
   id: string
@@ -54,6 +47,9 @@ export function resolveIso2ForBabilCountryName(
   const fromCard = iso2ForCountryNameOrEmpty(name)
   if (fromCard) return fromCard
 
+  const fromOverride = iso2FromIntelligenceOverride(name)
+  if (fromOverride) return fromOverride
+
   const direct = wbByNormalizedName.get(normalizeCountryMatchKey(name))
   if (direct) return direct
 
@@ -85,3 +81,5 @@ export async function fetchWorldBankLatestDatum(
   if (!row) return null
   return { value: row.value, date: row.date }
 }
+
+export { normalizeCountryMatchKey } from './country-match-key'

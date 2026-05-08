@@ -17,6 +17,7 @@ export {
   INTELLIGENCE_TAXONOMY_VERSION,
   FIELD_GENERAL_POPULATION_TOTAL,
   FIELD_ECONOMY_GDP_USD_CURRENT,
+  FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
   WORLD_BANK_INDICATORS,
   MATERIALIZE_TARGETS,
 } from './taxonomy-v1'
@@ -27,6 +28,7 @@ export {
   fetchWorldBankLatestDatum,
   type WbDatum,
 } from './world-bank-client'
+export { iso2FromIntelligenceOverride, COUNTRY_ISO2_OVERRIDES } from './country-iso-overrides'
 export { runWorldBankCollector, type WorldBankCollectorResult } from './world-bank-collector'
 export {
   materializeEconomyObservationsForCountry,

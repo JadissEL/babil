@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { normalizeCountryMatchKey, resolveIso2ForBabilCountryName } from './world-bank-client'
+import { normalizeCountryMatchKey } from './country-match-key'
+import { resolveIso2ForBabilCountryName } from './world-bank-client'
 
 describe('normalizeCountryMatchKey', () => {
   it('lowercases and collapses spaces', () => {
@@ -9,6 +10,13 @@ describe('normalizeCountryMatchKey', () => {
 })
 
 describe('resolveIso2ForBabilCountryName', () => {
+  it('uses intelligence overrides when WB map has no dataset label', () => {
+    const empty = new Map<string, string>()
+    assert.equal(resolveIso2ForBabilCountryName('DR Congo', empty), 'cd')
+    assert.equal(resolveIso2ForBabilCountryName('South Korea', empty), 'kr')
+    assert.equal(resolveIso2ForBabilCountryName('Russia', empty), 'ru')
+  })
+
   it('uses World Bank map for English names', () => {
     const m = new Map([
       [normalizeCountryMatchKey('Afghanistan'), 'af'],
