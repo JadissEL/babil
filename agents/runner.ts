@@ -7,6 +7,7 @@ import {
   deriveStreetFoodBusinessAccessFromFullData,
   ensureStreetFoodBusinessAccessOnFullData,
 } from '../lib/country-street-food-access'
+import { syncDrivingRightsIntelIntoFullData } from '../lib/driving-rights-intel'
 import { CONTRACT_VERSION } from '../lib/country-intelligence-contract'
 import { isSchengenMember } from '../lib/schengen-members'
 import type { CompletenessReport } from '../lib/country-completeness'
@@ -226,12 +227,15 @@ function hydrateAgentFullDataFromPrismaRow(
 ): Record<string, unknown> {
   const top = fullData.street_food_business_access
   const hasTop = typeof top === 'string' && top.trim().length > 0
-  if (hasTop) return fullData
-  const col = row?.street_food_business_access
-  if (typeof col === 'string' && col.trim()) {
-    return { ...fullData, street_food_business_access: col.trim() }
+  let next = fullData
+  if (!hasTop) {
+    const col = row?.street_food_business_access
+    if (typeof col === 'string' && col.trim()) {
+      next = { ...fullData, street_food_business_access: col.trim() }
+    }
   }
-  return fullData
+  // Pass-0 completeness + first adaptive query use snapshotInit before mergeCountryData runs.
+  return syncDrivingRightsIntelIntoFullData(next)
 }
 
 function nextRetryDelay(attempts: number) {
@@ -492,6 +496,7 @@ async function processCountryTask(task: CountryTask) {
   }
 
   fullDataForUpsert = ensureStreetFoodBusinessAccessOnFullData(fullDataForUpsert)
+  fullDataForUpsert = syncDrivingRightsIntelIntoFullData(fullDataForUpsert)
   const streetFoodBusinessAccess = deriveStreetFoodBusinessAccessFromFullData(fullDataForUpsert)
 
   const childKnowledge = await loadChildKnowledge()
