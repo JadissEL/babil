@@ -16,6 +16,9 @@
  *
  * `--with-contract-coverage` stores `full_data._data_backfill.contractCoverage` (intelligence contract
  * score + domain breakdown + sample of critical missing keys) for **quality tracking** in DB.
+ *
+ * On `--apply`, also merges `full_data._agent.coverageManifest` + `completeness` from the same
+ * completeness pass (preserves existing `_agent.updatedAt` when already set by the enrichment agent).
  */
 import 'dotenv/config'
 
@@ -30,7 +33,9 @@ import {
 import { prismaVisaScalarsFromFullData } from '../lib/scoring/prisma-visa-snapshot'
 import { loadFallbackCountries, type LegacyCountryRecord } from '../lib/countries-fallback'
 import { mergeDisplayedFullData } from '../lib/merge-displayed-full-data'
-import { buildContractCoverageSnapshot, DATA_BACKFILL_META_KEY } from '../lib/contract-coverage-snapshot'
+import { buildContractCoverageSnapshotFromReport, DATA_BACKFILL_META_KEY } from '../lib/contract-coverage-snapshot'
+import { buildCompletenessReportForCountryRow } from '../lib/country-completeness-row'
+import { mergeAgentProvenanceIntoFullData } from '../lib/agent-provenance-full-data'
 
 const BACKFILL_META_KEY = DATA_BACKFILL_META_KEY
 const BACKFILL_VERSION = 1
@@ -218,20 +223,20 @@ async function main() {
       street_food_business_access: row.street_food_business_access,
     })
 
-    const coverageSnapshot =
-      withContractCoverage
-        ? buildContractCoverageSnapshot(
-            row,
-            fullMaterialized,
-            scalars,
-            friction.appointment_difficulty,
-            appliedAt,
-          )
-        : null
+    const report = buildCompletenessReportForCountryRow(
+      row,
+      fullMaterialized,
+      scalars,
+      friction.appointment_difficulty,
+    )
+    const coverageSnapshot = withContractCoverage
+      ? buildContractCoverageSnapshotFromReport(report, appliedAt)
+      : null
 
     let full = fullMaterialized
     if (apply) {
-      full = attachBackfillMeta(fullMaterialized, appliedAt, {
+      const withProv = mergeAgentProvenanceIntoFullData(fullMaterialized, report, appliedAt)
+      full = attachBackfillMeta(withProv, appliedAt, {
         hydrateStatic: hydrateStatic && staticFull != null,
         contractCoverage: coverageSnapshot ?? undefined,
       })

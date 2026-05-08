@@ -3,7 +3,9 @@
  * Normalizes `full_data` (driving_rights v1, friction, street_food top-level) for structure/quality.
  */
 
-import { buildContractCoverageSnapshot, DATA_BACKFILL_META_KEY } from '@/lib/contract-coverage-snapshot'
+import { buildContractCoverageSnapshotFromReport, DATA_BACKFILL_META_KEY } from '@/lib/contract-coverage-snapshot'
+import { buildCompletenessReportForCountryRow } from '@/lib/country-completeness-row'
+import { mergeAgentProvenanceIntoFullData } from '@/lib/agent-provenance-full-data'
 import { enrichCountryRecordWithDrivingRights } from '@/lib/driving-rights-intel'
 import { attachCanonicalSchengenFlag, materializePublicFullData } from '@/lib/country-full-data-materialize'
 import {
@@ -93,15 +95,16 @@ export function buildCountryPrismaPayloadFromStaticRecord(c: Record<string, unkn
   const region = String(c.region ?? 'Other')
   const appliedAt = new Date().toISOString()
   const scalars = prismaVisaScalarsFromFullData(full, {})
-  const contractCoverage = buildContractCoverageSnapshot(
+  const report = buildCompletenessReportForCountryRow(
     { name, region },
     full,
     scalars,
     friction.appointment_difficulty,
-    appliedAt,
   )
+  const contractCoverage = buildContractCoverageSnapshotFromReport(report, appliedAt)
+  const withAgent = mergeAgentProvenanceIntoFullData(full, report, appliedAt)
   const fullWithMeta: Record<string, unknown> = {
-    ...full,
+    ...withAgent,
     [DATA_BACKFILL_META_KEY]: {
       version: 1,
       lastAppliedAt: appliedAt,

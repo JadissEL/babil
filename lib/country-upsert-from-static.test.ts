@@ -28,6 +28,11 @@ describe('buildCountryPrismaPayloadFromStaticRecord', () => {
     assert.equal(payload.name, 'Testland')
     const full = parseCountryFullData(payload.full_data)
     assert.equal(full.schengen_flag, false)
+    const agent = full._agent as Record<string, unknown> | undefined
+    assert.ok(agent && typeof agent === 'object')
+    const comp = agent.completeness as Record<string, unknown> | undefined
+    assert.ok(comp && typeof comp.score === 'number')
+    assert.ok(agent.coverageManifest && typeof agent.coverageManifest === 'object')
     const dr = full.driving_rights as Record<string, unknown> | undefined
     assert.ok(dr && typeof dr === 'object')
     assert.equal((dr.meta as Record<string, unknown>).schemaVersion, 1)
