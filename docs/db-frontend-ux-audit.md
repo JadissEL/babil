@@ -237,7 +237,7 @@ Admin
 
 ## 13. Plan d’amélioration UX basé sur les données **déjà** stockées (priorisé)
 
-1. **Historique de navigation** : exploiter `UserHistoryEvent` pour un carrousel « Reprendre » (sans nouveau stockage).
+1. **Historique de navigation** : exploiter `UserHistoryEvent` pour un carrousel « Reprendre » (sans nouveau stockage). — **Fait** : section « Reprendre vos recherches » sur le tableau de bord (`/overview`), à partir des événements `VIEW_COUNTRY`.
 2. **Transparence scores** : afficher 2–3 facteurs issus de `full_data` déjà lus par proba/reco (acceptation, friction, doctorat).
 3. **Profil** : utiliser `age` / `goal_type` dans les textes explicatifs du score (même si la pondération reste simple au début).
 4. **CountryInsight** : décision produit unique — soit intégration UI, soit migration vers observations versionnées ; pas suppression silencieuse.

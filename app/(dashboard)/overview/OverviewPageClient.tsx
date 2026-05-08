@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 
 import { MyDelegatedRequests } from '@/components/services/MyDelegatedRequests'
+import { RecentlyViewedCountries } from '@/components/user/RecentlyViewedCountries'
 
 export default function OverviewPageClient() {
   const { user } = useUser()
@@ -122,6 +123,8 @@ export default function OverviewPageClient() {
       <div className="mb-12">
         <MyDelegatedRequests />
       </div>
+
+      <RecentlyViewedCountries />
 
       <div className="mb-10 grid grid-cols-1 gap-4 sm:mb-12 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, i) => (
