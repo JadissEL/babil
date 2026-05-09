@@ -99,7 +99,7 @@ export default function RecommendationEnginePage() {
       const res = await fetch('/api/recommendation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile }),
+        body: JSON.stringify({ profile, playground: true }),
       })
       const data = await res.json()
       if (!res.ok) {

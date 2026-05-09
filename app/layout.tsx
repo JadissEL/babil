@@ -53,6 +53,12 @@ export default function RootLayout({
                     Moteur visa
                   </Link>
                   <Link
+                    href="/recommendation-engine"
+                    className="text-sm font-semibold text-muted transition-colors hover:text-primary"
+                  >
+                    Labo reco
+                  </Link>
+                  <Link
                     href="/services/delegated-applications"
                     className="text-sm font-semibold text-muted transition-colors hover:text-primary"
                   >

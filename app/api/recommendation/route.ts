@@ -9,9 +9,11 @@ import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
 import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
 import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
+import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
 import { buildCountrySheetSignals } from '@/lib/probability-result-display'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
+import { sanitizePublicSyntheticProfile } from '@/lib/public-synthetic-profile'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
 
@@ -267,11 +269,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const profile = !userId
-    ? { ...PUBLIC_READ_ONLY_DEMO_PROFILE }
-    : body.profile && typeof body.profile === 'object' && body.profile !== null
-      ? body.profile
-      : {};
+  const playground = body.playground === true
+  let profile: Record<string, unknown>
+  if (userId) {
+    profile =
+      body.profile && typeof body.profile === 'object' && body.profile !== null
+        ? (body.profile as Record<string, unknown>)
+        : {}
+  } else if (playground && body.profile && typeof body.profile === 'object' && body.profile !== null) {
+    profile = sanitizePublicSyntheticProfile(body.profile as Record<string, unknown>)
+  } else {
+    profile = { ...PUBLIC_READ_ONLY_DEMO_PROFILE }
+  }
 
   try {
     const normalizedProfile = normalizeProfile(profile);
@@ -313,8 +322,13 @@ export async function POST(req: Request) {
     const rest = recommendations.slice(1)
     const merged = top ? [top, ...rest] : recommendations
 
-    return NextResponse.json(merged.slice(0, 10));
+    return NextResponse.json(merged.slice(0, 10), {
+      headers: engineVersionHeaders('recommendation'),
+    })
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message, engineVersion: BABIL_ENGINE_VERSION },
+      { status: 500, headers: engineVersionHeaders('recommendation') },
+    )
   }
 }

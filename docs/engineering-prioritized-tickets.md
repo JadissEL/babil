@@ -10,7 +10,15 @@ Ces cinq chantiers sont **en cours de livraison** dans le dépôt (voir impléme
 | **T2** | Ops données | Politique de rétention `CountryObservation` + script de purge paramétrable (`--dry-run`, `--older-than-days`) | Implémenté |
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
-| **T5** | Doc moteur | Documenter formules probabilité vs recommandation + `engineVersion` API — **backlog** (non inclus dans ce lot) | À planifier |
+| **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
+
+### Lot données / transparence catalogue B (items 23–25)
+
+| ID catalogue | Livrable | Fichiers / notes |
+|--------------|----------|------------------|
+| B.23 | Doc technique unique (poids, inputs) | [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md) |
+| B.24 | `engineVersion` exposée | `lib/engine-version.ts` ; en-têtes sur `POST /api/recommendation` et `POST /api/probability` |
+| B.25 | Calibration / stabilité | Tests [`lib/public-synthetic-profile.test.ts`](../lib/public-synthetic-profile.test.ts) ; checklist manuelle dans la doc moteur |
 
 ### Lot UX catalogue A (items 16–22)
 
@@ -21,11 +29,12 @@ Ces cinq chantiers sont **en cours de livraison** dans le dépôt (voir impléme
 | A.18 | CTA PhD visible quand données PhD | Bandeau + lien `/countries/[id]/doctorat` sur la même fiche pays |
 | A.19 | Feedback utile / pas utile | `components/feedback/BlockFeedback.tsx`, événement `CONTENT_FEEDBACK` sur `POST /api/user/history` |
 | A.20 | Personas profil (démo) | Presets sur [`app/(dashboard)/profile/page.tsx`](../app/(dashboard)/profile/page.tsx) |
-| A.21 | Lecture sans compte (reco / proba) | Pages publiques [`app/(public)/recommendations`](../app/(public)/recommendations/page.tsx), [`app/(public)/probability`](../app/(public)/probability/page.tsx) ; profil démo [`lib/public-read-only-demo-profile.ts`](../lib/public-read-only-demo-profile.ts) ; API sans `userId` |
+| A.21 | Lecture sans compte (reco / proba / labo) | [`/recommendations`](../app/(public)/recommendations/page.tsx), [`/probability`](../app/(public)/probability/page.tsx), [`/recommendation-engine`](../app/(public)/recommendation-engine/page.tsx) ; démo serveur + bac à sable `playground` + [`sanitizePublicSyntheticProfile`](../lib/public-synthetic-profile.ts) |
 | A.22 | Page design system interne | [`app/(dashboard)/design-system/page.tsx`](../app/(dashboard)/design-system/page.tsx) (protégée par middleware + layout dashboard) ; section composants produit |
 
 ## Références
 
+- Moteurs (formules + version) : [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md)
 - Spécification liste légère : [app/api/countries/route.ts](../app/api/countries/route.ts) (`?light=1`)
 - Rétention : [country-observation-retention.md](country-observation-retention.md)
 - CI : [ci.yml](../.github/workflows/ci.yml)

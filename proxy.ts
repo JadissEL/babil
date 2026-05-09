@@ -7,8 +7,7 @@ const isProtectedRoute = createRouteMatcher([
   '/profile(.*)',
   '/design-system(.*)',
   '/moderation(.*)',
-  /** /probability et /recommendations : lecture découverte (profil démo serveur) pour visiteurs */
-  '/recommendation-engine(.*)',
+  /** /probability, /recommendations, /recommendation-engine : publics (voir proxy + doc moteurs) */
   '/admin(.*)',
   '/api/admin(.*)',
   '/api/comments(.*)',

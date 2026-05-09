@@ -8,6 +8,7 @@ import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
 import { buildCountrySheetSignals } from '@/lib/probability-result-display'
+import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 
 export async function POST(req: Request) {
@@ -190,8 +191,11 @@ export async function POST(req: Request) {
       };
     }).sort((a: any, b: any) => b.globalScore - a.globalScore);
 
-    return NextResponse.json(results);
+    return NextResponse.json(results, { headers: engineVersionHeaders('probability') });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message, engineVersion: BABIL_ENGINE_VERSION },
+      { status: 500, headers: engineVersionHeaders('probability') },
+    );
   }
 }
