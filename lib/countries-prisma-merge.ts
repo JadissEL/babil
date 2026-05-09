@@ -3,7 +3,7 @@
  * with static `data/countries.json` as a coverage fallback when a DB row has no counterpart.
  *
  * **Consistency rule for public HTTP responses:** never return raw `parseCountryFullData(prismaRow)`
- * alone. Prefer `buildMergedCountriesList()`, `augmentCountryDetailPayload()`, or
+ * alone. Prefer `buildMergedCountriesList()` / `getMergedCountriesListCached()`, `augmentCountryDetailPayload()`, or
  * `augmentPrismaCountriesForPublicPayload()` with `loadFallbackCountries()` so:
  * - Static JSON is matched by **country name** first (Prisma `id` often ≠ countries.json index).
  * - Null visa columns are backfilled from static.
@@ -11,6 +11,7 @@
  * Client-side reads should use `materializePublicFullDataForApi` from `@/lib/country-full-data-materialize`.
  */
 
+import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
 
 import prisma from '@/lib/prisma'
@@ -222,14 +223,28 @@ async function fetchMergedCountriesListUncached(): Promise<LegacyCountryRecord[]
   }
 }
 
+/** Invalidate via `revalidateTag` when merged list must drop `unstable_cache` immediately (e.g. admin country PATCH). */
+export const MERGED_COUNTRIES_LIST_CACHE_TAG = 'babil-merged-countries-list'
+
+const fetchMergedCountriesListCrossRequest = unstable_cache(
+  fetchMergedCountriesListUncached,
+  ['babil-merged-countries-list-v1'],
+  { revalidate: 120, tags: [MERGED_COUNTRIES_LIST_CACHE_TAG] },
+)
+
 /**
  * Prefer DB rows keyed by country name when both exist (runner / seeded data).
- * Use `getMergedCountriesListCached` in Server Components when the same render loads the list twice.
+ *
+ * **D.56 / D.57:** `cache()` dedupes parallel reads during one Server Component render / request;
+ * inner `unstable_cache` avoids re-running Prisma + merge for ~120s across Route Handlers and RSC (aligned with `GET /api/countries` edge TTL).
+ */
+export const getMergedCountriesListCached = cache(fetchMergedCountriesListCrossRequest)
+
+/**
+ * Same merged list as `getMergedCountriesListCached` — use this name when parity with older docs/routes is clearer.
  */
 export async function buildMergedCountriesList(): Promise<LegacyCountryRecord[]> {
-  return fetchMergedCountriesListUncached()
+  return getMergedCountriesListCached()
 }
-
-export const getMergedCountriesListCached = cache(fetchMergedCountriesListUncached)
 
 export { approvedComments as countryApprovedCommentsConfig }

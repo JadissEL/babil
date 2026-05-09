@@ -120,15 +120,15 @@ flowchart LR
 51. **Cron** : documenter secrets, environnements, et rollback si matérialisation partielle. *(Livré : [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).)*
 52. **Feature flag** pour activer/désactiver collecte par source en prod. *(Livré : `INTELLIGENCE_SOURCE_DISABLED_SLUGS` + [`source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts), appliqué au collecteur WB et aux stubs multilatéraux — voir doc cron.)*
 
-> **Livré (lot D.54–D.55) :** pagination curseur `id` sur [`GET /api/countries`](../app/api/countries/route.ts) ; en-têtes cache public + SWR via [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) (liste + fiche `[id]`).
+> **Livré (lot D.54–D.57) :** pagination curseur `id` sur [`GET /api/countries`](../app/api/countries/route.ts) ; en-têtes cache public + SWR via [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) (liste + fiche `[id]`) ; **D.56–D.57** — `unstable_cache` + `cache()` sur la liste fusionnée [`countries-prisma-merge.ts`](../lib/countries-prisma-merge.ts) + `revalidateTag` après PATCH admin pays.
 
 ### D — API, performances et cache (53–65)
 
 53. **`GET /api/countries?light=1`** : exclure ou tronquer `full_data` + commentaires pour listes. *(Livré.)*
 54. **Pagination / curseur** sur liste pays si le nombre de pays augmente fortement. *(Livré : `GET /api/countries?limit=1..200` + `cursor` = dernier `id` exclus ; enveloppe `{ items, nextCursor, hasMore }` ; sans `limit` le corps reste un tableau — voir JSDoc [`route.ts`](../app/api/countries/route.ts).)*
 55. **`Cache-Control`** / `stale-while-revalidate` sur réponses publiques sûres. *(Livré : [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) sur `GET /api/countries` et `GET /api/countries/[id]`.)*
-56. **React `cache()`** ou équivalent déjà partiellement utilisé — étendre aux lectures lourdes répétées.
-57. **Déduplication** des appels `buildMergedCountriesList` dans une même requête (si patterns N+1).
+56. **React `cache()`** ou équivalent déjà partiellement utilisé — étendre aux lectures lourdes répétées. *(Livré : `unstable_cache` (120s, tag `babil-merged-countries-list`) + `cache()` sur [`getMergedCountriesListCached`](../lib/countries-prisma-merge.ts) ; `buildMergedCountriesList` délègue à ce chemin.)*
+57. **Déduplication** des appels `buildMergedCountriesList` dans une même requête (si patterns N+1). *(Livré : même module — `cache()` pour un rendu / handler ; invalidation `revalidateTag` sur [`PATCH /api/admin/countries/[id]`](../app/api/admin/countries/[id]/route.ts).)*
 58. **Edge** : évaluer middleware géo ou redirections uniquement (pas de logique lourde).
 59. **Compression** Brotli côté plateforme (souvent auto) + vérifier taille JSON max.
 60. **Rate limiting** par `userId` sur POST reco/proba pour anti-abus.

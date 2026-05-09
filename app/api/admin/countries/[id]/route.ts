@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import type { Prisma } from '@prisma/client'
 
 import { getAdminUser } from '@/lib/admin-auth'
+import { MERGED_COUNTRIES_LIST_CACHE_TAG } from '@/lib/countries-prisma-merge'
 import prisma from '@/lib/prisma'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { materializePublicFullData } from '@/lib/country-full-data-materialize'
@@ -139,6 +141,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       where: { id },
       data,
     })
+    try {
+      revalidateTag(MERGED_COUNTRIES_LIST_CACHE_TAG)
+    } catch {
+      /* revalidateTag requires Next server context */
+    }
     return NextResponse.json(updated)
   } catch (error: unknown) {
     if (isDbUnavailable(error)) {
