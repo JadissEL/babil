@@ -69,7 +69,7 @@ export function PostSignupOnboarding() {
         {
           done: Boolean(store.explorerDone),
           title: 'Parcourir l’explorateur',
-          description: 'Carte des pays, filtres et fiches détaillées.',
+          description: 'Utilisez les filtres, la recherche ou ouvrez une fiche pays.',
           href: CTA_EXPLORE_HREF,
         },
       ] as const,

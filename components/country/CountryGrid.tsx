@@ -11,7 +11,13 @@ export type CountryGridItem = {
 /**
  * Lien vers `/countries/[id]` si `countryRouteId` est défini, sinon si `id` est numérique.
  */
-export default function CountryGrid({ countries }: { countries: CountryGridItem[] }) {
+export default function CountryGrid({
+  countries,
+  onCountryNavigate,
+}: {
+  countries: CountryGridItem[]
+  onCountryNavigate?: () => void
+}) {
   return (
     <div className="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
       {countries.map((country) => {
@@ -27,6 +33,7 @@ export default function CountryGrid({ countries }: { countries: CountryGridItem[
             key={id}
             {...rest}
             {...(routeTarget != null ? { countryId: routeTarget } : {})}
+            {...(onCountryNavigate ? { onNavigate: onCountryNavigate } : {})}
           />
         )
       })}

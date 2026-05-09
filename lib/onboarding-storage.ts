@@ -27,3 +27,8 @@ export function writeOnboarding(patch: Partial<OnboardingStorage>) {
     /* ignore quota */
   }
 }
+
+/** Explorer checklist: call after a deliberate action, not a passive page view. */
+export function markExplorerOnboardingEngaged() {
+  writeOnboarding({ explorerDone: true })
+}

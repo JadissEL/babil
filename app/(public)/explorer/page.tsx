@@ -23,7 +23,7 @@ import {
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
 import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-objective'
-import { writeOnboarding } from '@/lib/onboarding-storage'
+import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -75,10 +75,6 @@ function ExplorerPageInner() {
   const [schengenOnly, setSchengenOnly] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    writeOnboarding({ explorerDone: true })
-  }, [])
-
   const commitExplorerUrl = useCallback(
     (patch: UrlCommitSlice = {}) => {
       const s = patch.search ?? search
@@ -100,6 +96,7 @@ function ExplorerPageInner() {
       const qs = params.toString()
       const basePath = pathname ?? '/explorer'
       router.replace(qs ? `${basePath}?${qs}` : basePath, { scroll: false })
+      markExplorerOnboardingEngaged()
     },
     [search, region, difficulty, goal, budget, schengenOnly, mode, pathname, router],
   )
@@ -340,7 +337,7 @@ function ExplorerPageInner() {
         </div>
       ) : (
         <div className="space-y-12">
-          <CountryGrid countries={gridCountries} />
+          <CountryGrid countries={gridCountries} onCountryNavigate={markExplorerOnboardingEngaged} />
 
           <div className="flex justify-center py-8">
             <GoogleAd slot="explorer_bottom" />

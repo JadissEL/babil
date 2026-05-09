@@ -26,6 +26,8 @@ export type CountryCardProps = {
   business: MobilityTier
   highlightPlace?: string
   highlightImageUrl?: string
+  /** Fired when the user follows the link to `/countries/[id]` (analytics / onboarding). */
+  onNavigate?: () => void
   onClick?: () => void
 }
 
@@ -157,6 +159,7 @@ export function CountryCard({
       <Link
         href={`/countries/${countryId}`}
         className="flex h-full min-h-0 min-w-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60"
+        onClick={onNavigate}
       >
         {card}
       </Link>
