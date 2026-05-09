@@ -7,7 +7,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | ID | Thème | Ticket | Statut |
 |----|--------|--------|--------|
 | **T1** | Perf API | `GET /api/countries?light=1` — payload liste sans `full_data` ni `commentaires` (opt-in ; défaut inchangé) | Implémenté |
-| **T2** | Ops données | `CountryObservation` : purge, workflow dry-run mensuel (C.39), compaction (C.40), **dashboard volumes admin (C.41)** — [country-observation-retention.md](country-observation-retention.md), onglet Intelligence sur [`admin/page.tsx`](../app/(dashboard)/admin/page.tsx) | Implémenté |
+| **T2** | Ops données | `CountryObservation` + `EnrichmentRun` : purge / compaction (C.39–C.40), dashboard admin (C.41), **alertes runs (C.42)** — [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [`admin/page.tsx`](../app/(dashboard)/admin/page.tsx) | Implémenté |
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
@@ -34,12 +34,14 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | B.37 | Export données RGPD (pack JSON) | [`lib/user-gdpr-export.ts`](../lib/user-gdpr-export.ts) ; [`GET /api/user/data-export`](../app/api/user/data-export/route.ts) (`?inline=1` optionnel) ; profil [`profile/page.tsx`](../app/(dashboard)/profile/page.tsx) |
 | B.38 | Stratégie i18n chaînes métier | [`docs/business-strings-i18n.md`](business-strings-i18n.md) ; [`lib/i18n/`](../lib/i18n/) ; pilote catalogues dans [`lib/score-driver-explain.ts`](../lib/score-driver-explain.ts) (`formatScoreDrivers`, locale `fr` \| `en`) |
 
-### Lot pipeline observations catalogue C (items 39–40)
+### Lot pipeline observations catalogue C (items 39–42)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
 | C.39 | Rétention `CountryObservation` | [`docs/country-observation-retention.md`](country-observation-retention.md) ; [`scripts/prune-country-observations.ts`](../scripts/prune-country-observations.ts) ; workflow dry-run [`.github/workflows/country-observation-maintenance.yml`](../.github/workflows/country-observation-maintenance.yml) |
+| C.40 | Compaction dernière observation par triple | [`scripts/compact-country-observations.ts`](../scripts/compact-country-observations.ts) ; `npm run db:compact-observations(:dry)` |
 | C.41 | Dashboard admin volumes pipeline | [`GET /api/admin/intelligence/summary`](../app/api/admin/intelligence/summary/route.ts) ; onglet Intelligence [`admin/page.tsx`](../app/(dashboard)/admin/page.tsx) |
+| C.42 | Alertes `EnrichmentRun` (stuck / FAILED / PARTIAL) | [`lib/enrichment-run-alerts.ts`](../lib/enrichment-run-alerts.ts) ; `runAlerts` sur summary ; [`scripts/check-enrichment-run-alerts.ts`](../scripts/check-enrichment-run-alerts.ts) ; [`.github/workflows/enrichment-run-alerts.yml`](../.github/workflows/enrichment-run-alerts.yml) ; [enrichment-run-alerts.md](enrichment-run-alerts.md) |
 
 ### Lot UX catalogue A (items 16–22)
 
@@ -57,5 +59,5 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 
 - Moteurs (formules + version + échelles B.27 + i18n pilote B.38) : [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), [lib/score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [business-strings-i18n.md](business-strings-i18n.md)
 - Spécification liste légère : [app/api/countries/route.ts](../app/api/countries/route.ts) (`?light=1`)
-- Rétention + compaction observations : [country-observation-retention.md](country-observation-retention.md)
+- Rétention + compaction + alertes EnrichmentRun : [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md)
 - CI : [ci.yml](../.github/workflows/ci.yml)

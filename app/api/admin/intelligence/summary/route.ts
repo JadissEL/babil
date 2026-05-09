@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server'
 
 import { getAdminUser } from '@/lib/admin-auth'
+import {
+  computeEnrichmentRunAlertLevel,
+  FAILED_ENRICHMENT_LOOKBACK_MS,
+  STALE_ENRICHMENT_RUN_MS,
+} from '@/lib/enrichment-run-alerts'
 import prisma from '@/lib/prisma'
 
 function parseStatsJson(raw: string | null | undefined): unknown {
@@ -12,14 +17,19 @@ function parseStatsJson(raw: string | null | undefined): unknown {
   }
 }
 
-/** Résumé admin (C.41) : volumes par source, pays, run + fieldPath. */
+/** Résumé admin (C.41 + C.42) : volumes + alertes runs (bloqués / échecs). */
 export async function GET() {
   const admin = await getAdminUser()
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   try {
+    const staleCutoff = new Date(Date.now() - STALE_ENRICHMENT_RUN_MS)
+    const failedLookbackStart = new Date(Date.now() - FAILED_ENRICHMENT_LOOKBACK_MS)
+
     const [
       lastRun,
+      staleRuns,
+      recentFailedOrPartialRuns,
       sourceCount,
       observationCount,
       observationsWithoutRun,
@@ -29,6 +39,32 @@ export async function GET() {
       recentRuns,
     ] = await Promise.all([
       prisma.enrichmentRun.findFirst({ orderBy: { startedAt: 'desc' } }),
+      prisma.enrichmentRun.findMany({
+        where: {
+          finishedAt: null,
+          status: { in: ['PENDING', 'RUNNING'] },
+          startedAt: { lt: staleCutoff },
+        },
+        orderBy: { startedAt: 'asc' },
+        take: 20,
+        select: { id: true, startedAt: true, status: true, trigger: true, errorSummary: true },
+      }),
+      prisma.enrichmentRun.findMany({
+        where: {
+          status: { in: ['FAILED', 'PARTIAL'] },
+          startedAt: { gte: failedLookbackStart },
+        },
+        orderBy: { startedAt: 'desc' },
+        take: 15,
+        select: {
+          id: true,
+          startedAt: true,
+          finishedAt: true,
+          status: true,
+          trigger: true,
+          errorSummary: true,
+        },
+      }),
       prisma.intelligenceSource.count(),
       prisma.countryObservation.count(),
       prisma.countryObservation.count({ where: { runId: null } }),
@@ -121,6 +157,31 @@ export async function GET() {
       stats: parseStatsJson(run.statsJson),
     }))
 
+    const runAlerts = {
+      level: computeEnrichmentRunAlertLevel({
+        staleRunCount: staleRuns.length,
+        recentFailedOrPartialCount: recentFailedOrPartialRuns.length,
+        lastRunStatus: lastRun?.status ?? null,
+      }),
+      staleThresholdHours: STALE_ENRICHMENT_RUN_MS / 3_600_000,
+      failedLookbackDays: FAILED_ENRICHMENT_LOOKBACK_MS / 86_400_000,
+      staleRuns: staleRuns.map((r) => ({
+        id: r.id,
+        startedAt: r.startedAt.toISOString(),
+        status: r.status,
+        trigger: r.trigger,
+        errorSummary: r.errorSummary,
+      })),
+      recentFailedOrPartial: recentFailedOrPartialRuns.map((r) => ({
+        id: r.id,
+        startedAt: r.startedAt.toISOString(),
+        finishedAt: r.finishedAt ? r.finishedAt.toISOString() : null,
+        status: r.status,
+        trigger: r.trigger,
+        errorSummary: r.errorSummary,
+      })),
+    }
+
     return NextResponse.json({
       lastRun: lastRunParsed,
       sourceCount,
@@ -130,6 +191,7 @@ export async function GET() {
       observationsBySource,
       observationsByCountry,
       recentRuns: runsWithStats,
+      runAlerts,
     })
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)

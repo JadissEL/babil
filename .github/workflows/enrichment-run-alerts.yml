@@ -1,0 +1,22 @@
+# Alertes pipeline EnrichmentRun (C.42) — quotidien + manuel. Échoue si critical (runs bloqués > 2 h sans finishedAt).
+name: Enrichment run alerts
+
+on:
+  schedule:
+    - cron: '15 7 * * *'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Check stale or failed enrichment runs
+        run: npm run intelligence:check-run-alerts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

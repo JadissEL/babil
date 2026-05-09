@@ -72,8 +72,8 @@ Le détail exact des clés doit **s’aligner** sur une **taxonomy versionnée**
 - **Jobs** : Vercel Cron → `GET /api/cron/intelligence-pipeline` (variable d’environnement **`CRON_SECRET`**, en-tête `Authorization: Bearer …`) ; fichier `vercel.json` (dimanche 04:00 UTC). Pour les gros volumes ou si la fonction dépasse le délai max, utiliser le workflow GitHub **Intelligence pipeline (weekly)** (`.github/workflows/intelligence-pipeline-weekly.yml`) avec le secret `DATABASE_URL`, ou un worker Render exécutant `npm run intelligence:world-bank:materialize`. Query `?mode=materialize` : matérialisation seule (sans nouvelle collecte WB).
 - **Cache** : cache HTTP/API pour lectures publiques ; invalidation après run réussi de matérialisation.
 - **Retry** : au niveau connecteur (backoff, idempotence par `runId` + clé naturelle observation).
-- **Monitoring** : statut `EnrichmentRun`, logs applicatifs, alerte si `PARTIAL` / `FAILED`.
-- **Admin** : `GET /api/admin/intelligence/summary` (auth admin Clerk) — dernier run, nombre de sources, nombre d’observations.
+- **Monitoring** : statut `EnrichmentRun`, logs applicatifs ; **alertes C.42** : runs bloqués (PENDING/RUNNING sans fin &gt; 2 h) = critique, FAILED/PARTIAL récents (14 j) ou dernier run dégradé = avertissement — voir [enrichment-run-alerts.md](enrichment-run-alerts.md), champ `runAlerts` sur l’API admin, script `npm run intelligence:check-run-alerts`.
+- **Admin** : `GET /api/admin/intelligence/summary` (auth admin Clerk) — dernier run, volumes par source / pays / run, **alertes runs**, nombre de sources, nombre d’observations.
 
 ### 2.6 IA & personnalisation (phase ultérieure, sur cette base)
 

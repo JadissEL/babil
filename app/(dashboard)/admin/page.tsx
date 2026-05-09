@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Activity,
+  AlertTriangle,
   BarChart3,
   CheckCircle,
   Database,
@@ -67,6 +68,26 @@ type IntelligenceSummary = {
     errorSummary: string | null
     stats: unknown
   } | null
+  runAlerts: {
+    level: 'ok' | 'warning' | 'critical'
+    staleThresholdHours: number
+    failedLookbackDays: number
+    staleRuns: Array<{
+      id: string
+      startedAt: string
+      status: string
+      trigger: string
+      errorSummary: string | null
+    }>
+    recentFailedOrPartial: Array<{
+      id: string
+      startedAt: string
+      finishedAt: string | null
+      status: string
+      trigger: string
+      errorSummary: string | null
+    }>
+  }
 }
 
 type AssistQueueRow = {
@@ -644,6 +665,74 @@ export default function AdminPage() {
               Rafraîchir
             </Button>
           </div>
+
+          {intelligence?.runAlerts && intelligence.runAlerts.level !== 'ok' ? (
+            <div
+              className={`flex gap-3 rounded-xl border p-4 ${
+                intelligence.runAlerts.level === 'critical'
+                  ? 'border-[#f3afaf] bg-[#fff0f0]'
+                  : 'border-amber-200 bg-[#fffbeb]'
+              }`}
+            >
+              <AlertTriangle
+                className={`mt-0.5 h-6 w-6 shrink-0 ${
+                  intelligence.runAlerts.level === 'critical' ? 'text-danger' : 'text-amber-700'
+                }`}
+              />
+              <div className="min-w-0 flex-1 space-y-3 text-sm">
+                <div>
+                  <p className="font-black text-text">
+                    {intelligence.runAlerts.level === 'critical'
+                      ? 'Alerte critique : runs sans fin (stuck)'
+                      : 'Avertissement : échecs ou runs partiels'}
+                  </p>
+                  <p className="mt-1 text-xs text-muted">
+                    Seuil blocage : &gt; {intelligence.runAlerts.staleThresholdHours} h sans{' '}
+                    <code className="rounded bg-black/5 px-1">finishedAt</code> en statut PENDING/RUNNING.
+                    Échecs listés sur les {intelligence.runAlerts.failedLookbackDays} derniers jours.
+                  </p>
+                </div>
+                {intelligence.runAlerts.staleRuns.length > 0 ? (
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-danger">
+                      Runs bloqués ({intelligence.runAlerts.staleRuns.length})
+                    </p>
+                    <ul className="mt-1 list-inside list-disc space-y-1 text-xs text-muted">
+                      {intelligence.runAlerts.staleRuns.map((r) => (
+                        <li key={r.id}>
+                          <span className="font-mono text-text">{r.id.slice(0, 8)}…</span> · {r.status} ·{' '}
+                          {r.trigger} · {new Date(r.startedAt).toLocaleString('fr-FR')}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {intelligence.runAlerts.recentFailedOrPartial.length > 0 ? (
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-amber-800">
+                      FAILED / PARTIAL ({intelligence.runAlerts.recentFailedOrPartial.length})
+                    </p>
+                    <ul className="mt-1 list-inside list-disc space-y-1 text-xs text-muted">
+                      {intelligence.runAlerts.recentFailedOrPartial.map((r) => (
+                        <li key={r.id}>
+                          <span className="font-black text-text">{r.status}</span> ·{' '}
+                          <span className="font-mono text-text">{r.id.slice(0, 8)}…</span> · {r.trigger} ·{' '}
+                          {new Date(r.startedAt).toLocaleString('fr-FR')}
+                          {r.errorSummary ? (
+                            <span className="mt-0.5 block text-danger line-clamp-2">{r.errorSummary}</span>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                <p className="text-[11px] text-muted">
+                  CI : <code className="rounded bg-black/5 px-1">npm run intelligence:check-run-alerts</code> (échoue si
+                  critique). Option <code className="rounded bg-black/5 px-1">--fail-on-warning</code>.
+                </p>
+              </div>
+            </div>
+          ) : null}
 
           {intelligenceLoading && !intelligence ? (
             <Card className="border-dashed border-line bg-surface">
