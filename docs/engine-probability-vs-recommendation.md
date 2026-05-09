@@ -76,7 +76,7 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 | **Objectif** | Classement « meilleur match » pour un objectif visa explicite | Vue « chances de succès » plus profil socio-économique |
 | **Visa** | Pilier central (40 %) | Intégré dans « contexte pays » (20 %) |
 | **Friction** | Pilier dédié (20 %) | Pilier RDV (10 %) |
-| **Sortie** | Top 10, breakdown radar 4 axes | Liste complète triée, breakdown détaillé par pays |
+| **Sortie** | Top 10, breakdown radar 4 axes, `topDrivers` (3) | Liste triée, breakdown détaillé, `topDrivers` (3), `defaultsUsed` si fiche incomplète |
 
 ---
 
@@ -85,6 +85,37 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 - Constante : `BABIL_ENGINE_VERSION` (`lib/engine-version.ts`).
 - Chaque réponse réussie ou erreur 500 inclut les en-têtes `X-Babil-Engine-Version` et `X-Babil-Engine-Kind` (`recommendation` | `probability`).
 - Les corps d’erreur 500 peuvent inclure `engineVersion` pour le debug client.
+
+---
+
+## Échelles & nommage (ticket B.27)
+
+- **Recommandation** : les quatre piliers du `breakdown` et le score final sont sur **0–100** (entiers arrondis côté API). Le champ historique `match_score` reste `finalScore / 10` (compatibilité).
+- **Probabilité** : `globalScore` et les sous-scores agrégés du `breakdown` sont en **0–100**. Le signal brut `brutal_reality_score` dans `full_data` est une **échelle 0–10** ; le moteur le convertit en contribution 0–100 via `100 - brutal×10`. L’UI rappelle « /10 » quand elle cite la valeur brute fiche, et « % » pour les barres de breakdown.
+- **Prisma** : les colonnes `tourist_visa_score`, `study_visa_score`, etc. sont stockées en **0–100** (aligné UI).
+
+---
+
+## Top facteurs « SHAP-like » simplifiés (ticket B.26)
+
+- **Idée** : par rapport à un profil de référence **neutre** (chaque pilier interne à **50** avant pondération), on calcule la contribution signée de chaque pilier au score final, puis on expose les **3 plus grandes** en valeur absolue.
+- **Recommandation** : implémentation [`computeRecommendationTopDrivers`](../lib/score-driver-explain.ts), champ JSON `topDrivers` sur chaque ligne renvoyée par `POST /api/recommendation` (mêmes pondérations que la formule finale).
+- **Probabilité** : [`computeProbabilityTopDrivers`](../lib/score-driver-explain.ts) sur les six facteurs qui entrent dans `globalScore` (finance, profession, social, contexte pays, RDV, risque immigration), champ `topDrivers` sur chaque pays.
+- **UI** : listes « Facteurs les plus influents (vs neutre) » sur `/recommendations`, `/recommendation-engine`, `/probability` (détail pays).
+
+---
+
+## Signaux fiche manquants (ticket B.30)
+
+- **Texte** : [`formatCountrySheetSignalsSummary`](../lib/probability-result-display.ts) et [`describeTopCountrySignals`](../lib/probability-result-display.ts) mentionnent explicitement **non renseigné** et le recours à une **valeur neutre (50)**.
+- **API probabilité** : `defaultsUsed` liste les clés (`acceptance_rate_morocco`, `friction_score`, `brutal_reality_score`) pour lesquelles la fiche était vide ; [`orderedProbabilityBreakdown`](../lib/probability-result-display.ts) peut suffixer les libellés concernés (`· fiche non renseignée → neutre`, etc.).
+
+---
+
+## Snapshot contract ↔ fiche pays (ticket B.29)
+
+- Liste de marqueurs attendus dans [`app/(public)/countries/[id]/page.tsx`](../app/(public)/countries/[id]/page.tsx) : [`COUNTRY_DETAIL_PAGE_CONTRACT_MARKERS`](../lib/country-intelligence-contract-display-snapshot.ts).  
+- Test : [`lib/country-intelligence-contract-display-snapshot.test.ts`](../lib/country-intelligence-contract-display-snapshot.test.ts) (échec si la fiche publique retire un signal majeur sans mettre à jour le snapshot).
 
 ---
 

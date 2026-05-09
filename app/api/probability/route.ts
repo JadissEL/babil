@@ -7,8 +7,9 @@ import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
-import { buildCountrySheetSignals } from '@/lib/probability-result-display'
+import { buildCountrySheetSignals, inferProbabilitySheetDefaultsFromFull } from '@/lib/probability-result-display'
 import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version'
+import { computeProbabilityTopDrivers } from '@/lib/score-driver-explain'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 
 export async function POST(req: Request) {
@@ -78,6 +79,7 @@ export async function POST(req: Request) {
     
     const results = countries.map((c: any) => {
       const full = materializePublicFullData(c.full_data ?? null);
+      const defaultsUsed = inferProbabilitySheetDefaultsFromFull(full as Record<string, unknown>)
       const phdStudiesData = hasCountryPhdStoredData(full);
       
       // 📊 FACTEURS DE CALCUL
@@ -169,6 +171,17 @@ export async function POST(req: Request) {
 
       appendProfileContextNarratives(p, { primary: reasons, secondary: strategy })
 
+      const breakdown = {
+        finance: Math.round(financialScore),
+        profession: Math.round(profScore),
+        social: Math.round(socialScore),
+        acceptance: Math.round(acceptanceScore),
+        visaEase: Math.round(visaEase100),
+        countryContext: Math.round(countryContextScore),
+        appointmentEase: Math.round(accessibilityScore),
+        riskImmigration: Math.round(riskScore),
+      }
+
       return {
         id: c.id,
         country: c.name,
@@ -178,16 +191,16 @@ export async function POST(req: Request) {
         countrySignals: buildCountrySheetSignals(full as Record<string, unknown>),
         reasons,
         strategy,
-        breakdown: {
-          finance: Math.round(financialScore),
-          profession: Math.round(profScore),
-          social: Math.round(socialScore),
-          acceptance: Math.round(acceptanceScore),
-          visaEase: Math.round(visaEase100),
-          countryContext: Math.round(countryContextScore),
-          appointmentEase: Math.round(accessibilityScore),
-          riskImmigration: Math.round(riskScore),
-        },
+        breakdown,
+        defaultsUsed,
+        topDrivers: computeProbabilityTopDrivers({
+          finance: breakdown.finance,
+          profession: breakdown.profession,
+          social: breakdown.social,
+          countryContext: breakdown.countryContext,
+          appointmentEase: breakdown.appointmentEase,
+          riskImmigration: breakdown.riskImmigration,
+        }),
       };
     }).sort((a: any, b: any) => b.globalScore - a.globalScore);
 

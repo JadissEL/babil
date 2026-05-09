@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select'
 import type { ApiRecommendation } from '@/lib/recommendation-ui'
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
+import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
 import { writeOnboarding } from '@/lib/onboarding-storage'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import { appToast } from '@/lib/toast-store'
@@ -301,6 +302,18 @@ export default function RecommendationsPage() {
                     Même décomposition que le moteur d&apos;analyse manuelle : visa, friction, objectif et risque
                     perçu.
                   </p>
+                  {chartReco.topDrivers && chartReco.topDrivers.length > 0 ? (
+                    <div className="rounded-lg border border-line bg-inset p-3">
+                      <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted">
+                        Facteurs les plus influents (vs neutre)
+                      </p>
+                      <ul className="list-disc space-y-1.5 pl-4 text-xs font-medium text-muted">
+                        {formatScoreDriversFrench(chartReco.topDrivers).map((line, i) => (
+                          <li key={`${chartReco.id}-driver-${i}`}>{line}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
                 </CardContent>
               </Card>
             </div>

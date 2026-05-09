@@ -21,6 +21,7 @@ import {
 import { formatGoalTypeLabelFr } from '@/lib/probability-profile-narrative'
 import type { ApiRecommendation } from '@/lib/recommendation-ui'
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
+import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
 
 const GOALS = ['TOURISM', 'STUDY', 'WORK', 'BUSINESS', 'SHORT_COURSE'] as const
 
@@ -340,6 +341,18 @@ export default function RecommendationEnginePage() {
                   <p className="text-xs text-slate-500">
                     Les pondérations finales combinent ces axes avec votre profil (revenu, épargne, objectif).
                   </p>
+                  {chartReco.topDrivers && chartReco.topDrivers.length > 0 ? (
+                    <div className="rounded-lg border border-white/10 bg-slate-900/50 p-3">
+                      <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                        Facteurs les plus influents (vs neutre)
+                      </p>
+                      <ul className="list-disc space-y-1.5 pl-4 text-xs text-slate-400">
+                        {formatScoreDriversFrench(chartReco.topDrivers).map((line, i) => (
+                          <li key={`${chartReco.id}-driver-${i}`}>{line}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
                 </CardContent>
               </Card>
             </div>

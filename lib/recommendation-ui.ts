@@ -4,6 +4,8 @@ import type { ProbabilityCountrySignals } from '@/lib/probability-result-display
 import { formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
 import { englishScoreLevelToFr } from '@/lib/score-level-fr'
 
+import type { ScoreDriver } from '@/lib/score-driver-explain'
+
 /** Shape returned by `POST /api/recommendation` */
 export type ApiRecommendation = {
   id: number | string
@@ -21,6 +23,8 @@ export type ApiRecommendation = {
     goalMatch: number
     risk: number
   }
+  /** B.26 — top contributions vs baseline neutre (50 sur chaque pilier). */
+  topDrivers?: ScoreDriver[]
 }
 
 export function mapApiRecommendationToPanelRow(

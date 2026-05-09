@@ -10,9 +10,12 @@ import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkele
 import {
   describeTopCountrySignals,
   orderedProbabilityBreakdown,
+  PROBABILITY_DEFAULT_FIELD_LABELS_FR,
   type ProbabilityCountrySignals,
+  type ProbabilitySheetFieldDefault,
 } from '@/lib/probability-result-display'
 import { englishScoreLevelToFr } from '@/lib/score-level-fr'
+import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import { appToast } from '@/lib/toast-store'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
@@ -300,7 +303,10 @@ export default function ProbabilityPage() {
                   <div key={r.country} className="rounded-3xl border border-line bg-inset p-6">
                     <h3 className="text-2xl font-black mb-6">{r.country}</h3>
                     <div className="space-y-6">
-                      {orderedProbabilityBreakdown(r.breakdown as Record<string, unknown>).map(
+                      {orderedProbabilityBreakdown(
+                        r.breakdown as Record<string, unknown>,
+                        r.defaultsUsed as ProbabilitySheetFieldDefault[] | undefined,
+                      ).map(
                         ({ key, label, value }) => (
                           <div key={key}>
                             <div className="mb-2 flex justify-between text-xs font-bold uppercase tracking-widest text-muted">
@@ -398,6 +404,27 @@ export default function ProbabilityPage() {
                 {expanded === r.country && (
                   <div className="border-t border-line bg-inset px-4 pb-6 sm:px-6 md:px-8 md:pb-8">
                     <div className="mt-8 space-y-8">
+                      {Array.isArray(r.defaultsUsed) && r.defaultsUsed.length > 0 ? (
+                        <div className="rounded-2xl border border-amber-500/35 bg-amber-500/10 p-4 text-sm font-medium text-text">
+                          Données fiche incomplètes : le moteur utilise une valeur neutre (50) pour{' '}
+                          {(r.defaultsUsed as ProbabilitySheetFieldDefault[])
+                            .map((k) => PROBABILITY_DEFAULT_FIELD_LABELS_FR[k])
+                            .join(' ; ')}
+                          .
+                        </div>
+                      ) : null}
+                      {Array.isArray(r.topDrivers) && r.topDrivers.length > 0 ? (
+                        <div className="rounded-2xl border border-line bg-surface p-5">
+                          <h4 className="mb-3 text-xs font-black uppercase tracking-widest text-muted">
+                            Facteurs les plus influents (vs neutre)
+                          </h4>
+                          <ul className="list-disc space-y-2 pl-5 text-sm font-medium text-muted">
+                            {formatScoreDriversFrench(r.topDrivers).map((line, i) => (
+                              <li key={`${r.country}-td-${i}`}>{line}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : null}
                       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                         {/* Breakdown */}
                         <div className="space-y-4">
@@ -405,7 +432,10 @@ export default function ProbabilityPage() {
                             <TrendingUp className="h-4 w-4" /> Facteurs
                           </h4>
                           <div className="space-y-4 rounded-2xl border border-line bg-surface p-6">
-                            {orderedProbabilityBreakdown(r.breakdown as Record<string, unknown>).map(
+                            {orderedProbabilityBreakdown(
+                              r.breakdown as Record<string, unknown>,
+                              r.defaultsUsed as ProbabilitySheetFieldDefault[] | undefined,
+                            ).map(
                               ({ key, label, value }) => (
                                 <div key={key} className="space-y-2">
                                   <div className="flex justify-between text-xs font-bold text-muted">

@@ -2,7 +2,7 @@
 
 **Liste complète des 100 pistes (versionnée dans le repo) :** [enhancements-backlog-100.md](enhancements-backlog-100.md)
 
-Ces cinq chantiers sont **en cours de livraison** dans le dépôt (voir implémentations associées). Les autres items du catalogue restent dans le backlog produit/tech.
+Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentations associées). Les autres items du catalogue restent dans le backlog produit/tech.
 
 | ID | Thème | Ticket | Statut |
 |----|--------|--------|--------|
@@ -11,14 +11,20 @@ Ces cinq chantiers sont **en cours de livraison** dans le dépôt (voir impléme
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
+| **T6** | Transparence scoring | Top 3 facteurs (`topDrivers`), signaux fiche explicites (`defaultsUsed`, textes non renseigné) — [score-driver-explain.ts](../lib/score-driver-explain.ts), [probability-result-display.ts](../lib/probability-result-display.ts), snapshot contract/UI [country-intelligence-contract-display-snapshot.ts](../lib/country-intelligence-contract-display-snapshot.ts) | Implémenté |
 
-### Lot données / transparence catalogue B (items 23–25)
+### Lot données / transparence catalogue B (items 23–30 partiel)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
 | B.23 | Doc technique unique (poids, inputs) | [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md) |
 | B.24 | `engineVersion` exposée | `lib/engine-version.ts` ; en-têtes sur `POST /api/recommendation` et `POST /api/probability` |
 | B.25 | Calibration / stabilité | Tests [`lib/public-synthetic-profile.test.ts`](../lib/public-synthetic-profile.test.ts) ; checklist manuelle dans la doc moteur |
+| B.26 | Top 3 facteurs vs neutre | [`lib/score-driver-explain.ts`](../lib/score-driver-explain.ts) ; champ `topDrivers` reco + proba |
+| B.27 | Échelles 0–100 vs 0–10 | Doc moteur (section dédiée) |
+| B.28 | Journal `full_data` | Backlog (non livré ici) |
+| B.29 | Snapshot contract ↔ fiche pays | [`lib/country-intelligence-contract-display-snapshot.ts`](../lib/country-intelligence-contract-display-snapshot.ts) + test |
+| B.30 | Signaux manquants explicites | [`lib/probability-result-display.ts`](../lib/probability-result-display.ts) ; `defaultsUsed` sur `POST /api/probability` |
 
 ### Lot UX catalogue A (items 16–22)
 

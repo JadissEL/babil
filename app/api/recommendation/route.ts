@@ -10,6 +10,7 @@ import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
 import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version'
+import { computeRecommendationTopDrivers } from '@/lib/score-driver-explain'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
 import { buildCountrySheetSignals } from '@/lib/probability-result-display'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
@@ -235,16 +236,19 @@ function computeRecommendation(country: any, profile: NormalizedProfile) {
   if (goalMatchScore >= 70) explanations.push('Objectif utilisateur bien aligné avec le pays.');
   if (riskScore >= 65) warnings.push('Risque de refus au-dessus de la moyenne.');
 
+  const breakdown = {
+    visa: Math.round(visaScore),
+    friction: Math.round(frictionScore),
+    goalMatch: Math.round(goalMatchScore),
+    risk: Math.round(riskScore),
+  }
+
   return {
     id: country.id,
     name: country.name,
     score: Math.round(finalScore),
-    breakdown: {
-      visa: Math.round(visaScore),
-      friction: Math.round(frictionScore),
-      goalMatch: Math.round(goalMatchScore),
-      risk: Math.round(riskScore),
-    },
+    breakdown,
+    topDrivers: computeRecommendationTopDrivers(breakdown),
     countrySignals: s.countrySignals,
     hasPhdStudies: s.education.phdStudiesStructured,
     explanation: explanations.slice(0, 4),
