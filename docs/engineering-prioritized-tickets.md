@@ -1,5 +1,7 @@
 # Tickets priorisés (extrait du catalogue « 100 améliorations »)
 
+**Liste complète des 100 pistes (versionnée dans le repo) :** [enhancements-backlog-100.md](enhancements-backlog-100.md)
+
 Ces cinq chantiers sont **en cours de livraison** dans le dépôt (voir implémentations associées). Les autres items du catalogue restent dans le backlog produit/tech.
 
 | ID | Thème | Ticket | Statut |
