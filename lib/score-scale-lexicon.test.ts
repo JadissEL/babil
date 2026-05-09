@@ -12,5 +12,6 @@ describe('score-scale-lexicon', () => {
   it('legend strings are non-empty', () => {
     assert.ok(SCORE_SCALE_LEGEND_FR.visaBarsSubtitle.length > 20)
     assert.ok(SCORE_SCALE_LEGEND_FR.prismaVisaColumns.includes('1–10'))
+    assert.ok(SCORE_SCALE_LEGEND_FR.pipelineObservationConfidence.includes('0–1'))
   })
 })

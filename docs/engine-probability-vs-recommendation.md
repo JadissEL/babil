@@ -113,6 +113,14 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 
 ---
 
+## Agrégat confiance observations (ticket B.31)
+
+- **Stockage** : chaque ligne `CountryObservation` porte un `confidence` **0–1** (défaut 0,7 en Prisma).
+- **API fiche pays** : `GET /api/countries/[id]` ajoute `observationConfidenceAggregate` lorsqu’il existe au moins une observation — moyenne, min, max, `count` et `meanPercent` (0–100 arrondi). Voir [`getObservationConfidenceAggregateForCountry`](../lib/country-observation-confidence-db.ts).
+- **UI** : la tuile « Confiance » garde `full_data.confidence_score` (0–100) ; une ligne **pipeline** sous la tuile résume l’agrégat quand il est disponible (distinct de la confiance fiche). Lexique : [`SCORE_SCALE_LEGEND_FR.pipelineObservationConfidence`](../lib/score-scale-lexicon.ts).
+
+---
+
 ## Journal `full_data` (ticket B.28)
 
 - Clé JSON **`_data_changelog`** : liste chronologique inversée (plus récent en tête), entrées `{ at, actor, action, detail?, subjectId? }` avec `actor` ∈ `admin` | `agent` | `pipeline` | `system`.

@@ -7,6 +7,7 @@
  * | `full_data.friction_score` | **0–100** | Plus bas = parcours plus fluide. |
  * | `full_data.brutal_reality_score` | **0–10** | Converti en contribution 0–100 dans le moteur proba (`×10` sur risque). |
  * | Moteurs reco / proba / enrich UI | **0–100** | Scores affichés, breakdown, barres. |
+ * | `CountryObservation.confidence` | **0–1** | Stockage Prisma ; agrégat pays affiché en % (B.31) sur la fiche. |
  * | `UserProfile` / profil formulaire | Hors scope | Revenus / épargne en unités métier, pas des « scores ». |
  */
 
@@ -32,4 +33,7 @@ export const SCORE_SCALE_LEGEND_FR = {
   /** Rappel stockage Prisma (admin / doc) */
   prismaVisaColumns:
     'En base, les colonnes visa (`tourist_visa_score`, etc.) sont des snapshots 1–10 ; l’app les projette en 0–100 pour l’affichage et les moteurs.',
+  /** Tooltip agrégat confiance observations (complément du score confiance `full_data`) */
+  pipelineObservationConfidence:
+    'Moyenne des champs `CountryObservation.confidence` en base (échelle 0–1) ; affichage en pourcentage. Distinct de la « confiance données » de la fiche (0–100).',
 } as const

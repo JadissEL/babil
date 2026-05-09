@@ -38,6 +38,11 @@ import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
+import {
+  formatObservationConfidencePrintFr,
+  formatObservationConfidenceSidebarFr,
+  parseObservationConfidenceAggregatePayload,
+} from '@/lib/country-observation-confidence-aggregate'
 import { SCORE_SCALE_LEGEND_FR } from '@/lib/score-scale-lexicon'
 import { appToast } from '@/lib/toast-store'
 import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
@@ -296,6 +301,9 @@ export default function CountryDetailPage() {
   const economyIntelFresh = isEconomyIntelFresh(intelLatest)
   const officialLinks = officialSourcesForCountry(country.name, String(country.region ?? ''))
   const countryPageId = String(Array.isArray(id) ? id[0] ?? '' : id ?? '')
+  const observationConfidenceAggregate = parseObservationConfidenceAggregatePayload(
+    country.observationConfidenceAggregate,
+  )
 
   return (
     <>
@@ -434,6 +442,14 @@ export default function CountryDetailPage() {
                 <div className="rounded-2xl border border-line bg-inset p-4 text-center">
                   <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Confiance</div>
                   <div className="text-2xl font-black text-text">{fmtConfidencePct(full.confidence_score)}</div>
+                  {observationConfidenceAggregate ? (
+                    <p
+                      className="mt-2 text-[9px] font-bold leading-snug text-muted"
+                      title={SCORE_SCALE_LEGEND_FR.pipelineObservationConfidence}
+                    >
+                      {formatObservationConfidenceSidebarFr(observationConfidenceAggregate)}
+                    </p>
+                  ) : null}
                 </div>
               </div>
               <p className="mt-4 text-[10px] font-medium leading-relaxed text-muted">
@@ -781,7 +797,10 @@ export default function CountryDetailPage() {
             <li>Score réalité : {fmtBrutalReality(full.brutal_reality_score)}</li>
             <li>Acceptation (indicateur) : {fmtAcceptanceRate(full.acceptance_rate_morocco)}</li>
             <li>Friction RDV : {fmtFrictionBlock(full.friction_score)}</li>
-            <li>Confiance données : {fmtConfidencePct(full.confidence_score)}</li>
+            <li>Confiance données (fiche) : {fmtConfidencePct(full.confidence_score)}</li>
+            {observationConfidenceAggregate ? (
+              <li>{formatObservationConfidencePrintFr(observationConfidenceAggregate)}</li>
+            ) : null}
           </ul>
         </section>
 

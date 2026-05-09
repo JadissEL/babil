@@ -11,9 +11,9 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
-| **T6** | Transparence scoring | Top 3 facteurs (`topDrivers`), signaux fiche explicites, snapshot contract/UI, journal `_data_changelog`, **lexique échelles B.27** — [score-driver-explain.ts](../lib/score-driver-explain.ts), [probability-result-display.ts](../lib/probability-result-display.ts), [full-data-changelog.ts](../lib/full-data-changelog.ts), [score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [country-intelligence-contract-display-snapshot.ts](../lib/country-intelligence-contract-display-snapshot.ts) | Implémenté |
+| **T6** | Transparence scoring | Top 3 facteurs (`topDrivers`), signaux fiche explicites, snapshot contract/UI, journal `_data_changelog`, **lexique échelles B.27**, **agrégat confiance observations B.31** — [score-driver-explain.ts](../lib/score-driver-explain.ts), [probability-result-display.ts](../lib/probability-result-display.ts), [full-data-changelog.ts](../lib/full-data-changelog.ts), [score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [country-intelligence-contract-display-snapshot.ts](../lib/country-intelligence-contract-display-snapshot.ts), [country-observation-confidence-aggregate.ts](../lib/country-observation-confidence-aggregate.ts) | Implémenté |
 
-### Lot données / transparence catalogue B (items 23–30)
+### Lot données / transparence catalogue B (items 23–31)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
@@ -25,6 +25,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | B.28 | Journal écritures `full_data` | [`lib/full-data-changelog.ts`](../lib/full-data-changelog.ts) ; `materializePublicFullDataForApi` ; agent + admin + pipeline économie |
 | B.29 | Snapshot contract ↔ fiche pays | [`lib/country-intelligence-contract-display-snapshot.ts`](../lib/country-intelligence-contract-display-snapshot.ts) + test |
 | B.30 | Signaux manquants explicites | [`lib/probability-result-display.ts`](../lib/probability-result-display.ts) ; `defaultsUsed` sur `POST /api/probability` |
+| B.31 | Agrégat confiance observations par pays | [`lib/country-observation-confidence-aggregate.ts`](../lib/country-observation-confidence-aggregate.ts), [`lib/country-observation-confidence-db.ts`](../lib/country-observation-confidence-db.ts) ; `observationConfidenceAggregate` sur [`GET /api/countries/[id]`](../app/api/countries/[id]/route.ts) ; fiche pays + imprimable |
 
 ### Lot UX catalogue A (items 16–22)
 

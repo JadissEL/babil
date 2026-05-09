@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge'
+import { getObservationConfidenceAggregateForCountry } from '@/lib/country-observation-confidence-db'
 import { getIntelligenceProvenanceForCountry } from '@/lib/intelligence-pipeline/provenance'
 
 export async function GET(
@@ -44,6 +45,14 @@ export async function GET(
       const url = new URL(req.url)
       const intelligence = url.searchParams.get('intelligence') === '1'
       let payload: Record<string, unknown> = augmentCountryDetailPayload(country, fallback)
+      try {
+        const observationConfidenceAggregate = await getObservationConfidenceAggregateForCountry(country.id)
+        if (observationConfidenceAggregate) {
+          payload = { ...payload, observationConfidenceAggregate }
+        }
+      } catch {
+        /* DB indisponible ou requête refusée — ne pas bloquer la fiche pays. */
+      }
       if (intelligence) {
         try {
           const intelligence_provenance = await getIntelligenceProvenanceForCountry(country.id)
