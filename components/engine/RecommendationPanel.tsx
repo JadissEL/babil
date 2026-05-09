@@ -8,6 +8,9 @@ export type RecommendationResultRow = {
   rank?: number
   subtitle?: string
   warnings?: string[]
+  /** Signaux fiche pays (acceptation, friction…) — pas de texte générique répété. */
+  sheetSignalsSummary?: string
+  hasPhdStudies?: boolean
 }
 
 export function RecommendationPanel({ results }: { results: RecommendationResultRow[] }) {
@@ -26,7 +29,14 @@ export function RecommendationPanel({ results }: { results: RecommendationResult
                 </span>
               )}
               <div className="min-w-0">
-                <h3 className="font-semibold text-white">{r.country}</h3>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-semibold text-white">{r.country}</h3>
+                  {r.hasPhdStudies ? (
+                    <span className="rounded-full border border-blue-500/40 bg-blue-500/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-blue-300">
+                      PhD
+                    </span>
+                  ) : null}
+                </div>
                 {r.subtitle ? (
                   <p className="mt-0.5 text-xs font-medium uppercase tracking-wider text-slate-500">
                     {r.subtitle}
@@ -38,6 +48,13 @@ export function RecommendationPanel({ results }: { results: RecommendationResult
           </div>
 
           <Progress value={r.score} />
+
+          {r.sheetSignalsSummary ? (
+            <p className="mt-3 rounded-lg border border-slate-600/60 bg-slate-900/40 p-3 text-xs font-medium leading-relaxed text-slate-400">
+              <span className="font-black text-slate-500">Fiche pays · </span>
+              {r.sheetSignalsSummary}
+            </p>
+          ) : null}
 
           {r.warnings && r.warnings.length > 0 ? (
             <p className="mt-3 text-xs font-medium text-red-400">{r.warnings[0]}</p>

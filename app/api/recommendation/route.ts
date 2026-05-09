@@ -10,6 +10,7 @@ import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
 import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
+import { buildCountrySheetSignals } from '@/lib/probability-result-display'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
 
@@ -128,6 +129,7 @@ function readCountrySignals(country: any) {
     transparencyScore,
     education,
     business,
+    countrySignals: buildCountrySheetSignals(full as Record<string, unknown>),
   };
 }
 
@@ -240,6 +242,8 @@ function computeRecommendation(country: any, profile: NormalizedProfile) {
       goalMatch: Math.round(goalMatchScore),
       risk: Math.round(riskScore),
     },
+    countrySignals: s.countrySignals,
+    hasPhdStudies: s.education.phdStudiesStructured,
     explanation: explanations.slice(0, 4),
     warnings: warnings.slice(0, 4),
     reason:

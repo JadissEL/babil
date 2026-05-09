@@ -6,6 +6,39 @@ export type ProbabilityCountrySignals = {
   brutal_reality_score: number | null
 }
 
+/** Extrait les signaux « fiche pays » depuis `full_data` matérialisé (probabilités + recommandations). */
+export function buildCountrySheetSignals(full: Record<string, unknown>): ProbabilityCountrySignals {
+  const acceptanceLabel =
+    typeof full.acceptance_rate_morocco === 'string' && full.acceptance_rate_morocco.trim()
+      ? full.acceptance_rate_morocco.trim()
+      : null
+  const friction = Number(full.friction_score)
+  const brutal = Number(full.brutal_reality_score)
+  return {
+    acceptance_rate_morocco: acceptanceLabel,
+    friction_score: Number.isFinite(friction) ? Math.round(friction) : null,
+    brutal_reality_score: Number.isFinite(brutal) ? brutal : null,
+  }
+}
+
+/** Résumé court pour listes (reco) : `null` si aucun signal exploitable — évite de répéter le texte générique. */
+export function formatCountrySheetSignalsSummary(
+  signals: ProbabilityCountrySignals | null | undefined,
+): string | null {
+  if (!signals) return null
+  const parts: string[] = []
+  if (signals.acceptance_rate_morocco) {
+    parts.push(`Indicateur d'acceptation (fiche) : ${signals.acceptance_rate_morocco}.`)
+  }
+  if (signals.friction_score != null) {
+    parts.push(`Friction administrative : ${signals.friction_score}/100 — plus bas = parcours plus fluide.`)
+  }
+  if (signals.brutal_reality_score != null) {
+    parts.push(`« Réalité terrain » (échelle interne) : ${signals.brutal_reality_score}/10.`)
+  }
+  return parts.length ? parts.join(' ') : null
+}
+
 const BREAKDOWN_ORDER = [
   'finance',
   'profession',

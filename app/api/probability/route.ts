@@ -7,6 +7,7 @@ import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
+import { buildCountrySheetSignals } from '@/lib/probability-result-display'
 
 export async function POST(req: Request) {
   const { userId } = auth();
@@ -167,22 +168,13 @@ export async function POST(req: Request) {
 
       appendProfileContextNarratives(p, { primary: reasons, secondary: strategy })
 
-      const acceptanceLabel =
-        typeof full.acceptance_rate_morocco === 'string' && full.acceptance_rate_morocco.trim()
-          ? full.acceptance_rate_morocco.trim()
-          : null
-
       return {
         id: c.id,
         country: c.name,
         globalScore,
         level,
         hasPhdStudies: phdStudiesData,
-        countrySignals: {
-          acceptance_rate_morocco: acceptanceLabel,
-          friction_score: Number.isFinite(friction) ? Math.round(friction) : null,
-          brutal_reality_score: Number.isFinite(brutal) ? brutal : null,
-        },
+        countrySignals: buildCountrySheetSignals(full as Record<string, unknown>),
         reasons,
         strategy,
         breakdown: {
