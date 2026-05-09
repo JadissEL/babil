@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
 
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
@@ -9,11 +10,28 @@ import { cn } from '@/lib/utils'
 
 type Row = { id: string | number; name: string }
 
+function useAppleLikePlatform() {
+  const [isApple, setIsApple] = useState(false)
+  useEffect(() => {
+    const ua = typeof navigator !== 'undefined' ? navigator.userAgent : ''
+    const p = typeof navigator !== 'undefined' ? navigator.platform : ''
+    const mac =
+      /Mac|iPhone|iPad|iPod/i.test(p) ||
+      /Mac OS/.test(ua) ||
+      (typeof navigator.userAgentData !== 'undefined' && navigator.userAgentData.platform === 'macOS')
+    setIsApple(mac)
+  }, [])
+  return isApple
+}
+
 export function GlobalCountrySearch() {
+  const router = useRouter()
+  const isApple = useAppleLikePlatform()
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
   const [rows, setRows] = useState<Row[]>([])
   const [loaded, setLoaded] = useState(false)
+  const [highlight, setHighlight] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
 
@@ -87,12 +105,12 @@ export function GlobalCountrySearch() {
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label="Rechercher un pays"
-        title="Rechercher un pays (Ctrl+K)"
+        title={`Rechercher un pays (${shortcutLabel})`}
       >
         <Search className="h-4 w-4 shrink-0" aria-hidden />
         <span className="max-[420px]:sr-only">Pays</span>
         <kbd className="hidden rounded border border-line bg-inset px-1.5 py-0.5 font-mono text-[10px] font-bold text-muted sm:inline">
-          ⌘K
+          {shortcutLabel}
         </kbd>
       </button>
 
@@ -115,13 +133,32 @@ export function GlobalCountrySearch() {
                   type="search"
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowDown') {
+                      e.preventDefault()
+                      setHighlight((h) => (filtered.length ? (h + 1) % filtered.length : 0))
+                    } else if (e.key === 'ArrowUp') {
+                      e.preventDefault()
+                      setHighlight((h) =>
+                        filtered.length ? (h - 1 + filtered.length) % filtered.length : 0,
+                      )
+                    } else if (e.key === 'Enter' && filtered.length > 0) {
+                      e.preventDefault()
+                      const r = filtered[Math.min(highlight, filtered.length - 1)]
+                      if (r) {
+                        setOpen(false)
+                        setQ('')
+                        router.push(`/countries/${encodeURIComponent(String(r.id))}`)
+                      }
+                    }
+                  }}
                   placeholder="Nom du pays…"
                   className="w-full rounded-xl border border-line bg-inset py-2.5 pl-10 pr-3 text-sm font-medium text-text outline-none focus:ring-2 focus:ring-primary/40"
                   autoComplete="off"
                 />
               </div>
               <p className="mt-2 text-[11px] font-medium text-muted">
-                Liste fusionnée légère — accès direct aux fiches.
+                Liste fusionnée légère — flèches et Entrée pour ouvrir.
               </p>
             </div>
             <ul className="max-h-[min(50vh,18rem)] overflow-y-auto p-2 sm:max-h-[min(55vh,16rem)]">
@@ -130,11 +167,15 @@ export function GlobalCountrySearch() {
               ) : filtered.length === 0 ? (
                 <li className="px-3 py-4 text-center text-sm font-medium text-muted">Aucun résultat.</li>
               ) : (
-                filtered.map((r) => (
+                filtered.map((r, i) => (
                   <li key={String(r.id)}>
                     <Link
                       href={`/countries/${encodeURIComponent(String(r.id))}`}
-                      className="block rounded-xl px-3 py-2.5 text-sm font-bold text-text transition-colors hover:bg-primary-soft"
+                      className={cn(
+                        'block rounded-xl px-3 py-2.5 text-sm font-bold text-text transition-colors',
+                        i === highlight ? 'bg-primary-soft ring-1 ring-primary/30' : 'hover:bg-primary-soft',
+                      )}
+                      onMouseEnter={() => setHighlight(i)}
                       onClick={() => {
                         setOpen(false)
                         setQ('')

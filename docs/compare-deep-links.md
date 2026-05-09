@@ -27,4 +27,4 @@ Sur l’écran « Pays & résultats », le bouton **Copier le lien** construit u
 
 - Si `objective` est absent ou inconnu, l’utilisateur commence au choix du domaine.
 - `countries` est lu au chargement pour pré-remplir la sélection (plafonné à 4 pays).
-- Les IDs doivent correspondre aux `id` numériques Prisma des pays dans l’API `GET /api/countries`.
+- Les IDs sélectionnés sont **reflétés dans l’URL** (paramètre `countries`) après un court délai lorsque vous êtes à l’étape « Pays & résultats », ce qui permet de partager ou d’actualiser la page sans perdre la sélection.

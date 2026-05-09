@@ -230,21 +230,52 @@ export function CompareExperience() {
     document.getElementById('compare-table-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const copyShareLink = useCallback(async () => {
+  const buildCompareShareUrl = useCallback((): string => {
     const params = new URLSearchParams(searchParams?.toString() ?? '')
     params.set('objective', objective.id)
     if (selectedIds.length) params.set('countries', selectedIds.join(','))
     else params.delete('countries')
     const base = typeof window !== 'undefined' ? window.location.origin : ''
-    const path = pathname ?? '/compare'
-    const url = `${base}${path}?${params.toString()}`
+    return `${base}${pathname ?? '/compare'}?${params.toString()}`
+  }, [objective.id, pathname, searchParams, selectedIds])
+
+  const shareOrCopyCompareLink = useCallback(async () => {
+    const url = buildCompareShareUrl()
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: 'VisaFlow — Comparaison',
+          text: `Objectif : ${objective.label}`,
+          url,
+        })
+        appToast.success('Partage lancé.')
+        return
+      } catch (e) {
+        if ((e as Error).name === 'AbortError') return
+      }
+    }
     try {
       await navigator.clipboard.writeText(url)
       appToast.success('Lien de comparaison copié.')
     } catch {
       appToast.error('Copie impossible — copiez l’URL depuis la barre d’adresse.')
     }
-  }, [objective.id, pathname, searchParams, selectedIds])
+  }, [buildCompareShareUrl, objective.label])
+
+  useEffect(() => {
+    if (step !== 'countries') return
+    const params = new URLSearchParams(searchParams?.toString() ?? '')
+    params.set('objective', objective.id)
+    if (selectedIds.length) params.set('countries', selectedIds.join(','))
+    else params.delete('countries')
+    const next = params.toString()
+    const cur = searchParams?.toString() ?? ''
+    if (next === cur) return
+    const t = window.setTimeout(() => {
+      router.replace(`${pathname ?? '/compare'}?${next}`, { scroll: false })
+    }, 400)
+    return () => window.clearTimeout(t)
+  }, [step, objective.id, selectedIds, pathname, router, searchParams])
 
   const objectivesInCategory = categoryId ? listObjectivesForCategory(categoryId) : []
 
@@ -365,10 +396,10 @@ export function CompareExperience() {
                   type="button"
                   variant="outline"
                   className="gap-1 text-sm"
-                  onClick={() => void copyShareLink()}
-                  title="Copier un lien profond (objectif + pays + filtres)"
+                  onClick={() => void shareOrCopyCompareLink()}
+                  title="Partager (mobile) ou copier le lien dans le presse-papiers"
                 >
-                  <Share2 className="h-4 w-4" /> Copier le lien
+                  <Share2 className="h-4 w-4" /> Partager le lien
                 </Button>
               </div>
               <h2 className="text-lg font-black text-text sm:text-xl">3. Choisissez les pays</h2>

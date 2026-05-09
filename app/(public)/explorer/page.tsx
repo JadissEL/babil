@@ -26,6 +26,7 @@ import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-
 import {
   buildExplorerQueryStringFromSaved,
   clearExplorerSavedFilters,
+  EXPLORER_SAVED_FILTERS_STORAGE_KEY,
   readExplorerSavedFilters,
   writeExplorerSavedFilters,
 } from '@/lib/explorer-saved-filters'
@@ -85,6 +86,16 @@ function ExplorerPageInner() {
 
   useEffect(() => {
     setHasSavedView(Boolean(readExplorerSavedFilters()))
+  }, [])
+
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === EXPLORER_SAVED_FILTERS_STORAGE_KEY || e.key === null) {
+        setHasSavedView(Boolean(readExplorerSavedFilters()))
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [])
 
   const commitExplorerUrl = useCallback(

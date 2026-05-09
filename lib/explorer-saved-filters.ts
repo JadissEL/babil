@@ -1,4 +1,5 @@
-const KEY = 'vf_explorer_saved_filters_v1'
+export const EXPLORER_SAVED_FILTERS_STORAGE_KEY = 'vf_explorer_saved_filters_v1'
+const KEY = EXPLORER_SAVED_FILTERS_STORAGE_KEY
 
 export type ExplorerSavedFiltersV1 = {
   v: 1
