@@ -72,6 +72,9 @@ flowchart LR
 18. **Parcours PhD** : CTA clair vers contenu structuré quand `hasPhdStudies`.
 19. **Feedback utilisateur** (“utile / pas utile”) sur blocs explicatifs pour améliorer le produit.
 20. **Personas** : presets de profil (étudiant, nomade, business) pour démo et tests.
+
+> **Livré (lot A.16–A.20) :** section sources officielles [`lib/official-sources.ts`](../lib/official-sources.ts) + [`components/country/OfficialSourcesCard.tsx`](../components/country/OfficialSourcesCard.tsx) sur la fiche pays ; vue régionale type heatmap légère (moyennes par zone) [`ExplorerRegionScoreStrip`](../components/explorer/ExplorerRegionScoreStrip.tsx) + [`lib/explorer-region-score-buckets.ts`](../lib/explorer-region-score-buckets.ts) sur l’explorateur ; bandeau CTA PhD en tête de fiche + correctif dates intelligence (`intelLatest`) ; feedback « utile / pas utile » [`BlockFeedback`](../components/feedback/BlockFeedback.tsx) (localStorage + `CONTENT_FEEDBACK` via `POST /api/user/history` si connecté) ; personas démo sur [`app/(dashboard)/profile/page.tsx`](../app/(dashboard)/profile/page.tsx).
+
 21. **Mode “lecture seule”** pour utilisateurs non connectés sur plus de routes si stratégie SEO l’exige.
 22. **Storybook** ou page interne de design system (composants filtres, cartes, panneaux).
 
