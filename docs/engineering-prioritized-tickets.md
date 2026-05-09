@@ -7,7 +7,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | ID | Thème | Ticket | Statut |
 |----|--------|--------|--------|
 | **T1** | Perf API | `GET /api/countries?light=1` — payload liste sans `full_data` ni `commentaires` (opt-in ; défaut inchangé) | Implémenté |
-| **T2** | Ops données | `CountryObservation` + `EnrichmentRun` : purge / compaction (C.39–C.40), dashboard admin (C.41), **alertes runs (C.42)** — [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [`admin/page.tsx`](../app/(dashboard)/admin/page.tsx) | Implémenté |
+| **T2** | Ops données | `CountryObservation` + `EnrichmentRun` : purge / compaction (C.39–C.40), dashboard admin (C.41), alertes runs (C.42), **idempotence WB (C.43)**, **stubs multilatéraux (C.44)**, **queue pipeline (C.45)** — [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), [`admin/page.tsx`](../app/(dashboard)/admin/page.tsx) | Implémenté |
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
@@ -34,7 +34,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | B.37 | Export données RGPD (pack JSON) | [`lib/user-gdpr-export.ts`](../lib/user-gdpr-export.ts) ; [`GET /api/user/data-export`](../app/api/user/data-export/route.ts) (`?inline=1` optionnel) ; profil [`profile/page.tsx`](../app/(dashboard)/profile/page.tsx) |
 | B.38 | Stratégie i18n chaînes métier | [`docs/business-strings-i18n.md`](business-strings-i18n.md) ; [`lib/i18n/`](../lib/i18n/) ; pilote catalogues dans [`lib/score-driver-explain.ts`](../lib/score-driver-explain.ts) (`formatScoreDrivers`, locale `fr` \| `en`) |
 
-### Lot pipeline observations catalogue C (items 39–42)
+### Lot pipeline observations catalogue C (items 39–45)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
@@ -42,6 +42,9 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | C.40 | Compaction dernière observation par triple | [`scripts/compact-country-observations.ts`](../scripts/compact-country-observations.ts) ; `npm run db:compact-observations(:dry)` |
 | C.41 | Dashboard admin volumes pipeline | [`GET /api/admin/intelligence/summary`](../app/api/admin/intelligence/summary/route.ts) ; onglet Intelligence [`admin/page.tsx`](../app/(dashboard)/admin/page.tsx) |
 | C.42 | Alertes `EnrichmentRun` (stuck / FAILED / PARTIAL) | [`lib/enrichment-run-alerts.ts`](../lib/enrichment-run-alerts.ts) ; `runAlerts` sur summary ; [`scripts/check-enrichment-run-alerts.ts`](../scripts/check-enrichment-run-alerts.ts) ; [`.github/workflows/enrichment-run-alerts.yml`](../.github/workflows/enrichment-run-alerts.yml) ; [enrichment-run-alerts.md](enrichment-run-alerts.md) |
+| C.43 | Idempotence collecteur World Bank | [`lib/intelligence-pipeline/world-bank-dedupe.ts`](../lib/intelligence-pipeline/world-bank-dedupe.ts) ; [`world-bank-collector.ts`](../lib/intelligence-pipeline/world-bank-collector.ts) ; `CountryObservation.dedupeKey` dans [`prisma/schema.prisma`](../prisma/schema.prisma) |
+| C.44 | Stubs OECD / IMF / UN (`IntelligenceSource`) | [`lib/intelligence-pipeline/stub-multilateral-collectors.ts`](../lib/intelligence-pipeline/stub-multilateral-collectors.ts) ; `npm run intelligence:pipeline -- --stub-collectors` |
+| C.45 | Queue async `IntelligencePipelineJob` | [`prisma/schema.prisma`](../prisma/schema.prisma) ; [`scripts/intelligence-pipeline-enqueue.ts`](../scripts/intelligence-pipeline-enqueue.ts) ; [`scripts/intelligence-pipeline-worker-once.ts`](../scripts/intelligence-pipeline-worker-once.ts) ; [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md) ; `pipelineJobQueue` sur summary admin |
 
 ### Lot UX catalogue A (items 16–22)
 
@@ -59,5 +62,5 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 
 - Moteurs (formules + version + échelles B.27 + i18n pilote B.38) : [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), [lib/score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [business-strings-i18n.md](business-strings-i18n.md)
 - Spécification liste légère : [app/api/countries/route.ts](../app/api/countries/route.ts) (`?light=1`)
-- Rétention + compaction + alertes EnrichmentRun : [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md)
+- Rétention + compaction + alertes EnrichmentRun + queue pipeline : [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md)
 - CI : [ci.yml](../.github/workflows/ci.yml)

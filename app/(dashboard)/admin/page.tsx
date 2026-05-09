@@ -88,6 +88,7 @@ type IntelligenceSummary = {
       errorSummary: string | null
     }>
   }
+  pipelineJobQueue: { pending: number; running: number }
 }
 
 type AssistQueueRow = {
@@ -753,7 +754,7 @@ export default function AdminPage() {
 
           {intelligence ? (
             <>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-6">
                 <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
                   <p className="text-[10px] font-black uppercase tracking-wider text-muted">Sources (registre)</p>
                   <p className="text-lg font-black text-text">{intelligence.sourceCount}</p>
@@ -769,6 +770,14 @@ export default function AdminPage() {
                 <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
                   <p className="text-[10px] font-black uppercase tracking-wider text-muted">Runs listés</p>
                   <p className="text-lg font-black text-text">{intelligence.recentRuns.length}</p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#e8f4ff] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Jobs PENDING</p>
+                  <p className="text-lg font-black text-text">{intelligence.pipelineJobQueue.pending}</p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#e8f4ff] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Jobs RUNNING</p>
+                  <p className="text-lg font-black text-text">{intelligence.pipelineJobQueue.running}</p>
                 </div>
               </div>
 

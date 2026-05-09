@@ -113,6 +113,8 @@ model CountryObservation {
   sourceId     String
   runId        String?
   rawPayload   String?
+  /** C.43 — clé stable par point de données (ex. World Bank indicateur×pays×année) pour upsert / reprises. */
+  dedupeKey    String?  @unique
 
   country Country            @relation(fields: [countryId], references: [id], onDelete: Cascade)
   source  IntelligenceSource @relation(fields: [sourceId], references: [id], onDelete: Restrict)
@@ -122,6 +124,23 @@ model CountryObservation {
   @@index([sourceId])
   @@index([runId])
   @@index([observedAt])
+}
+
+/** C.45 — file d’attente pour exécuter le pipeline hors timeout serverless (worker long-running). */
+model IntelligencePipelineJob {
+  id           String    @id @default(cuid())
+  kind         String
+  status       String    @default("PENDING")
+  payloadJson  String
+  priority     Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  startedAt    DateTime?
+  finishedAt   DateTime?
+  errorSummary String?
+  resultJson   String?
+
+  @@index([status, priority(sort: Desc), createdAt(sort: Asc)])
 }
 
 model Comment {

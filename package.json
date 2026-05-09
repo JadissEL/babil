@@ -42,6 +42,8 @@
     "intelligence:materialize-economy": "tsx scripts/intelligence-enrichment-pipeline.ts --materialize",
     "intelligence:world-bank:materialize": "tsx scripts/intelligence-enrichment-pipeline.ts --world-bank --materialize",
     "intelligence:check-run-alerts": "tsx scripts/check-enrichment-run-alerts.ts",
+    "intelligence:enqueue-job": "tsx scripts/intelligence-pipeline-enqueue.ts",
+    "intelligence:worker-once": "tsx scripts/intelligence-pipeline-worker-once.ts",
     "db:prune-observations:dry": "tsx scripts/prune-country-observations.ts --dry-run --older-than-days=730",
     "db:prune-observations": "tsx scripts/prune-country-observations.ts --older-than-days=730",
     "db:compact-observations:dry": "tsx scripts/compact-country-observations.ts --dry-run",

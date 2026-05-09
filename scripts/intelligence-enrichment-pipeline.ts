@@ -4,6 +4,7 @@
  *   npm run intelligence:seed-sources
  *   npm run intelligence:world-bank -- --limit 5
  *   npm run intelligence:world-bank:materialize
+ *   npm run intelligence:pipeline -- --stub-collectors
  */
 import 'dotenv/config'
 
@@ -30,7 +31,8 @@ async function main() {
 
   const worldBank = argFlag('--world-bank')
   const materialize = argFlag('--materialize')
-  if (!worldBank && !materialize) {
+  const stubCollectors = argFlag('--stub-collectors')
+  if (!worldBank && !materialize && !stubCollectors) {
     const r = await runEnrichmentPipeline({ trigger: argFlag('--cron') ? 'cron' : 'manual' })
     console.log(JSON.stringify(r, null, 2))
     return
@@ -41,6 +43,7 @@ async function main() {
     worldBank,
     materializeEconomy: materialize,
     worldBankLimit: argNumber('--limit'),
+    stubMultilateralCollectors: stubCollectors,
   })
   console.log(JSON.stringify(r, null, 2))
 }

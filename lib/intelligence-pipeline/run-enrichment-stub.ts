@@ -7,6 +7,8 @@ import { materializeEconomyObservationsForAllCountries } from './materialize-eco
 import { DEFAULT_INTELLIGENCE_SOURCES } from './default-sources'
 import type { WorldBankCollectorResult } from './world-bank-collector'
 import { runWorldBankCollector } from './world-bank-collector'
+import type { StubCollectorResult } from './stub-multilateral-collectors'
+import { runStubMultilateralCollectors } from './stub-multilateral-collectors'
 
 export type PipelineResult = {
   runId: string
@@ -14,6 +16,8 @@ export type PipelineResult = {
   observationsWritten: number
   materializedCountries?: number
   worldBank?: WorldBankCollectorResult
+  /** C.44 — stubs UN / OECD / IMF (aucune observation tant que les APIs ne sont pas branchées). */
+  stubCollectors?: StubCollectorResult[]
   errorSummary?: string
 }
 
@@ -22,6 +26,8 @@ export async function runEnrichmentPipeline(args: {
   worldBank?: boolean
   materializeEconomy?: boolean
   worldBankLimit?: number
+  /** C.44 — exécute les enregistrements placeholder pour un_data, oecd, imf_data. */
+  stubMultilateralCollectors?: boolean
 }): Promise<PipelineResult> {
   const trigger = args.trigger ?? 'manual'
   const run = await prisma.enrichmentRun.create({
@@ -32,11 +38,16 @@ export async function runEnrichmentPipeline(args: {
   let errorSummary: string | undefined
   let worldBank: WorldBankCollectorResult | undefined
   let materializedCountries: number | undefined
+  let stubCollectors: StubCollectorResult[] | undefined
 
   try {
     if (args.worldBank) {
       worldBank = await runWorldBankCollector(run.id, { limit: args.worldBankLimit })
       observationsWritten += worldBank.observationsWritten
+    }
+
+    if (args.stubMultilateralCollectors) {
+      stubCollectors = await runStubMultilateralCollectors(run.id)
     }
 
     if (args.materializeEconomy) {
@@ -55,6 +66,7 @@ export async function runEnrichmentPipeline(args: {
           observationsWritten,
           materializedCountries,
           worldBank,
+          stubCollectors,
           worldBankOnly: args.worldBank && !args.materializeEconomy,
         }),
       },
@@ -66,6 +78,7 @@ export async function runEnrichmentPipeline(args: {
       observationsWritten,
       materializedCountries,
       worldBank,
+      stubCollectors,
     }
   } catch (e) {
     errorSummary = e instanceof Error ? e.message : String(e)
@@ -75,7 +88,7 @@ export async function runEnrichmentPipeline(args: {
         status: 'FAILED',
         finishedAt: new Date(),
         errorSummary,
-        statsJson: JSON.stringify({ observationsWritten, materializedCountries, worldBank }),
+        statsJson: JSON.stringify({ observationsWritten, materializedCountries, worldBank, stubCollectors }),
       },
     })
     return {
@@ -84,6 +97,7 @@ export async function runEnrichmentPipeline(args: {
       observationsWritten,
       materializedCountries,
       worldBank,
+      stubCollectors,
       errorSummary,
     }
   }

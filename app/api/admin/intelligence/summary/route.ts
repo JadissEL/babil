@@ -17,7 +17,7 @@ function parseStatsJson(raw: string | null | undefined): unknown {
   }
 }
 
-/** Résumé admin (C.41 + C.42) : volumes + alertes runs (bloqués / échecs). */
+/** Résumé admin (C.41–C.45) : volumes, alertes runs, file jobs pipeline. */
 export async function GET() {
   const admin = await getAdminUser()
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -37,6 +37,8 @@ export async function GET() {
       observationsBySourceId,
       observationsByCountryId,
       recentRuns,
+      pendingPipelineJobs,
+      runningPipelineJobs,
     ] = await Promise.all([
       prisma.enrichmentRun.findFirst({ orderBy: { startedAt: 'desc' } }),
       prisma.enrichmentRun.findMany({
@@ -99,6 +101,8 @@ export async function GET() {
           _count: { select: { observations: true } },
         },
       }),
+      prisma.intelligencePipelineJob.count({ where: { status: 'PENDING' } }),
+      prisma.intelligencePipelineJob.count({ where: { status: 'RUNNING' } }),
     ])
 
     const fieldPathBreakdown = observationsByField.map((r) => ({
@@ -192,6 +196,10 @@ export async function GET() {
       observationsByCountry,
       recentRuns: runsWithStats,
       runAlerts,
+      pipelineJobQueue: {
+        pending: pendingPipelineJobs,
+        running: runningPipelineJobs,
+      },
     })
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)

@@ -7,6 +7,7 @@ import {
   FIELD_WORK_UNEMPLOYMENT_RATE_PCT,
   WORLD_BANK_INDICATORS,
 } from './taxonomy-v1'
+import { worldBankObservationDedupeKey } from './world-bank-dedupe'
 import {
   chunkIso2ForWorldBank,
   fetchWorldBankCountryIso2Map,
@@ -124,8 +125,11 @@ export async function runWorldBankCollector(
           const d = dataMap.get(iso2)
           if (!d || d.value == null || !Number.isFinite(d.value)) continue
 
-          await prisma.countryObservation.create({
-            data: {
+          const dedupeKey = worldBankObservationDedupeKey(spec.wbId, iso2, d.date)
+
+          await prisma.countryObservation.upsert({
+            where: { dedupeKey },
+            create: {
               countryId,
               fieldPath: spec.fieldPath,
               valueJson: JSON.stringify({
@@ -139,6 +143,21 @@ export async function runWorldBankCollector(
               confidence: spec.confidence,
               observedAt,
               sourceId: source.id,
+              runId,
+              rawPayload: JSON.stringify({ wb: d }),
+              dedupeKey,
+            },
+            update: {
+              valueJson: JSON.stringify({
+                value: d.value,
+                year: Number(d.date),
+                indicator: spec.wbId,
+                iso2,
+              }),
+              valueNumeric: d.value,
+              unit: spec.unit,
+              confidence: spec.confidence,
+              observedAt,
               runId,
               rawPayload: JSON.stringify({ wb: d }),
             },
