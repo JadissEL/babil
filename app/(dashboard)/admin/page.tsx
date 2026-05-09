@@ -39,7 +39,8 @@ type AssistQueueRow = {
   createdAt: string
   userEmail: string
   userName: string | null
-  contactEmail: string | null
+  contactEmailMasked: string | null
+  hasFormContactEmail: boolean
 }
 
 type AgentHealth = {
@@ -66,7 +67,12 @@ export default function AdminPage() {
   const [agentHealth, setAgentHealth] = useState<AgentHealth | null>(null)
   const [assistRows, setAssistRows] = useState<AssistQueueRow[]>([])
   const [assistFilter, setAssistFilter] = useState('')
-  const [assistDetail, setAssistDetail] = useState<{ id: number; json: string } | null>(null)
+  const [assistDetail, setAssistDetail] = useState<{
+    id: number
+    json: string
+    full: boolean
+    redactionApplied: boolean
+  } | null>(null)
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [loading, setLoading] = useState(true)
 
@@ -146,18 +152,26 @@ export default function AdminPage() {
     }
   }
 
-  const toggleAssistPayload = async (id: number, current: typeof assistDetail) => {
-    if (current?.id === id) {
-      setAssistDetail(null)
-      return
-    }
-    const res = await fetch(`/api/admin/delegated-application-requests/${id}`)
+  const loadAssistDetail = async (id: number, full: boolean) => {
+    const res = await fetch(
+      `/api/admin/delegated-application-requests/${id}${full ? '?fullPayload=1' : ''}`,
+    )
     if (!res.ok) return
-    const data = await res.json()
+    const data = (await res.json()) as { payload?: unknown; payloadRedactionApplied?: boolean }
     setAssistDetail({
       id,
       json: JSON.stringify(data?.payload ?? {}, null, 2),
+      full,
+      redactionApplied: Boolean(data?.payloadRedactionApplied),
     })
+  }
+
+  const toggleAssistPayload = async (id: number) => {
+    if (assistDetail?.id === id) {
+      setAssistDetail(null)
+      return
+    }
+    await loadAssistDetail(id, false)
   }
 
   const filteredAssistRows = useMemo(() => {
@@ -172,7 +186,8 @@ export default function AdminPage() {
         r.status,
         r.userEmail,
         r.userName ?? '',
-        r.contactEmail ?? '',
+        r.contactEmailMasked ?? '',
+        r.hasFormContactEmail ? 'form' : '',
         r.createdAt,
       ]
         .join('\n')
@@ -480,33 +495,65 @@ export default function AdminPage() {
                         {r.userName ?? '—'} ({r.userEmail})
                       </div>
                       <div className="break-all">
-                        <span className="font-black text-text">Contact formulaire : </span>
-                        {r.contactEmail ?? '—'}
+                        <span className="font-black text-text">Contact formulaire (masqué) : </span>
+                        {r.contactEmailMasked ?? '—'}
+                        {r.hasFormContactEmail ? (
+                          <span className="ml-1 text-[10px] font-medium text-muted">
+                            — dévoiler dans le payload pour copier l’adresse complète
+                          </span>
+                        ) : null}
                       </div>
                       <div>
                         <span className="font-black text-text">Date : </span>
                         {new Date(r.createdAt).toLocaleString('fr-FR')}
                       </div>
                       <div className="flex flex-wrap gap-2">
-                        <Button type="button" variant="outline" onClick={() => void toggleAssistPayload(r.id, assistDetail)}>
-                          {assistDetail?.id === r.id ? 'Masquer payload' : 'Payload JSON'}
+                        <Button type="button" variant="outline" onClick={() => void toggleAssistPayload(r.id)}>
+                          {assistDetail?.id === r.id ? 'Masquer payload' : 'Payload JSON (masqué)'}
                         </Button>
-                        {r.contactEmail ? (
-                          <a
-                            className="inline-flex rounded-lg border border-line bg-[#f8f2e8] px-3 py-1 text-xs font-bold hover:bg-primary-soft"
-                            href={`mailto:${r.contactEmail}?subject=${encodeURIComponent(
-                              `[VisaFlow Assist] Demande #${r.id}`,
-                            )}`}
-                          >
-                            Répondre
-                          </a>
-                        ) : null}
+                        <a
+                          className="inline-flex rounded-lg border border-line bg-[#f8f2e8] px-3 py-1 text-xs font-bold hover:bg-primary-soft"
+                          href={`mailto:${r.userEmail}?subject=${encodeURIComponent(
+                            `[VisaFlow Assist] Demande #${r.id}`,
+                          )}`}
+                        >
+                          Répondre (compte client)
+                        </a>
                       </div>
                     </div>
                     {assistDetail?.id === r.id ? (
-                      <pre className="max-h-64 overflow-auto rounded-xl border border-line bg-[#101820] p-4 text-[11px] text-emerald-100">
-                        {assistDetail.json}
-                      </pre>
+                      <div className="space-y-2">
+                        {assistDetail.redactionApplied && !assistDetail.full ? (
+                          <p className="text-[11px] font-medium text-amber-800">
+                            Affichage masqué par défaut (B.36). Utilisez le bouton ci-dessous pour charger les données
+                            sensibles complètes si nécessaire pour traiter la demande.
+                          </p>
+                        ) : null}
+                        <div className="flex flex-wrap gap-2">
+                          {assistDetail.redactionApplied && !assistDetail.full ? (
+                            <Button
+                              type="button"
+                              variant="secondary"
+                              className="text-xs"
+                              onClick={() => void loadAssistDetail(r.id, true)}
+                            >
+                              Afficher données sensibles (complet)
+                            </Button>
+                          ) : assistDetail.full ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="text-xs"
+                              onClick={() => void loadAssistDetail(r.id, false)}
+                            >
+                              Revenir à la vue masquée
+                            </Button>
+                          ) : null}
+                        </div>
+                        <pre className="max-h-64 overflow-auto rounded-xl border border-line bg-[#101820] p-4 text-[11px] text-emerald-100">
+                          {assistDetail.json}
+                        </pre>
+                      </div>
                     ) : null}
                   </CardContent>
                 </Card>

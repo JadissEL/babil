@@ -143,6 +143,14 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 
 ---
 
+## Demandes déléguées — masquage admin (ticket B.36)
+
+- **Utilitaire** : [`redactDelegatedPayloadDeep`](../lib/delegated-application-payload-utils.ts), emails / téléphones / noms / champs type notes masqués ; `packageSnapshot` produit (nom de forfait, prix) conservé pour le contexte métier.
+- **API** : liste admin — `contactEmailMasked` + `hasFormContactEmail` ; détail — `payloadRedactionApplied: true` par défaut, JSON complet avec `GET ?fullPayload=1` (toujours réservé aux admins).
+- **Logs** : [`delegatedRequestLogContext`](../lib/delegated-application-payload-utils.ts) pour journaliser id / catégorie / package sans corps de payload.
+
+---
+
 ## Journal `full_data` (ticket B.28)
 
 - Clé JSON **`_data_changelog`** : liste chronologique inversée (plus récent en tête), entrées `{ at, actor, action, detail?, subjectId? }` avec `actor` ∈ `admin` | `agent` | `pipeline` | `system`.

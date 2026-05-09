@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server'
 
 import { getAdminUser } from '@/lib/admin-auth'
-import { previewDelegatedPayload } from '@/lib/delegated-application-payload-utils'
+import {
+  maskEmailForAdminList,
+  previewDelegatedPayload,
+} from '@/lib/delegated-application-payload-utils'
 import prisma from '@/lib/prisma'
 import { findDelegatedPackage, type DelegatedCategory } from '@/lib/delegated-application-catalog'
 import { isDbUnavailable } from '@/lib/db-resilience'
@@ -34,7 +37,8 @@ export async function GET() {
         createdAt: r.createdAt.toISOString(),
         userEmail: r.user.email,
         userName: r.user.name,
-        contactEmail: pv.contactEmail ?? null,
+        contactEmailMasked: pv.contactEmail ? maskEmailForAdminList(pv.contactEmail) : null,
+        hasFormContactEmail: Boolean(pv.contactEmail),
       }
     })
 

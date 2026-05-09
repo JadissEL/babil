@@ -1,13 +1,17 @@
 import { NextResponse } from 'next/server'
 
 import { getAdminUser } from '@/lib/admin-auth'
+import { redactDelegatedPayloadDeep } from '@/lib/delegated-application-payload-utils'
 import prisma from '@/lib/prisma'
 import { isDelegatedRequestStatus } from '@/lib/delegated-application-status'
 import { isDbUnavailable } from '@/lib/db-resilience'
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   const admin = await getAdminUser()
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const url = new URL(req.url)
+  const fullPayload = url.searchParams.get('fullPayload') === '1'
 
   const id = Number.parseInt(params.id, 10)
   if (!Number.isFinite(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
@@ -25,8 +29,17 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     try {
       payloadParsed = JSON.parse(row.payload)
     } catch {
-      payloadParsed = { parseError: true, rawSnippet: row.payload.slice(0, 500) }
+      payloadParsed = {
+        parseError: true,
+        rawSnippet: fullPayload ? row.payload.slice(0, 500) : '[extrait omis — payload illisible ; ne pas afficher en clair]',
+      }
     }
+
+    const payloadForResponse = fullPayload
+      ? payloadParsed
+      : typeof payloadParsed === 'object' && payloadParsed !== null
+        ? redactDelegatedPayloadDeep(payloadParsed)
+        : payloadParsed
 
     return NextResponse.json({
       id: row.id,
@@ -35,7 +48,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       status: row.status,
       createdAt: row.createdAt.toISOString(),
       user: row.user,
-      payload: payloadParsed,
+      payload: payloadForResponse,
+      payloadRedactionApplied: !fullPayload,
     })
   } catch (error: unknown) {
     if (isDbUnavailable(error)) return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })
