@@ -41,4 +41,4 @@ Sur **Render**, le service web **`start:render`** applique **`db:migrate-deploy`
 
 **Vercel** (build) : le déploiement n’exécute en général pas `migrate deploy` ; gardez les migrations à jour via le workflow GitHub, un job Render dédié, ou une étape de release manuelle avec `DATABASE_URL`.
 
-Voir aussi [country-intelligence-system.md](country-intelligence-system.md).
+Voir aussi [country-intelligence-system.md](country-intelligence-system.md) et [intelligence-seed-sources.md](intelligence-seed-sources.md) (ordre migrate → seed sources → seed pays → pipeline).

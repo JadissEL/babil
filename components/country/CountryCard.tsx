@@ -58,6 +58,7 @@ export function CountryCard({
   business,
   highlightPlace,
   highlightImageUrl,
+  onNavigate,
   onClick,
 }: CountryCardProps) {
   const iso = code.toLowerCase().trim()

@@ -23,10 +23,14 @@ function useAppleLikePlatform() {
   useEffect(() => {
     const ua = typeof navigator !== 'undefined' ? navigator.userAgent : ''
     const p = typeof navigator !== 'undefined' ? navigator.platform : ''
+    const uad =
+      typeof navigator !== 'undefined' && 'userAgentData' in navigator
+        ? (navigator as Navigator & { userAgentData?: { platform?: string } }).userAgentData
+        : undefined
     const mac =
       /Mac|iPhone|iPad|iPod/i.test(p) ||
       /Mac OS/.test(ua) ||
-      (typeof navigator.userAgentData !== 'undefined' && navigator.userAgentData.platform === 'macOS')
+      uad?.platform === 'macOS'
     setIsApple(mac)
   }, [])
   return isApple
@@ -35,6 +39,7 @@ function useAppleLikePlatform() {
 export function GlobalCountrySearch() {
   const router = useRouter()
   const isApple = useAppleLikePlatform()
+  const shortcutLabel = isApple ? '⌘K' : 'Ctrl+K'
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
   const [rows, setRows] = useState<Row[]>([])
@@ -77,7 +82,7 @@ export function GlobalCountrySearch() {
 
   useEffect(() => {
     let idleId: number | undefined
-    let timeoutId: ReturnType<typeof setTimeout> | undefined
+    let timeoutId: number | undefined
     if (typeof window.requestIdleCallback === 'function') {
       idleId = window.requestIdleCallback(() => {
         void load()

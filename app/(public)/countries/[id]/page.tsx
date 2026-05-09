@@ -126,6 +126,11 @@ function fmtUnemploymentLaborForcePct(n: number): string {
   return `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(n)} %`
 }
 
+/** Part de la population en zones urbaines (série WB), en % du total. */
+function fmtUrbanPopulationPct(n: number): string {
+  return `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(n)} %`
+}
+
 function scoreTone(score: number) {
   if (score >= 75) return 'border-[#94dfbd] bg-[#e9f9f1] text-success'
   if (score >= 55) return 'border-[#f2c27a] bg-[#fff5e7] text-warning'
@@ -291,13 +296,15 @@ export default function CountryDetailPage() {
   const economyBlock = full.economy as Record<string, unknown> | undefined
   const healthBlock = full.health as Record<string, unknown> | undefined
   const workBlock = full.work as Record<string, unknown> | undefined
+  const demographics = full.demographics as Record<string, unknown> | undefined
   const intelMeta = full._intelligence as Record<string, unknown> | undefined
   const popWb = readFiniteNumber(economyBlock?.population_wb)
   const gdpUsd = readFiniteNumber(economyBlock?.gdp_usd)
   const gdpCap = readFiniteNumber(economyBlock?.gdp_per_capita_usd)
   const lifeExp = readFiniteNumber(healthBlock?.life_expectancy_years)
   const unempPct = readFiniteNumber(workBlock?.unemployment_rate_pct)
-  const hasWbIndicators = [popWb, gdpUsd, gdpCap, lifeExp, unempPct].some((v) => v != null)
+  const urbanPopPct = readFiniteNumber(demographics?.urban_population_wb_pct)
+  const hasWbIndicators = [popWb, gdpUsd, gdpCap, lifeExp, unempPct, urbanPopPct].some((v) => v != null)
   const intelLatest = latestMaterializedIsoFromIntelMeta(intelMeta)
   const economyIntelFresh = isEconomyIntelFresh(intelLatest)
   const officialLinks = officialSourcesForCountry(country.name, String(country.region ?? ''))
@@ -484,7 +491,7 @@ export default function CountryDetailPage() {
                   <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-primary">
                     Indicateurs (World Bank, matérialisés)
                   </p>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
                     {popWb != null ? (
                       <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
                         <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Population</div>
@@ -513,6 +520,12 @@ export default function CountryDetailPage() {
                       <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
                         <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Chômage (actifs)</div>
                         <div className="text-sm font-black text-text">{fmtUnemploymentLaborForcePct(unempPct)}</div>
+                      </div>
+                    ) : null}
+                    {urbanPopPct != null ? (
+                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
+                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Pop. urbaine</div>
+                        <div className="text-sm font-black text-text">{fmtUrbanPopulationPct(urbanPopPct)}</div>
                       </div>
                     ) : null}
                   </div>

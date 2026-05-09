@@ -32,6 +32,7 @@ import {
   writeExplorerSavedFilters,
 } from '@/lib/explorer-saved-filters'
 import { buildExplorerRegionScoreBuckets } from '@/lib/explorer-region-score-buckets'
+import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
 import { appToast } from '@/lib/toast-store'
 
 type Mode = 'explorer' | 'recommendation'

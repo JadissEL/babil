@@ -82,7 +82,7 @@ flowchart LR
 
 > **Livré (lot B.23–B.25) :** documentation unique [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md) ; version des moteurs via `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` et constante [`BABIL_ENGINE_VERSION`](../lib/engine-version.ts) ; tests de garde + checklist calibration dans la même doc ([`lib/public-synthetic-profile.test.ts`](../lib/public-synthetic-profile.test.ts)).
 
-> **Livré (lot B.26–B.38 + C.39–C.45) :** pour **B.26–C.42**, voir les entrées numérotées dans les sections B et C ci-dessous (notes *Livré* / références). **C.43** — idempotence World Bank : `CountryObservation.dedupeKey` + upsert ([`lib/intelligence-pipeline/world-bank-dedupe.ts`](../lib/intelligence-pipeline/world-bank-dedupe.ts), [`world-bank-collector.ts`](../lib/intelligence-pipeline/world-bank-collector.ts)) ; **C.44** — stubs `un_data` / `oecd` / `imf_data` ([`stub-multilateral-collectors.ts`](../lib/intelligence-pipeline/stub-multilateral-collectors.ts), flag `--stub-collectors` sur le CLI pipeline) ; **C.45** — queue `IntelligencePipelineJob` ([`prisma/schema.prisma`](../prisma/schema.prisma)), `npm run intelligence:enqueue-job` / `intelligence:worker-once`, doc [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), compteurs jobs sur l’API admin / onglet Intelligence.
+> **Livré (lot B.26–B.38 + C.39–C.50) :** pour **B.26–C.50** (hors synthèse ci-dessous), voir les entrées numérotées dans les sections B et C. **C.46** — tests mock HTTP WB [`world-bank-client.integration.test.ts`](../lib/intelligence-pipeline/world-bank-client.integration.test.ts) ; **C.47** — [intelligence-seed-sources.md](intelligence-seed-sources.md) ; **C.48** — taxonomie + matérialisation **population urbaine %** (`demographics.*`) ; **C.49** — glossaire [`/intelligence-fieldpaths`](../app/(public)/intelligence-fieldpaths/page.tsx) + lien provenance ; **C.50** — cap `rawPayload` [`observation-raw-payload.ts`](../lib/intelligence-pipeline/observation-raw-payload.ts).
 
 ### B — Données, scoring et transparence (23–38)
 
@@ -112,11 +112,11 @@ flowchart LR
 43. **Idempotence** renforcée des collecteurs WB (clé métier claire, reprises). *(Livré : `dedupeKey` unique + upsert — [`world-bank-dedupe.ts`](../lib/intelligence-pipeline/world-bank-dedupe.ts), migration Prisma.)*
 44. **Sources additionnelles** (OECD, IMF, UN) derrière même abstraction `IntelligenceSource`. *(Livré : stubs enregistrés + `--stub-collectors` — [`stub-multilateral-collectors.ts`](../lib/intelligence-pipeline/stub-multilateral-collectors.ts) ; connecteurs HTTP : backlog.)*
 45. **File d’attente** async (queue) si collecte dépasse timeout serverless. *(Livré : `IntelligencePipelineJob`, scripts enqueue/worker, doc [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), KPIs admin.)*
-46. **Tests d’intégration** mock HTTP sur collecteurs (contrats JSON stables).
-47. **Seed sources** documenté et reproductible sur nouvelle base.
-48. **Materialisation** : étendre au-delà économie/santé/travail (taxonomie [lib/intelligence-pipeline/taxonomy-v1.ts](../lib/intelligence-pipeline/taxonomy-v1.ts)).
-49. **Provenance utilisateur** : lien depuis UI vers explication du `fieldPath` (glossaire).
-50. **Limiter** `rawPayload` taille ou externaliser vers object storage si croissance.
+46. **Tests d’intégration** mock HTTP sur collecteurs (contrats JSON stables). *(Livré : [`world-bank-client.integration.test.ts`](../lib/intelligence-pipeline/world-bank-client.integration.test.ts) — mock `fetch`, corps `[meta, rows]` World Bank.)*
+47. **Seed sources** documenté et reproductible sur nouvelle base. *(Livré : [intelligence-seed-sources.md](intelligence-seed-sources.md) + commande `npm run intelligence:seed-sources`.)*
+48. **Materialisation** : étendre au-delà économie/santé/travail (taxonomie [lib/intelligence-pipeline/taxonomy-v1.ts](../lib/intelligence-pipeline/taxonomy-v1.ts)). *(Livré partiel : indicateur **population urbaine %** (`SP.URB.TOTL.IN.ZS` → `demographics.urban_population_pct` → `full_data.demographics.urban_population_wb_pct`) ; autres domaines : backlog.)*
+49. **Provenance utilisateur** : lien depuis UI vers explication du `fieldPath` (glossaire). *(Livré : page [`/intelligence-fieldpaths`](../app/(public)/intelligence-fieldpaths/page.tsx) + lien depuis [`IntelligenceProvenanceCollapsible`](../components/country/IntelligenceProvenanceCollapsible.tsx) + module [`lib/intelligence-fieldpath-glossary.ts`](../lib/intelligence-fieldpath-glossary.ts).)*
+50. **Limiter** `rawPayload` taille ou externaliser vers object storage si croissance. *(Livré : plafond bytes [`observation-raw-payload.ts`](../lib/intelligence-pipeline/observation-raw-payload.ts) appliqué dans [`world-bank-collector.ts`](../lib/intelligence-pipeline/world-bank-collector.ts) ; object storage : backlog si besoin.)*
 51. **Cron** : documenter secrets, environnements, et rollback si matérialisation partielle.
 52. **Feature flag** pour activer/désactiver collecte par source en prod.
 

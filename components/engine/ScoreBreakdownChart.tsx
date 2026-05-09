@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { TooltipProps } from 'recharts'
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -61,7 +60,13 @@ export function breakdownToRadarData(b: RadarBreakdown): RadarDatum[] {
   return rows
 }
 
-function RadarAxisTooltip({ active, payload }: TooltipProps<number, string>) {
+function RadarAxisTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean
+  payload?: ReadonlyArray<{ payload?: RadarDatum }>
+}) {
   if (!active || !payload?.length) return null
   const p = payload[0]?.payload as RadarDatum | undefined
   if (!p) return null

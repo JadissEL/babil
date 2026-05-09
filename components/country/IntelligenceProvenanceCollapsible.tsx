@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useId, useState } from 'react'
 import { BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -78,7 +79,14 @@ export function IntelligenceProvenanceCollapsible({ countryId }: { countryId: st
         )}
       </button>
       <p className="mt-2 text-[11px] font-medium leading-relaxed text-muted">
-        Champs issus du pipeline (ex. Banque mondiale) : traçabilité par observation, sans valeur brute complète.
+        Champs issus du pipeline (ex. Banque mondiale) : traçabilité par observation, sans valeur brute complète.{' '}
+        <Link
+          href="/intelligence-fieldpaths"
+          className="font-bold text-primary underline-offset-2 hover:underline"
+        >
+          Glossaire des champs (fieldPath)
+        </Link>
+        .
       </p>
 
       <div

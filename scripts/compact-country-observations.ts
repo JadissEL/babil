@@ -22,7 +22,7 @@ function parseArgs(argv: string[]) {
   return { dryRun, exportJson }
 }
 
-async function countDuplicates(): Promise<bigint> {
+async function countDuplicates(): Promise<number> {
   const rows = await prisma.$queryRaw<[{ count: bigint }]>`
     SELECT COUNT(*)::bigint AS count
     FROM (
@@ -35,7 +35,8 @@ async function countDuplicates(): Promise<bigint> {
     ) ranked
     WHERE ranked.rn > 1
   `
-  return rows[0]?.count ?? 0n
+  const c = rows[0]?.count
+  return c != null ? Number(c) : 0
 }
 
 async function fetchDuplicateRows(): Promise<
@@ -100,7 +101,7 @@ async function main() {
     `[compact-country-observations] duplicate_rows_to_remove=${n.toString()} dry_run=${dryRun} export_json=${exportJson ?? 'none'}`,
   )
 
-  if (n === 0n) {
+  if (n === 0) {
     await prisma.$disconnect()
     return
   }

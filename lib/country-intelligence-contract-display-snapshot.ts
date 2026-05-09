@@ -12,6 +12,7 @@ export const COUNTRY_DETAIL_PAGE_CONTRACT_MARKERS = [
   'economy',
   'health',
   'work',
+  'demographics',
   '_intelligence',
   'morocco_insights',
   'embassy_behavior',

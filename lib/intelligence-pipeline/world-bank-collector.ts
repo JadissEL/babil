@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma'
 import {
+  FIELD_DEMOGRAPHICS_URBAN_POPULATION_PCT,
   FIELD_ECONOMY_GDP_USD_CURRENT,
   FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT,
   FIELD_GENERAL_POPULATION_TOTAL,
@@ -7,6 +8,7 @@ import {
   FIELD_WORK_UNEMPLOYMENT_RATE_PCT,
   WORLD_BANK_INDICATORS,
 } from './taxonomy-v1'
+import { capObservationRawPayloadJson } from './observation-raw-payload'
 import { worldBankObservationDedupeKey } from './world-bank-dedupe'
 import {
   chunkIso2ForWorldBank,
@@ -69,6 +71,12 @@ const INDICATOR_SPECS: IndicatorSpec[] = [
     unit: 'percent_of_labor_force',
     confidence: 0.82,
   },
+  {
+    wbId: WORLD_BANK_INDICATORS.urbanPopulationPct,
+    fieldPath: FIELD_DEMOGRAPHICS_URBAN_POPULATION_PCT,
+    unit: 'percent_of_total_population',
+    confidence: 0.85,
+  },
 ]
 
 /**
@@ -126,6 +134,7 @@ export async function runWorldBankCollector(
           if (!d || d.value == null || !Number.isFinite(d.value)) continue
 
           const dedupeKey = worldBankObservationDedupeKey(spec.wbId, iso2, d.date)
+          const rawPayload = capObservationRawPayloadJson(JSON.stringify({ wb: d }))
 
           await prisma.countryObservation.upsert({
             where: { dedupeKey },
@@ -144,7 +153,7 @@ export async function runWorldBankCollector(
               observedAt,
               sourceId: source.id,
               runId,
-              rawPayload: JSON.stringify({ wb: d }),
+              rawPayload,
               dedupeKey,
             },
             update: {
@@ -159,7 +168,7 @@ export async function runWorldBankCollector(
               confidence: spec.confidence,
               observedAt,
               runId,
-              rawPayload: JSON.stringify({ wb: d }),
+              rawPayload,
             },
           })
           observationsWritten += 1

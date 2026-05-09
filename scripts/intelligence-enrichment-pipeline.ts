@@ -1,7 +1,7 @@
 /**
  * CLI: seed sources | run pipeline (World Bank + optional materialize).
  *
- *   npm run intelligence:seed-sources
+ *   npm run intelligence:seed-sources   # voir docs/intelligence-seed-sources.md
  *   npm run intelligence:world-bank -- --limit 5
  *   npm run intelligence:world-bank:materialize
  *   npm run intelligence:pipeline -- --stub-collectors
