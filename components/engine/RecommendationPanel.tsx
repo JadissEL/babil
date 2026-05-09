@@ -2,6 +2,8 @@ import { Progress } from '@/components/ui/progress'
 
 export type RecommendationResultRow = {
   country: string
+  /** Identifiant pays (reco API) — utilisé pour le mode comparaison. */
+  countryId?: number
   score: number
   explanation: string[]
   /** Index affiché (1-based) */
@@ -13,13 +15,38 @@ export type RecommendationResultRow = {
   hasPhdStudies?: boolean
 }
 
-export function RecommendationPanel({ results }: { results: RecommendationResultRow[] }) {
+export function RecommendationPanel({
+  results,
+  compareMode,
+  compareSelectedIds,
+  onCompareToggle,
+}: {
+  results: RecommendationResultRow[]
+  compareMode?: boolean
+  compareSelectedIds?: number[]
+  onCompareToggle?: (countryId: number) => void
+}) {
+  const selected = new Set(compareSelectedIds ?? [])
+
   return (
     <div className="space-y-6">
       {results.map((r, i) => (
         <div key={`${r.country}-${i}`} className="rounded-xl border border-gray-800 bg-[#111827] p-4 sm:p-5">
           <div className="mb-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex gap-3">
+            <div className="flex min-w-0 gap-3">
+              {compareMode && r.countryId != null && onCompareToggle ? (
+                <label className="flex shrink-0 cursor-pointer items-center pt-1">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-slate-500 bg-slate-800 text-primary focus:ring-primary"
+                    checked={selected.has(r.countryId)}
+                    disabled={!selected.has(r.countryId) && selected.size >= 3}
+                    onChange={() => onCompareToggle(r.countryId!)}
+                    aria-label={`Comparer ${r.country}`}
+                  />
+                </label>
+              ) : null}
+              <div className="flex gap-3">
               {r.rank != null && (
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-500/15 text-sm font-black text-blue-300 ring-1 ring-blue-500/35"
@@ -43,6 +70,7 @@ export function RecommendationPanel({ results }: { results: RecommendationResult
                   </p>
                 ) : null}
               </div>
+            </div>
             </div>
             <span className="shrink-0 text-sm text-gray-400">{r.score}/100</span>
           </div>

@@ -16,7 +16,8 @@ import {
   CheckCircle2,
   XCircle,
   ChevronLeft,
-  Heart
+  Heart,
+  Printer
 } from 'lucide-react'
 
 import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsIntelSection'
@@ -33,6 +34,7 @@ import { filterPublicCountryInsights } from '@/lib/country-db-insights'
 import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
+import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 const toNum = (v: any, fallback = 0) => {
@@ -277,7 +279,8 @@ export default function CountryDetailPage() {
       : null
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-20 pt-2 sm:px-6 lg:px-8">
+    <>
+    <div className="mx-auto max-w-6xl px-4 pb-20 pt-2 sm:px-6 lg:px-8 print:hidden">
       <Link
         href="/explorer"
         className="mb-6 flex items-center gap-2 font-bold text-muted transition-colors hover:text-primary"
@@ -304,6 +307,14 @@ export default function CountryDetailPage() {
           >
             Vue Schengen
           </Link>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-2 rounded-xl border border-line bg-inset px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/40 hover:bg-primary-soft"
+          >
+            <Printer className="h-4 w-4" />
+            Imprimer / PDF
+          </button>
         </div>
       </div>
 
@@ -634,6 +645,84 @@ export default function CountryDetailPage() {
           </div>
       </div>
     </div>
+
+      <div
+        className="hidden bg-white px-8 py-10 text-[14px] leading-relaxed text-gray-900 print:block"
+        aria-hidden
+      >
+        <header className="mb-6 border-b border-gray-300 pb-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-500">VisaFlow — résumé fiche pays</p>
+          <h1 className="mt-2 text-2xl font-black text-gray-900">{country.name}</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            {country.region}
+            {isSchengenMember(String(country.name ?? '')) ? ' · Schengen' : ''} —{' '}
+            {new Date().toLocaleDateString('fr-FR', { dateStyle: 'long' })}
+          </p>
+        </header>
+
+        <section className="mb-5">
+          <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">Scores indicatifs (0–100)</h2>
+          <table className="w-full max-w-lg text-left text-sm">
+            <tbody className="divide-y divide-gray-200">
+              <tr>
+                <td className="py-1.5 pr-4 font-medium text-gray-700">Score final</td>
+                <td className="py-1.5 font-bold">{finalScore}</td>
+              </tr>
+              <tr>
+                <td className="py-1.5 pr-4 font-medium text-gray-700">Visa tourisme</td>
+                <td className="py-1.5">{tourismScore}</td>
+              </tr>
+              <tr>
+                <td className="py-1.5 pr-4 font-medium text-gray-700">Visa études</td>
+                <td className="py-1.5">{studyScore}</td>
+              </tr>
+              <tr>
+                <td className="py-1.5 pr-4 font-medium text-gray-700">Visa travail</td>
+                <td className="py-1.5">{workScore}</td>
+              </tr>
+              <tr>
+                <td className="py-1.5 pr-4 font-medium text-gray-700">Visa affaires</td>
+                <td className="py-1.5">{businessScore}</td>
+              </tr>
+              <tr>
+                <td className="py-1.5 pr-4 font-medium text-gray-700">Friction (lecture)</td>
+                <td className="py-1.5">{frictionScore}</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section className="mb-5">
+          <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">Indicateurs terrain (extraits)</h2>
+          <ul className="list-inside list-disc space-y-1 text-sm text-gray-800">
+            <li>Score réalité : {fmtBrutalReality(full.brutal_reality_score)}</li>
+            <li>Acceptation (indicateur) : {fmtAcceptanceRate(full.acceptance_rate_morocco)}</li>
+            <li>Friction RDV : {fmtFrictionBlock(full.friction_score)}</li>
+            <li>Confiance données : {fmtConfidencePct(full.confidence_score)}</li>
+          </ul>
+        </section>
+
+        <section className="mb-5">
+          <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">Signaux (synthèse moteur)</h2>
+          <p className="text-sm text-gray-800">
+            {formatCountrySheetSignalsSummary(buildCountrySheetSignals(full as Record<string, unknown>)) ?? '—'}
+          </p>
+        </section>
+
+        <section className="mb-6">
+          <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">Réalité terrain (citation)</h2>
+          <p className="text-sm italic text-gray-800">&quot;{moroccoRealityText(full as Record<string, unknown>)}&quot;</p>
+        </section>
+
+        <footer className="border-t border-gray-200 pt-4 text-[10px] leading-snug text-gray-600">
+          <p>
+            Document informatif généré depuis VisaFlow. Les scores, signaux et textes ne constituent pas un conseil
+            juridique ni une garantie d&apos;obtention de visa ou de titre de séjour. Vérifiez systématiquement auprès
+            des autorités consulaires et du droit applicable.
+          </p>
+        </footer>
+      </div>
+    </>
   )
 }
 

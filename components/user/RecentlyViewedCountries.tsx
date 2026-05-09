@@ -78,17 +78,25 @@ export function RecentlyViewedCountries() {
 
   return (
     <div className="mb-10 rounded-2xl border border-primary/20 bg-primary-soft/30 p-5 shadow-card sm:rounded-[2rem] sm:p-6">
-      <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="flex items-center gap-2 text-base font-black text-text sm:text-lg">
           <History className="h-5 w-5 shrink-0 text-primary" />
           Reprendre vos recherches
         </h2>
-        <Link
-          href="/explorer"
-          className="flex items-center gap-1 text-xs font-bold text-primary hover:underline sm:text-sm"
-        >
-          Explorer <ChevronRight className="h-3 w-3" />
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/history"
+            className="text-xs font-bold text-primary underline-offset-2 hover:underline sm:text-sm"
+          >
+            Tout l&apos;historique
+          </Link>
+          <Link
+            href="/explorer"
+            className="flex items-center gap-1 text-xs font-bold text-primary hover:underline sm:text-sm"
+          >
+            Explorer <ChevronRight className="h-3 w-3" />
+          </Link>
+        </div>
       </div>
       <p className="mb-4 text-xs font-medium text-muted sm:text-sm">
         Pays récemment ouverts (compte connecté). Les visites sont enregistrées depuis la fiche pays.

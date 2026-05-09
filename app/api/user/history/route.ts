@@ -3,15 +3,19 @@ import { auth, currentUser } from '@clerk/nextjs/server'
 import prisma from '@/lib/prisma'
 import { isDbUnavailable } from '@/lib/db-resilience'
 
-export async function GET() {
+export async function GET(req: Request) {
   const { userId } = auth()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { searchParams } = new URL(req.url)
+  const rawLimit = Number(searchParams.get('limit') ?? '50')
+  const take = Number.isFinite(rawLimit) ? Math.min(200, Math.max(1, Math.floor(rawLimit))) : 50
 
   try {
     const events = await prisma.userHistoryEvent.findMany({
       where: { userId: userId as string },
       orderBy: { createdAt: 'desc' },
-      take: 50,
+      take,
     })
 
     return NextResponse.json(

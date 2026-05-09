@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import type { TooltipProps } from 'recharts'
 import {
   PolarAngleAxis,
   PolarGrid,
@@ -11,6 +12,7 @@ import {
   Tooltip,
 } from 'recharts'
 
+import { RECO_RADAR_AXIS_DESCRIPTIONS } from '@/lib/recommendation-radar-axes'
 import { cn } from '@/lib/utils'
 
 function useCompactViewport() {
@@ -34,24 +36,57 @@ export type RadarBreakdown = {
   risk: number
 }
 
-export function breakdownToRadarData(b: RadarBreakdown) {
-  return [
-    { subject: 'Visa', value: Math.round(b.visa), fullMark: 100 },
-    { subject: 'Friction', value: Math.round(b.friction), fullMark: 100 },
-    { subject: 'Objectif', value: Math.round(b.goalMatch), fullMark: 100 },
-    { subject: 'Anti-risque', value: Math.round(Math.max(0, 100 - b.risk)), fullMark: 100 },
+export type RadarDatum = {
+  subject: string
+  value: number
+  fullMark: number
+  description: string
+}
+
+export function breakdownToRadarData(b: RadarBreakdown): RadarDatum[] {
+  const rows: RadarDatum[] = [
+    { subject: 'Visa', value: Math.round(b.visa), fullMark: 100, description: '' },
+    { subject: 'Friction', value: Math.round(b.friction), fullMark: 100, description: '' },
+    { subject: 'Objectif', value: Math.round(b.goalMatch), fullMark: 100, description: '' },
+    {
+      subject: 'Anti-risque',
+      value: Math.round(Math.max(0, 100 - b.risk)),
+      fullMark: 100,
+      description: '',
+    },
   ]
+  for (const row of rows) {
+    row.description = RECO_RADAR_AXIS_DESCRIPTIONS[row.subject] ?? ''
+  }
+  return rows
+}
+
+function RadarAxisTooltip({ active, payload }: TooltipProps<number, string>) {
+  if (!active || !payload?.length) return null
+  const p = payload[0]?.payload as RadarDatum | undefined
+  if (!p) return null
+  return (
+    <div className="max-w-[min(22rem,calc(100vw-2rem))] rounded-lg border border-line bg-[#1e293b] p-3 text-left shadow-lg">
+      <p className="text-xs font-black text-white">{p.subject}</p>
+      {p.description ? (
+        <p className="mt-1 text-[11px] font-medium leading-snug text-slate-300">{p.description}</p>
+      ) : null}
+      <p className="mt-2 text-[11px] font-bold text-slate-200">{p.value}/100</p>
+    </div>
+  )
 }
 
 type ScoreBreakdownChartProps = {
   breakdown: RadarBreakdown
   className?: string
+  /** Hauteur du graphique en px (ex. comparaison multi-pays). */
+  chartHeight?: number
 }
 
-export function ScoreBreakdownChart({ breakdown, className }: ScoreBreakdownChartProps) {
+export function ScoreBreakdownChart({ breakdown, className, chartHeight }: ScoreBreakdownChartProps) {
   const data = breakdownToRadarData(breakdown)
   const compact = useCompactViewport()
-  const height = compact ? 216 : 276
+  const height = chartHeight ?? (compact ? 216 : 276)
   const tickSize = compact ? 10 : 11
   const radiusTick = compact ? 9 : 10
 
@@ -70,11 +105,7 @@ export function ScoreBreakdownChart({ breakdown, className }: ScoreBreakdownChar
             fillOpacity={0.35}
             strokeWidth={2}
           />
-          <Tooltip
-            contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}
-            labelStyle={{ color: '#e2e8f0' }}
-            formatter={(v) => [`${Number(v)}/100`, '']}
-          />
+          <Tooltip content={<RadarAxisTooltip />} />
         </RadarChart>
       </ResponsiveContainer>
     </div>

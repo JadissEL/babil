@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
 
@@ -36,6 +36,8 @@ export default function RecommendationsPage() {
   const [loading, setLoading] = useState(true)
   const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null)
   const [chartCountryId, setChartCountryId] = useState<number | null>(null)
+  const [compareMode, setCompareMode] = useState(false)
+  const [compareSelectedIds, setCompareSelectedIds] = useState<number[]>([])
 
   useEffect(() => {
     const loadData = async () => {
@@ -86,6 +88,21 @@ export default function RecommendationsPage() {
     )
   }, [recommendations, chartCountryId])
 
+  const toggleCompare = useCallback((countryId: number) => {
+    setCompareSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(countryId)) next.delete(countryId)
+      else if (next.size < 3) next.add(countryId)
+      return Array.from(next)
+    })
+  }, [])
+
+  const compareRecos = useMemo(() => {
+    if (compareSelectedIds.length < 2) return []
+    const byId = new Map(recommendations.map((r) => [Number(r.id), r]))
+    return compareSelectedIds.map((id) => byId.get(id)).filter((r): r is ApiRecommendation => Boolean(r?.breakdown))
+  }, [compareSelectedIds, recommendations])
+
   const panelRows = recommendations.map((r, idx) =>
     mapApiRecommendationToPanelRow(r, idx + 1),
   )
@@ -122,6 +139,27 @@ export default function RecommendationsPage() {
       ) : (
         <>
           {profileUsed ? <ProfileContextBanner profile={profileUsed} variant="recommendation" /> : null}
+
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-text">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-line text-primary focus:ring-primary"
+                checked={compareMode}
+                onChange={(ev) => {
+                  setCompareMode(ev.target.checked)
+                  if (!ev.target.checked) setCompareSelectedIds([])
+                }}
+              />
+              Mode comparaison radar (2 à 3 pays)
+            </label>
+            {compareMode ? (
+              <p className="text-xs font-medium text-muted sm:max-w-md sm:text-right">
+                Activez les cases dans le classement ci-dessous ; la zone de comparaison apparaît sous le radar
+                principal.
+              </p>
+            ) : null}
+          </div>
 
           {chartReco?.breakdown ? (
             <div className="mb-10 grid min-w-0 gap-6 lg:grid-cols-2">
@@ -173,10 +211,41 @@ export default function RecommendationsPage() {
             </div>
           ) : null}
 
-          <div className="space-y-3">
+          {compareRecos.length >= 2 ? (
+            <Card className="mb-10 min-w-0 border-line bg-surface shadow-card">
+              <CardContent className="space-y-4 p-4 sm:p-6">
+                <h2 className="text-lg font-black text-text">Comparaison radar (2–3 pays)</h2>
+                <p className="text-xs font-medium text-muted">
+                  Même échelle que le radar principal — survolez un axe pour la définition alignée sur le moteur.
+                </p>
+                <div className="grid min-w-0 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {compareRecos.map((r) => (
+                    <div key={String(r.id)} className="min-w-0 rounded-xl border border-line bg-inset p-4">
+                      <p className="mb-2 text-sm font-black text-text">{r.name}</p>
+                      <ScoreBreakdownChart breakdown={r.breakdown!} chartHeight={200} />
+                      <Link
+                        href={`/countries/${r.id}`}
+                        className="mt-2 inline-block text-xs font-bold text-primary underline-offset-2 hover:underline"
+                      >
+                        Ouvrir la fiche pays →
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          <div className="mb-4">
             <h2 className="text-lg font-black text-text">Classement</h2>
-            <RecommendationPanel results={panelRows} />
           </div>
+
+          <RecommendationPanel
+            results={panelRows}
+            compareMode={compareMode}
+            compareSelectedIds={compareSelectedIds}
+            onCompareToggle={toggleCompare}
+          />
         </>
       )}
     </div>

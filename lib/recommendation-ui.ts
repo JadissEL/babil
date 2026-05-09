@@ -2,6 +2,7 @@ import type { RecommendationResultRow } from '@/components/engine/Recommendation
 
 import type { ProbabilityCountrySignals } from '@/lib/probability-result-display'
 import { formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
+import { englishScoreLevelToFr } from '@/lib/score-level-fr'
 
 /** Shape returned by `POST /api/recommendation` */
 export type ApiRecommendation = {
@@ -39,11 +40,17 @@ export function mapApiRecommendationToPanelRow(
 
   const sheetSummary = formatCountrySheetSignalsSummary(r.countrySignals)
 
+  const levelFr = englishScoreLevelToFr(r.level)
+
+  const cid = Number(r.id)
+  const countryId = Number.isFinite(cid) ? cid : undefined
+
   return {
     country: r.name,
+    countryId,
     score: r.score,
     rank,
-    subtitle: r.level ? `Probabilité : ${r.level}` : undefined,
+    subtitle: levelFr ? `Niveau de correspondance : ${levelFr}` : undefined,
     sheetSignalsSummary: sheetSummary ?? undefined,
     hasPhdStudies: Boolean(r.hasPhdStudies),
     explanation: lines.length ? lines : ['Synthèse indisponible pour ce résultat.'],

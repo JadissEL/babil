@@ -18,6 +18,7 @@ import {
   Scale,
   Shield,
   SwatchBook,
+  History,
 } from 'lucide-react'
 
 export type DashboardNavItem = {
@@ -29,6 +30,7 @@ export type DashboardNavItem = {
 
 export const dashboardNav: DashboardNavItem[] = [
   { label: 'Aperçu', href: '/overview', icon: LayoutDashboard },
+  { label: 'Historique', href: '/history', icon: History },
   { label: 'Moteur de probabilités', href: '/probability', icon: Brain },
   { label: 'Moteur reco (pro)', href: '/recommendation-engine', icon: Activity },
   { label: 'Mes recommandations', href: '/recommendations', icon: Map },
