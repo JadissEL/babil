@@ -3,7 +3,7 @@
  * Réutilisé par l’Explorer et le comparateur pour garder les mêmes scores.
  */
 
-import { materializePublicFullData } from '@/lib/country-full-data-materialize'
+import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
@@ -71,7 +71,7 @@ function normalizeHighlightFromFullData(full: Record<string, unknown>) {
 }
 
 export function enrichCountryApiRecord(c: Record<string, unknown>): EnrichedCountryApi {
-  const full = materializePublicFullData(c.full_data ?? null)
+  const full = materializePublicFullDataForApi(c.full_data ?? null)
 
   const streetFoodCol =
     typeof c.street_food_business_access === 'string' ? c.street_food_business_access : null

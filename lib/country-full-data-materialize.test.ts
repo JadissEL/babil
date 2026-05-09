@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { attachCanonicalSchengenFlag, materializePublicFullData } from './country-full-data-materialize'
+import {
+  attachCanonicalSchengenFlag,
+  materializePublicFullData,
+  materializePublicFullDataForApi,
+} from './country-full-data-materialize'
+import { FULL_DATA_CHANGELOG_KEY, appendFullDataChangelog } from './full-data-changelog'
 
 describe('materializePublicFullData', () => {
   it('materializes driving_rights v1 from legacy driving_license', () => {
@@ -16,6 +21,16 @@ describe('materializePublicFullData', () => {
     assert.ok(dr && typeof dr === 'object')
     const meta = dr.meta as Record<string, unknown> | undefined
     assert.equal(meta?.schemaVersion, 1)
+  })
+
+  it('materializePublicFullDataForApi strips _data_changelog', () => {
+    const withLog = appendFullDataChangelog(
+      { friction_score: 10 },
+      { actor: 'agent', action: 'test.write', detail: 'probe' },
+    )
+    const out = materializePublicFullDataForApi(withLog)
+    assert.ok(!(FULL_DATA_CHANGELOG_KEY in out))
+    assert.equal(out.friction_score, 10)
   })
 })
 

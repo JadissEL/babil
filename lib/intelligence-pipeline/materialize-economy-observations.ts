@@ -1,5 +1,6 @@
 import prisma from '@/lib/prisma'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { appendFullDataChangelog } from '@/lib/full-data-changelog'
 import { setDeep } from './merge-observations'
 import { INTELLIGENCE_TAXONOMY_VERSION, MATERIALIZE_TARGETS } from './taxonomy-v1'
 
@@ -45,9 +46,16 @@ export async function materializeEconomyObservationsForCountry(countryId: number
   setDeep(full, '_intelligence.economy_materialized_at', new Date().toISOString())
   setDeep(full, '_intelligence.taxonomy', INTELLIGENCE_TAXONOMY_VERSION)
 
+  const appliedPaths = [...best.keys()].join(',')
+  const withChangelog = appendFullDataChangelog(full, {
+    actor: 'pipeline',
+    action: 'intelligence.materialize_economy',
+    detail: appliedPaths || 'none',
+  })
+
   await prisma.country.update({
     where: { id: countryId },
-    data: { full_data: JSON.stringify(full) },
+    data: { full_data: JSON.stringify(withChangelog) },
   })
   return true
 }

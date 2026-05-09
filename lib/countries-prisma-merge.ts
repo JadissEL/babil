@@ -8,7 +8,7 @@
  * - Static JSON is matched by **country name** first (Prisma `id` often ≠ countries.json index).
  * - Null visa columns are backfilled from static.
  * - `full_data.friction_score` is coalesced from `friction_analysis` when missing.
- * Client-side reads should use `materializePublicFullData` from `@/lib/country-full-data-materialize`.
+ * Client-side reads should use `materializePublicFullDataForApi` from `@/lib/country-full-data-materialize`.
  */
 
 import { cache } from 'react'
@@ -17,7 +17,7 @@ import prisma from '@/lib/prisma'
 import type { LegacyCountryRecord } from '@/lib/countries-fallback'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
-import { materializePublicFullData } from '@/lib/country-full-data-materialize'
+import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
 import { mergeDisplayedFullData } from '@/lib/merge-displayed-full-data'
 import { dedupeSchengenMembersByCanonicalName, warnIfSchengenCardinalityExceeded } from '@/lib/schengen-duplicate-merge'
 import { isSchengenMember } from '@/lib/schengen-members'
@@ -65,9 +65,9 @@ export function augmentCountryDetailPayload<T extends Record<string, unknown>>(
       staticRow.full_data && typeof staticRow.full_data === 'object' && !Array.isArray(staticRow.full_data)
         ? (staticRow.full_data as Record<string, unknown>)
         : {}
-    full_data = materializePublicFullData(mergeDisplayedFullData(staticFull, full_data))
+    full_data = materializePublicFullDataForApi(mergeDisplayedFullData(staticFull, full_data))
   } else {
-    full_data = materializePublicFullData(country.full_data)
+    full_data = materializePublicFullDataForApi(country.full_data)
   }
 
   const appt =
@@ -134,7 +134,7 @@ function mergeFallbackRowWithDb(f: LegacyCountryRecord, db: {
     business_visa_score:
       typeof db.business_visa_score === 'number' ? db.business_visa_score : f.business_visa_score,
     appointment_difficulty: db.appointment_difficulty ?? f.appointment_difficulty,
-    full_data: materializePublicFullData(mergeDisplayedFullData(staticFull, dbFull)),
+    full_data: materializePublicFullDataForApi(mergeDisplayedFullData(staticFull, dbFull)),
     comments: (db.comments as LegacyCountryRecord['comments']) ?? [],
   }
 }
@@ -164,7 +164,7 @@ export function prismaRowToLegacy(
     work_visa_score: typeof db.work_visa_score === 'number' ? db.work_visa_score : 5,
     business_visa_score: typeof db.business_visa_score === 'number' ? db.business_visa_score : 5,
     appointment_difficulty: db.appointment_difficulty ?? 'Medium',
-    full_data: materializePublicFullData(db.full_data),
+    full_data: materializePublicFullDataForApi(db.full_data),
     comments: (db.comments as LegacyCountryRecord['comments']) ?? [],
   }
 }

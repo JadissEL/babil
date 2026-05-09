@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma'
-import { materializePublicFullData } from '@/lib/country-full-data-materialize'
+import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
     const safeIncome = Number.isFinite(income) && income >= 0 ? income : 0
     
     const results = countries.map((c: any) => {
-      const full = materializePublicFullData(c.full_data ?? null);
+      const full = materializePublicFullDataForApi(c.full_data ?? null);
       const defaultsUsed = inferProbabilitySheetDefaultsFromFull(full as Record<string, unknown>)
       const phdStudiesData = hasCountryPhdStoredData(full);
       

@@ -2,11 +2,12 @@
  * Parsed `full_data` plus friction coalescence and **driving_rights v1** materialization from legacy
  * `driving_license` when needed — **no Prisma**, safe for client bundles.
  * Prefer `augmentCountryDetailPayload` / `buildMergedCountriesList` on the server when possible;
- * use `materializePublicFullData` everywhere `full_data` is consumed so nested-only friction
- * scores still resolve.
+ * use **`materializePublicFullDataForApi`** for **HTTP / client-facing** payloads (retire `_data_changelog`).
+ * Use `materializePublicFullData` when persisting en base après avoir éventuellement appendé au journal interne.
  */
 
 import { parseCountryFullData } from '@/lib/country-full-data-json'
+import { stripFullDataChangelog } from '@/lib/full-data-changelog'
 import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel'
 import { isSchengenMember } from '@/lib/schengen-members'
 
@@ -35,6 +36,14 @@ export function materializePublicFullData(raw: unknown): Record<string, unknown>
 }
 
 /**
+ * Même traitement que `materializePublicFullData`, puis suppression de `_data_changelog`
+ * (réservé DB / audit — ne doit pas fuiter vers clients publics).
+ */
+export function materializePublicFullDataForApi(raw: unknown): Record<string, unknown> {
+  return stripFullDataChangelog(materializePublicFullData(raw))
+}
+
+/**
  * Writes canonical `schengen_flag` at the top level of stored `full_data` so JSON matches
  * Prisma + explorer rules (`lib/schengen-members`), independent of stale dataset flags.
  */
@@ -47,7 +56,7 @@ export function attachCanonicalSchengenFlag(
 
 /** One row from `GET /api/countries` or `GET /api/countries/[id]` — guarantees `full_data` is parsed + friction-normalized. */
 export function materializeCountryApiRow<T extends Record<string, unknown>>(row: T): T & { full_data: Record<string, unknown> } {
-  return { ...row, full_data: materializePublicFullData(row.full_data ?? null) }
+  return { ...row, full_data: materializePublicFullDataForApi(row.full_data ?? null) }
 }
 
 /** Client-side defense after `fetch('/api/countries')` — handles non-array payloads and string `full_data`. */

@@ -112,6 +112,15 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 
 ---
 
+## Journal `full_data` (ticket B.28)
+
+- Clé JSON **`_data_changelog`** : liste chronologique inversée (plus récent en tête), entrées `{ at, actor, action, detail?, subjectId? }` avec `actor` ∈ `admin` | `agent` | `pipeline` | `system`.
+- **Écritures branchées** : `PATCH /api/admin/countries/[id]` (détail des champs modifiés + `subjectId` = id utilisateur admin Prisma), upsert post-enrichissement dans [`agents/runner.ts`](../agents/runner.ts), matérialisation économie [`materializeEconomyObservationsForCountry`](../lib/intelligence-pipeline/materialize-economy-observations.ts).
+- **Confidentialité** : le journal **n’est pas** renvoyé aux clients publics — [`materializePublicFullDataForApi`](../lib/country-full-data-materialize.ts) retire `_data_changelog` après normalisation (liste pays, fiche, reco, proba, enrich explorer).
+- **Limite** : tronquer à 50 entrées par défaut ([`DEFAULT_MAX_FULL_DATA_CHANGELOG_ENTRIES`](../lib/full-data-changelog.ts)) ; pas d’historique infini en JSON.
+
+---
+
 ## Snapshot contract ↔ fiche pays (ticket B.29)
 
 - Liste de marqueurs attendus dans [`app/(public)/countries/[id]/page.tsx`](../app/(public)/countries/[id]/page.tsx) : [`COUNTRY_DETAIL_PAGE_CONTRACT_MARKERS`](../lib/country-intelligence-contract-display-snapshot.ts).  

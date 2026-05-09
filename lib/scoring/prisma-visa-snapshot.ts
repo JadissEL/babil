@@ -2,7 +2,7 @@
  * Derives Prisma 1–10 visa snapshots from full_data using the same mobility models + DB scalar merge as enrich.
  */
 
-import { materializePublicFullData } from '@/lib/country-full-data-materialize'
+import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
 import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
 import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
 import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
@@ -34,7 +34,7 @@ export function mergedVisaScores100WithDb(
   rawFullData: unknown,
   existing: PrismaVisaScalarInput,
 ): MergedVisaScores100 {
-  const full = materializePublicFullData(rawFullData)
+  const full = materializePublicFullDataForApi(rawFullData)
   const street =
     typeof existing.street_food_business_access === 'string'
       ? existing.street_food_business_access

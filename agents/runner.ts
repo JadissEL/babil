@@ -8,6 +8,7 @@ import {
   ensureStreetFoodBusinessAccessOnFullData,
 } from '../lib/country-street-food-access'
 import { syncDrivingRightsIntelIntoFullData } from '../lib/driving-rights-intel'
+import { appendFullDataChangelog } from '../lib/full-data-changelog'
 import { CONTRACT_VERSION } from '../lib/country-intelligence-contract'
 import { isSchengenMember } from '../lib/schengen-members'
 import type { CompletenessReport } from '../lib/country-completeness'
@@ -506,6 +507,12 @@ async function processCountryTask(task: CountryTask) {
     contractFields: ALL_COUNTRY_CONTRACT_FIELD_COUNT,
     advancementGatePassed: orch.advancementGatePassed,
     strictCountryGate: AGENT_STRICT_COUNTRY_GATE,
+  })
+
+  fullDataForUpsert = appendFullDataChangelog(fullDataForUpsert, {
+    actor: 'agent',
+    action: 'enrichment.upsert',
+    detail: `country=${task.country}; completeness=${reportPayload.report.score.toFixed(1)}${canaryPayload ? ';canary' : ''}`,
   })
 
   await prisma.country.upsert({
