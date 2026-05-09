@@ -4,7 +4,7 @@
  */
 export const RECO_RADAR_AXIS_DESCRIPTIONS: Record<string, string> = {
   Visa:
-    'Score visa pour votre objectif (tourisme, études, travail ou affaires), avec pénalités / bonus financiers et de profil (revenu, épargne, CNSS, famille UE) comme dans le moteur.',
+    'Score visa pour votre objectif (tourisme, études, travail ou affaires) sur 0–100 après fusion modèle + colonnes 1–10, avec pénalités / bonus financiers et de profil (revenu, épargne, CNSS, famille UE) comme dans le moteur.',
   Friction:
     'Facilité administrative : rendez-vous, délais moyens et transparence. Plus la valeur est haute, moins le parcours consulaire est pénalisant.',
   Objectif:

@@ -11,9 +11,9 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
-| **T6** | Transparence scoring | Top 3 facteurs (`topDrivers`), signaux fiche explicites (`defaultsUsed`, textes non renseigné), snapshot contract/UI, journal `_data_changelog` (B.28) — [score-driver-explain.ts](../lib/score-driver-explain.ts), [probability-result-display.ts](../lib/probability-result-display.ts), [full-data-changelog.ts](../lib/full-data-changelog.ts), [country-intelligence-contract-display-snapshot.ts](../lib/country-intelligence-contract-display-snapshot.ts) | Implémenté |
+| **T6** | Transparence scoring | Top 3 facteurs (`topDrivers`), signaux fiche explicites, snapshot contract/UI, journal `_data_changelog`, **lexique échelles B.27** — [score-driver-explain.ts](../lib/score-driver-explain.ts), [probability-result-display.ts](../lib/probability-result-display.ts), [full-data-changelog.ts](../lib/full-data-changelog.ts), [score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [country-intelligence-contract-display-snapshot.ts](../lib/country-intelligence-contract-display-snapshot.ts) | Implémenté |
 
-### Lot données / transparence catalogue B (items 23–30 partiel)
+### Lot données / transparence catalogue B (items 23–30)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
@@ -21,7 +21,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | B.24 | `engineVersion` exposée | `lib/engine-version.ts` ; en-têtes sur `POST /api/recommendation` et `POST /api/probability` |
 | B.25 | Calibration / stabilité | Tests [`lib/public-synthetic-profile.test.ts`](../lib/public-synthetic-profile.test.ts) ; checklist manuelle dans la doc moteur |
 | B.26 | Top 3 facteurs vs neutre | [`lib/score-driver-explain.ts`](../lib/score-driver-explain.ts) ; champ `topDrivers` reco + proba |
-| B.27 | Échelles 0–100 vs 0–10 | Doc moteur (section dédiée) |
+| B.27 | Échelles 0–100 vs 0–10 / naming | [`lib/score-scale-lexicon.ts`](../lib/score-scale-lexicon.ts) ; fiche pays + radar ; doc moteur + `schema.prisma` |
 | B.28 | Journal écritures `full_data` | [`lib/full-data-changelog.ts`](../lib/full-data-changelog.ts) ; `materializePublicFullDataForApi` ; agent + admin + pipeline économie |
 | B.29 | Snapshot contract ↔ fiche pays | [`lib/country-intelligence-contract-display-snapshot.ts`](../lib/country-intelligence-contract-display-snapshot.ts) + test |
 | B.30 | Signaux manquants explicites | [`lib/probability-result-display.ts`](../lib/probability-result-display.ts) ; `defaultsUsed` sur `POST /api/probability` |
@@ -40,7 +40,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 
 ## Références
 
-- Moteurs (formules + version) : [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md)
+- Moteurs (formules + version + échelles B.27) : [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), [lib/score-scale-lexicon.ts](../lib/score-scale-lexicon.ts)
 - Spécification liste légère : [app/api/countries/route.ts](../app/api/countries/route.ts) (`?light=1`)
 - Rétention : [country-observation-retention.md](country-observation-retention.md)
 - CI : [ci.yml](../.github/workflows/ci.yml)

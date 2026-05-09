@@ -54,7 +54,7 @@ model Country {
   short_course_access         String?
   street_food_business_access String?
   driving_license_status      String?
-  full_data                   String?
+  full_data                   String? /// JSON fiche : friction_score 0–100, brutal_reality_score 0–10 ; les snapshots visa sont en colonnes 1–10 — voir lib/score-scale-lexicon.ts
 
   comments      Comment[]
   insights      CountryInsight[]

@@ -38,6 +38,7 @@ import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
+import { SCORE_SCALE_LEGEND_FR } from '@/lib/score-scale-lexicon'
 import { appToast } from '@/lib/toast-store'
 import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
 import { officialSourcesForCountry } from '@/lib/official-sources'
@@ -435,6 +436,9 @@ export default function CountryDetailPage() {
                   <div className="text-2xl font-black text-text">{fmtConfidencePct(full.confidence_score)}</div>
                 </div>
               </div>
+              <p className="mt-4 text-[10px] font-medium leading-relaxed text-muted">
+                {SCORE_SCALE_LEGEND_FR.terrainTilesCaption}
+              </p>
 
               {hasWbIndicators ? (
                 <div className="mt-8 rounded-2xl border border-primary/20 bg-primary-soft/40 p-5">
@@ -491,7 +495,10 @@ export default function CountryDetailPage() {
 
               <CountryDbInsightsCollapsible rows={dbInsightRows} />
 
-              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <p className="mt-8 text-[10px] font-medium leading-relaxed text-muted">
+                {SCORE_SCALE_LEGEND_FR.visaBarsSubtitle}
+              </p>
+              <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ScoreBar label="Visa tourisme" value={tourismScore} />
                 <ScoreBar label="Visa études" value={studyScore} />
                 <ScoreBar label="Visa travail" value={workScore} />
@@ -735,7 +742,8 @@ export default function CountryDetailPage() {
         ) : null}
 
         <section className="mb-5">
-          <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">Scores indicatifs (0–100)</h2>
+          <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">Scores indicatifs</h2>
+          <p className="mb-3 text-[10px] leading-snug text-gray-600">{SCORE_SCALE_LEGEND_FR.printTableSubtitle}</p>
           <table className="w-full max-w-lg text-left text-sm">
             <tbody className="divide-y divide-gray-200">
               <tr>
@@ -768,6 +776,7 @@ export default function CountryDetailPage() {
 
         <section className="mb-5">
           <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">Indicateurs terrain (extraits)</h2>
+          <p className="mb-2 text-[10px] leading-snug text-gray-600">{SCORE_SCALE_LEGEND_FR.terrainTilesCaption}</p>
           <ul className="list-inside list-disc space-y-1 text-sm text-gray-800">
             <li>Score réalité : {fmtBrutalReality(full.brutal_reality_score)}</li>
             <li>Acceptation (indicateur) : {fmtAcceptanceRate(full.acceptance_rate_morocco)}</li>

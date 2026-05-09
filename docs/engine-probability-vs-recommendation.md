@@ -90,9 +90,10 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 
 ## Échelles & nommage (ticket B.27)
 
+- **Source de vérité code + libellés UI** : [`lib/score-scale-lexicon.ts`](../lib/score-scale-lexicon.ts) (`SCORE_SCALE_LEGEND_FR`, constantes de bornes).
 - **Recommandation** : les quatre piliers du `breakdown` et le score final sont sur **0–100** (entiers arrondis côté API). Le champ historique `match_score` reste `finalScore / 10` (compatibilité).
 - **Probabilité** : `globalScore` et les sous-scores agrégés du `breakdown` sont en **0–100**. Le signal brut `brutal_reality_score` dans `full_data` est une **échelle 0–10** ; le moteur le convertit en contribution 0–100 via `100 - brutal×10`. L’UI rappelle « /10 » quand elle cite la valeur brute fiche, et « % » pour les barres de breakdown.
-- **Prisma** : les colonnes `tourist_visa_score`, `study_visa_score`, etc. sont stockées en **0–100** (aligné UI).
+- **Prisma `Country`** : les colonnes `tourist_visa_score`, `study_visa_score`, `work_visa_score`, `business_visa_score` sont des **snapshots 1–10** (voir commentaires `schema.prisma`) ; `mergeModelWithDbScalar01to100` les projette en **0–100** pour l’enrichissement et les moteurs. Le JSON `full_data` porte typiquement `friction_score` **0–100** et `brutal_reality_score` **0–10**.
 
 ---
 
