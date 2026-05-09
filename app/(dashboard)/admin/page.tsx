@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Activity,
+  BarChart3,
   CheckCircle,
   Database,
   FileStack,
@@ -19,7 +20,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { DELEGATED_REQUEST_STATUSES } from '@/lib/delegated-application-status'
 import { formatPriceMad } from '@/lib/delegated-application-catalog'
 
-type Tab = 'comments' | 'countries' | 'assist'
+type Tab = 'comments' | 'countries' | 'assist' | 'intelligence'
 
 type PendingComment = {
   id: number
@@ -27,6 +28,45 @@ type PendingComment = {
   status: string
   user: { name: string | null; email: string | null }
   country: { name: string }
+}
+
+type IntelligenceSummary = {
+  sourceCount: number
+  observationCount: number
+  observationsWithoutRun: number
+  fieldPathBreakdown: Array<{ fieldPath: string; count: number }>
+  observationsBySource: Array<{
+    sourceId: string
+    slug: string
+    name: string
+    tier: string | null
+    count: number
+  }>
+  observationsByCountry: Array<{
+    countryId: number
+    name: string
+    region: string | null
+    count: number
+  }>
+  recentRuns: Array<{
+    id: string
+    startedAt: string
+    finishedAt: string | null
+    status: string
+    trigger: string
+    errorSummary: string | null
+    observationCount: number
+    stats: unknown
+  }>
+  lastRun: {
+    id: string
+    startedAt: string
+    finishedAt: string | null
+    status: string
+    trigger: string
+    errorSummary: string | null
+    stats: unknown
+  } | null
 }
 
 type AssistQueueRow = {
@@ -73,8 +113,20 @@ export default function AdminPage() {
     full: boolean
     redactionApplied: boolean
   } | null>(null)
+  const [intelligence, setIntelligence] = useState<IntelligenceSummary | null>(null)
+  const [intelligenceLoading, setIntelligenceLoading] = useState(false)
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [loading, setLoading] = useState(true)
+
+  const loadIntelligence = useCallback(async () => {
+    setIntelligenceLoading(true)
+    const res = await fetch('/api/admin/intelligence/summary')
+    if (res.ok) {
+      const data = (await res.json()) as IntelligenceSummary
+      setIntelligence(data)
+    }
+    setIntelligenceLoading(false)
+  }, [])
 
   const loadAgentHealth = useCallback(async () => {
     const healthRes = await fetch('/api/admin/agents/health')
@@ -128,6 +180,10 @@ export default function AdminPage() {
     }
     void boot()
   }, [loadAgentHealth, loadAssist, loadCountries])
+
+  useEffect(() => {
+    if (tab === 'intelligence') void loadIntelligence()
+  }, [tab, loadIntelligence])
 
   useEffect(() => {
     if (tab === 'assist') void loadAssist()
@@ -253,6 +309,14 @@ export default function AdminPage() {
           onClick={() => setTab('assist')}
         >
           <FileStack className="h-4 w-4 shrink-0" /> Assist ({assistRows.length})
+        </Button>
+        <Button
+          className="w-full justify-center gap-2 sm:w-auto sm:justify-start"
+          variant={tab === 'intelligence' ? 'default' : 'outline'}
+          type="button"
+          onClick={() => setTab('intelligence')}
+        >
+          <BarChart3 className="h-4 w-4 shrink-0" /> Intelligence
         </Button>
         <Link
           href="/moderation"
@@ -560,6 +624,211 @@ export default function AdminPage() {
               ))}
             </div>
           )}
+        </section>
+      )}
+
+      {tab === 'intelligence' && (
+        <section className="space-y-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-center gap-2">
+              <BarChart3 className="h-5 w-5 shrink-0 text-primary" />
+              <h2 className="text-lg font-black text-text">Pipeline observations</h2>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full shrink-0 sm:w-auto"
+              disabled={intelligenceLoading}
+              onClick={() => void loadIntelligence()}
+            >
+              Rafraîchir
+            </Button>
+          </div>
+
+          {intelligenceLoading && !intelligence ? (
+            <Card className="border-dashed border-line bg-surface">
+              <CardContent className="p-10 text-center text-muted">Chargement des agrégats…</CardContent>
+            </Card>
+          ) : null}
+
+          {!intelligenceLoading && !intelligence ? (
+            <Card className="border-line bg-surface">
+              <CardContent className="space-y-3 p-6 text-center">
+                <p className="text-sm text-muted">Résumé indisponible (tables intelligence ou erreur serveur).</p>
+                <Button type="button" variant="outline" onClick={() => void loadIntelligence()}>
+                  Réessayer
+                </Button>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {intelligence ? (
+            <>
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4">
+                <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Sources (registre)</p>
+                  <p className="text-lg font-black text-text">{intelligence.sourceCount}</p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Observations</p>
+                  <p className="text-lg font-black text-text">{intelligence.observationCount}</p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#fff8e8] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Sans runId</p>
+                  <p className="text-lg font-black text-warning">{intelligence.observationsWithoutRun}</p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Runs listés</p>
+                  <p className="text-lg font-black text-text">{intelligence.recentRuns.length}</p>
+                </div>
+              </div>
+
+              {intelligence.lastRun ? (
+                <Card className="border-line bg-surface">
+                  <CardContent className="space-y-2 p-4">
+                    <p className="text-[10px] font-black uppercase tracking-wider text-muted">Dernier run</p>
+                    <p className="text-sm font-bold text-text">
+                      {intelligence.lastRun.status} · {intelligence.lastRun.trigger} ·{' '}
+                      {new Date(intelligence.lastRun.startedAt).toLocaleString('fr-FR')}
+                    </p>
+                    {intelligence.lastRun.errorSummary ? (
+                      <p className="text-xs text-danger line-clamp-3">{intelligence.lastRun.errorSummary}</p>
+                    ) : null}
+                  </CardContent>
+                </Card>
+              ) : null}
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <Card className="border-line bg-surface">
+                  <CardContent className="p-0">
+                    <p className="border-b border-line bg-[#f8f2e8] px-4 py-3 text-[10px] font-black uppercase tracking-wider text-muted">
+                      Volume par source
+                    </p>
+                    <div className="max-h-72 overflow-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="sticky top-0 bg-surface text-[10px] font-black uppercase tracking-wider text-muted">
+                          <tr>
+                            <th className="px-4 py-2">Source</th>
+                            <th className="px-4 py-2">Tier</th>
+                            <th className="px-4 py-2 text-right">Obs.</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {intelligence.observationsBySource.map((s) => (
+                            <tr key={s.sourceId} className="border-t border-line">
+                              <td className="px-4 py-2 font-medium text-text">
+                                <span className="block font-black">{s.name}</span>
+                                <span className="text-[10px] text-muted">{s.slug}</span>
+                              </td>
+                              <td className="px-4 py-2 text-muted">{s.tier ?? '—'}</td>
+                              <td className="px-4 py-2 text-right font-mono font-bold">{s.count}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-line bg-surface">
+                  <CardContent className="p-0">
+                    <p className="border-b border-line bg-[#f8f2e8] px-4 py-3 text-[10px] font-black uppercase tracking-wider text-muted">
+                      Top pays (40)
+                    </p>
+                    <div className="max-h-72 overflow-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="sticky top-0 bg-surface text-[10px] font-black uppercase tracking-wider text-muted">
+                          <tr>
+                            <th className="px-4 py-2">Pays</th>
+                            <th className="px-4 py-2">Région</th>
+                            <th className="px-4 py-2 text-right">Obs.</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {intelligence.observationsByCountry.map((c) => (
+                            <tr key={c.countryId} className="border-t border-line">
+                              <td className="px-4 py-2">
+                                <Link
+                                  href={`/countries/${c.countryId}`}
+                                  className="font-black text-primary hover:text-primary-hover"
+                                >
+                                  {c.name}
+                                </Link>
+                              </td>
+                              <td className="px-4 py-2 text-muted">{c.region ?? '—'}</td>
+                              <td className="px-4 py-2 text-right font-mono font-bold">{c.count}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card className="border-line bg-surface">
+                <CardContent className="p-0">
+                  <p className="border-b border-line bg-[#f8f2e8] px-4 py-3 text-[10px] font-black uppercase tracking-wider text-muted">
+                    Runs récents (25) — volume observations
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[640px] text-left text-xs">
+                      <thead className="text-[10px] font-black uppercase tracking-wider text-muted">
+                        <tr>
+                          <th className="px-4 py-2">Début</th>
+                          <th className="px-4 py-2">Statut</th>
+                          <th className="px-4 py-2">Déclencheur</th>
+                          <th className="px-4 py-2 text-right">Obs.</th>
+                          <th className="px-4 py-2">Erreur</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {intelligence.recentRuns.map((r) => (
+                          <tr key={r.id} className="border-t border-line">
+                            <td className="whitespace-nowrap px-4 py-2 text-muted">
+                              {new Date(r.startedAt).toLocaleString('fr-FR')}
+                            </td>
+                            <td className="px-4 py-2 font-black text-text">{r.status}</td>
+                            <td className="px-4 py-2 text-muted">{r.trigger}</td>
+                            <td className="px-4 py-2 text-right font-mono font-bold">{r.observationCount}</td>
+                            <td className="max-w-[200px] truncate px-4 py-2 text-danger" title={r.errorSummary ?? ''}>
+                              {r.errorSummary ?? '—'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-line bg-surface">
+                <CardContent className="p-0">
+                  <p className="border-b border-line bg-[#f8f2e8] px-4 py-3 text-[10px] font-black uppercase tracking-wider text-muted">
+                    Field paths (top 24)
+                  </p>
+                  <div className="max-h-64 overflow-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="sticky top-0 bg-surface text-[10px] font-black uppercase tracking-wider text-muted">
+                        <tr>
+                          <th className="px-4 py-2">fieldPath</th>
+                          <th className="px-4 py-2 text-right">Obs.</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {intelligence.fieldPathBreakdown.map((f) => (
+                          <tr key={f.fieldPath} className="border-t border-line">
+                            <td className="px-4 py-2 font-mono text-[11px] text-text">{f.fieldPath}</td>
+                            <td className="px-4 py-2 text-right font-mono font-bold">{f.count}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : null}
         </section>
       )}
     </div>
