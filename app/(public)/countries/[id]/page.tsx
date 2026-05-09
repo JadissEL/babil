@@ -35,6 +35,8 @@ import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
+import { appToast } from '@/lib/toast-store'
+import { formatIntelDateShortFr, isEconomyIntelFresh } from '@/lib/intel-freshness'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 const toNum = (v: any, fallback = 0) => {
@@ -195,8 +197,15 @@ export default function CountryDetailPage() {
       })
       if (res.ok) {
         const data = await res.json()
-        setFavorited(Boolean(data?.favorited))
+        const next = Boolean(data?.favorited)
+        setFavorited(next)
+        appToast.success(next ? 'Ajouté aux favoris.' : 'Retiré des favoris.')
+      } else {
+        const err = await res.json().catch(() => ({}))
+        appToast.error(typeof err?.error === 'string' ? err.error : 'Impossible de mettre à jour les favoris.')
       }
+    } catch {
+      appToast.error('Erreur réseau — favoris non enregistrés.')
     } finally {
       setFavLoading(false)
     }
@@ -220,10 +229,15 @@ export default function CountryDetailPage() {
       if (res.ok) {
         setComment('')
         setMessage('Merci ! Votre commentaire est en attente de modération.')
+        appToast.success('Commentaire envoyé — modération en cours.')
         setTimeout(() => setMessage(''), 5000)
+      } else {
+        const err = await res.json().catch(() => ({}))
+        appToast.error(typeof err?.error === 'string' ? err.error : 'Envoi du commentaire refusé.')
       }
     } catch (error) {
       console.error(error)
+      appToast.error('Erreur réseau — commentaire non envoyé.')
     } finally {
       setSubmitting(false)
     }
@@ -277,6 +291,7 @@ export default function CountryDetailPage() {
     typeof intelMeta?.economy_materialized_at === 'string' && intelMeta.economy_materialized_at.trim()
       ? intelMeta.economy_materialized_at.trim()
       : null
+  const economyIntelFresh = isEconomyIntelFresh(intelUpdated)
 
   return (
     <>
@@ -298,6 +313,15 @@ export default function CountryDetailPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          {economyIntelFresh && intelUpdated ? (
+            <span
+              className="inline-flex items-center gap-1.5 rounded-xl border border-[#94dfbd]/70 bg-[#e9f9f1] px-3 py-2 text-[10px] font-black uppercase tracking-widest text-success"
+              title={`Indicateurs économie / matérialisation : ${formatIntelDateShortFr(intelUpdated)}`}
+            >
+              <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              Données fraîches
+            </span>
+          ) : null}
           <span className={`rounded-xl border px-4 py-2 text-xs font-black uppercase tracking-widest ${scoreTone(finalScore)}`}>
             Score final {finalScore}/100
           </span>

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
+import { appToast } from '@/lib/toast-store'
 
 export default function ProfilePage() {
   const { user } = useUser()
@@ -63,10 +64,15 @@ export default function ProfilePage() {
       
       if (res.ok) {
         setMessage('Profil mis à jour avec succès !')
+        appToast.success('Profil enregistré.')
         setTimeout(() => setMessage(''), 3000)
+      } else {
+        const err = await res.json().catch(() => ({}))
+        appToast.error(typeof err?.error === 'string' ? err.error : 'Enregistrement du profil impossible.')
       }
     } catch (error) {
       console.error(error)
+      appToast.error('Erreur réseau — profil non enregistré.')
     } finally {
       setSaving(false)
     }

@@ -1,0 +1,154 @@
+'use client'
+
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
+import { Search } from 'lucide-react'
+
+import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import { cn } from '@/lib/utils'
+
+type Row = { id: string | number; name: string }
+
+export function GlobalCountrySearch() {
+  const [open, setOpen] = useState(false)
+  const [q, setQ] = useState('')
+  const [rows, setRows] = useState<Row[]>([])
+  const [loaded, setLoaded] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  const load = useCallback(async () => {
+    if (loaded) return
+    try {
+      const r = await fetch('/api/countries?light=1')
+      const data = await r.json()
+      const norm = normalizeCountriesApiListResponse(data)
+      setRows(
+        norm
+          .map((c) => ({
+            id: (c as { id?: unknown }).id as string | number,
+            name: String((c as { name?: unknown }).name ?? ''),
+          }))
+          .filter((x) => x.name && x.id !== undefined && x.id !== ''),
+      )
+    } catch {
+      setRows([])
+    } finally {
+      setLoaded(true)
+    }
+  }, [loaded])
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        setOpen((o) => !o)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    void load()
+    const t = window.setTimeout(() => inputRef.current?.focus(), 0)
+    const onDoc = (e: MouseEvent) => {
+      if (!panelRef.current?.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    return () => {
+      window.clearTimeout(t)
+      document.removeEventListener('mousedown', onDoc)
+    }
+  }, [open, load])
+
+  useEffect(() => {
+    if (!open) return
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('keydown', onEsc)
+    return () => window.removeEventListener('keydown', onEsc)
+  }, [open])
+
+  const filtered = useMemo(() => {
+    const s = q.trim().toLowerCase()
+    if (!s) return rows.slice(0, 14)
+    return rows.filter((r) => r.name.toLowerCase().includes(s)).slice(0, 24)
+  }, [q, rows])
+
+  return (
+    <div className="relative" ref={panelRef}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-[10px] font-black uppercase tracking-wider text-muted transition-colors hover:border-primary/40 hover:bg-primary-soft hover:text-primary sm:px-3.5 sm:text-xs"
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        aria-label="Rechercher un pays"
+        title="Rechercher un pays (Ctrl+K)"
+      >
+        <Search className="h-4 w-4 shrink-0" aria-hidden />
+        <span className="max-[420px]:sr-only">Pays</span>
+        <kbd className="hidden rounded border border-line bg-inset px-1.5 py-0.5 font-mono text-[10px] font-bold text-muted sm:inline">
+          ⌘K
+        </kbd>
+      </button>
+
+      {open ? (
+        <>
+          <div className="fixed inset-0 z-[60] bg-black/25 sm:hidden" aria-hidden onClick={() => setOpen(false)} />
+          <div
+            role="dialog"
+            aria-label="Recherche de pays"
+            aria-modal="true"
+            className={cn(
+              'fixed left-3 right-3 top-20 z-[70] max-h-[min(70vh,28rem)] overflow-hidden rounded-2xl border border-line bg-surface shadow-card sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[min(100vw-2rem,22rem)] sm:max-h-[min(70vh,24rem)]',
+            )}
+          >
+            <div className="border-b border-line p-3">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                <input
+                  ref={inputRef}
+                  type="search"
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder="Nom du pays…"
+                  className="w-full rounded-xl border border-line bg-inset py-2.5 pl-10 pr-3 text-sm font-medium text-text outline-none focus:ring-2 focus:ring-primary/40"
+                  autoComplete="off"
+                />
+              </div>
+              <p className="mt-2 text-[11px] font-medium text-muted">
+                Liste fusionnée légère — accès direct aux fiches.
+              </p>
+            </div>
+            <ul className="max-h-[min(50vh,18rem)] overflow-y-auto p-2 sm:max-h-[min(55vh,16rem)]">
+              {!loaded ? (
+                <li className="px-3 py-4 text-center text-sm font-medium text-muted">Chargement…</li>
+              ) : filtered.length === 0 ? (
+                <li className="px-3 py-4 text-center text-sm font-medium text-muted">Aucun résultat.</li>
+              ) : (
+                filtered.map((r) => (
+                  <li key={String(r.id)}>
+                    <Link
+                      href={`/countries/${encodeURIComponent(String(r.id))}`}
+                      className="block rounded-xl px-3 py-2.5 text-sm font-bold text-text transition-colors hover:bg-primary-soft"
+                      onClick={() => {
+                        setOpen(false)
+                        setQ('')
+                      }}
+                    >
+                      {r.name}
+                    </Link>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+        </>
+      ) : null}
+    </div>
+  )
+}

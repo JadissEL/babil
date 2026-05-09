@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft, ChevronRight, Scale } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Scale, Share2 } from 'lucide-react'
 
 import { CompareStickyBar } from '@/components/compare/CompareStickyBar'
 import { CompareExperienceSkeleton } from '@/components/compare/CompareExperienceSkeleton'
@@ -24,6 +24,7 @@ import {
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
+import { appToast } from '@/lib/toast-store'
 import {
   matchesExplorerRegionFilter,
   matchesExplorerSchengenOnlyToggle,
@@ -66,13 +67,23 @@ export function CompareExperience() {
   }, [])
 
   useEffect(() => {
-    if (hydratedFromUrl.current || !searchParams) return
-    hydratedFromUrl.current = true
-    const o = searchParams?.get('objective')
-    if (o && o in COMPARE_OBJECTIVES) {
-      const def = COMPARE_OBJECTIVES[o as CompareObjectiveId]
-      setCategoryId(def.categoryId)
-      setStep('countries')
+    if (!searchParams) return
+    if (!hydratedFromUrl.current) {
+      hydratedFromUrl.current = true
+      const o = searchParams.get('objective')
+      if (o && o in COMPARE_OBJECTIVES) {
+        const def = COMPARE_OBJECTIVES[o as CompareObjectiveId]
+        setCategoryId(def.categoryId)
+        setStep('countries')
+      }
+    }
+    const c = searchParams.get('countries')
+    if (c) {
+      const ids = c
+        .split(/[,\s]+/)
+        .map((s) => parseInt(s.trim(), 10))
+        .filter((n) => Number.isFinite(n))
+      if (ids.length) setSelectedIds(ids.slice(0, MAX))
     }
   }, [searchParams])
 
@@ -219,6 +230,22 @@ export function CompareExperience() {
     document.getElementById('compare-table-anchor')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  const copyShareLink = useCallback(async () => {
+    const params = new URLSearchParams(searchParams?.toString() ?? '')
+    params.set('objective', objective.id)
+    if (selectedIds.length) params.set('countries', selectedIds.join(','))
+    else params.delete('countries')
+    const base = typeof window !== 'undefined' ? window.location.origin : ''
+    const path = pathname ?? '/compare'
+    const url = `${base}${path}?${params.toString()}`
+    try {
+      await navigator.clipboard.writeText(url)
+      appToast.success('Lien de comparaison copié.')
+    } catch {
+      appToast.error('Copie impossible — copiez l’URL depuis la barre d’adresse.')
+    }
+  }, [objective.id, pathname, searchParams, selectedIds])
+
   const objectivesInCategory = categoryId ? listObjectivesForCategory(categoryId) : []
 
   if (loading) {
@@ -334,6 +361,15 @@ export function CompareExperience() {
                 <span className="rounded-full bg-primary-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
                   {objective.shortLabel}
                 </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="gap-1 text-sm"
+                  onClick={() => void copyShareLink()}
+                  title="Copier un lien profond (objectif + pays + filtres)"
+                >
+                  <Share2 className="h-4 w-4" /> Copier le lien
+                </Button>
               </div>
               <h2 className="text-lg font-black text-text sm:text-xl">3. Choisissez les pays</h2>
               <p className="max-w-2xl text-sm font-medium text-muted">{objective.description}</p>

@@ -5,6 +5,8 @@ import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { Globe, Heart, LayoutDashboard } from 'lucide-react'
 import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate'
+import { AppToaster } from '@/components/AppToaster'
+import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -75,6 +77,7 @@ export default function RootLayout({
               </div>
 
                 <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 sm:gap-3">
+                  <GlobalCountrySearch />
                   <SignedOut>
                     <>
                       <SignInButton mode="modal">
@@ -111,6 +114,7 @@ export default function RootLayout({
                 </div>
             </div>
           </header>
+          <AppToaster />
           <main className="flex-1 pb-12">{children}</main>
           <footer className="border-t border-line bg-[#fdf8ef]/90 text-text">
             <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 sm:px-6 lg:px-8">

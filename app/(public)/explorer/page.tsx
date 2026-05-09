@@ -23,7 +23,14 @@ import {
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
 import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-objective'
+import {
+  buildExplorerQueryStringFromSaved,
+  clearExplorerSavedFilters,
+  readExplorerSavedFilters,
+  writeExplorerSavedFilters,
+} from '@/lib/explorer-saved-filters'
 import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
+import { appToast } from '@/lib/toast-store'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -74,6 +81,11 @@ function ExplorerPageInner() {
   const [budget, setBudget] = useState<Budget>('all')
   const [schengenOnly, setSchengenOnly] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [hasSavedView, setHasSavedView] = useState(false)
+
+  useEffect(() => {
+    setHasSavedView(Boolean(readExplorerSavedFilters()))
+  }, [])
 
   const commitExplorerUrl = useCallback(
     (patch: UrlCommitSlice = {}) => {
@@ -348,6 +360,59 @@ function ExplorerPageInner() {
             />
             Schengen uniquement
           </label>
+
+          <div className="flex w-full flex-wrap items-center gap-2 border-t border-line pt-4 sm:w-auto sm:border-0 sm:pt-0">
+            <button
+              type="button"
+              onClick={() => {
+                writeExplorerSavedFilters({
+                  q: search,
+                  region: region === 'all' ? '' : explorerRegionToUrlParam(region),
+                  goal,
+                  budget,
+                  difficulty,
+                  schengenOnly,
+                  mode,
+                })
+                setHasSavedView(true)
+                appToast.success('Vue enregistrée — vous pourrez la rouvrir d’un clic.')
+              }}
+              className="rounded-xl border border-line bg-surface px-3 py-2 text-[10px] font-black uppercase tracking-wider text-text transition-colors hover:border-primary/40 hover:bg-primary-soft"
+            >
+              Mémoriser la vue
+            </button>
+            <button
+              type="button"
+              disabled={!hasSavedView}
+              onClick={() => {
+                const s = readExplorerSavedFilters()
+                if (!s) {
+                  appToast.info('Aucune vue enregistrée.')
+                  return
+                }
+                const qs = buildExplorerQueryStringFromSaved(s)
+                const path = pathname ?? '/explorer'
+                router.replace(qs ? `${path}?${qs}` : path)
+                markExplorerOnboardingEngaged()
+                appToast.success('Vue restaurée.')
+              }}
+              className="rounded-xl border border-primary/30 bg-primary-soft/40 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-primary transition-colors hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              Restaurer
+            </button>
+            <button
+              type="button"
+              disabled={!hasSavedView}
+              onClick={() => {
+                clearExplorerSavedFilters()
+                setHasSavedView(false)
+                appToast.info('Mémorisation supprimée.')
+              }}
+              className="rounded-xl border border-line bg-inset px-3 py-2 text-[10px] font-black uppercase tracking-wider text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              Oublier
+            </button>
+          </div>
         </div>
       </div>
 
