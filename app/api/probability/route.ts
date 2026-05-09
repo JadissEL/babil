@@ -8,10 +8,10 @@ import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
 import { buildCountrySheetSignals } from '@/lib/probability-result-display'
+import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 
 export async function POST(req: Request) {
   const { userId } = auth();
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   let body: Record<string, unknown>;
   try {
@@ -33,15 +33,15 @@ export async function POST(req: Request) {
   }
 
   try {
-    // If no profile provided in body, try to fetch from DB
-    if (!profile) {
+    if (!userId) {
+      profile = { ...PUBLIC_READ_ONLY_DEMO_PROFILE };
+    } else if (!profile) {
       const dbProfile = await prisma.userProfile.findUnique({
         where: { userId: userId as string }
       });
       if (dbProfile) {
         profile = dbProfile;
       } else {
-        // Fallback to demo profile if nothing found
         profile = {
           age: 35,
           marital_status: 'single',

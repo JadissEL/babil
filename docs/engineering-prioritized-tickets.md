@@ -21,6 +21,8 @@ Ces cinq chantiers sont **en cours de livraison** dans le dépôt (voir impléme
 | A.18 | CTA PhD visible quand données PhD | Bandeau + lien `/countries/[id]/doctorat` sur la même fiche pays |
 | A.19 | Feedback utile / pas utile | `components/feedback/BlockFeedback.tsx`, événement `CONTENT_FEEDBACK` sur `POST /api/user/history` |
 | A.20 | Personas profil (démo) | Presets sur [`app/(dashboard)/profile/page.tsx`](../app/(dashboard)/profile/page.tsx) |
+| A.21 | Lecture sans compte (reco / proba) | Pages publiques [`app/(public)/recommendations`](../app/(public)/recommendations/page.tsx), [`app/(public)/probability`](../app/(public)/probability/page.tsx) ; profil démo [`lib/public-read-only-demo-profile.ts`](../lib/public-read-only-demo-profile.ts) ; API sans `userId` |
+| A.22 | Page design system interne | [`app/(dashboard)/design-system/page.tsx`](../app/(dashboard)/design-system/page.tsx) (protégée par middleware + layout dashboard) ; section composants produit |
 
 ## Références
 

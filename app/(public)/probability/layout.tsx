@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function ProbabilityLayout({ children }: { children: ReactNode }) {
-  return children
+  return <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10 lg:px-8">{children}</div>
 }

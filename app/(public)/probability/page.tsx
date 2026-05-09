@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Brain, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Lightbulb, TrendingUp, Scale, Star, ShieldAlert, Info } from 'lucide-react'
+import { SignInButton, useUser } from '@clerk/nextjs'
 
 import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
@@ -14,19 +15,49 @@ import {
 import { englishScoreLevelToFr } from '@/lib/score-level-fr'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import { appToast } from '@/lib/toast-store'
+import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 
 export default function ProbabilityPage() {
+  const { user, isLoaded } = useUser()
   const [results, setResults] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null)
+  const [readOnlyDemo, setReadOnlyDemo] = useState(false)
   const [expanded, setExpanded] = useState<string | null>(null)
   const [comparisonList, setComparisonList] = useState<string[]>([])
   const [showComparison, setShowComparison] = useState(false)
 
   useEffect(() => {
+    if (!isLoaded) return
+
     const loadData = async () => {
       try {
-        // Fetch user profile first
+        if (!user) {
+          setReadOnlyDemo(true)
+          setProfileUsed({ ...PUBLIC_READ_ONLY_DEMO_PROFILE })
+          const probRes = await fetch('/api/probability', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+          })
+          const data = await probRes.json()
+          if (!probRes.ok) {
+            const msg =
+              typeof (data as { error?: unknown })?.error === 'string'
+                ? (data as { error: string }).error
+                : 'Le moteur de probabilités a échoué.'
+            appToast.error(msg)
+            setResults([])
+          } else if (!Array.isArray(data)) {
+            appToast.error('Réponse probabilité inattendue.')
+            setResults([])
+          } else {
+            setResults(data)
+          }
+          return
+        }
+
+        setReadOnlyDemo(false)
         const profileRes = await fetch('/api/user/profile')
         const profile = await profileRes.json()
 
@@ -40,11 +71,14 @@ export default function ProbabilityPage() {
         const probRes = await fetch('/api/probability', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profile })
+          body: JSON.stringify({ profile }),
         })
         const data = await probRes.json()
         if (!probRes.ok) {
-          const msg = typeof (data as { error?: unknown })?.error === 'string' ? (data as { error: string }).error : 'Le moteur de probabilités a échoué.'
+          const msg =
+            typeof (data as { error?: unknown })?.error === 'string'
+              ? (data as { error: string }).error
+              : 'Le moteur de probabilités a échoué.'
           appToast.error(msg)
           setResults([])
         } else if (!Array.isArray(data)) {
@@ -63,7 +97,7 @@ export default function ProbabilityPage() {
     }
 
     loadData()
-  }, [])
+  }, [isLoaded, user])
 
   const toggleComparison = (country: string) => {
     if (comparisonList.includes(country)) {
@@ -93,7 +127,21 @@ export default function ProbabilityPage() {
   // Calculate Global Strategy based on results
   const topCountry = results[0]
   const backupCountries = results.slice(1, 4)
-  const highRiskCountries = results.filter(r => r.globalScore < 40).slice(0, 3)
+  const highRiskCountries = results.filter((r) => r.globalScore < 40).slice(0, 3)
+
+  if (!isLoaded || loading) {
+    return (
+      <div className="mx-auto max-w-6xl pb-16 sm:pb-20">
+        <div className="mb-8 flex min-w-0 items-center gap-3 sm:mb-10 sm:gap-4">
+          <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
+            <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
+          </div>
+          <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl">Moteur de probabilités visa</h1>
+        </div>
+        <DashboardPageSkeleton />
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-6xl pb-16 sm:pb-20">
@@ -129,9 +177,23 @@ export default function ProbabilityPage() {
         </div>
       </div>
 
-      {loading ? (
-        <DashboardPageSkeleton />
-      ) : results.length === 0 ? (
+      {readOnlyDemo ? (
+        <div className="mb-6 rounded-2xl border border-primary/35 bg-primary-soft/50 p-4 text-sm font-medium text-text shadow-card sm:p-5">
+          <span className="font-black text-primary">Mode découverte.</span> Scores calculés avec un profil de démonstration
+          fixe.{' '}
+          <SignInButton mode="modal">
+            <button
+              type="button"
+              className="font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+            >
+              Connectez-vous
+            </button>
+          </SignInButton>{' '}
+          et renseignez votre profil pour une lecture personnalisée.
+        </div>
+      ) : null}
+
+      {results.length === 0 ? (
         <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface px-5 py-10 text-center shadow-card sm:rounded-[2rem] sm:p-12">
           <ShieldAlert className="mx-auto mb-6 h-16 w-16 text-warning" />
           <h2 className="mb-4 text-2xl font-black text-text">Profil incomplet</h2>

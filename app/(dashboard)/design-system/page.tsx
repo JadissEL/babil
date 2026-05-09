@@ -8,6 +8,13 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { FilterBar } from '@/components/filters/FilterBar'
+import { CountryCard } from '@/components/country/CountryCard'
+import { OfficialSourcesCard } from '@/components/country/OfficialSourcesCard'
+import { ExplorerRegionScoreStrip } from '@/components/explorer/ExplorerRegionScoreStrip'
+import { BlockFeedback } from '@/components/feedback/BlockFeedback'
+import { officialSourcesForCountry } from '@/lib/official-sources'
+import type { RegionScoreBucket } from '@/lib/explorer-region-score-buckets'
 
 const palette = [
   { name: 'bg', hex: '#f7f3eb', className: 'bg-bg text-text' },
@@ -22,15 +29,27 @@ const palette = [
   { name: 'danger', hex: '#dc4b4b', className: 'bg-danger text-white' },
 ]
 
+const DEMO_REGION_BUCKETS: RegionScoreBucket[] = [
+  { key: 'schengen', label: 'Schengen', avgScore: 68.2, countryCount: 27 },
+  { key: 'europe', label: 'Europe', avgScore: 61.4, countryCount: 40 },
+  { key: 'asia', label: 'Asie', avgScore: 52.1, countryCount: 18 },
+  { key: 'africa', label: 'Afrique', avgScore: 48.7, countryCount: 12 },
+  { key: 'americas', label: 'Amériques', avgScore: 55.3, countryCount: 15 },
+]
+
 export default function DesignSystemPage() {
   const [country, setCountry] = useState('france')
+  const [explorerGoal, setExplorerGoal] = useState('all')
+  const [explorerRegion, setExplorerRegion] = useState('all')
 
   return (
     <div className="mx-auto max-w-6xl space-y-6 pb-16 sm:space-y-8 sm:pb-20">
       <header className="space-y-2">
         <h1 className="text-2xl font-black text-text sm:text-3xl">Design System Library</h1>
         <p className="text-sm leading-relaxed text-muted">
-          Source of truth for the VisaFlow light UI: colors, typography, states, and reusable components.
+          Source of truth for the VisaFlow light UI: colors, typography, states, and reusable components. La section
+          « produit » du bas montre des blocs réels utilisés sur l’explorateur et les fiches pays (connecté requis pour
+          cette page).
         </p>
       </header>
 
@@ -107,6 +126,58 @@ export default function DesignSystemPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardContent className="space-y-6 p-5 sm:p-6">
+          <h2 className="text-lg font-black text-text">Composants produit (Babil)</h2>
+          <p className="text-sm text-muted">
+            Aperçus statiques — mêmes composants que l’explorateur public et la fiche pays.
+          </p>
+
+          <div className="space-y-3">
+            <p className="text-xs font-black uppercase tracking-widest text-muted">FilterBar</p>
+            <FilterBar
+              goalValue={explorerGoal}
+              regionValue={explorerRegion}
+              onGoalChange={setExplorerGoal}
+              onRegionChange={setExplorerRegion}
+            />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-3">
+              <p className="text-xs font-black uppercase tracking-widest text-muted">CountryCard</p>
+              <CountryCard
+                name="France"
+                code="fr"
+                score={82}
+                visaScore={78}
+                friction="Low"
+                study="Strong"
+                business="Medium"
+              />
+            </div>
+            <div className="space-y-3">
+              <p className="text-xs font-black uppercase tracking-widest text-muted">OfficialSourcesCard</p>
+              <OfficialSourcesCard
+                countryName="France"
+                links={officialSourcesForCountry('France', 'Europe')}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-xs font-black uppercase tracking-widest text-muted">ExplorerRegionScoreStrip</p>
+            <ExplorerRegionScoreStrip buckets={DEMO_REGION_BUCKETS} />
+          </div>
+
+          <div className="rounded-2xl border border-line bg-surface p-4">
+            <p className="mb-2 text-xs font-black uppercase tracking-widest text-muted">BlockFeedback</p>
+            <p className="mb-3 text-sm text-muted">Exemple sur un bloc fictif (localStorage clé de démo).</p>
+            <BlockFeedback blockId="design-system-preview" countryId="0" />
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

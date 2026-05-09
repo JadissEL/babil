@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
+import { SignInButton, useUser } from '@clerk/nextjs'
 
 import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart'
 import RecommendationPanel from '@/components/engine/RecommendationPanel'
@@ -22,6 +23,7 @@ import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
 import { writeOnboarding } from '@/lib/onboarding-storage'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import { appToast } from '@/lib/toast-store'
+import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 
 function RecoMetricBar({ label, value }: { label: string; value: number }) {
   return (
@@ -36,16 +38,46 @@ function RecoMetricBar({ label, value }: { label: string; value: number }) {
 }
 
 export default function RecommendationsPage() {
+  const { user, isLoaded } = useUser()
   const [recommendations, setRecommendations] = useState<ApiRecommendation[]>([])
   const [loading, setLoading] = useState(true)
   const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null)
+  const [readOnlyDemo, setReadOnlyDemo] = useState(false)
   const [chartCountryId, setChartCountryId] = useState<number | null>(null)
   const [compareMode, setCompareMode] = useState(false)
   const [compareSelectedIds, setCompareSelectedIds] = useState<number[]>([])
 
   useEffect(() => {
+    if (!isLoaded) return
+
     const loadData = async () => {
       try {
+        if (!user) {
+          setReadOnlyDemo(true)
+          setProfileUsed({ ...PUBLIC_READ_ONLY_DEMO_PROFILE })
+          const recoRes = await fetch('/api/recommendation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}),
+          })
+          const data = await recoRes.json()
+          if (!recoRes.ok) {
+            const msg =
+              typeof (data as { error?: unknown })?.error === 'string'
+                ? (data as { error: string }).error
+                : 'Le moteur de recommandation a échoué.'
+            appToast.error(msg)
+            setRecommendations([])
+          } else if (!Array.isArray(data)) {
+            appToast.error('Réponse recommandation inattendue.')
+            setRecommendations([])
+          } else {
+            setRecommendations(data)
+          }
+          return
+        }
+
+        setReadOnlyDemo(false)
         const profileRes = await fetch('/api/user/profile')
         const profile = await profileRes.json()
 
@@ -63,7 +95,10 @@ export default function RecommendationsPage() {
         })
         const data = await recoRes.json()
         if (!recoRes.ok) {
-          const msg = typeof (data as { error?: unknown })?.error === 'string' ? (data as { error: string }).error : 'Le moteur de recommandation a échoué.'
+          const msg =
+            typeof (data as { error?: unknown })?.error === 'string'
+              ? (data as { error: string }).error
+              : 'Le moteur de recommandation a échoué.'
           appToast.error(msg)
           setRecommendations([])
         } else if (!Array.isArray(data)) {
@@ -82,7 +117,7 @@ export default function RecommendationsPage() {
     }
 
     loadData()
-  }, [])
+  }, [isLoaded, user])
 
   useEffect(() => {
     if (!loading && recommendations.length > 0) {
@@ -128,6 +163,19 @@ export default function RecommendationsPage() {
     mapApiRecommendationToPanelRow(r, idx + 1),
   )
 
+  if (!isLoaded || loading) {
+    return (
+      <div>
+        <div className="mb-8 sm:mb-10">
+          <h1 className="mb-2 text-2xl font-black tracking-tight text-text sm:text-3xl lg:text-4xl">
+            Intelligence de recommandation
+          </h1>
+        </div>
+        <DashboardPageSkeleton />
+      </div>
+    )
+  }
+
   return (
     <div>
       <div className="mb-8 sm:mb-10">
@@ -139,9 +187,23 @@ export default function RecommendationsPage() {
         </p>
       </div>
 
-      {loading ? (
-        <DashboardPageSkeleton />
-      ) : recommendations.length === 0 ? (
+      {readOnlyDemo ? (
+        <div className="mb-6 rounded-2xl border border-primary/35 bg-primary-soft/50 p-4 text-sm font-medium text-text shadow-card sm:p-5">
+          <span className="font-black text-primary">Mode découverte.</span> Résultats calculés avec un profil de
+          démonstration fixe (non personnalisable).{' '}
+          <SignInButton mode="modal">
+            <button
+              type="button"
+              className="font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+            >
+              Connectez-vous
+            </button>
+          </SignInButton>{' '}
+          puis complétez votre profil pour des recommandations sur mesure.
+        </div>
+      ) : null}
+
+      {recommendations.length === 0 ? (
         <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface px-6 py-10 text-center shadow-card sm:rounded-[2rem] sm:p-12">
           <AlertCircle className="mx-auto mb-6 h-16 w-16 text-primary" />
           <h2 className="mb-4 text-2xl font-black text-text">Besoin de plus d&apos;infos</h2>

@@ -11,6 +11,7 @@ import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
 import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
 import { buildCountrySheetSignals } from '@/lib/probability-result-display'
+import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
 
@@ -257,7 +258,6 @@ function computeRecommendation(country: any, profile: NormalizedProfile) {
 
 export async function POST(req: Request) {
   const { userId } = auth();
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   let body: Record<string, unknown>;
   try {
@@ -267,8 +267,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const profile =
-    body.profile && typeof body.profile === 'object' && body.profile !== null ? body.profile : {};
+  const profile = !userId
+    ? { ...PUBLIC_READ_ONLY_DEMO_PROFILE }
+    : body.profile && typeof body.profile === 'object' && body.profile !== null
+      ? body.profile
+      : {};
 
   try {
     const normalizedProfile = normalizeProfile(profile);
