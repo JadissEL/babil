@@ -660,6 +660,13 @@ export default function CountryDetailPage() {
           </p>
         </header>
 
+        {intelUpdated ? (
+          <p className="mb-4 text-[11px] text-gray-600">
+            Données économie (dernière matérialisation) :{' '}
+            {new Date(intelUpdated).toLocaleDateString('fr-FR', { dateStyle: 'medium' })}
+          </p>
+        ) : null}
+
         <section className="mb-5">
           <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">Scores indicatifs (0–100)</h2>
           <table className="w-full max-w-lg text-left text-sm">

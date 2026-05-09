@@ -76,14 +76,46 @@ function RadarAxisTooltip({ active, payload }: TooltipProps<number, string>) {
   )
 }
 
+export function RecoRadarAxisLegend({ className }: { className?: string }) {
+  return (
+    <details
+      className={cn(
+        'mt-3 rounded-lg border border-line/80 bg-inset/60 p-3 text-left [&_summary]:marker:text-muted',
+        className,
+      )}
+    >
+      <summary className="cursor-pointer text-xs font-black text-text outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
+        Définitions des axes (radar reco)
+      </summary>
+      <dl className="mt-3 space-y-2.5 text-[11px] text-muted">
+        {Object.entries(RECO_RADAR_AXIS_DESCRIPTIONS).map(([subject, desc]) => (
+          <div key={subject}>
+            <dt className="font-black text-text">{subject}</dt>
+            <dd className="mt-0.5 leading-snug">{desc}</dd>
+          </div>
+        ))}
+      </dl>
+    </details>
+  )
+}
+
 type ScoreBreakdownChartProps = {
   breakdown: RadarBreakdown
   className?: string
   /** Hauteur du graphique en px (ex. comparaison multi-pays). */
   chartHeight?: number
+  /** Bloc repliable avec les définitions (mobile / accessibilité). */
+  withAxisLegend?: boolean
+  classNameLegend?: string
 }
 
-export function ScoreBreakdownChart({ breakdown, className, chartHeight }: ScoreBreakdownChartProps) {
+export function ScoreBreakdownChart({
+  breakdown,
+  className,
+  chartHeight,
+  withAxisLegend = true,
+  classNameLegend,
+}: ScoreBreakdownChartProps) {
   const data = breakdownToRadarData(breakdown)
   const compact = useCompactViewport()
   const height = chartHeight ?? (compact ? 216 : 276)
@@ -108,6 +140,7 @@ export function ScoreBreakdownChart({ breakdown, className, chartHeight }: Score
           <Tooltip content={<RadarAxisTooltip />} />
         </RadarChart>
       </ResponsiveContainer>
+      {withAxisLegend ? <RecoRadarAxisLegend className={classNameLegend} /> : null}
     </div>
   )
 }

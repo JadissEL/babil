@@ -60,7 +60,7 @@ export function RecommendationPanel({
                   <h3 className="font-semibold text-white">{r.country}</h3>
                   {r.hasPhdStudies ? (
                     <span className="rounded-full border border-blue-500/40 bg-blue-500/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-blue-300">
-                      PhD
+                      Doctorat
                     </span>
                   ) : null}
                 </div>

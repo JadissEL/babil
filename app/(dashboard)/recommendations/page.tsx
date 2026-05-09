@@ -222,7 +222,7 @@ export default function RecommendationsPage() {
                   {compareRecos.map((r) => (
                     <div key={String(r.id)} className="min-w-0 rounded-xl border border-line bg-inset p-4">
                       <p className="mb-2 text-sm font-black text-text">{r.name}</p>
-                      <ScoreBreakdownChart breakdown={r.breakdown!} chartHeight={200} />
+                      <ScoreBreakdownChart breakdown={r.breakdown!} chartHeight={200} withAxisLegend={false} />
                       <Link
                         href={`/countries/${r.id}`}
                         className="mt-2 inline-block text-xs font-bold text-primary underline-offset-2 hover:underline"

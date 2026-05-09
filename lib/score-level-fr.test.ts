@@ -5,9 +5,9 @@ import { englishScoreLevelToFr } from './score-level-fr'
 
 describe('englishScoreLevelToFr', () => {
   it('maps API levels to French labels', () => {
-    assert.equal(englishScoreLevelToFr('Very High'), 'Très élevée')
-    assert.equal(englishScoreLevelToFr('High'), 'Élevée')
-    assert.equal(englishScoreLevelToFr('Medium'), 'Moyenne')
+    assert.equal(englishScoreLevelToFr('Very High'), 'Très élevé')
+    assert.equal(englishScoreLevelToFr('High'), 'Élevé')
+    assert.equal(englishScoreLevelToFr('Medium'), 'Moyen')
     assert.equal(englishScoreLevelToFr('Low'), 'Faible')
     assert.equal(englishScoreLevelToFr('Very Low'), 'Très faible')
   })

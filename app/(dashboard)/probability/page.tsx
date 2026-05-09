@@ -9,6 +9,7 @@ import {
   orderedProbabilityBreakdown,
   type ProbabilityCountrySignals,
 } from '@/lib/probability-result-display'
+import { englishScoreLevelToFr } from '@/lib/score-level-fr'
 
 export default function ProbabilityPage() {
   const [results, setResults] = useState<any[]>([])
@@ -71,23 +72,6 @@ export default function ProbabilityPage() {
         return 'border-[#f3afaf] bg-[#fff0f0] text-danger'
       default:
         return 'border-line bg-inset text-muted'
-    }
-  }
-
-  const levelLabelFr = (level: string) => {
-    switch (level) {
-      case 'Very High':
-        return 'Très haut'
-      case 'High':
-        return 'Élevé'
-      case 'Medium':
-        return 'Moyen'
-      case 'Low':
-        return 'Faible'
-      case 'Very Low':
-        return 'Très faible'
-      default:
-        return level || '—'
     }
   }
 
@@ -277,7 +261,7 @@ export default function ProbabilityPage() {
                         <div
                           className={`inline-block rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${getLevelColor(r.level)}`}
                         >
-                          {levelLabelFr(r.level)}
+                          {englishScoreLevelToFr(r.level) ?? r.level ?? '—'}
                         </div>
                         {r.hasPhdStudies ? (
                           <span className="rounded-full border border-primary/40 bg-primary-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-primary">

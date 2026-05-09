@@ -1,10 +1,11 @@
 /**
  * Libellés FR pour les niveaux de score renvoyés en anglais par les APIs (reco, probabilité).
  */
+/** Formes masculines — alignées probabilité / « niveau » / affichages courts. */
 const EN_TO_FR: Record<string, string> = {
-  'Very High': 'Très élevée',
-  High: 'Élevée',
-  Medium: 'Moyenne',
+  'Very High': 'Très élevé',
+  High: 'Élevé',
+  Medium: 'Moyen',
   Low: 'Faible',
   'Very Low': 'Très faible',
 }

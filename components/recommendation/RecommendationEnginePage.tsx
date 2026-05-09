@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import { Activity, Loader2, RefreshCw, Sparkles } from 'lucide-react'
 
 import { RecommendationPanel } from '@/components/engine/RecommendationPanel'
@@ -17,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { formatGoalTypeLabelFr } from '@/lib/probability-profile-narrative'
 import type { ApiRecommendation } from '@/lib/recommendation-ui'
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
 
@@ -47,6 +49,8 @@ export default function RecommendationEnginePage() {
   const [chartCountryId, setChartCountryId] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [profileHint, setProfileHint] = useState<string | null>(null)
+  const [compareMode, setCompareMode] = useState(false)
+  const [compareSelectedIds, setCompareSelectedIds] = useState<number[]>([])
 
   const loadProfile = useCallback(async () => {
     try {
@@ -117,6 +121,23 @@ export default function RecommendationEnginePage() {
     () => results.map((r, idx) => mapApiRecommendationToPanelRow(r, idx + 1)),
     [results],
   )
+
+  const toggleCompare = useCallback((countryId: number) => {
+    setCompareSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(countryId)) next.delete(countryId)
+      else if (next.size < 3) next.add(countryId)
+      return Array.from(next)
+    })
+  }, [])
+
+  const compareRecos = useMemo(() => {
+    if (compareSelectedIds.length < 2) return []
+    const byId = new Map(results.map((r) => [Number(r.id), r]))
+    return compareSelectedIds
+      .map((id) => byId.get(id))
+      .filter((r): r is ApiRecommendation => Boolean(r?.breakdown))
+  }, [compareSelectedIds, results])
 
   const chartReco = useMemo(() => {
     if (!results.length) return null
@@ -203,7 +224,7 @@ export default function RecommendationEnginePage() {
                 <SelectContent>
                   {GOALS.map((g) => (
                     <SelectItem key={g} value={g}>
-                      {g}
+                      {formatGoalTypeLabelFr(g)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -256,55 +277,115 @@ export default function RecommendationEnginePage() {
         </CardContent>
       </Card>
 
-      {results.length > 0 && chartReco?.breakdown && (
-        <div className="grid min-w-0 gap-6 lg:grid-cols-2">
-          <Card className="min-w-0 border-gray-800 bg-[#111827]">
-            <CardContent className="space-y-4 p-4 sm:p-6">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-lg font-semibold text-white">Radar — {chartReco.name}</h2>
-                <Select
-                  value={String(chartReco.id)}
-                  onValueChange={(v) => setChartCountryId(Number(v))}
-                >
-                  <SelectTrigger className="w-full sm:w-[220px]">
-                    <SelectValue placeholder="Pays" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {results.map((r) => (
-                      <SelectItem key={String(r.id)} value={String(r.id)}>
-                        {r.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <ScoreBreakdownChart breakdown={chartReco.breakdown} />
-            </CardContent>
-          </Card>
-
-          <Card className="min-w-0 border-gray-800 bg-[#111827]">
-            <CardContent className="space-y-4 p-4 sm:p-6">
-              <h2 className="text-lg font-semibold text-white">Détail barres</h2>
-              <div className="grid gap-3">
-                <MetricBar label="Visa" value={chartReco.breakdown.visa} />
-                <MetricBar label="Friction (facilité)" value={chartReco.breakdown.friction} />
-                <MetricBar label="Adéquation objectif" value={chartReco.breakdown.goalMatch} />
-                <MetricBar label="Risque refus (inv.)" value={100 - chartReco.breakdown.risk} />
-              </div>
-              <p className="text-xs text-slate-500">
-                Les pondérations finales combinent ces axes avec votre profil (revenu, épargne, objectif).
+      {results.length > 0 ? (
+        <>
+          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-300">
+              <input
+                type="checkbox"
+                className="size-4 rounded border-gray-600 bg-[#0B0F19] text-blue-600"
+                checked={compareMode}
+                onChange={(ev) => {
+                  setCompareMode(ev.target.checked)
+                  if (!ev.target.checked) setCompareSelectedIds([])
+                }}
+              />
+              Mode comparaison radar (2 à 3 pays)
+            </label>
+            {compareMode ? (
+              <p className="max-w-xl text-xs text-slate-500 sm:text-right">
+                Cochez des pays dans le classement ; les radars comparés apparaissent sous le graphique principal.
               </p>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+            ) : null}
+          </div>
 
-      {results.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-white">Classement synthétique</h2>
-          <RecommendationPanel results={panelRows} />
-        </div>
-      )}
+          {chartReco?.breakdown ? (
+            <div className="grid min-w-0 gap-6 lg:grid-cols-2">
+              <Card className="min-w-0 border-gray-800 bg-[#111827]">
+                <CardContent className="space-y-4 p-4 sm:p-6">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h2 className="text-lg font-semibold text-white">Radar — {chartReco.name}</h2>
+                    <Select
+                      value={String(chartReco.id)}
+                      onValueChange={(v) => setChartCountryId(Number(v))}
+                    >
+                      <SelectTrigger className="w-full sm:w-[220px]">
+                        <SelectValue placeholder="Pays" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {results.map((r) => (
+                          <SelectItem key={String(r.id)} value={String(r.id)}>
+                            {r.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <ScoreBreakdownChart
+                    breakdown={chartReco.breakdown}
+                    classNameLegend="border-white/10 bg-slate-950/50 text-slate-400 [&_summary]:text-slate-200 [&_dt]:text-slate-100"
+                  />
+                </CardContent>
+              </Card>
+
+              <Card className="min-w-0 border-gray-800 bg-[#111827]">
+                <CardContent className="space-y-4 p-4 sm:p-6">
+                  <h2 className="text-lg font-semibold text-white">Détail barres</h2>
+                  <div className="grid gap-3">
+                    <MetricBar label="Visa" value={chartReco.breakdown.visa} />
+                    <MetricBar label="Friction (facilité)" value={chartReco.breakdown.friction} />
+                    <MetricBar label="Adéquation objectif" value={chartReco.breakdown.goalMatch} />
+                    <MetricBar label="Risque refus (inv.)" value={100 - chartReco.breakdown.risk} />
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Les pondérations finales combinent ces axes avec votre profil (revenu, épargne, objectif).
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          ) : null}
+
+          {compareRecos.length >= 2 ? (
+            <Card className="mt-8 min-w-0 border-gray-800 bg-[#111827]">
+              <CardContent className="space-y-4 p-4 sm:p-6">
+                <h2 className="text-lg font-semibold text-white">Comparaison radar (2–3 pays)</h2>
+                <p className="text-xs text-slate-500">
+                  Même échelle que le graphique principal — ouvrez « Définitions des axes » sur le radar du dessus pour
+                  le détail.
+                </p>
+                <div className="grid min-w-0 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {compareRecos.map((r) => (
+                    <div key={String(r.id)} className="min-w-0 rounded-xl border border-white/10 bg-slate-950/30 p-4">
+                      <p className="mb-2 text-sm font-semibold text-white">{r.name}</p>
+                      <ScoreBreakdownChart
+                        breakdown={r.breakdown!}
+                        chartHeight={200}
+                        withAxisLegend={false}
+                      />
+                      <Link
+                        href={`/countries/${r.id}`}
+                        className="mt-2 inline-block text-xs font-bold text-blue-400 underline-offset-2 hover:underline"
+                      >
+                        Ouvrir la fiche pays →
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          <div className="mt-8 space-y-3">
+            <h2 className="text-lg font-semibold text-white">Classement synthétique</h2>
+            <RecommendationPanel
+              results={panelRows}
+              compareMode={compareMode}
+              compareSelectedIds={compareSelectedIds}
+              onCompareToggle={toggleCompare}
+            />
+          </div>
+        </>
+      ) : null}
     </div>
   )
 }
