@@ -13,6 +13,7 @@ import {
   formatPriceMad,
   type DelegatedCategory,
 } from '@/lib/delegated-application-catalog'
+import { appToast } from '@/lib/toast-store'
 
 export default function DelegatedApplicationApplyClient() {
   const { user } = useUser()
@@ -92,7 +93,9 @@ export default function DelegatedApplicationApplyClient() {
       if (!res.ok) throw new Error(data?.error || 'Échec envoi')
       setDoneId(typeof data.id === 'number' ? data.id : null)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erreur')
+      const message = err instanceof Error ? err.message : 'Erreur'
+      setError(message)
+      appToast.error(message)
     } finally {
       setSubmitting(false)
     }

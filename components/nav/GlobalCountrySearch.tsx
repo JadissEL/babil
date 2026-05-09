@@ -10,6 +10,14 @@ import { cn } from '@/lib/utils'
 
 type Row = { id: string | number; name: string }
 
+function isEditableKeyboardTarget(target: EventTarget | null): boolean {
+  if (!target || !(target instanceof HTMLElement)) return false
+  if (target.isContentEditable) return true
+  const tag = target.tagName
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return true
+  return Boolean(target.closest('[contenteditable="true"]'))
+}
+
 function useAppleLikePlatform() {
   const [isApple, setIsApple] = useState(false)
   useEffect(() => {
@@ -58,14 +66,34 @@ export function GlobalCountrySearch() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault()
-        setOpen((o) => !o)
-      }
+      if (!((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) return
+      if (!open && isEditableKeyboardTarget(e.target)) return
+      e.preventDefault()
+      setOpen((o) => !o)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [open])
+
+  useEffect(() => {
+    let idleId: number | undefined
+    let timeoutId: ReturnType<typeof setTimeout> | undefined
+    if (typeof window.requestIdleCallback === 'function') {
+      idleId = window.requestIdleCallback(() => {
+        void load()
+      })
+    } else {
+      timeoutId = window.setTimeout(() => {
+        void load()
+      }, 500)
+    }
+    return () => {
+      if (idleId !== undefined && typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(idleId)
+      }
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId)
+    }
+  }, [load])
 
   useEffect(() => {
     if (!open) return

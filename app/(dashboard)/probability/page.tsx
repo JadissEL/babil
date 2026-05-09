@@ -13,6 +13,7 @@ import {
 } from '@/lib/probability-result-display'
 import { englishScoreLevelToFr } from '@/lib/score-level-fr'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
+import { appToast } from '@/lib/toast-store'
 
 export default function ProbabilityPage() {
   const [results, setResults] = useState<any[]>([])
@@ -42,9 +43,20 @@ export default function ProbabilityPage() {
           body: JSON.stringify({ profile })
         })
         const data = await probRes.json()
-        setResults(Array.isArray(data) && probRes.ok ? data : [])
+        if (!probRes.ok) {
+          const msg = typeof (data as { error?: unknown })?.error === 'string' ? (data as { error: string }).error : 'Le moteur de probabilités a échoué.'
+          appToast.error(msg)
+          setResults([])
+        } else if (!Array.isArray(data)) {
+          appToast.error('Réponse probabilité inattendue.')
+          setResults([])
+        } else {
+          setResults(data)
+        }
       } catch (err) {
         console.error(err)
+        appToast.error('Erreur réseau — probabilités non chargées.')
+        setResults([])
       } finally {
         setLoading(false)
       }

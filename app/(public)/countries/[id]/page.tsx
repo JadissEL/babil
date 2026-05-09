@@ -36,7 +36,7 @@ import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-stud
 import { isSchengenMember } from '@/lib/schengen-members'
 import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
 import { appToast } from '@/lib/toast-store'
-import { formatIntelDateShortFr, isEconomyIntelFresh } from '@/lib/intel-freshness'
+import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 const toNum = (v: any, fallback = 0) => {
@@ -313,10 +313,10 @@ export default function CountryDetailPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          {economyIntelFresh && intelUpdated ? (
+          {economyIntelFresh && intelLatest ? (
             <span
               className="inline-flex items-center gap-1.5 rounded-xl border border-[#94dfbd]/70 bg-[#e9f9f1] px-3 py-2 text-[10px] font-black uppercase tracking-widest text-success"
-              title={`Indicateurs économie / matérialisation : ${formatIntelDateShortFr(intelUpdated)}`}
+              title={`Dernière matérialisation intelligence : ${formatIntelDateShortFr(intelLatest)}`}
             >
               <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
               Données fraîches

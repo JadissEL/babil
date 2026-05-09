@@ -21,6 +21,7 @@ import type { ApiRecommendation } from '@/lib/recommendation-ui'
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
 import { writeOnboarding } from '@/lib/onboarding-storage'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
+import { appToast } from '@/lib/toast-store'
 
 function RecoMetricBar({ label, value }: { label: string; value: number }) {
   return (
@@ -61,9 +62,20 @@ export default function RecommendationsPage() {
           body: JSON.stringify({ profile }),
         })
         const data = await recoRes.json()
-        setRecommendations(Array.isArray(data) ? data : [])
+        if (!recoRes.ok) {
+          const msg = typeof (data as { error?: unknown })?.error === 'string' ? (data as { error: string }).error : 'Le moteur de recommandation a échoué.'
+          appToast.error(msg)
+          setRecommendations([])
+        } else if (!Array.isArray(data)) {
+          appToast.error('Réponse recommandation inattendue.')
+          setRecommendations([])
+        } else {
+          setRecommendations(data)
+        }
       } catch (err) {
         console.error(err)
+        appToast.error('Erreur réseau — recommandations non chargées.')
+        setRecommendations([])
       } finally {
         setLoading(false)
       }
