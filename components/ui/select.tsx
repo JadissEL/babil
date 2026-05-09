@@ -86,7 +86,8 @@ export function Select({
 export function SelectTrigger({
   className,
   children,
-}: {
+  ...props
+}: React.ComponentProps<'button'> & {
   className?: string
   children?: React.ReactNode
 }) {
@@ -101,6 +102,7 @@ export function SelectTrigger({
         className,
       )}
       onClick={() => ctx.setOpen(!ctx.open)}
+      {...props}
     >
       <span className="truncate">{children}</span>
       <ChevronDown className="size-4 shrink-0 text-muted opacity-70" aria-hidden />

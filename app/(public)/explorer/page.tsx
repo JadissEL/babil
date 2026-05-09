@@ -23,6 +23,7 @@ import {
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
 import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-objective'
+import { writeOnboarding } from '@/lib/onboarding-storage'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -73,6 +74,10 @@ function ExplorerPageInner() {
   const [budget, setBudget] = useState<Budget>('all')
   const [schengenOnly, setSchengenOnly] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    writeOnboarding({ explorerDone: true })
+  }, [])
 
   const commitExplorerUrl = useCallback(
     (patch: UrlCommitSlice = {}) => {

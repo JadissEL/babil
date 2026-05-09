@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import type { CompareRow } from '@/lib/compare-rows'
+import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 
 import { cn } from '@/lib/utils'
 
@@ -76,7 +77,21 @@ export function CompareTable({
   if (rows.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-line bg-inset p-8 text-center text-muted sm:p-12">
-        Sélectionnez au moins un pays pour afficher le tableau.
+        <p className="mb-6 font-medium">Sélectionnez au moins un pays pour afficher le tableau.</p>
+        <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
+          <Link
+            href={CTA_EXPLORE_HREF}
+            className="inline-flex justify-center rounded-xl bg-primary px-6 py-3 text-sm font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
+          >
+            Choisir dans l&apos;explorateur
+          </Link>
+          <Link
+            href={CTA_COMPARE_TOURISM_HREF}
+            className="inline-flex justify-center rounded-xl border border-line bg-surface px-6 py-3 text-sm font-black text-text transition-colors hover:bg-primary-soft"
+          >
+            Exemple : comparer (tourisme)
+          </Link>
+        </div>
       </div>
     )
   }

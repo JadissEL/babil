@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 
 import PageContainer from '@/components/layout/PageContainer'
 import { CompareExperience } from '@/components/compare/CompareExperience'
+import { CompareExperienceSkeleton } from '@/components/compare/CompareExperienceSkeleton'
 
 export const metadata = {
   title: 'Comparer les pays | VisaFlow',
@@ -13,11 +14,7 @@ export default function ComparePage() {
   return (
     <PageContainer className="py-8 sm:py-10 lg:py-12">
       <Suspense
-        fallback={
-          <div className="py-16 text-center text-sm font-bold text-muted sm:py-20 sm:text-base">
-            Chargement…
-          </div>
-        }
+        fallback={<CompareExperienceSkeleton />}
       >
         <CompareExperience />
       </Suspense>

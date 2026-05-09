@@ -7,6 +7,7 @@ import { AlertCircle } from 'lucide-react'
 import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart'
 import RecommendationPanel from '@/components/engine/RecommendationPanel'
 import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import {
@@ -18,6 +19,8 @@ import {
 } from '@/components/ui/select'
 import type { ApiRecommendation } from '@/lib/recommendation-ui'
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
+import { writeOnboarding } from '@/lib/onboarding-storage'
+import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 
 function RecoMetricBar({ label, value }: { label: string; value: number }) {
   return (
@@ -70,6 +73,12 @@ export default function RecommendationsPage() {
   }, [])
 
   useEffect(() => {
+    if (!loading && recommendations.length > 0) {
+      writeOnboarding({ recoSeen: true })
+    }
+  }, [loading, recommendations.length])
+
+  useEffect(() => {
     if (!recommendations.length) {
       setChartCountryId(null)
       return
@@ -119,9 +128,7 @@ export default function RecommendationsPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center p-20">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
-        </div>
+        <DashboardPageSkeleton />
       ) : recommendations.length === 0 ? (
         <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface px-6 py-10 text-center shadow-card sm:rounded-[2rem] sm:p-12">
           <AlertCircle className="mx-auto mb-6 h-16 w-16 text-primary" />
@@ -129,12 +136,26 @@ export default function RecommendationsPage() {
           <p className="mb-8 font-medium leading-relaxed text-muted">
             Complétez votre profil pour obtenir des recommandations personnalisées basées sur votre budget et vos objectifs.
           </p>
-          <Link
-            href="/profile"
-            className="inline-block rounded-2xl bg-primary px-8 py-4 font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
-          >
-            Configurer mon profil
-          </Link>
+          <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
+            <Link
+              href="/profile"
+              className="inline-flex justify-center rounded-2xl bg-primary px-8 py-4 font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
+            >
+              Configurer mon profil
+            </Link>
+            <Link
+              href={CTA_EXPLORE_HREF}
+              className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
+            >
+              Explorer les pays
+            </Link>
+            <Link
+              href={CTA_COMPARE_TOURISM_HREF}
+              className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
+            >
+              Tester le comparateur
+            </Link>
+          </div>
         </div>
       ) : (
         <>

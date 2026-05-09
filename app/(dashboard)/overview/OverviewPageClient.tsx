@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 
 import { MyDelegatedRequests } from '@/components/services/MyDelegatedRequests'
+import { PostSignupOnboarding } from '@/components/dashboard/PostSignupOnboarding'
 import { RecentlyViewedCountries } from '@/components/user/RecentlyViewedCountries'
 
 export default function OverviewPageClient() {
@@ -123,6 +124,8 @@ export default function OverviewPageClient() {
       <div className="mb-12">
         <MyDelegatedRequests />
       </div>
+
+      <PostSignupOnboarding />
 
       <RecentlyViewedCountries />
 

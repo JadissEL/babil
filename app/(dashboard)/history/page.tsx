@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { History, Loader2 } from 'lucide-react'
+import { History } from 'lucide-react'
 
 import { Card, CardContent } from '@/components/ui/card'
+import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -173,14 +174,28 @@ export default function HistoryPage() {
           </div>
 
           {loading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            </div>
+            <DashboardPageSkeleton variant="table" />
           ) : filtered.length === 0 ? (
-            <p className="py-12 text-center text-sm font-medium text-muted">
-              Aucun événement pour ce filtre. Les visites de fiches pays apparaissent après connexion sur une page
-              pays.
-            </p>
+            <div className="space-y-4 py-12">
+              <p className="text-center text-sm font-medium text-muted">
+                Aucun événement pour ce filtre. Les visites de fiches pays apparaissent après connexion sur une page
+                pays.
+              </p>
+              <div className="flex flex-col items-center justify-center gap-3 pb-8 sm:flex-row">
+                <Link
+                  href="/explorer"
+                  className="inline-flex rounded-xl border border-line bg-surface px-5 py-3 text-sm font-bold text-primary transition-colors hover:bg-primary-soft"
+                >
+                  Ouvrir l&apos;explorateur
+                </Link>
+                <Link
+                  href="/profile"
+                  className="inline-flex rounded-xl border border-line bg-inset px-5 py-3 text-sm font-bold text-text transition-colors hover:bg-primary-soft"
+                >
+                  Vérifier mon profil
+                </Link>
+              </div>
+            </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-line">
               <table className="w-full min-w-[720px] text-left text-sm">

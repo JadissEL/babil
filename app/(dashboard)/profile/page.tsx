@@ -18,6 +18,8 @@ import {
   FileStack
 } from 'lucide-react'
 
+import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
+
 export default function ProfilePage() {
   const { user } = useUser()
   const [loading, setLoading] = useState(true)
@@ -70,12 +72,7 @@ export default function ProfilePage() {
     }
   }
 
-  if (loading)
-    return (
-      <div className="flex justify-center p-20">
-        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
-      </div>
-    )
+  if (loading) return <DashboardPageSkeleton variant="profile" />
 
   return (
     <div className="mx-auto max-w-4xl pb-16 sm:pb-20">

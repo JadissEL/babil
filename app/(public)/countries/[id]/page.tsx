@@ -288,8 +288,8 @@ export default function CountryDetailPage() {
         <ChevronLeft className="h-4 w-4" /> Retour à l&apos;explorateur
       </Link>
 
-      <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-line bg-surface p-5 shadow-card lg:flex-row lg:items-center lg:justify-between">
-        <div>
+      <div className="mb-8 flex min-w-0 flex-col gap-4 rounded-[2rem] border border-line bg-surface p-5 shadow-card lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
           <p className="text-[10px] font-black uppercase tracking-widest text-muted">Décision rapide</p>
           <p className="mt-1 text-sm font-bold text-text">
             {country.name} {'→'} potentiel{' '}
@@ -318,26 +318,28 @@ export default function CountryDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
+      <div className="grid min-w-0 grid-cols-1 gap-12 lg:grid-cols-3">
         {/* Left Column: Main Info */}
-        <div className="lg:col-span-2 space-y-12">
+        <div className="min-w-0 space-y-12 lg:col-span-2">
           <section>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="rounded-[2rem] bg-primary p-4 text-white shadow-soft">
-                <Globe className="h-8 w-8" />
-              </div>
-              <div>
-                <h1 className="text-4xl font-black tracking-tight text-text md:text-5xl">{country.name}</h1>
-                <p className="mt-1 flex items-center gap-2 font-medium text-muted">
-                  <MapPin className="h-4 w-4" /> {country.region} {isSchengenMember(String(country.name ?? '')) && '• Schengen'}
-                </p>
+            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="flex min-w-0 flex-1 items-center gap-4">
+                <div className="rounded-[2rem] bg-primary p-4 text-white shadow-soft">
+                  <Globe className="h-8 w-8" />
+                </div>
+                <div className="min-w-0">
+                  <h1 className="text-3xl font-black tracking-tight text-text sm:text-4xl md:text-5xl">{country.name}</h1>
+                  <p className="mt-1 flex items-center gap-2 font-medium text-muted">
+                    <MapPin className="h-4 w-4" /> {country.region} {isSchengenMember(String(country.name ?? '')) && '• Schengen'}
+                  </p>
+                </div>
               </div>
               {user && (
                 <button
                   type="button"
                   onClick={toggleFavorite}
                   disabled={favLoading}
-                  className={`ml-auto flex items-center gap-2 rounded-2xl border px-5 py-3 text-sm font-black transition-all ${
+                  className={`flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-sm font-black transition-all sm:ml-auto sm:w-auto ${
                     favorited
                       ? 'border-red-500/35 bg-red-500/15 text-red-300 hover:bg-red-500/25'
                       : 'border-line bg-inset text-text hover:bg-primary-soft'

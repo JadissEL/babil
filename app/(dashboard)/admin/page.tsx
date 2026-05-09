@@ -13,6 +13,7 @@ import {
 import Link from 'next/link'
 
 import { CountryEditor, type CountryEditorModel } from '@/components/admin/CountryEditor'
+import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { DELEGATED_REQUEST_STATUSES } from '@/lib/delegated-application-status'
@@ -190,11 +191,7 @@ export default function AdminPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex justify-center px-4 py-16 text-slate-400 sm:p-20">
-        <p className="font-bold text-muted">Chargement…</p>
-      </div>
-    )
+    return <DashboardPageSkeleton />
   }
 
   if (forbidden) {

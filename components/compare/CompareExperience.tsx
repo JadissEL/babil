@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, ChevronRight, Scale } from 'lucide-react'
 
 import { CompareStickyBar } from '@/components/compare/CompareStickyBar'
+import { CompareExperienceSkeleton } from '@/components/compare/CompareExperienceSkeleton'
 import { CompareTable } from '@/components/compare/CompareTable'
 import { CountryComparePicker, type CountryOption } from '@/components/compare/CountryComparePicker'
 import { Button } from '@/components/ui/button'
@@ -221,11 +222,7 @@ export function CompareExperience() {
   const objectivesInCategory = categoryId ? listObjectivesForCategory(categoryId) : []
 
   if (loading) {
-    return (
-      <div className="py-16 text-center text-sm font-bold text-muted sm:py-20 sm:text-base">
-        Chargement des pays…
-      </div>
-    )
+    return <CompareExperienceSkeleton />
   }
 
   return (
@@ -269,7 +266,7 @@ export function CompareExperience() {
       {step === 'category' && (
         <div className="space-y-4">
           <h2 className="text-lg font-black text-text sm:text-xl">1. Quel est votre domaine ?</h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {COMPARE_CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
@@ -299,7 +296,7 @@ export function CompareExperience() {
             </Button>
             <h2 className="text-lg font-black text-text sm:text-xl">2. Précisez votre objectif</h2>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
             {objectivesInCategory.map((o) => (
               <button
                 key={o.id}

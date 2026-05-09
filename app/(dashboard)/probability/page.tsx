@@ -1,15 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Brain, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Lightbulb, TrendingUp, Scale, Star, ShieldAlert, Info } from 'lucide-react'
 
 import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import {
   describeTopCountrySignals,
   orderedProbabilityBreakdown,
   type ProbabilityCountrySignals,
 } from '@/lib/probability-result-display'
 import { englishScoreLevelToFr } from '@/lib/score-level-fr'
+import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 
 export default function ProbabilityPage() {
   const [results, setResults] = useState<any[]>([])
@@ -115,9 +118,7 @@ export default function ProbabilityPage() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center p-20">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
-        </div>
+        <DashboardPageSkeleton />
       ) : results.length === 0 ? (
         <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface px-5 py-10 text-center shadow-card sm:rounded-[2rem] sm:p-12">
           <ShieldAlert className="mx-auto mb-6 h-16 w-16 text-warning" />
@@ -125,20 +126,34 @@ export default function ProbabilityPage() {
           <p className="mb-8 font-medium leading-relaxed text-muted">
             Pour calculer vos probabilités, renseignez votre situation financière et professionnelle.
           </p>
-          <a
-            href="/profile"
-            className="inline-block rounded-2xl bg-primary px-8 py-4 font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
-          >
-            Compléter mon profil
-          </a>
+          <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
+            <Link
+              href="/profile"
+              className="inline-flex justify-center rounded-2xl bg-primary px-8 py-4 font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
+            >
+              Compléter mon profil
+            </Link>
+            <Link
+              href={CTA_EXPLORE_HREF}
+              className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
+            >
+              Explorer les pays
+            </Link>
+            <Link
+              href={CTA_COMPARE_TOURISM_HREF}
+              className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
+            >
+              Ouvrir le comparateur
+            </Link>
+          </div>
         </div>
       ) : (
         <div className="space-y-12">
           {profileUsed ? <ProfileContextBanner profile={profileUsed} variant="probability" /> : null}
 
           {/* Global Output Section */}
-          <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-3xl text-white shadow-xl shadow-green-100">
+          <section className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-3">
+            <div className="min-w-0 bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-3xl text-white shadow-xl shadow-green-100">
               <div className="flex items-center gap-2 mb-4">
                 <Star className="w-5 h-5" />
                 <span className="text-xs font-black uppercase tracking-widest opacity-80">Meilleur choix</span>
@@ -152,7 +167,7 @@ export default function ProbabilityPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-line bg-surface p-6 shadow-soft">
+            <div className="min-w-0 rounded-3xl border border-line bg-surface p-6 shadow-soft">
               <div className="mb-4 flex items-center gap-2">
                 <ShieldAlert className="h-5 w-5 text-warning" />
                 <span className="text-xs font-black uppercase tracking-widest text-muted">
@@ -172,7 +187,7 @@ export default function ProbabilityPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-line bg-surface p-6 shadow-soft">
+            <div className="min-w-0 rounded-3xl border border-line bg-surface p-6 shadow-soft">
               <div className="mb-4 flex items-center gap-2 text-danger">
                 <AlertCircle className="h-5 w-5" />
                 <span className="text-xs font-black uppercase tracking-widest text-muted">

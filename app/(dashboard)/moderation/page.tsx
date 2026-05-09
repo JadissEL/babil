@@ -12,6 +12,8 @@ import {
   ShieldAlert
 } from 'lucide-react'
 
+import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
+
 export default function ModerationPage() {
   const { user: clerkUser } = useUser()
   const [comments, setComments] = useState<any[]>([])
@@ -62,12 +64,7 @@ export default function ModerationPage() {
     }
   }
 
-  if (loading)
-    return (
-      <div className="px-4 py-16 text-center text-sm font-bold text-muted sm:p-20 sm:text-base">
-        Chargement…
-      </div>
-    )
+  if (loading) return <DashboardPageSkeleton variant="table" />
   if (error)
     return (
       <div className="mx-auto max-w-4xl px-4 py-16 text-center sm:p-20">
