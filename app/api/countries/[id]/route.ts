@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge'
+import { COUNTRY_DETAIL_CACHE_CONTROL } from '@/lib/public-api-cache'
 import { getObservationConfidenceAggregateForCountry } from '@/lib/country-observation-confidence-db'
 import { analyzeEconomyIndicatorsAnomalies } from '@/lib/intelligence-data-anomalies'
 import { fetchObservationJumpAnomaliesForCountry } from '@/lib/intelligence-data-anomalies-db'
@@ -87,7 +88,9 @@ export async function GET(
           payload = { ...payload, intelligence_provenance: [] }
         }
       }
-      return NextResponse.json(payload)
+      return NextResponse.json(payload, {
+        headers: { 'Cache-Control': COUNTRY_DETAIL_CACHE_CONTROL },
+      })
     }
   } catch {
     /* Missing DATABASE_URL, DB down, etc. — serve static JSON like pre-Prisma deploys. */
@@ -96,7 +99,10 @@ export async function GET(
   try {
     const fallback = await loadFallbackCountries()
     const country = fallback.find((c) => c.id === id)
-    if (country) return NextResponse.json(country)
+    if (country)
+      return NextResponse.json(country, {
+        headers: { 'Cache-Control': COUNTRY_DETAIL_CACHE_CONTROL },
+      })
   } catch {
     /* 404 below */
   }

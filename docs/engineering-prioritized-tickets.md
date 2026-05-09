@@ -12,6 +12,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
 | **T6** | Transparence scoring | Top 3 facteurs, signaux fiche, snapshot contract/UI, journal `_data_changelog`, lexique B.27, agrégat confiance B.31, qualité données B.32, profil enum B.34–B.35, Assist masqué B.36, export RGPD B.37, **i18n pilote B.38** — voir fichiers listés en B.23–B.38 ci-dessous | Implémenté |
+| **T7** | Perf API (catalogue D) | **D.54** — pagination curseur sur `GET /api/countries` (`limit` 1–200, `cursor` = dernier `id` exclus, réponse `{ items, nextCursor, hasMore }` si `limit` présent). **D.55** — `Cache-Control` public + `stale-while-revalidate` sur liste et fiche [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) | Implémenté |
 
 ### Lot données / transparence catalogue B (items 23–38)
 
@@ -65,9 +66,17 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | A.21 | Lecture sans compte (reco / proba / labo) | [`/recommendations`](../app/(public)/recommendations/page.tsx), [`/probability`](../app/(public)/probability/page.tsx), [`/recommendation-engine`](../app/(public)/recommendation-engine/page.tsx) ; démo serveur + bac à sable `playground` + [`sanitizePublicSyntheticProfile`](../lib/public-synthetic-profile.ts) |
 | A.22 | Page design system interne | [`app/(dashboard)/design-system/page.tsx`](../app/(dashboard)/design-system/page.tsx) (protégée par middleware + layout dashboard) ; section composants produit |
 
+### Lot API / perf catalogue D (extrait 53–55)
+
+| ID catalogue | Livrable | Fichiers / notes |
+|--------------|----------|------------------|
+| D.53 | Liste légère `?light=1` | [app/api/countries/route.ts](../app/api/countries/route.ts) (inchangé — déjà T1) |
+| D.54 | Pagination curseur | [`lib/countries-list-pagination.ts`](../lib/countries-list-pagination.ts) ; `GET /api/countries?limit=&cursor=` |
+| D.55 | Cache public + SWR | [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) ; `GET /api/countries`, `GET /api/countries/[id]` |
+
 ## Références
 
 - Moteurs (formules + version + échelles B.27 + i18n pilote B.38) : [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), [lib/score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [business-strings-i18n.md](business-strings-i18n.md)
-- Spécification liste légère : [app/api/countries/route.ts](../app/api/countries/route.ts) (`?light=1`)
+- Liste pays : [app/api/countries/route.ts](../app/api/countries/route.ts) (`?light=1`, `?limit` + `?cursor`, en-têtes cache)
 - Rétention + pipeline intelligence (C.39–C.52) : [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), [intelligence-seed-sources.md](intelligence-seed-sources.md), [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md)
 - CI : [ci.yml](../.github/workflows/ci.yml)

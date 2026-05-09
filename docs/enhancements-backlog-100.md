@@ -120,11 +120,13 @@ flowchart LR
 51. **Cron** : documenter secrets, environnements, et rollback si matérialisation partielle. *(Livré : [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).)*
 52. **Feature flag** pour activer/désactiver collecte par source en prod. *(Livré : `INTELLIGENCE_SOURCE_DISABLED_SLUGS` + [`source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts), appliqué au collecteur WB et aux stubs multilatéraux — voir doc cron.)*
 
+> **Livré (lot D.54–D.55) :** pagination curseur `id` sur [`GET /api/countries`](../app/api/countries/route.ts) ; en-têtes cache public + SWR via [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) (liste + fiche `[id]`).
+
 ### D — API, performances et cache (53–65)
 
 53. **`GET /api/countries?light=1`** : exclure ou tronquer `full_data` + commentaires pour listes. *(Livré.)*
-54. **Pagination / curseur** sur liste pays si le nombre de pays augmente fortement.
-55. **`Cache-Control`** / `stale-while-revalidate` sur réponses publiques sûres.
+54. **Pagination / curseur** sur liste pays si le nombre de pays augmente fortement. *(Livré : `GET /api/countries?limit=1..200` + `cursor` = dernier `id` exclus ; enveloppe `{ items, nextCursor, hasMore }` ; sans `limit` le corps reste un tableau — voir JSDoc [`route.ts`](../app/api/countries/route.ts).)*
+55. **`Cache-Control`** / `stale-while-revalidate` sur réponses publiques sûres. *(Livré : [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) sur `GET /api/countries` et `GET /api/countries/[id]`.)*
 56. **React `cache()`** ou équivalent déjà partiellement utilisé — étendre aux lectures lourdes répétées.
 57. **Déduplication** des appels `buildMergedCountriesList` dans une même requête (si patterns N+1).
 58. **Edge** : évaluer middleware géo ou redirections uniquement (pas de logique lourde).
