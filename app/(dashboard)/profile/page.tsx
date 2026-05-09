@@ -16,7 +16,8 @@ import {
   Calendar,
   GraduationCap,
   FileStack,
-  Sparkles
+  Sparkles,
+  Download
 } from 'lucide-react'
 
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
@@ -77,6 +78,7 @@ export default function ProfilePage() {
   const { user } = useUser()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [exportingGdpr, setExportingGdpr] = useState(false)
   const [message, setMessage] = useState('')
   
   const [profile, setProfile] = useState({
@@ -130,6 +132,35 @@ export default function ProfilePage() {
     }
   }
 
+  const handleGdprExport = async () => {
+    setExportingGdpr(true)
+    try {
+      const res = await fetch('/api/user/data-export')
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        appToast.error(typeof err?.error === 'string' ? err.error : 'Export des données impossible.')
+        return
+      }
+      const blob = await res.blob()
+      const dispo = res.headers.get('Content-Disposition')
+      const match = /filename="([^"]+)"/.exec(dispo ?? '')
+      const filename = match?.[1] ?? 'babil-donnees-personnelles.json'
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+      appToast.success('Fichier JSON téléchargé — conservez-le dans un endroit sûr.')
+    } catch {
+      appToast.error('Erreur réseau — export non téléchargé.')
+    } finally {
+      setExportingGdpr(false)
+    }
+  }
+
   if (loading) return <DashboardPageSkeleton variant="profile" />
 
   return (
@@ -166,6 +197,33 @@ export default function ProfilePage() {
           <CheckCircle2 className="h-5 w-5" /> {message}
         </div>
       )}
+
+      <section className="mb-6 rounded-2xl border border-line bg-surface p-5 shadow-card sm:mb-8 sm:rounded-[2.5rem] sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <div className="rounded-2xl bg-slate-500/15 p-3 text-slate-600 ring-1 ring-slate-500/25">
+              <Download className="h-6 w-6" aria-hidden />
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-text sm:text-xl">Vos données (RGPD)</h2>
+              <p className="mt-1 max-w-xl text-sm font-medium text-muted">
+                Téléchargez une copie des informations que nous stockons dans notre base pour votre compte
+                (profil, favoris, historique d’activité, commentaires, demandes Assist). L’export ne remplace pas les
+                données détenues par Clerk — gérez-les depuis votre compte Clerk si besoin.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => void handleGdprExport()}
+            disabled={exportingGdpr}
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-line bg-[#f8f2e8] px-5 py-3 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/40 hover:bg-primary-soft disabled:opacity-50"
+          >
+            <Download className="h-4 w-4" aria-hidden />
+            {exportingGdpr ? 'Préparation…' : 'Télécharger JSON'}
+          </button>
+        </div>
+      </section>
 
       <section className="mb-6 rounded-2xl border border-dashed border-primary/35 bg-primary-soft/30 p-5 shadow-card sm:mb-8 sm:rounded-[2.5rem] sm:p-6">
         <div className="mb-4 flex items-start gap-3">

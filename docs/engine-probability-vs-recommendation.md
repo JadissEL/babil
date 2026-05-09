@@ -151,6 +151,15 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 
 ---
 
+## Export données personnelles / RGPD (ticket B.37)
+
+- **API** : `GET /api/user/data-export` (authentifié) — JSON avec `User`, `UserProfile`, `Comment` (+ nom pays), `FavoriteCountry`, `UserHistoryEvent` (plafond 500 événements les plus récents, indiqué dans `_export.historyEventsMaxRows`), `DelegatedApplicationRequest` (payload parsé).
+- **Hors périmètre** : données résidant uniquement chez Clerk — mention explicite dans `_export.scope` du fichier.
+- **UI** : bouton sur `/profile` ; réponse `Content-Disposition: attachment` par défaut ; `?inline=1` pour inspection dans le navigateur.
+- **Code** : [`buildGdprExportBundle`](../lib/user-gdpr-export.ts), tests [`lib/user-gdpr-export.test.ts`](../lib/user-gdpr-export.test.ts).
+
+---
+
 ## Journal `full_data` (ticket B.28)
 
 - Clé JSON **`_data_changelog`** : liste chronologique inversée (plus récent en tête), entrées `{ at, actor, action, detail?, subjectId? }` avec `actor` ∈ `admin` | `agent` | `pipeline` | `system`.

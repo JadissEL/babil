@@ -14,6 +14,7 @@ const isProtectedRoute = createRouteMatcher([
   '/api/user/profile(.*)',
   '/api/user/favorites(.*)',
   '/api/user/history(.*)',
+  '/api/user/data-export(.*)',
   '/api/delegated-application-requests(.*)',
 ])
 

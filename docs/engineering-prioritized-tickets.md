@@ -11,9 +11,9 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
-| **T6** | Transparence scoring | Top 3 facteurs, signaux fiche, snapshot contract/UI, journal `_data_changelog`, lexique B.27, agrégat confiance B.31, qualité données B.32, profil enum B.34–B.35, **Assist masqué B.36** — voir fichiers listés en B.23–B.36 ci-dessous | Implémenté |
+| **T6** | Transparence scoring | Top 3 facteurs, signaux fiche, snapshot contract/UI, journal `_data_changelog`, lexique B.27, agrégat confiance B.31, qualité données B.32, profil enum B.34–B.35, Assist masqué B.36, **export RGPD B.37** — voir fichiers listés en B.23–B.37 ci-dessous | Implémenté |
 
-### Lot données / transparence catalogue B (items 23–36)
+### Lot données / transparence catalogue B (items 23–37)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
@@ -31,6 +31,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | B.34 | `goal_type` validé (enum partagé) | [`lib/user-profile-enums.ts`](../lib/user-profile-enums.ts) ; [`POST /api/user/profile`](../app/api/user/profile/route.ts) ; [`sanitizePublicSyntheticProfile`](../lib/public-synthetic-profile.ts) ; [`POST /api/recommendation`](../app/api/recommendation/route.ts) |
 | B.35 | `profession` validée (enum) | Même module `user-profile-enums` ; profil dashboard + coercition lecture ; pondérations étendues sur [`POST /api/probability`](../app/api/probability/route.ts) |
 | B.36 | Masquage demandes déléguées (admin) | [`lib/delegated-application-payload-utils.ts`](../lib/delegated-application-payload-utils.ts) ; [`GET /api/admin/delegated-application-requests`](../app/api/admin/delegated-application-requests/route.ts) ; [`GET .../[id]`](../app/api/admin/delegated-application-requests/[id]/route.ts) `?fullPayload=1` ; onglet Assist [`admin/page.tsx`](../app/(dashboard)/admin/page.tsx) |
+| B.37 | Export données RGPD (pack JSON) | [`lib/user-gdpr-export.ts`](../lib/user-gdpr-export.ts) ; [`GET /api/user/data-export`](../app/api/user/data-export/route.ts) (`?inline=1` optionnel) ; profil [`profile/page.tsx`](../app/(dashboard)/profile/page.tsx) |
 
 ### Lot UX catalogue A (items 16–22)
 
