@@ -121,6 +121,28 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 
 ---
 
+## Qualité données & sauts pipeline (ticket B.32)
+
+- **Heuristiques `full_data.economy`** : cohérence PIB / population / PIB·hab., valeurs extrêmes — [`analyzeEconomyIndicatorsAnomalies`](../lib/intelligence-data-anomalies.ts).
+- **Sauts** : deux dernières `CountryObservation` pour PIB nominal et population (taxonomie WB) — [`fetchObservationJumpAnomaliesForCountry`](../lib/intelligence-data-anomalies-db.ts).
+- **API / UI** : `GET /api/countries/[id]` expose `dataQualityAnomalies` (liste `{ code, messageFr }`) si non vide ; encart « Signaux qualité données » sur la fiche et la vue imprimable.
+
+---
+
+## CountryInsight vs observations (ticket B.33)
+
+- **Doc** : [country-insight-vs-observations.md](country-insight-vs-observations.md) — rôles, décision v1 (pas de fusion automatique), pistes d’évolution.
+
+---
+
+## Profil utilisateur : `goal_type` et `profession` (tickets B.34–B.35)
+
+- **Contrat partagé** : [`USER_GOAL_TYPES` / `USER_PROFESSIONS`](../lib/user-profile-enums.ts) — parsing, mapping vers objectif moteur (`userGoalTypeToEngineGoal`), coercition `profession` en lecture.
+- **API** : `POST /api/user/profile` rejette objectif ou profession inconnus (400 + liste des valeurs). `GET` renvoie `goal_type` et `profession` normalisés quand possible.
+- **Moteurs** : `POST /api/recommendation` utilise le même parsing d’objectif ; `POST /api/probability` mappe la profession via `coerceStoredProfession` et ajuste légèrement le facteur professionnel pour les statuts couverts par l’enum.
+
+---
+
 ## Journal `full_data` (ticket B.28)
 
 - Clé JSON **`_data_changelog`** : liste chronologique inversée (plus récent en tête), entrées `{ at, actor, action, detail?, subjectId? }` avec `actor` ∈ `admin` | `agent` | `pipeline` | `system`.

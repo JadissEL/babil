@@ -14,6 +14,7 @@ Document de référence pour transformer Babil en **plateforme de collecte et d�
   - **Doublon logique** : vérité partagée entre Prisma, `data/countries.json` et merge runtime (`countries-prisma-merge`) — utile en repli, mais source de dérive.
   - **Pas de table de provenance** : impossible de répondre proprement à « d’où vient ce chiffre ? » ni « quand a-t-il été observé ? ».
   - **`CountryInsight`** : texte libre, non relié à un modèle de confiance ni à des sources.
+  - **Alignement avec le pipeline** : voir [country-insight-vs-observations.md](country-insight-vs-observations.md) (ticket B.33).
 - **Champs potentiellement redondants** : friction / rendez-vous à la fois dans colonnes Prisma et dans `full_data.friction_analysis` / `appointment_audit` — acceptable comme **cache lecture** si la **source canonique** devient ailleurs.
 
 ### 1.2 Pipeline actuel

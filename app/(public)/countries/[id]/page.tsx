@@ -47,6 +47,7 @@ import { SCORE_SCALE_LEGEND_FR } from '@/lib/score-scale-lexicon'
 import { appToast } from '@/lib/toast-store'
 import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
 import { officialSourcesForCountry } from '@/lib/official-sources'
+import { parseDataQualityAnomaliesPayload } from '@/lib/intelligence-data-anomalies'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 const toNum = (v: any, fallback = 0) => {
@@ -301,6 +302,7 @@ export default function CountryDetailPage() {
   const economyIntelFresh = isEconomyIntelFresh(intelLatest)
   const officialLinks = officialSourcesForCountry(country.name, String(country.region ?? ''))
   const countryPageId = String(Array.isArray(id) ? id[0] ?? '' : id ?? '')
+  const dataQualityAnomalies = parseDataQualityAnomaliesPayload(country.dataQualityAnomalies)
   const observationConfidenceAggregate = parseObservationConfidenceAggregatePayload(
     country.observationConfidenceAggregate,
   )
@@ -356,6 +358,27 @@ export default function CountryDetailPage() {
 
       {officialLinks.length ? (
         <OfficialSourcesCard countryName={country.name} links={officialLinks} className="mb-8" />
+      ) : null}
+
+      {dataQualityAnomalies.length > 0 ? (
+        <div
+          className="mb-8 rounded-[2rem] border border-amber-200/90 bg-amber-50/90 p-5 shadow-card sm:p-6"
+          role="status"
+        >
+          <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest text-amber-900">
+            <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
+            Signaux qualité données
+          </h2>
+          <p className="mb-3 text-xs font-medium leading-relaxed text-amber-950/80">
+            Indicateurs automatiques (cohérence des séries affichées et dernières observations pipeline). À
+            interpréter comme alerte de contrôle, pas comme refus de dossier.
+          </p>
+          <ul className="list-inside list-disc space-y-1.5 text-sm font-medium text-amber-950">
+            {dataQualityAnomalies.map((a) => (
+              <li key={a.code}>{a.messageFr}</li>
+            ))}
+          </ul>
+        </div>
       ) : null}
 
       {showPhdTeaser && phdModel ? (
@@ -755,6 +778,19 @@ export default function CountryDetailPage() {
             Données économie (dernière matérialisation) :{' '}
             {new Date(intelLatest).toLocaleDateString('fr-FR', { dateStyle: 'medium' })}
           </p>
+        ) : null}
+
+        {dataQualityAnomalies.length > 0 ? (
+          <section className="mb-5">
+            <h2 className="mb-2 text-xs font-black uppercase tracking-widest text-gray-800">
+              Signaux qualité données
+            </h2>
+            <ul className="list-inside list-disc space-y-1 text-sm text-gray-800">
+              {dataQualityAnomalies.map((a) => (
+                <li key={a.code}>{a.messageFr}</li>
+              ))}
+            </ul>
+          </section>
         ) : null}
 
         <section className="mb-5">

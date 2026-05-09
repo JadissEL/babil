@@ -11,6 +11,7 @@ import { buildCountrySheetSignals, inferProbabilitySheetDefaultsFromFull } from 
 import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version'
 import { computeProbabilityTopDrivers } from '@/lib/score-driver-explain'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
+import { coerceStoredProfession } from '@/lib/user-profile-enums'
 
 export async function POST(req: Request) {
   const { userId } = auth();
@@ -72,6 +73,9 @@ export async function POST(req: Request) {
     }
 
     const p = profile as Record<string, unknown>
+    const profession = coerceStoredProfession(
+      typeof p.profession === 'string' ? p.profession : null,
+    ) ?? 'self-employed'
     const savings = Number(p.savings ?? 0)
     const income = Number(p.income ?? 0)
     const safeSavings = Number.isFinite(savings) && savings >= 0 ? savings : 0
@@ -90,8 +94,11 @@ export async function POST(req: Request) {
       // 2. 🧾 FACTEUR PROFESSIONNEL (20%)
       let profScore = 40; // Default
       if (Boolean(p.CNSS_status)) profScore += 40;
-      if (p.profession === 'public') profScore += 20;
-      else if (p.profession === 'self-employed') profScore += 10;
+      if (profession === 'public') profScore += 20;
+      else if (profession === 'self-employed' || profession === 'freelance') profScore += 10;
+      else if (profession === 'salaried') profScore += 15;
+      else if (profession === 'student') profScore += 5;
+      else if (profession === 'retired' || profession === 'other') profScore += 5;
       
       // 3. 👨‍👩‍👧 FACTEUR LIENS SOCIAUX (20%)
       let socialScore = 50;

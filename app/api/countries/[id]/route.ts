@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge'
 import { getObservationConfidenceAggregateForCountry } from '@/lib/country-observation-confidence-db'
+import { analyzeEconomyIndicatorsAnomalies } from '@/lib/intelligence-data-anomalies'
+import { fetchObservationJumpAnomaliesForCountry } from '@/lib/intelligence-data-anomalies-db'
 import { getIntelligenceProvenanceForCountry } from '@/lib/intelligence-pipeline/provenance'
 
 export async function GET(
@@ -52,6 +54,30 @@ export async function GET(
         }
       } catch {
         /* DB indisponible ou requête refusée — ne pas bloquer la fiche pays. */
+      }
+      try {
+        const fd = payload.full_data
+        const economy =
+          fd && typeof fd === 'object' && !Array.isArray(fd)
+            ? (fd as Record<string, unknown>).economy
+            : undefined
+        const econBlock =
+          economy && typeof economy === 'object' && !Array.isArray(economy)
+            ? (economy as Record<string, unknown>)
+            : undefined
+        const fromSheet = analyzeEconomyIndicatorsAnomalies(econBlock)
+        let fromJumps: Awaited<ReturnType<typeof fetchObservationJumpAnomaliesForCountry>> = []
+        try {
+          fromJumps = await fetchObservationJumpAnomaliesForCountry(country.id)
+        } catch {
+          /* ignore */
+        }
+        const dataQualityAnomalies = [...fromSheet, ...fromJumps]
+        if (dataQualityAnomalies.length) {
+          payload = { ...payload, dataQualityAnomalies }
+        }
+      } catch {
+        /* ne pas bloquer la fiche */
       }
       if (intelligence) {
         try {

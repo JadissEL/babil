@@ -29,7 +29,7 @@ const PERSONA_PRESETS = [
     description: 'Objectif études, budget serré, peu de revenu stable.',
     patch: {
       age: 22,
-      profession: 'unemployed',
+      profession: 'student',
       income: 2500,
       savings: 12000,
       CNSS_status: false,
@@ -292,8 +292,11 @@ export default function ProfilePage() {
                 <option value="self-employed">Indépendant / Auto-entrepreneur</option>
                 <option value="salaried">Salarié secteur privé</option>
                 <option value="public">Fonctionnaire</option>
-                <option value="freelance">Freelance (International)</option>
+                <option value="freelance">Freelance (international)</option>
+                <option value="student">Étudiant·e</option>
+                <option value="retired">Retraité·e</option>
                 <option value="unemployed">Sans emploi</option>
+                <option value="other">Autre</option>
               </select>
             </div>
 
@@ -402,6 +405,7 @@ export default function ProfilePage() {
                   { id: 'study', label: 'Études', icon: GraduationCap },
                   { id: 'work', label: 'Travail / pro', icon: Briefcase },
                   { id: 'business', label: 'Business', icon: Target },
+                  { id: 'short_course', label: 'Formation courte / séjour ciblé', icon: GraduationCap },
                 ].map((goal) => (
                   <button
                     key={goal.id}

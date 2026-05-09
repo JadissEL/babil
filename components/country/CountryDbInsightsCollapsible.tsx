@@ -28,7 +28,7 @@ function FieldBlock({
   )
 }
 
-/** Notes terrain stockées en base (`CountryInsight`), distinctes de `full_data.morocco_insights`. */
+/** Notes terrain : rédactionnel `CountryInsight` (non versionné). Voir docs/country-insight-vs-observations.md — distinct des faits `CountryObservation` / matérialisation `full_data`. */
 export function CountryDbInsightsCollapsible({ rows }: { rows: CountryDbInsightPublic[] }) {
   const panelId = useId()
   const headingId = useId()
@@ -56,8 +56,8 @@ export function CountryDbInsightsCollapsible({ rows }: { rows: CountryDbInsightP
         )}
       </button>
       <p className="mt-2 text-[11px] font-medium leading-relaxed text-muted">
-        Synthèses OSINT et friction terrain synchronisées avec ce pays — à lire comme contexte, pas comme décision
-        officielle.
+        Synthèses et retours qualitatifs (table dédiée, pas le journal d’observations chiffrées). Complète les
+        blocs structurés de la fiche et du pipeline intelligence — ne les remplace pas.
       </p>
 
       <div

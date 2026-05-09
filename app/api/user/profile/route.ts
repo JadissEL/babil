@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma';
+import prisma from '@/lib/prisma'
 import { isDbUnavailable } from '@/lib/db-resilience'
+import {
+  USER_GOAL_TYPES,
+  USER_PROFESSIONS,
+  coerceStoredProfession,
+  parseUserGoalType,
+  parseUserProfession,
+} from '@/lib/user-profile-enums'
 
 export async function GET() {
   const { userId } = auth();
@@ -11,7 +18,15 @@ export async function GET() {
     const profile = await prisma.userProfile.findUnique({
       where: { userId: userId as string },
     });
-    return NextResponse.json(profile);
+    if (!profile) return NextResponse.json(null);
+    return NextResponse.json({
+      ...profile,
+      profession: coerceStoredProfession(profile.profession),
+      goal_type:
+        profile.goal_type == null || !String(profile.goal_type).trim()
+          ? profile.goal_type
+          : parseUserGoalType(profile.goal_type) ?? 'tourism',
+    });
   } catch (error: any) {
     if (isDbUnavailable(error)) return NextResponse.json(null)
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -33,21 +48,41 @@ function parseBody(data: Record<string, unknown>) {
     return { error: 'savings must be a non-negative number' as const }
   }
 
-  const profession =
-    typeof data.profession === 'string' && data.profession.trim() ? data.profession.trim() : null
   const marital_status =
     typeof data.marital_status === 'string' && data.marital_status.trim()
       ? data.marital_status.trim()
       : null
   const family_details =
     typeof data.family_details === 'string' ? data.family_details.trim().slice(0, 4000) : null
-  const goal_type =
-    typeof data.goal_type === 'string' && data.goal_type.trim() ? data.goal_type.trim().slice(0, 128) : null
+
+  const professionRaw =
+    typeof data.profession === 'string' && data.profession.trim() ? data.profession.trim() : null
+  if (professionRaw) {
+    const p = parseUserProfession(professionRaw)
+    if (!p) {
+      return {
+        error: `profession must be one of: ${USER_PROFESSIONS.join(', ')}` as const,
+      }
+    }
+  }
+
+  const goalRaw =
+    typeof data.goal_type === 'string' && data.goal_type.trim() ? data.goal_type.trim() : null
+  let goal_type: string | null = null
+  if (goalRaw) {
+    const g = parseUserGoalType(goalRaw)
+    if (!g) {
+      return {
+        error: `goal_type must be one of: ${USER_GOAL_TYPES.join(', ')} (synonymes: education → study)` as const,
+      }
+    }
+    goal_type = g
+  }
 
   return {
     value: {
       age,
-      profession,
+      profession: professionRaw ? parseUserProfession(professionRaw)! : null,
       income,
       savings,
       CNSS_status: Boolean(data.CNSS_status),
@@ -116,7 +151,14 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(profile);
+    return NextResponse.json({
+      ...profile,
+      profession: coerceStoredProfession(profile.profession),
+      goal_type:
+        profile.goal_type == null || !String(profile.goal_type).trim()
+          ? profile.goal_type
+          : parseUserGoalType(profile.goal_type) ?? 'tourism',
+    });
   } catch (error: any) {
     if (isDbUnavailable(error)) {
       return NextResponse.json({ ok: true, degraded: true, profile: parsed.value })

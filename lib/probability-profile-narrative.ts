@@ -42,7 +42,12 @@ export function appendProfileContextNarratives(
       'Objectif tourisme : gardez une cohérence entre durée du séjour, moyens et itinéraire pour renforcer la crédibilité du dossier.',
     )
   }
-  if (g.includes('etud') || g.includes('study') || g.includes('formation') || g.includes('cours')) {
+  if (
+    g.includes('etud') ||
+    g.includes('study') ||
+    g.includes('formation') ||
+    (g.includes('cours') && !g.includes('short'))
+  ) {
     primary.push(
       "Objectif études / formation : vérifiez sur la fiche pays les blocs admission et visa étudiant avant de vous engager sur une destination.",
     )
@@ -56,6 +61,11 @@ export function appendProfileContextNarratives(
   if (g.includes('business') || g.includes('affair') || g.includes('invest')) {
     primary.push(
       "Objectif affaires ou investissement : documentez l'activité réelle (société, revenus, partenariats).",
+    )
+  }
+  if (g.includes('short') && (g.includes('course') || g.includes('court'))) {
+    primary.push(
+      'Séjour court ou formation ciblée : vérifiez durée, justificatifs et cohérence avec l’objectif déclaré sur la fiche pays.',
     )
   }
 }

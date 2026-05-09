@@ -15,6 +15,7 @@ export const COUNTRY_DETAIL_PAGE_CONTRACT_MARKERS = [
   '_intelligence',
   'morocco_insights',
   'embassy_behavior',
+  'dataQualityAnomalies',
 ] as const
 
 export type CountryDetailPageContractMarker = (typeof COUNTRY_DETAIL_PAGE_CONTRACT_MARKERS)[number]

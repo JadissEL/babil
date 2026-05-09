@@ -11,9 +11,9 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
-| **T6** | Transparence scoring | Top 3 facteurs (`topDrivers`), signaux fiche explicites, snapshot contract/UI, journal `_data_changelog`, **lexique échelles B.27**, **agrégat confiance observations B.31** — [score-driver-explain.ts](../lib/score-driver-explain.ts), [probability-result-display.ts](../lib/probability-result-display.ts), [full-data-changelog.ts](../lib/full-data-changelog.ts), [score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [country-intelligence-contract-display-snapshot.ts](../lib/country-intelligence-contract-display-snapshot.ts), [country-observation-confidence-aggregate.ts](../lib/country-observation-confidence-aggregate.ts) | Implémenté |
+| **T6** | Transparence scoring | Top 3 facteurs, signaux fiche, snapshot contract/UI, journal `_data_changelog`, lexique B.27, agrégat confiance B.31, **qualité données B.32**, **profil enum B.34–B.35** — voir fichiers listés en B.23–B.35 ci-dessous | Implémenté |
 
-### Lot données / transparence catalogue B (items 23–31)
+### Lot données / transparence catalogue B (items 23–35)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
@@ -26,6 +26,10 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | B.29 | Snapshot contract ↔ fiche pays | [`lib/country-intelligence-contract-display-snapshot.ts`](../lib/country-intelligence-contract-display-snapshot.ts) + test |
 | B.30 | Signaux manquants explicites | [`lib/probability-result-display.ts`](../lib/probability-result-display.ts) ; `defaultsUsed` sur `POST /api/probability` |
 | B.31 | Agrégat confiance observations par pays | [`lib/country-observation-confidence-aggregate.ts`](../lib/country-observation-confidence-aggregate.ts), [`lib/country-observation-confidence-db.ts`](../lib/country-observation-confidence-db.ts) ; `observationConfidenceAggregate` sur [`GET /api/countries/[id]`](../app/api/countries/[id]/route.ts) ; fiche pays + imprimable |
+| B.32 | Détection d’anomalies (économie + sauts pipeline) | [`lib/intelligence-data-anomalies.ts`](../lib/intelligence-data-anomalies.ts), [`lib/intelligence-data-anomalies-db.ts`](../lib/intelligence-data-anomalies-db.ts) ; `dataQualityAnomalies` sur [`GET /api/countries/[id]`](../app/api/countries/[id]/route.ts) ; fiche + PDF |
+| B.33 | Harmonisation `CountryInsight` vs observations | [`docs/country-insight-vs-observations.md`](country-insight-vs-observations.md) ; encart [`CountryDbInsightsCollapsible`](../components/country/CountryDbInsightsCollapsible.tsx) |
+| B.34 | `goal_type` validé (enum partagé) | [`lib/user-profile-enums.ts`](../lib/user-profile-enums.ts) ; [`POST /api/user/profile`](../app/api/user/profile/route.ts) ; [`sanitizePublicSyntheticProfile`](../lib/public-synthetic-profile.ts) ; [`POST /api/recommendation`](../app/api/recommendation/route.ts) |
+| B.35 | `profession` validée (enum) | Même module `user-profile-enums` ; profil dashboard + coercition lecture ; pondérations étendues sur [`POST /api/probability`](../app/api/probability/route.ts) |
 
 ### Lot UX catalogue A (items 16–22)
 

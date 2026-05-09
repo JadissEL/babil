@@ -15,6 +15,7 @@ import { appendProfileContextNarratives } from '@/lib/probability-profile-narrat
 import { buildCountrySheetSignals } from '@/lib/probability-result-display'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 import { sanitizePublicSyntheticProfile } from '@/lib/public-synthetic-profile'
+import { parseUserGoalType, userGoalTypeToEngineGoal } from '@/lib/user-profile-enums'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
 
@@ -35,9 +36,7 @@ const toNumber = (value: unknown, fallback = 0) => {
 };
 
 function normalizeProfile(profile: any): NormalizedProfile {
-  const goalRaw = String(profile.goal ?? profile.goal_type ?? 'TOURISM').toUpperCase();
-  const allowed: Goal[] = ['TOURISM', 'STUDY', 'WORK', 'BUSINESS', 'SHORT_COURSE'];
-  const goal = (allowed.includes(goalRaw as Goal) ? goalRaw : 'TOURISM') as Goal;
+  const goal = userGoalTypeToEngineGoal(parseUserGoalType(profile.goal ?? profile.goal_type)) as Goal
 
   return {
     income: toNumber(profile.income, 0),
