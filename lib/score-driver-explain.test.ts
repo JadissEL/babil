@@ -4,6 +4,7 @@ import { describe, it } from 'node:test'
 import {
   computeProbabilityTopDrivers,
   computeRecommendationTopDrivers,
+  formatScoreDrivers,
   formatScoreDriversFrench,
 } from './score-driver-explain'
 
@@ -41,5 +42,17 @@ describe('score-driver-explain', () => {
       risk: 50,
     }))
     assert.ok(lines[0]?.includes('+'))
+  })
+
+  it('formatScoreDrivers uses English catalog when locale is en', () => {
+    const lines = formatScoreDrivers(
+      computeRecommendationTopDrivers(
+        { visa: 60, friction: 50, goalMatch: 50, risk: 50 },
+        'en',
+      ),
+      'en',
+    )
+    assert.ok(lines[0]?.includes('Visa pillar'))
+    assert.ok(lines[0]?.includes('neutral reference profile'))
   })
 })

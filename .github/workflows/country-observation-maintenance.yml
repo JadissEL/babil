@@ -1,0 +1,28 @@
+# Rapports dry-run : purge par âge (C.39) + compaction doublons (C.40).
+# Aucune écriture destructive : uniquement des COUNT / logs. Nécessite DATABASE_URL.
+
+name: Country observation maintenance (dry-run)
+
+on:
+  schedule:
+    - cron: '30 5 1 * *'
+  workflow_dispatch:
+
+jobs:
+  dry-run-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Prune candidates (age, dry-run)
+        run: npm run db:prune-observations:dry
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Compaction candidates (duplicates, dry-run)
+        run: npm run db:compact-observations:dry
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

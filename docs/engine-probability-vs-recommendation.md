@@ -103,6 +103,7 @@ Profil serveur identique au démo recommandation (`PUBLIC_READ_ONLY_DEMO_PROFILE
 - **Recommandation** : implémentation [`computeRecommendationTopDrivers`](../lib/score-driver-explain.ts), champ JSON `topDrivers` sur chaque ligne renvoyée par `POST /api/recommendation` (mêmes pondérations que la formule finale).
 - **Probabilité** : [`computeProbabilityTopDrivers`](../lib/score-driver-explain.ts) sur les six facteurs qui entrent dans `globalScore` (finance, profession, social, contexte pays, RDV, risque immigration), champ `topDrivers` sur chaque pays.
 - **UI** : listes « Facteurs les plus influents (vs neutre) » sur `/recommendations`, `/recommendation-engine`, `/probability` (détail pays).
+- **i18n (B.38)** : les libellés affichables des piliers et la phrase « … pt (vs profil de référence neutre) » viennent du catalogue [`lib/i18n/catalog-scoring.ts`](../lib/i18n/catalog-scoring.ts) ; `compute*TopDrivers(..., locale)` et `formatScoreDrivers(..., locale)` avec `fr` \| `en`. Stratégie : [`business-strings-i18n.md`](business-strings-i18n.md). L’API renvoie encore les labels en **français** par défaut ; l’anglais est prêt côté lib pour un branchement ultérieur (cookie / `Accept-Language`).
 
 ---
 
