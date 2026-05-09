@@ -6,6 +6,8 @@ import { runEnrichmentPipeline } from '@/lib/intelligence-pipeline/run-enrichmen
  * Déclenchement planifié du pipeline intelligence (World Bank + matérialisation).
  * Protégé par `CRON_SECRET` : en-tête `Authorization: Bearer <CRON_SECRET>` ou `?secret=`.
  *
+ * @see docs/intelligence-cron-and-environments.md — secrets, environnements, reprise (C.51) et `INTELLIGENCE_SOURCE_DISABLED_SLUGS` (C.52).
+ *
  * Query :
  * - `mode=full` (défaut) : collecte WB + matérialisation
  * - `mode=materialize` : matérialisation seule (rapide, utile si la collecte tourne ailleurs)

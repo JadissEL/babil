@@ -77,6 +77,7 @@ Le détail exact des clés doit **s’aligner** sur une **taxonomy versionnée**
 - **File d’attente (C.45)** : table `IntelligencePipelineJob` + `intelligence:enqueue-job` / `intelligence:worker-once` — voir [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md).
 - **Monitoring** : statut `EnrichmentRun`, logs applicatifs ; **alertes C.42** : runs bloqués (PENDING/RUNNING sans fin &gt; 2 h) = critique, FAILED/PARTIAL récents (14 j) ou dernier run dégradé = avertissement — voir [enrichment-run-alerts.md](enrichment-run-alerts.md), champ `runAlerts` sur l’API admin, script `npm run intelligence:check-run-alerts`.
 - **Admin** : `GET /api/admin/intelligence/summary` (auth admin Clerk) — dernier run, volumes par source / pays / run, **alertes runs**, nombre de sources, nombre d’observations.
+- **Exploitation (C.51–C.52)** : secrets, environnements, reprise après matérialisation partielle, désactivation de collecte par slug — [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md), variable **`INTELLIGENCE_SOURCE_DISABLED_SLUGS`** ([`source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts)).
 
 ### 2.6 IA & personnalisation (phase ultérieure, sur cette base)
 

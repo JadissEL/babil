@@ -35,4 +35,4 @@ Les lignes sont **idempotentes** (upsert par `slug`) : relancer la commande est 
 3. `npm run seed` (pays depuis `data/countries.json`, voir `prisma/seed.ts`)
 4. Pipeline : `npm run intelligence:world-bank:materialize` (ou workflow GitHub hebdomadaire)
 
-Voir aussi [country-intelligence-system.md](country-intelligence-system.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md).
+Voir aussi [country-intelligence-system.md](country-intelligence-system.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).

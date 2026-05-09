@@ -82,7 +82,7 @@ flowchart LR
 
 > **Livré (lot B.23–B.25) :** documentation unique [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md) ; version des moteurs via `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` et constante [`BABIL_ENGINE_VERSION`](../lib/engine-version.ts) ; tests de garde + checklist calibration dans la même doc ([`lib/public-synthetic-profile.test.ts`](../lib/public-synthetic-profile.test.ts)).
 
-> **Livré (lot B.26–B.38 + C.39–C.50) :** pour **B.26–C.50** (hors synthèse ci-dessous), voir les entrées numérotées dans les sections B et C. **C.46** — tests mock HTTP WB [`world-bank-client.integration.test.ts`](../lib/intelligence-pipeline/world-bank-client.integration.test.ts) ; **C.47** — [intelligence-seed-sources.md](intelligence-seed-sources.md) ; **C.48** — taxonomie + matérialisation **population urbaine %** (`demographics.*`) ; **C.49** — glossaire [`/intelligence-fieldpaths`](../app/(public)/intelligence-fieldpaths/page.tsx) + lien provenance ; **C.50** — cap `rawPayload` [`observation-raw-payload.ts`](../lib/intelligence-pipeline/observation-raw-payload.ts).
+> **Livré (lot B.26–B.38 + C.39–C.52) :** entrées détaillées en sections B et C. Synthèse **C.46–C.50** : tests mock WB, [intelligence-seed-sources.md](intelligence-seed-sources.md), démographie WB + glossaire `/intelligence-fieldpaths`, cap `rawPayload`. **C.51** — [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md). **C.52** — `INTELLIGENCE_SOURCE_DISABLED_SLUGS` + [`source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts).
 
 ### B — Données, scoring et transparence (23–38)
 
@@ -117,8 +117,8 @@ flowchart LR
 48. **Materialisation** : étendre au-delà économie/santé/travail (taxonomie [lib/intelligence-pipeline/taxonomy-v1.ts](../lib/intelligence-pipeline/taxonomy-v1.ts)). *(Livré partiel : indicateur **population urbaine %** (`SP.URB.TOTL.IN.ZS` → `demographics.urban_population_pct` → `full_data.demographics.urban_population_wb_pct`) ; autres domaines : backlog.)*
 49. **Provenance utilisateur** : lien depuis UI vers explication du `fieldPath` (glossaire). *(Livré : page [`/intelligence-fieldpaths`](../app/(public)/intelligence-fieldpaths/page.tsx) + lien depuis [`IntelligenceProvenanceCollapsible`](../components/country/IntelligenceProvenanceCollapsible.tsx) + module [`lib/intelligence-fieldpath-glossary.ts`](../lib/intelligence-fieldpath-glossary.ts).)*
 50. **Limiter** `rawPayload` taille ou externaliser vers object storage si croissance. *(Livré : plafond bytes [`observation-raw-payload.ts`](../lib/intelligence-pipeline/observation-raw-payload.ts) appliqué dans [`world-bank-collector.ts`](../lib/intelligence-pipeline/world-bank-collector.ts) ; object storage : backlog si besoin.)*
-51. **Cron** : documenter secrets, environnements, et rollback si matérialisation partielle.
-52. **Feature flag** pour activer/désactiver collecte par source en prod.
+51. **Cron** : documenter secrets, environnements, et rollback si matérialisation partielle. *(Livré : [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).)*
+52. **Feature flag** pour activer/désactiver collecte par source en prod. *(Livré : `INTELLIGENCE_SOURCE_DISABLED_SLUGS` + [`source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts), appliqué au collecteur WB et aux stubs multilatéraux — voir doc cron.)*
 
 ### D — API, performances et cache (53–65)
 

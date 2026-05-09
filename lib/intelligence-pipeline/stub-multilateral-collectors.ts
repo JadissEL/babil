@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma'
+import { isIntelligenceSourceCollectionEnabled } from './source-collection-flags'
 
 /** Slugs alignés sur [`default-sources.ts`](./default-sources.ts) — connecteurs réseau à brancher (C.44). */
 export const STUB_MULTILATERAL_SLUGS = ['un_data', 'oecd', 'imf_data'] as const
@@ -8,7 +9,7 @@ export type StubMultilateralSlug = (typeof STUB_MULTILATERAL_SLUGS)[number]
 export type StubCollectorResult = {
   slug: string
   observationsWritten: number
-  status: 'skipped_not_implemented'
+  status: 'skipped_not_implemented' | 'skipped_disabled'
   message: string
   runId: string
 }
@@ -20,6 +21,16 @@ export type StubCollectorResult = {
 export async function runStubMultilateralCollectors(runId: string): Promise<StubCollectorResult[]> {
   const out: StubCollectorResult[] = []
   for (const slug of STUB_MULTILATERAL_SLUGS) {
+    if (!isIntelligenceSourceCollectionEnabled(slug)) {
+      out.push({
+        slug,
+        observationsWritten: 0,
+        status: 'skipped_disabled',
+        message: 'Source listée dans INTELLIGENCE_SOURCE_DISABLED_SLUGS — pas d’exécution stub.',
+        runId,
+      })
+      continue
+    }
     const src = await prisma.intelligenceSource.findUnique({ where: { slug } })
     if (!src) {
       out.push({

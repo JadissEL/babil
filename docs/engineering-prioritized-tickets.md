@@ -7,7 +7,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | ID | Thème | Ticket | Statut |
 |----|--------|--------|--------|
 | **T1** | Perf API | `GET /api/countries?light=1` — payload liste sans `full_data` ni `commentaires` (opt-in ; défaut inchangé) | Implémenté |
-| **T2** | Ops données | `CountryObservation` + `EnrichmentRun` : C.39–C.45 + **tests mock WB (C.46)**, **doc seed sources (C.47)**, **matérialisation démographie WB (C.48)**, **glossaire fieldPath (C.49)**, **cap rawPayload (C.50)** — [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), [intelligence-seed-sources.md](intelligence-seed-sources.md), [`admin/page.tsx`](../app/(dashboard)/admin/page.tsx) | Implémenté |
+| **T2** | Ops données | Pipeline observations C.39–C.52 : rétention, compaction, admin, alertes, idempotence WB, stubs/queue, tests mock, seed doc, démographie WB, glossaire, cap `rawPayload`, **doc cron/environnements (C.51)**, **flags collecte par source (C.52)** — voir table C.39–C.52 + [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md) | Implémenté |
 | **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
@@ -34,7 +34,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | B.37 | Export données RGPD (pack JSON) | [`lib/user-gdpr-export.ts`](../lib/user-gdpr-export.ts) ; [`GET /api/user/data-export`](../app/api/user/data-export/route.ts) (`?inline=1` optionnel) ; profil [`profile/page.tsx`](../app/(dashboard)/profile/page.tsx) |
 | B.38 | Stratégie i18n chaînes métier | [`docs/business-strings-i18n.md`](business-strings-i18n.md) ; [`lib/i18n/`](../lib/i18n/) ; pilote catalogues dans [`lib/score-driver-explain.ts`](../lib/score-driver-explain.ts) (`formatScoreDrivers`, locale `fr` \| `en`) |
 
-### Lot pipeline observations catalogue C (items 39–50)
+### Lot pipeline observations catalogue C (items 39–52)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
@@ -50,6 +50,8 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | C.48 | Matérialisation étendue (démographie WB) | [`lib/intelligence-pipeline/taxonomy-v1.ts`](../lib/intelligence-pipeline/taxonomy-v1.ts) (`demographics.urban_population_pct` → `full_data.demographics.urban_population_wb_pct`) ; tuile fiche pays |
 | C.49 | Glossaire `fieldPath` (provenance) | [`lib/intelligence-fieldpath-glossary.ts`](../lib/intelligence-fieldpath-glossary.ts) ; [`app/(public)/intelligence-fieldpaths/page.tsx`](../app/(public)/intelligence-fieldpaths/page.tsx) ; lien [`IntelligenceProvenanceCollapsible`](../components/country/IntelligenceProvenanceCollapsible.tsx) |
 | C.50 | Limite taille `rawPayload` | [`lib/intelligence-pipeline/observation-raw-payload.ts`](../lib/intelligence-pipeline/observation-raw-payload.ts) ; appliqué dans [`world-bank-collector.ts`](../lib/intelligence-pipeline/world-bank-collector.ts) |
+| C.51 | Doc cron, secrets, reprise partielle | [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md) |
+| C.52 | Désactivation collecte par source | [`lib/intelligence-pipeline/source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts) ; variable `INTELLIGENCE_SOURCE_DISABLED_SLUGS` (`.env.example`) |
 
 ### Lot UX catalogue A (items 16–22)
 
@@ -67,5 +69,5 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 
 - Moteurs (formules + version + échelles B.27 + i18n pilote B.38) : [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), [lib/score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [business-strings-i18n.md](business-strings-i18n.md)
 - Spécification liste légère : [app/api/countries/route.ts](../app/api/countries/route.ts) (`?light=1`)
-- Rétention + compaction + alertes EnrichmentRun + queue pipeline + seed sources + glossaire fieldPath : [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), [intelligence-seed-sources.md](intelligence-seed-sources.md)
+- Rétention + pipeline intelligence (C.39–C.52) : [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), [intelligence-seed-sources.md](intelligence-seed-sources.md), [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md)
 - CI : [ci.yml](../.github/workflows/ci.yml)

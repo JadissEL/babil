@@ -8,6 +8,10 @@ export {
 } from './merge-observations'
 export { DEFAULT_INTELLIGENCE_SOURCES, type DefaultSourceSeed } from './default-sources'
 export {
+  isIntelligenceSourceCollectionEnabled,
+  parseDisabledIntelligenceSourceSlugs,
+} from './source-collection-flags'
+export {
   runEnrichmentPipeline,
   runEnrichmentPipelineStub,
   seedIntelligenceSources,

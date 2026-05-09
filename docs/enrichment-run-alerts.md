@@ -15,4 +15,4 @@ npm run intelligence:check-run-alerts
 
 Workflow [`.github/workflows/enrichment-run-alerts.yml`](../.github/workflows/enrichment-run-alerts.yml) : quotidien + `workflow_dispatch`, secret `DATABASE_URL`. Une alerte critique fait échouer le job (notification selon les réglages du dépôt GitHub).
 
-Contexte produit : [country-intelligence-system.md](country-intelligence-system.md) §2.5.
+Contexte produit : [country-intelligence-system.md](country-intelligence-system.md) §2.5 ; exploitation (cron, secrets, reprise) : [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).

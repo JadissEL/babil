@@ -16,6 +16,7 @@ import {
   fetchWorldBankLatestDataForCountriesBatch,
   resolveIso2ForBabilCountryName,
 } from './world-bank-client'
+import { isIntelligenceSourceCollectionEnabled } from './source-collection-flags'
 
 const BATCH_DELAY_MS = 200
 const ISO2_PER_BATCH = 40
@@ -31,6 +32,9 @@ export type WorldBankCollectorResult = {
   errors: number
   /** Nombre d’appels HTTP indicateur×lot (plus bas que 1 requête / pays / indicateur). */
   apiBatchCalls: number
+  /** C.52 — collecte désactivée par `INTELLIGENCE_SOURCE_DISABLED_SLUGS`. */
+  skippedByConfig?: boolean
+  skipReason?: string
 }
 
 type IndicatorSpec = {
@@ -86,6 +90,19 @@ export async function runWorldBankCollector(
   runId: string,
   opts?: { limit?: number },
 ): Promise<WorldBankCollectorResult> {
+  if (!isIntelligenceSourceCollectionEnabled('world_bank_open_data')) {
+    return {
+      observationsWritten: 0,
+      countriesMatched: 0,
+      countriesSkippedNoIso: 0,
+      errors: 0,
+      apiBatchCalls: 0,
+      skippedByConfig: true,
+      skipReason:
+        'Collecte World Bank désactivée (slug dans INTELLIGENCE_SOURCE_DISABLED_SLUGS). Aucun appel réseau.',
+    }
+  }
+
   const source = await prisma.intelligenceSource.findUnique({
     where: { slug: 'world_bank_open_data' },
   })

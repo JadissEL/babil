@@ -55,7 +55,8 @@ export async function runEnrichmentPipeline(args: {
       materializedCountries = m.updated
     }
 
-    const partial = worldBank != null && worldBank.errors > 0
+    const partial =
+      worldBank != null && !worldBank.skippedByConfig && worldBank.errors > 0
 
     await prisma.enrichmentRun.update({
       where: { id: run.id },
