@@ -1,18 +1,41 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { AlertCircle } from 'lucide-react'
 
+import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart'
 import RecommendationPanel from '@/components/engine/RecommendationPanel'
 import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+import { Card, CardContent } from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import type { ApiRecommendation } from '@/lib/recommendation-ui'
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
+
+function RecoMetricBar({ label, value }: { label: string; value: number }) {
+  return (
+    <div>
+      <div className="mb-1 flex justify-between text-[10px] font-black uppercase tracking-widest text-muted">
+        <span>{label}</span>
+        <span className="font-bold text-text">{Math.round(value)}</span>
+      </div>
+      <Progress value={Math.min(100, Math.max(0, value))} />
+    </div>
+  )
+}
 
 export default function RecommendationsPage() {
   const [recommendations, setRecommendations] = useState<ApiRecommendation[]>([])
   const [loading, setLoading] = useState(true)
   const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null)
+  const [chartCountryId, setChartCountryId] = useState<number | null>(null)
 
   useEffect(() => {
     const loadData = async () => {
@@ -43,6 +66,25 @@ export default function RecommendationsPage() {
 
     loadData()
   }, [])
+
+  useEffect(() => {
+    if (!recommendations.length) {
+      setChartCountryId(null)
+      return
+    }
+    setChartCountryId((prev) => {
+      const ids = recommendations.map((r) => Number(r.id))
+      if (prev != null && ids.includes(prev)) return prev
+      return Number(recommendations[0].id)
+    })
+  }, [recommendations])
+
+  const chartReco = useMemo(() => {
+    if (!recommendations.length || chartCountryId == null) return null
+    return (
+      recommendations.find((r) => Number(r.id) === chartCountryId) ?? recommendations[0]
+    )
+  }, [recommendations, chartCountryId])
 
   const panelRows = recommendations.map((r, idx) =>
     mapApiRecommendationToPanelRow(r, idx + 1),
@@ -80,7 +122,61 @@ export default function RecommendationsPage() {
       ) : (
         <>
           {profileUsed ? <ProfileContextBanner profile={profileUsed} variant="recommendation" /> : null}
-          <RecommendationPanel results={panelRows} />
+
+          {chartReco?.breakdown ? (
+            <div className="mb-10 grid min-w-0 gap-6 lg:grid-cols-2">
+              <Card className="min-w-0 border-line bg-surface shadow-card">
+                <CardContent className="space-y-4 p-4 sm:p-6">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <h2 className="text-lg font-black text-text">Radar — {chartReco.name}</h2>
+                    <Select
+                      value={String(chartReco.id)}
+                      onValueChange={(v) => setChartCountryId(Number(v))}
+                    >
+                      <SelectTrigger className="w-full border-line bg-inset sm:w-[220px]">
+                        <SelectValue placeholder="Pays" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {recommendations.map((r) => (
+                          <SelectItem key={String(r.id)} value={String(r.id)}>
+                            {r.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <ScoreBreakdownChart breakdown={chartReco.breakdown} />
+                  <Link
+                    href={`/countries/${chartReco.id}`}
+                    className="inline-block text-xs font-bold text-primary underline-offset-2 hover:underline"
+                  >
+                    Ouvrir la fiche pays →
+                  </Link>
+                </CardContent>
+              </Card>
+
+              <Card className="min-w-0 border-line bg-surface shadow-card">
+                <CardContent className="space-y-4 p-4 sm:p-6">
+                  <h2 className="text-lg font-black text-text">Détail des piliers</h2>
+                  <div className="grid gap-3">
+                    <RecoMetricBar label="Visa" value={chartReco.breakdown.visa} />
+                    <RecoMetricBar label="Friction (facilité)" value={chartReco.breakdown.friction} />
+                    <RecoMetricBar label="Adéquation objectif" value={chartReco.breakdown.goalMatch} />
+                    <RecoMetricBar label="Risque refus (inv.)" value={100 - chartReco.breakdown.risk} />
+                  </div>
+                  <p className="text-xs font-medium text-muted">
+                    Même décomposition que le moteur d&apos;analyse manuelle : visa, friction, objectif et risque
+                    perçu.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          ) : null}
+
+          <div className="space-y-3">
+            <h2 className="text-lg font-black text-text">Classement</h2>
+            <RecommendationPanel results={panelRows} />
+          </div>
         </>
       )}
     </div>
