@@ -133,6 +133,31 @@ function ExplorerPageInner() {
     setMode(modeParam === 'recommendation' ? 'recommendation' : 'explorer')
   }, [searchParams])
 
+  /** Liens partagés avec filtres / recherche = parcours explorateur utile sans clic supplémentaire. */
+  useEffect(() => {
+    if (!searchParams) return
+    const qRaw = searchParams.get('q') ?? searchParams.get('search')
+    let qDecoded = ''
+    try {
+      qDecoded = decodeURIComponent(qRaw ?? '').trim()
+    } catch {
+      qDecoded = String(qRaw ?? '').trim()
+    }
+    const bud = searchParams.get('budget')
+    const sch = searchParams.get('schengen')
+    const engaged =
+      qDecoded.length > 0 ||
+      Boolean(searchParams.get('region')?.trim()) ||
+      Boolean(searchParams.get('goal')?.trim()) ||
+      isBudgetParam(bud) ||
+      Boolean(searchParams.get('difficulty')?.trim()) ||
+      sch === '1' ||
+      sch === 'true' ||
+      sch === 'yes' ||
+      searchParams.get('mode') === 'recommendation'
+    if (engaged) markExplorerOnboardingEngaged()
+  }, [searchParams])
+
   useEffect(() => {
     fetch('/api/countries')
       .then((res) => res.json())
@@ -257,6 +282,7 @@ function ExplorerPageInner() {
               difficulty,
               schengenOnly,
             })}
+            onClick={() => markExplorerOnboardingEngaged()}
             className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary-soft/50 px-3 py-2 text-xs font-black uppercase tracking-wider text-primary transition-colors hover:border-primary/50 hover:bg-primary-soft"
           >
             <Scale className="h-4 w-4 shrink-0" aria-hidden />

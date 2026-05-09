@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
 import { CheckCircle2, Circle, ListChecks, X } from 'lucide-react'
 
-import { readOnboarding, writeOnboarding } from '@/lib/onboarding-storage'
+import { ONBOARDING_STORAGE_UPDATED_EVENT, readOnboarding, writeOnboarding } from '@/lib/onboarding-storage'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 
 function profileLooksComplete(p: Record<string, unknown> | null): boolean {
@@ -31,6 +31,23 @@ export function PostSignupOnboarding() {
   useEffect(() => {
     setStore(readOnboarding())
     setHydrated(true)
+  }, [])
+
+  useEffect(() => {
+    const sync = () => setStore(readOnboarding())
+    const onVis = () => {
+      if (document.visibilityState === 'visible') sync()
+    }
+    window.addEventListener(ONBOARDING_STORAGE_UPDATED_EVENT, sync)
+    window.addEventListener('focus', sync)
+    window.addEventListener('storage', sync)
+    document.addEventListener('visibilitychange', onVis)
+    return () => {
+      window.removeEventListener(ONBOARDING_STORAGE_UPDATED_EVENT, sync)
+      window.removeEventListener('focus', sync)
+      window.removeEventListener('storage', sync)
+      document.removeEventListener('visibilitychange', onVis)
+    }
   }, [])
 
   useEffect(() => {
