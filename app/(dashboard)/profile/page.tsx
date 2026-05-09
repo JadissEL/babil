@@ -15,11 +15,63 @@ import {
   CheckCircle2,
   Calendar,
   GraduationCap,
-  FileStack
+  FileStack,
+  Sparkles
 } from 'lucide-react'
 
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { appToast } from '@/lib/toast-store'
+
+const PERSONA_PRESETS = [
+  {
+    id: 'student',
+    label: 'Étudiant·e',
+    description: 'Objectif études, budget serré, peu de revenu stable.',
+    patch: {
+      age: 22,
+      profession: 'unemployed',
+      income: 2500,
+      savings: 12000,
+      CNSS_status: false,
+      marital_status: 'single',
+      family_in_europe: false,
+      family_details: '',
+      goal_type: 'study',
+    },
+  },
+  {
+    id: 'nomad',
+    label: 'Nomade digital',
+    description: 'Freelance, court séjour / tourisme, coussin d’épargne.',
+    patch: {
+      age: 32,
+      profession: 'freelance',
+      income: 18000,
+      savings: 90000,
+      CNSS_status: false,
+      marital_status: 'single',
+      family_in_europe: true,
+      family_details: '',
+      goal_type: 'tourism',
+    },
+  },
+  {
+    id: 'business',
+    label: 'Business',
+    description: 'Profil pro / affaires, revenus et épargne plus confortables.',
+    patch: {
+      age: 42,
+      profession: 'self-employed',
+      income: 35000,
+      savings: 250000,
+      CNSS_status: true,
+      marital_status: 'married',
+      family_in_europe: false,
+      family_details: '',
+      goal_type: 'business',
+    },
+  },
+] as const
 
 export default function ProfilePage() {
   const { user } = useUser()
@@ -114,6 +166,37 @@ export default function ProfilePage() {
           <CheckCircle2 className="h-5 w-5" /> {message}
         </div>
       )}
+
+      <section className="mb-6 rounded-2xl border border-dashed border-primary/35 bg-primary-soft/30 p-5 shadow-card sm:mb-8 sm:rounded-[2.5rem] sm:p-6">
+        <div className="mb-4 flex items-start gap-3">
+          <div className="rounded-2xl bg-primary/15 p-3 text-primary ring-1 ring-primary/25">
+            <Sparkles className="h-6 w-6" aria-hidden />
+          </div>
+          <div>
+            <h2 className="text-lg font-black text-text sm:text-xl">Personas démo</h2>
+            <p className="mt-1 text-sm font-medium text-muted">
+              Remplit rapidement le formulaire pour tests ou démo — cliquez sur « Sauvegarder » pour enregistrer en base.
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {PERSONA_PRESETS.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => {
+                setProfile((prev) => ({ ...prev, ...p.patch }))
+                appToast.info(`Profil « ${p.label} » appliqué — enregistrez si besoin.`)
+              }}
+              className="flex flex-col rounded-2xl border border-line bg-surface p-4 text-left transition-colors hover:border-primary/40 hover:bg-primary-soft/40"
+            >
+              <span className="text-sm font-black text-text">{p.label}</span>
+              <span className="mt-1 text-xs font-medium text-muted">{p.description}</span>
+              <span className="mt-3 text-[10px] font-black uppercase tracking-wider text-primary">Appliquer</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
       <section className="mb-6 rounded-2xl border border-line bg-surface p-5 shadow-card sm:mb-8 sm:rounded-[2.5rem] sm:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

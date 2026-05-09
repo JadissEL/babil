@@ -1,11 +1,12 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useState } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Search, Globe, SlidersHorizontal, Target, Scale } from 'lucide-react'
 import GoogleAd from '@/components/GoogleAd'
 import CountryGrid from '@/components/country/CountryGrid'
+import { ExplorerRegionScoreStrip } from '@/components/explorer/ExplorerRegionScoreStrip'
 import { FilterBar } from '@/components/filters/FilterBar'
 import {
   frictionTierFromCountry,
@@ -30,7 +31,7 @@ import {
   readExplorerSavedFilters,
   writeExplorerSavedFilters,
 } from '@/lib/explorer-saved-filters'
-import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
+import { buildExplorerRegionScoreBuckets } from '@/lib/explorer-region-score-buckets'
 import { appToast } from '@/lib/toast-store'
 
 type Mode = 'explorer' | 'recommendation'
@@ -189,7 +190,22 @@ function ExplorerPageInner() {
       .finally(() => setLoading(false))
   }, [])
 
-  const normalized = countries.map((c: Record<string, unknown>) => enrichCountryApiRecord(c))
+  const normalized = useMemo(
+    () => countries.map((c: Record<string, unknown>) => enrichCountryApiRecord(c)),
+    [countries],
+  )
+
+  const regionBuckets = useMemo(
+    () =>
+      buildExplorerRegionScoreBuckets(
+        normalized.map((c: { name?: unknown; region?: unknown; _finalScore?: unknown }) => ({
+          name: String(c.name ?? ''),
+          region: String(c.region ?? ''),
+          _finalScore: Number(c._finalScore ?? 0),
+        })),
+      ),
+    [normalized],
+  )
 
   const filtered = normalized
     .filter((c: any) => {
@@ -426,6 +442,8 @@ function ExplorerPageInner() {
           </div>
         </div>
       </div>
+
+      {!loading ? <ExplorerRegionScoreStrip buckets={regionBuckets} /> : null}
 
       <GoogleAd slot="explorer_top" />
 

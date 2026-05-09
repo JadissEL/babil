@@ -17,7 +17,8 @@ import {
   XCircle,
   ChevronLeft,
   Heart,
-  Printer
+  Printer,
+  GraduationCap
 } from 'lucide-react'
 
 import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsIntelSection'
@@ -27,6 +28,8 @@ import GoogleAd from '@/components/GoogleAd'
 import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
 import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
 import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryTeaser'
+import { OfficialSourcesCard } from '@/components/country/OfficialSourcesCard'
+import { BlockFeedback } from '@/components/feedback/BlockFeedback'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
@@ -37,6 +40,7 @@ import { isSchengenMember } from '@/lib/schengen-members'
 import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
 import { appToast } from '@/lib/toast-store'
 import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
+import { officialSourcesForCountry } from '@/lib/official-sources'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 const toNum = (v: any, fallback = 0) => {
@@ -287,11 +291,10 @@ export default function CountryDetailPage() {
   const lifeExp = readFiniteNumber(healthBlock?.life_expectancy_years)
   const unempPct = readFiniteNumber(workBlock?.unemployment_rate_pct)
   const hasWbIndicators = [popWb, gdpUsd, gdpCap, lifeExp, unempPct].some((v) => v != null)
-  const intelUpdated =
-    typeof intelMeta?.economy_materialized_at === 'string' && intelMeta.economy_materialized_at.trim()
-      ? intelMeta.economy_materialized_at.trim()
-      : null
-  const economyIntelFresh = isEconomyIntelFresh(intelUpdated)
+  const intelLatest = latestMaterializedIsoFromIntelMeta(intelMeta)
+  const economyIntelFresh = isEconomyIntelFresh(intelLatest)
+  const officialLinks = officialSourcesForCountry(country.name, String(country.region ?? ''))
+  const countryPageId = String(Array.isArray(id) ? id[0] ?? '' : id ?? '')
 
   return (
     <>
@@ -341,6 +344,35 @@ export default function CountryDetailPage() {
           </button>
         </div>
       </div>
+
+      {officialLinks.length ? (
+        <OfficialSourcesCard countryName={country.name} links={officialLinks} className="mb-8" />
+      ) : null}
+
+      {showPhdTeaser && phdModel ? (
+        <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-line bg-surface p-5 shadow-card sm:flex-row sm:items-center sm:justify-between sm:p-6">
+          <div className="flex min-w-0 items-start gap-4">
+            <div className="rounded-2xl bg-primary/15 p-3 text-primary ring-1 ring-primary/25">
+              <GraduationCap className="h-7 w-7" aria-hidden />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-widest text-primary">Parcours doctorat</p>
+              <p className="mt-1 text-base font-black text-text sm:text-lg">
+                Données structurées pour préparer un PhD à {country.name}
+              </p>
+              <p className="mt-1 text-sm font-medium text-muted">
+                Financements, organismes, démarches et signaux utiles — contenu dédié hors de cette fiche synthèse.
+              </p>
+            </div>
+          </div>
+          <Link
+            href={`/countries/${countryPageId}/doctorat`}
+            className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-primary px-6 py-3.5 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-colors hover:bg-primary-hover"
+          >
+            Voir le parcours PhD
+          </Link>
+        </div>
+      ) : null}
 
       <div className="grid min-w-0 grid-cols-1 gap-12 lg:grid-cols-3">
         {/* Left Column: Main Info */}
@@ -441,10 +473,10 @@ export default function CountryDetailPage() {
                       </div>
                     ) : null}
                   </div>
-                  {intelUpdated ? (
+                  {intelLatest ? (
                     <p className="mt-3 text-[10px] font-medium text-muted">
                       Dernière mise à jour des indicateurs :{' '}
-                      {new Date(intelUpdated).toLocaleString('fr-FR', {
+                      {new Date(intelLatest).toLocaleString('fr-FR', {
                         dateStyle: 'medium',
                         timeStyle: 'short',
                       })}
@@ -465,6 +497,8 @@ export default function CountryDetailPage() {
                 <ScoreBar label="Visa travail" value={workScore} />
                 <ScoreBar label="Visa affaires" value={businessScore} />
               </div>
+
+              <BlockFeedback blockId="country-reality" countryId={countryPageId} />
             </div>
 
             <GoogleAd slot="country_detail_mid" />
@@ -505,6 +539,8 @@ export default function CountryDetailPage() {
                 </ul>
               </div>
             </div>
+
+            <BlockFeedback blockId="country-appointment-audit" countryId={countryPageId} />
           </section>
 
           <DrivingRightsIntelSection countryName={country.name} countryId={id as string} intel={drivingIntel} />
@@ -661,6 +697,11 @@ export default function CountryDetailPage() {
                       &quot;{moroccoProTipText(full as Record<string, unknown>)}&quot;
                     </p>
                   </div>
+                  <BlockFeedback
+                    blockId="country-darija-tip"
+                    countryId={countryPageId}
+                    className="!mt-3 !border-t-0 !pt-3"
+                  />
                 </div>
 
                 <div className="border-t border-line pt-8">
@@ -686,10 +727,10 @@ export default function CountryDetailPage() {
           </p>
         </header>
 
-        {intelUpdated ? (
+        {intelLatest ? (
           <p className="mb-4 text-[11px] text-gray-600">
             Données économie (dernière matérialisation) :{' '}
-            {new Date(intelUpdated).toLocaleDateString('fr-FR', { dateStyle: 'medium' })}
+            {new Date(intelLatest).toLocaleDateString('fr-FR', { dateStyle: 'medium' })}
           </p>
         ) : null}
 
