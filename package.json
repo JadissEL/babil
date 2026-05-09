@@ -12,6 +12,7 @@
     "build": "npm run validate:hero && npm run validate:schengen-keys && next build",
     "start": "next start",
     "db:generate": "prisma generate",
+    "db:migrate-deploy": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:setup": "npm run db:push && npm run seed",
     "start:render": "npm run db:setup && next start",

@@ -1,5 +1,6 @@
 # Collecte World Bank + matérialisation vers `full_data`.
 # Requis : secret repository `DATABASE_URL` (PostgreSQL Babil).
+# Applique d'abord les migrations Prisma (`dedupeKey`, queue jobs) puis seed + run.
 # Évite les limites de durée des fonctions serverless pour les gros runs.
 
 name: Intelligence pipeline (weekly)
@@ -20,6 +21,10 @@ jobs:
           node-version: '20'
           cache: npm
       - run: npm ci
+      - name: Apply pending Prisma migrations
+        run: npm run db:migrate-deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
       - name: Seed intelligence sources
         run: npm run intelligence:seed-sources
         env:

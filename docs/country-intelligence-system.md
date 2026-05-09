@@ -69,7 +69,7 @@ Le détail exact des clés doit **s’aligner** sur une **taxonomy versionnée**
 
 ### 2.5 Automatisation
 
-- **Jobs** : Vercel Cron → `GET /api/cron/intelligence-pipeline` (variable d’environnement **`CRON_SECRET`**, en-tête `Authorization: Bearer …`) ; fichier `vercel.json` (dimanche 04:00 UTC). Pour les gros volumes ou si la fonction dépasse le délai max, utiliser le workflow GitHub **Intelligence pipeline (weekly)** (`.github/workflows/intelligence-pipeline-weekly.yml`) avec le secret `DATABASE_URL`, ou un worker Render exécutant `npm run intelligence:world-bank:materialize`. Query `?mode=materialize` : matérialisation seule (sans nouvelle collecte WB).
+- **Jobs** : Vercel Cron → `GET /api/cron/intelligence-pipeline` (variable d’environnement **`CRON_SECRET`**, en-tête `Authorization: Bearer …`) ; fichier `vercel.json` (dimanche 04:00 UTC). Pour les gros volumes ou si la fonction dépasse le délai max, utiliser le workflow GitHub **Intelligence pipeline (weekly)** (`.github/workflows/intelligence-pipeline-weekly.yml`) avec le secret `DATABASE_URL` : il applique **`npm run db:migrate-deploy`** puis seed + `npm run intelligence:world-bank:materialize`, ou un worker Render exécutant la même séquence. Query `?mode=materialize` : matérialisation seule (sans nouvelle collecte WB).
 - **Cache** : cache HTTP/API pour lectures publiques ; invalidation après run réussi de matérialisation.
 - **Retry** : au niveau connecteur (backoff, idempotence par `runId` + clé naturelle observation).
 - **Idempotence WB (C.43)** : `CountryObservation.dedupeKey` + upsert — reprises sans doublons pour la même série indicateur/pays/année ; voir [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md).

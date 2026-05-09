@@ -33,4 +33,8 @@ Les écritures WB utilisent `CountryObservation.dedupeKey` (`wb:v1:{indicator}:{
 - Un seul worker à la fois recommandé (pas de `SKIP LOCKED` sur la sélection de job).
 - Pas d’API HTTP d’enqueue dans ce lot — utiliser le script ou Prisma Studio.
 
+## Déploiement / CI
+
+Le workflow GitHub **[`.github/workflows/intelligence-pipeline-weekly.yml`](../.github/workflows/intelligence-pipeline-weekly.yml)** exécute **`npm run db:migrate-deploy`** avant le seed et le run World Bank, pour que la base cible (secret `DATABASE_URL`) ait toujours le schéma à jour (`dedupeKey`, `IntelligencePipelineJob`, etc.). Les environnements Vercel/Render qui **ne** passent pas par ce workflow doivent appliquer les migrations séparément (`prisma migrate deploy` avec la même `DATABASE_URL`).
+
 Voir aussi [country-intelligence-system.md](country-intelligence-system.md).
