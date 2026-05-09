@@ -35,6 +35,10 @@ Les écritures WB utilisent `CountryObservation.dedupeKey` (`wb:v1:{indicator}:{
 
 ## Déploiement / CI
 
-Le workflow GitHub **[`.github/workflows/intelligence-pipeline-weekly.yml`](../.github/workflows/intelligence-pipeline-weekly.yml)** exécute **`npm run db:migrate-deploy`** avant le seed et le run World Bank, pour que la base cible (secret `DATABASE_URL`) ait toujours le schéma à jour (`dedupeKey`, `IntelligencePipelineJob`, etc.). Les environnements Vercel/Render qui **ne** passent pas par ce workflow doivent appliquer les migrations séparément (`prisma migrate deploy` avec la même `DATABASE_URL`).
+Le workflow GitHub **[`.github/workflows/intelligence-pipeline-weekly.yml`](../.github/workflows/intelligence-pipeline-weekly.yml)** exécute **`npm run db:migrate-deploy`** avant le seed et le run World Bank, pour que la base cible (secret `DATABASE_URL`) ait toujours le schéma à jour (`dedupeKey`, `IntelligencePipelineJob`, etc.). Pour toute autre base (preview, clone local), appliquer **`prisma migrate deploy`** avec la bonne `DATABASE_URL` avant d’exécuter le pipeline.
+
+Sur **Render**, le service web **`start:render`** applique **`db:migrate-deploy`**, **`seed`** (pays), puis **`next start`**. Le worker **`babil-agents`** exécute **`db:migrate-deploy`** avant **`agents:start`** ([`render.yaml`](../render.yaml)) pour éviter un schéma obsolète si seul le worker redémarre.
+
+**Vercel** (build) : le déploiement n’exécute en général pas `migrate deploy` ; gardez les migrations à jour via le workflow GitHub, un job Render dédié, ou une étape de release manuelle avec `DATABASE_URL`.
 
 Voir aussi [country-intelligence-system.md](country-intelligence-system.md).
