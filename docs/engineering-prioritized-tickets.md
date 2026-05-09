@@ -12,7 +12,7 @@ Ces cinq chantiers sont **en cours de livraison** dans le dépôt (voir impléme
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Documenter formules probabilité vs recommandation + `engineVersion` API — **backlog** (non inclus dans ce lot) | À planifier |
 
-### Lot UX catalogue A (items 16–20)
+### Lot UX catalogue A (items 16–22)
 
 | ID catalogue | Livrable | Fichiers / notes |
 |--------------|----------|------------------|
