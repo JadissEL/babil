@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import assert from 'node:assert/strict'
+import { describe, it } from 'node:test'
 
 import {
   buildCountrySheetSignals,
@@ -10,28 +11,28 @@ import {
 
 describe('probability-result-display', () => {
   it('buildCountrySheetSignals parses friction and brutal', () => {
-    expect(
+    assert.deepEqual(
       buildCountrySheetSignals({
         acceptance_rate_morocco: ' 55% ',
         friction_score: 42.2,
         brutal_reality_score: 7,
       }),
-    ).toEqual({
-      acceptance_rate_morocco: '55%',
-      friction_score: 42,
-      brutal_reality_score: 7,
-    })
+      {
+        acceptance_rate_morocco: '55%',
+        friction_score: 42,
+        brutal_reality_score: 7,
+      },
+    )
   })
 
   it('formatCountrySheetSignalsSummary returns null when empty', () => {
-    expect(formatCountrySheetSignalsSummary(buildCountrySheetSignals({}))).toBeNull()
-    expect(
-      formatCountrySheetSignalsSummary({
-        acceptance_rate_morocco: '50%',
-        friction_score: null,
-        brutal_reality_score: null,
-      }),
-    ).toContain('50%')
+    assert.equal(formatCountrySheetSignalsSummary(buildCountrySheetSignals({})), null)
+    const s = formatCountrySheetSignalsSummary({
+      acceptance_rate_morocco: '50%',
+      friction_score: null,
+      brutal_reality_score: null,
+    })
+    assert.ok(s && s.includes('50%'))
   })
 
   it('orders breakdown keys and skips invalid numbers', () => {
@@ -41,25 +42,29 @@ describe('probability-result-display', () => {
       acceptance: 55,
       appointmentEase: 80,
     })
-    expect(rows.map((r) => r.key)).toEqual(['acceptance', 'visaEase', 'appointmentEase'])
-    expect(probabilityBreakdownLabel('acceptance')).toBe('Acceptation (indicateur fiche)')
+    assert.deepEqual(
+      rows.map((r) => r.key),
+      ['acceptance', 'visaEase', 'appointmentEase'],
+    )
+    assert.equal(probabilityBreakdownLabel('acceptance'), 'Acceptation (indicateur fiche)')
   })
 
   it('describeTopCountrySignals falls back when empty', () => {
-    expect(describeTopCountrySignals(null)).toContain('Les scores combinent')
-    expect(
+    assert.ok(describeTopCountrySignals(null).includes('Les scores combinent'))
+    assert.match(
       describeTopCountrySignals({
         acceptance_rate_morocco: '62%',
         friction_score: 41,
         brutal_reality_score: 6,
       }),
-    ).toMatch(/62%/)
-    expect(
+      /62%/,
+    )
+    assert.ok(
       describeTopCountrySignals({
         acceptance_rate_morocco: null,
         friction_score: null,
         brutal_reality_score: null,
-      }),
-    ).toContain('Les scores combinent')
+      }).includes('Les scores combinent'),
+    )
   })
 })

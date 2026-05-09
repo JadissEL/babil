@@ -230,8 +230,8 @@ Admin
 ## 12. Performance et backend
 
 - **`full_data` volumineux** : chargé sur listes — surveiller taille JSON, index uniquement sur colonnes relationnelles ; le « poids » est surtout **réseau et parse**, pas des index SQL inutilisés sur JSON.
-- **`CountryObservation`** : index `(countryId, fieldPath)` adapté aux lectures matérialisation et provenance ; croissance = **partitionnement / rétention** à terme.
-- **Requêtes** : listes pays avec `comments` inclus — utile pour cartes si commentaires affichés ; sinon **IMPROVE** avec `select` minimal ou paramètre `?light=1` si un jour les perfs imposent.
+- **`CountryObservation`** : index `(countryId, fieldPath)` adapté aux lectures matérialisation et provenance ; croissance = **partitionnement / rétention** — voir [country-observation-retention.md](country-observation-retention.md) et `scripts/prune-country-observations.ts`.
+- **Requêtes** : listes pays avec `comments` inclus — utile pour cartes si commentaires affichés ; sinon **`GET /api/countries?light=1`** (fiche vide `full_data`, sans commentaires) pour widgets type « récemment consultés » ; l’explorateur / compare continuent sans `light`.
 
 ---
 

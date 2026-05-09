@@ -26,7 +26,7 @@ export function RecentlyViewedCountries() {
       try {
         const [histRes, countriesRes] = await Promise.all([
           fetch('/api/user/history'),
-          fetch('/api/countries'),
+          fetch('/api/countries?light=1'),
         ])
         if (cancelled) return
 
