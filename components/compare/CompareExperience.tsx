@@ -7,6 +7,7 @@ import { CompareExperienceSkeleton } from '@/components/compare/CompareExperienc
 import { CompareStickyBar } from '@/components/compare/CompareStickyBar'
 import { CompareTable } from '@/components/compare/CompareTable'
 import { CountryComparePicker, type CountryOption } from '@/components/compare/CountryComparePicker'
+import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider'
 import { Button } from '@/components/ui/button'
 import {
   COMPARE_CATEGORIES,
@@ -29,12 +30,28 @@ import {
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
 import { appToast } from '@/lib/toast-store'
+import { userObjectiveSlugToCompareObjectiveId } from '@/lib/user-objectives/compare-bridge'
 import { cn } from '@/lib/utils'
 
 const MAX = 4
 
 type Step = 'category' | 'objective' | 'countries'
 type SuggestionPoolSource = 'all' | 'filtered' | 'fallback'
+
+function parseValidCompareObjectiveParam(raw: string | null | undefined): CompareObjectiveId | null {
+  const o = raw?.trim()
+  if (!o || !(o in COMPARE_OBJECTIVES)) return null
+  return o as CompareObjectiveId
+}
+
+function parseCompareCountryParam(raw: string | null, max: number): number[] {
+  if (!raw?.trim()) return []
+  return raw
+    .split(/[,\s]+/)
+    .map((s) => parseInt(s.trim(), 10))
+    .filter((n) => Number.isFinite(n))
+    .slice(0, max)
+}
 
 function stepIndex(s: Step): number {
   return s === 'category' ? 0 : s === 'objective' ? 1 : 2
@@ -44,6 +61,8 @@ export function CompareExperience() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const objectivePref = useObjectivePreferenceOptional()
+  const didInitialStepHydrate = useRef(false)
 
   const [raw, setRaw] = useState<Record<string, unknown>[]>([])
   const [search, setSearch] = useState('')
@@ -55,7 +74,6 @@ export function CompareExperience() {
 
   const [step, setStep] = useState<Step>('category')
   const [categoryId, setCategoryId] = useState<CompareCategoryId | null>(null)
-  const hydratedFromUrl = useRef(false)
 
   useEffect(() => {
     fetch('/api/countries')
@@ -67,26 +85,48 @@ export function CompareExperience() {
 
   useEffect(() => {
     if (!searchParams) return
-    if (!hydratedFromUrl.current) {
-      hydratedFromUrl.current = true
-      const o = searchParams.get('objective')
-      if (o && o in COMPARE_OBJECTIVES) {
-        const def = COMPARE_OBJECTIVES[o as CompareObjectiveId]
-        setCategoryId(def.categoryId)
-        setStep('countries')
-      }
+
+    const ids = parseCompareCountryParam(searchParams.get('countries'), MAX)
+    if (ids.length) setSelectedIds(ids)
+
+    if (didInitialStepHydrate.current) return
+
+    const urlObj = parseValidCompareObjectiveParam(searchParams.get('objective'))
+    const prefReady = objectivePref?.ready === true
+    const prefObj =
+      !urlObj && objectivePref?.preference.primarySlug
+        ? userObjectiveSlugToCompareObjectiveId(objectivePref.preference.primarySlug)
+        : null
+
+    if (!urlObj && !prefReady) return
+
+    const effective = urlObj ?? prefObj
+    if (!effective) return
+
+    didInitialStepHydrate.current = true
+
+    const def = COMPARE_OBJECTIVES[effective]
+    setCategoryId(def.categoryId)
+
+    const hasCountries = parseCompareCountryParam(searchParams.get('countries'), MAX).length > 0
+
+    if (urlObj && hasCountries) {
+      setStep('countries')
+    } else {
+      setStep('objective')
     }
-    const c = searchParams.get('countries')
-    if (c) {
-      const ids = c
-        .split(/[,\s]+/)
-        .map((s) => parseInt(s.trim(), 10))
-        .filter((n) => Number.isFinite(n))
-      if (ids.length) setSelectedIds(ids.slice(0, MAX))
+
+    if (!urlObj && prefObj && searchParams.get('objective') !== prefObj) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.set('objective', prefObj)
+      const path = pathname ?? '/compare'
+      const qs = params.toString()
+      router.replace(qs ? `${path}?${qs}` : path, { scroll: false })
     }
-  }, [searchParams])
+  }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug, pathname, router])
 
   const goToCategoryStep = useCallback(() => {
+    didInitialStepHydrate.current = false
     setStep('category')
     setCategoryId(null)
     setSelectedIds([])

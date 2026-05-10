@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState, Suspense } from 'react';
 import { RecommendationPanel } from '@/components/engine/RecommendationPanel';
 import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart';
+import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,6 +23,8 @@ import { formatGoalTypeLabelFr } from '@/lib/probability-profile-narrative';
 import type { ApiRecommendation } from '@/lib/recommendation-ui';
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui';
 import { formatScoreDriversFrench } from '@/lib/score-driver-explain';
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
+import { userGoalTypeToEngineGoal } from '@/lib/user-profile-enums';
 
 const GOALS = ['TOURISM', 'STUDY', 'WORK', 'BUSINESS', 'SHORT_COURSE'] as const;
 
@@ -56,6 +59,8 @@ export default function RecommendationEnginePage() {
 
 function RecommendationEnginePageInner() {
   const searchParams = useSearchParams();
+  const objectivePref = useObjectivePreferenceOptional();
+  const [goalLockedFromAccount, setGoalLockedFromAccount] = useState(false);
   const focusCountryId = useMemo(() => {
     const raw = searchParams?.get('countryId');
     if (!raw) return undefined;
@@ -86,10 +91,22 @@ function RecommendationEnginePageInner() {
     try {
       const res = await fetch('/api/user/profile');
       const p = await res.json();
-      if (!p || p.error) {
+      if (!res.ok) {
+        setGoalLockedFromAccount(false);
         setProfileHint('Profil introuvable — saisissez les valeurs manuellement.');
         return;
       }
+      if (p === null || p === undefined) {
+        setGoalLockedFromAccount(false);
+        setProfileHint('Complétez votre profil ou saisissez les valeurs manuellement.');
+        return;
+      }
+      if (typeof p === 'object' && p !== null && 'error' in p && p.error) {
+        setGoalLockedFromAccount(false);
+        setProfileHint('Profil introuvable — saisissez les valeurs manuellement.');
+        return;
+      }
+      setGoalLockedFromAccount(true);
       setProfileHint('Profil chargé depuis votre compte.');
       setIncome(String(Math.round(p.income ?? 0)));
       setSavings(String(Math.round(p.savings ?? 0)));
@@ -102,6 +119,7 @@ function RecommendationEnginePageInner() {
       const g = String(p.goal_type || 'TOURISM').toUpperCase();
       if ((GOALS as readonly string[]).includes(g)) setGoal(g as (typeof GOALS)[number]);
     } catch {
+      setGoalLockedFromAccount(false);
       setProfileHint('Impossible de charger le profil.');
     }
   }, []);
@@ -109,6 +127,19 @@ function RecommendationEnginePageInner() {
   useEffect(() => {
     void loadProfile();
   }, [loadProfile]);
+
+  useEffect(() => {
+    if (goalLockedFromAccount) return;
+    if (!objectivePref?.ready) return;
+    const slug = objectivePref.preference.primarySlug;
+    if (!slug) return;
+    const engine = getObjectiveBySlug(slug)?.engineGoal;
+    if (!engine) return;
+    const upper = userGoalTypeToEngineGoal(engine);
+    if ((GOALS as readonly string[]).includes(upper)) {
+      setGoal(upper as (typeof GOALS)[number]);
+    }
+  }, [goalLockedFromAccount, objectivePref?.ready, objectivePref?.preference.primarySlug]);
 
   const handleRun = async () => {
     setLoading(true);

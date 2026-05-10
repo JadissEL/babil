@@ -19,7 +19,6 @@ export {
 } from '@/lib/user-objectives/home-orchestration';
 
 export {
-  explorerFilterGoalFromObjectiveSlug,
-  explorerFilterGoalFromEngineGoal,
-  type ExplorerFilterGoal,
-} from '@/lib/user-objectives/explorer-filter-goal';
+  USER_OBJECTIVE_TO_COMPARE_OBJECTIVE_ID,
+  userObjectiveSlugToCompareObjectiveId,
+} from '@/lib/user-objectives/compare-bridge';
