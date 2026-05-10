@@ -173,11 +173,11 @@ flowchart LR
 
 89. **CI GitHub Actions** : lint + `test:lib` + build sur chaque PR (en plus du cron intelligence). *(Livré : `.github/workflows/ci.yml`.)*
 90. **Sentry** (ou équivalent) front + API avec contexte utilisateur anonymisé. *(Livré partiel : **`@sentry/nextjs`** + [`next.config.js`](../next.config.js) (`withSentryConfig`, `instrumentationHook`), [`instrumentation.ts`](../instrumentation.ts), [`sentry.client.config.ts`](../sentry.client.config.ts) / [`sentry.server.config.ts`](../sentry.server.config.ts) / [`sentry.edge.config.ts`](../sentry.edge.config.ts), [`components/SentryClerkSync.tsx`](../components/SentryClerkSync.tsx) + [`lib/sentry-anon-user-id.ts`](../lib/sentry-anon-user-id.ts), capture dans les `error.tsx` ; configurer `NEXT_PUBLIC_SENTRY_DSN` en prod — voir README / `.env.example`.)*
-91. **Logs structurés** (JSON) pour Vercel/server avec corrélation `requestId`. *(Livré partiel : en-tête **`x-babil-request-id`** + log JSON **`api_request`** sur `/api/*` dans [`proxy.ts`](../proxy.ts) ; helpers [`lib/structured-log.ts`](../lib/structured-log.ts) + exemple erreur [`GET /api/countries`](../app/api/countries/route.ts) ; variables `BABIL_API_ACCESS_LOG` — voir README / `.env.example`.)*
-92. **Métriques** : latence p95 des routes pays / reco / proba. *(Livré partiel : événement JSON **`api_route_latency`** avec `durationMs` + `routeKey` sur liste/détail pays et POST reco/proba — [`lib/api-route-latency.ts`](../lib/api-route-latency.ts) ; p95 = agrégation côté plateforme de logs ; `BABIL_API_ROUTE_LATENCY_LOG` — README / `.env.example`.)*
-93. **Budget** : alerte coût si agents OpenAI / appels externes augmentent.
-94. **Environnements** : preview DB séparée ou feature branch Neon.
-95. **Runbooks** incident (pipeline cassé, DB down, fallback static).
+91. **Logs structurés** (JSON) pour Vercel/server avec corrélation `requestId`. *(Livré : en-tête **`x-babil-request-id`** + log JSON **`api_request`** sur `/api/*` dans [`proxy.ts`](../proxy.ts) ; helpers [`lib/structured-log.ts`](../lib/structured-log.ts) + `slogProcess` (jobs) ; exemple erreur [`GET /api/countries`](../app/api/countries/route.ts) ; variables `BABIL_API_ACCESS_LOG` — voir README / `.env.example`.)*
+92. **Métriques** : latence p95 des routes pays / reco / proba. *(Livré : événement JSON **`api_route_latency`** avec `durationMs` + `routeKey` sur liste/détail pays et POST reco/proba — [`lib/api-route-latency.ts`](../lib/api-route-latency.ts) ; p95 = agrégation côté plateforme de logs ; `BABIL_API_ROUTE_LATENCY_LOG` — README / `.env.example`.)*
+93. **Budget** : alerte coût si agents OpenAI / appels externes augmentent. *(Livré partiel : seuil **`INTELLIGENCE_PIPELINE_WB_HTTP_SOFT_LIMIT`** + log `pipeline_external_calls_budget_soft_exceeded` après run — [`lib/pipeline-external-budget.ts`](../lib/pipeline-external-budget.ts) ; guide fournisseurs / LLM — [observability-budget-alerts-g93.md](observability-budget-alerts-g93.md).)*
+94. **Environnements** : preview DB séparée ou feature branch Neon. *(Livré partiel : guide — [environments-preview-database-g94.md](environments-preview-database-g94.md).)*
+95. **Runbooks** incident (pipeline cassé, DB down, fallback static). *(Livré partiel : [runbooks-incidents-g95.md](runbooks-incidents-g95.md) + liens depuis [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).)*
 96. **Healthcheck** unifié (`/api/admin/agents/health` déjà présent — documenter dépendances).
 
 ### H — Agents, contenu et croissance (97–100)
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **93** (budget / alertes coût agents), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **G.96** (healthcheck unifié / doc dépendances), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.

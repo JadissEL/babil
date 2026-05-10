@@ -2,6 +2,7 @@
  * Country Intelligence pipeline — orchestration entrypoints.
  */
 
+import { logPipelineExternalBudgetWarnings } from '@/lib/pipeline-external-budget'
 import prisma from '@/lib/prisma'
 import { DEFAULT_INTELLIGENCE_SOURCES } from './default-sources'
 import { materializeEconomyObservationsForAllCountries } from './materialize-economy-observations'
@@ -73,7 +74,7 @@ export async function runEnrichmentPipeline(args: {
       },
     })
 
-    return {
+    const result: PipelineResult = {
       runId: run.id,
       status: partial ? 'PARTIAL' : 'SUCCEEDED',
       observationsWritten,
@@ -81,6 +82,12 @@ export async function runEnrichmentPipeline(args: {
       worldBank,
       stubCollectors,
     }
+    logPipelineExternalBudgetWarnings({
+      runId: result.runId,
+      status: result.status,
+      worldBank: result.worldBank,
+    })
+    return result
   } catch (e) {
     errorSummary = e instanceof Error ? e.message : String(e)
     await prisma.enrichmentRun.update({
@@ -92,7 +99,7 @@ export async function runEnrichmentPipeline(args: {
         statsJson: JSON.stringify({ observationsWritten, materializedCountries, worldBank, stubCollectors }),
       },
     })
-    return {
+    const result: PipelineResult = {
       runId: run.id,
       status: 'FAILED',
       observationsWritten,
@@ -101,6 +108,12 @@ export async function runEnrichmentPipeline(args: {
       stubCollectors,
       errorSummary,
     }
+    logPipelineExternalBudgetWarnings({
+      runId: result.runId,
+      status: result.status,
+      worldBank: result.worldBank,
+    })
+    return result
   }
 }
 

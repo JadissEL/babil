@@ -52,3 +52,19 @@ export function slogRequest(
   if (level === 'error' || level === 'warn') console.error(serialized);
   else console.log(serialized);
 }
+
+/**
+ * Cron, workers, pipeline — no HTTP `requestId`. Use `runId` / `job` in `fields` for correlation.
+ */
+export function slogProcess(level: SlogLevel, msg: string, fields?: Record<string, unknown>): void {
+  const line: Record<string, unknown> = {
+    level,
+    msg,
+    ts: new Date().toISOString(),
+    service: 'babil',
+    ...(fields ?? {}),
+  };
+  const serialized = JSON.stringify(line);
+  if (level === 'error' || level === 'warn') console.error(serialized);
+  else console.log(serialized);
+}
