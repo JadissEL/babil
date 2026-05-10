@@ -8,6 +8,7 @@ Ce document complète [country-intelligence-system.md](country-intelligence-syst
 |-------------|------------------|-----------------|---------------|
 | **Vercel Cron** | [`vercel.json`](../vercel.json) → `GET /api/cron/intelligence-pipeline` (dim. 04:00 UTC) | `DATABASE_URL` du projet Vercel (Production) | Limitée par `maxDuration` (300 s sur la route) |
 | **GitHub Actions** | [`.github/workflows/intelligence-pipeline-weekly.yml`](../.github/workflows/intelligence-pipeline-weekly.yml) | Secret repo **`DATABASE_URL`** | Jusqu’à 45 min |
+| **Webhook signé** | `POST /api/webhooks/ingest` avec `event: intelligence.pipeline.run` (secret **`BABIL_WEBHOOK_INGEST_SECRET`**, signature HMAC — voir [catalogue-e-security.md](catalogue-e-security.md) §E.76) | Même `DATABASE_URL` que l’app qui reçoit le POST | `maxDuration` 300 s sur la route ingest |
 | **Manuel / Render** | `npm run intelligence:world-bank:materialize`, worker, etc. | `DATABASE_URL` de l’environnement shell | Selon machine |
 
 **Preview Vercel** : les crons Vercel ciblent en général la **production**. Les previews n’ont souvent pas les mêmes secrets ; ne pas supposer que le cron preview écrit sur la même base que la prod.
@@ -25,7 +26,9 @@ Si `CRON_SECRET` est absent → **503**. Si le secret ne correspond pas → **40
 
 À configurer dans le dashboard Vercel (Environment Variables) pour **Production** (et éventuellement Preview si vous testez le cron sur une preview).
 
-### `DATABASE_URL`
+### `BABIL_WEBHOOK_INGEST_SECRET` (webhook pipeline)
+
+Alternative au cron HTTP : `POST /api/webhooks/ingest` avec corps JSON signé (HMAC sur le corps brut) peut déclencher le même orchestrateur que le cron lorsque `event` vaut `intelligence.pipeline.run` — voir [catalogue-e-security.md](catalogue-e-security.md) §E.76. Secret **distinct** de `CRON_SECRET`.
 
 - **Vercel** : variable d’environnement du projet (souvent Production + Preview selon votre politique).
 - **GitHub Actions** : secret **`DATABASE_URL`** (PostgreSQL cible, même chaîne que celle utilisée par l’app en prod si le pipeline doit alimenter le site).

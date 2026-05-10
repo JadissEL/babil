@@ -152,7 +152,7 @@ flowchart LR
 73. **Chiffrement at rest** : vérifier politique hébergeur DB + sauvegardes. *(Livré partiel : checklist étendue [catalogue-e-security.md](catalogue-e-security.md) §E.73 — Neon / Render / rétention ; validation légale hors code.)*
 74. **DPA / sous-traitants** (Clerk, hébergeur) documentés pour conformité. *(Livré partiel : registre processors §E.74 dans [catalogue-e-security.md](catalogue-e-security.md) ; contrats signés = hors repo.)*
 75. **Tests d’autorisation** (utilisateur A ne lit pas données B) sur favoris/historique. *(Livré : garde [`user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) — favoris, historique, export RGPD, **demandes déléguées** (liste + détail) ; pas de `userId` client dans query/body ; tests E2E multi-comptes : backlog.)*
-76. **Webhook** sécurisé si intégrations tierces (signature). *(Livré : HMAC-SHA256 + [`POST /api/webhooks/ingest`](../app/api/webhooks/ingest/route.ts) — [`lib/webhook-signature.ts`](../lib/webhook-signature.ts), `BABIL_WEBHOOK_INGEST_SECRET` — [catalogue-e-security.md](catalogue-e-security.md) §E.76 ; dispatch métier par `event` : backlog.)*
+76. **Webhook** sécurisé si intégrations tierces (signature). *(Livré : HMAC-SHA256 + [`POST /api/webhooks/ingest`](../app/api/webhooks/ingest/route.ts) — [`lib/webhook-signature.ts`](../lib/webhook-signature.ts), [`lib/webhook-ingest-dispatch.ts`](../lib/webhook-ingest-dispatch.ts) (`ping`, `intelligence.pipeline.run` + `mode`), `BABIL_WEBHOOK_INGEST_SECRET` — [catalogue-e-security.md](catalogue-e-security.md) §E.76.)*
 77. **Dependency audit** : `npm audit` en CI + Dependabot. *(Livré : `npm run audit:ci` dans [ci.yml](../.github/workflows/ci.yml) + [dependabot.yml](../.github/dependabot.yml) — [catalogue-e-security.md](catalogue-e-security.md).)*
 
 ### F — Qualité code, tests et DX (78–88)
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples), **dispatch métier** sur `/api/webhooks/ingest`, items **F.78–F.82** (tests / qualité TS).
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples), nouveaux **types d’événements** webhook (CRM, notifications — étendre `webhook-ingest-dispatch`), items **F.78–F.82** (tests / qualité TS).

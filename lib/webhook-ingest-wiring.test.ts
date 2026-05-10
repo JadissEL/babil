@@ -10,5 +10,6 @@ describe('webhook ingest wiring (E.76)', () => {
     const src = readFileSync(join(process.cwd(), 'app/api/webhooks/ingest/route.ts'), 'utf8')
     assert.match(src, /verifyBabilWebhookSignature/)
     assert.match(src, /BABIL_WEBHOOK_INGEST_SECRET/)
+    assert.match(src, /dispatchWebhookIngest/)
   })
 })

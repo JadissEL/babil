@@ -99,7 +99,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | E.73 | Chiffrement at rest (checklist) | [catalogue-e-security.md](catalogue-e-security.md) §E.73 |
 | E.74 | Sous-traitants / DPA (registre) | [catalogue-e-security.md](catalogue-e-security.md) §E.74 |
 | E.75 | Garde scope API utilisateur (+ délégué) | [`lib/user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) |
-| E.76 | Webhook signé ingest | [`lib/webhook-signature.ts`](../lib/webhook-signature.ts) ; [`POST /api/webhooks/ingest`](../app/api/webhooks/ingest/route.ts) ; [`lib/webhook-signature.test.ts`](../lib/webhook-signature.test.ts) ; [`lib/webhook-ingest-wiring.test.ts`](../lib/webhook-ingest-wiring.test.ts) |
+| E.76 | Webhook signé ingest + dispatch événements | [`lib/webhook-signature.ts`](../lib/webhook-signature.ts) ; [`lib/webhook-ingest-dispatch.ts`](../lib/webhook-ingest-dispatch.ts) ; [`POST /api/webhooks/ingest`](../app/api/webhooks/ingest/route.ts) ; [`lib/webhook-signature.test.ts`](../lib/webhook-signature.test.ts) ; [`lib/webhook-ingest-wiring.test.ts`](../lib/webhook-ingest-wiring.test.ts) ; [`lib/webhook-ingest-dispatch.test.ts`](../lib/webhook-ingest-dispatch.test.ts) |
 | E.77 | Audit deps + Dependabot | [`npm run audit:ci`](../package.json) ; [ci.yml](../.github/workflows/ci.yml) ; [dependabot.yml](../.github/dependabot.yml) |
 
 ## Références

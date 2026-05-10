@@ -82,8 +82,10 @@ Les contrats (DPA) se signent **hors dépôt**. **Processors typiques** à suivr
 - **Module** : [`lib/webhook-signature.ts`](../lib/webhook-signature.ts) — `computeBabilWebhookSignature`, `verifyBabilWebhookSignature` (comparaison **constant-time** via `timingSafeEqual`).
 - **Route** : [`POST /api/webhooks/ingest`](../app/api/webhooks/ingest/route.ts) — protégée par secret **`BABIL_WEBHOOK_INGEST_SECRET`** ; en-tête **`X-Babil-Webhook-Signature: sha256=<hmac_hex>`** où le HMAC-SHA256 (hex) couvre le **corps brut** UTF-8.
 - **Auth Clerk** : cette route n’est **pas** derrière `auth.protect()` (webhooks viennent de serveurs tiers ; pas d’`Origin` navigateur).
-- **503** si secret non configuré ; **401** si signature invalide ; **200** `{ ok: true, event? }` si JSON optionnel avec champ `event` (string).
-- Tests : [`lib/webhook-signature.test.ts`](../lib/webhook-signature.test.ts), [`lib/webhook-ingest-wiring.test.ts`](../lib/webhook-ingest-wiring.test.ts).
+- **503** si secret non configuré ; **401** si signature invalide ; **400** si JSON invalide.
+- **Dispatch** : [`lib/webhook-ingest-dispatch.ts`](../lib/webhook-ingest-dispatch.ts) — après JSON valide, si `event` (string) est absent → **`200` `{ ok: true }`** ; si `event` inconnu → **`200` `{ ok: true, event, handled: false }`** (sans effet de bord).
+- **Événements pris en charge** : `ping` / `webhook.ping` → **`200` `{ ok: true, event, handled: true, ping: 'ok' }`** ; `intelligence.pipeline.run` → exécute [`runEnrichmentPipeline`](../lib/intelligence-pipeline/run-enrichment-stub.ts) avec `trigger: 'webhook'` ; champ optionnel **`mode`** : `full` (défaut, collecte WB + matérialisation) ou `materialize` (matérialisation seule, comme le cron). **Durée max** : `maxDuration = 300` sur la route (même ordre que le cron intelligence).
+- Tests : [`lib/webhook-signature.test.ts`](../lib/webhook-signature.test.ts), [`lib/webhook-ingest-wiring.test.ts`](../lib/webhook-ingest-wiring.test.ts), [`lib/webhook-ingest-dispatch.test.ts`](../lib/webhook-ingest-dispatch.test.ts).
 
 ## E.77 — Audit dépendances & Dependabot
 
@@ -92,4 +94,4 @@ Les contrats (DPA) se signent **hors dépôt**. **Processors typiques** à suivr
 
 ## Suite produit (hors sécurité « baseline »)
 
-- Logique métier sur **`POST /api/webhooks/ingest`** (réactions à des `event` précis) : à définir selon la roadmap.
+- Nouveaux types d’événements webhook (sync CRM, notifications, etc.) : étendre [`lib/webhook-ingest-dispatch.ts`](../lib/webhook-ingest-dispatch.ts) + doc ci-dessus.

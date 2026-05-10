@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
+import { dispatchWebhookIngest } from '@/lib/webhook-ingest-dispatch'
 import { verifyBabilWebhookSignature } from '@/lib/webhook-signature'
 
 export const runtime = 'nodejs'
+/** Aligné sur `/api/cron/intelligence-pipeline` pour `event: intelligence.pipeline.run`. */
+export const maxDuration = 300
 
 const SIGNATURE_HEADER = 'x-babil-webhook-signature'
 
@@ -13,7 +17,8 @@ const SIGNATURE_HEADER = 'x-babil-webhook-signature'
  * - **Secret** : `BABIL_WEBHOOK_INGEST_SECRET` (obligatoire en prod pour accepter des appels).
  * - **Signature** : en-tête `X-Babil-Webhook-Signature: sha256=<hmac_hex>` où le HMAC-SHA256
  *   est calculé sur le **corps brut** (octets UTF-8 du body) avec le même secret.
- * - **Réponse** : `200` `{ ok: true, event? }` si JSON valide ; corps vide accepté (`event` absent).
+ * - **Réponse** : `200` — corps vide `{ ok: true }` ; JSON sans `event` idem ; avec `event` connu,
+ *   voir `lib/webhook-ingest-dispatch.ts` (`handled`, effets de bord).
  */
 export async function POST(req: Request) {
   const secret = process.env.BABIL_WEBHOOK_INGEST_SECRET?.trim()
@@ -38,15 +43,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
   }
 
-  const event =
-    payload !== null &&
-    typeof payload === 'object' &&
-    !Array.isArray(payload) &&
-    typeof (payload as { event?: unknown }).event === 'string'
-      ? (payload as { event: string }).event
-      : undefined
-
-  return NextResponse.json({ ok: true, ...(event !== undefined ? { event } : {}) })
+  try {
+    const outcome = await dispatchWebhookIngest(payload)
+    if (outcome.kind === 'no_event') {
+      return NextResponse.json({ ok: true })
+    }
+    if (outcome.kind === 'unknown_event') {
+      return NextResponse.json({ ok: true, event: outcome.event, handled: false })
+    }
+    return NextResponse.json({ ok: true, event: outcome.event, ...outcome.body })
+  } catch (e) {
+    return NextResponse.json(
+      { error: publicApiErrorMessage(e, 'Webhook dispatch failed') },
+      { status: 500 },
+    )
+  }
 }
 
 export function GET() {
