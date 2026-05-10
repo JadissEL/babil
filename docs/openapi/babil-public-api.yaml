@@ -1,0 +1,242 @@
+openapi: 3.0.3
+info:
+  title: Babil public HTTP API (extract)
+  description: |
+    Maintained contract for the main **anonymous** JSON endpoints used by the app and integrators.
+    Country records are large and evolve; schemas stay intentionally loose (`additionalProperties`) except where validated (engine POST bodies).
+
+    **Live spec:** `GET /api/openapi` serves this file (`application/yaml`).
+  version: 1.0.0
+
+servers:
+  - url: /
+    description: Same origin as the Next.js deployment
+
+tags:
+  - name: countries
+  - name: engines
+  - name: meta
+
+paths:
+  /api/openapi:
+    get:
+      tags: [meta]
+      summary: OpenAPI document (YAML)
+      operationId: getOpenApiYaml
+      responses:
+        '200':
+          description: OpenAPI 3.0 document in YAML
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: public, max-age=3600, stale-while-revalidate=86400
+          content:
+            application/yaml:
+              schema:
+                type: string
+                format: binary
+
+  /api/countries:
+    get:
+      tags: [countries]
+      summary: Countries list (merged Prisma + fallback JSON when available)
+      operationId: listCountries
+      parameters:
+        - name: light
+          in: query
+          description: When `1`, `true`, or `yes`, strips heavy fields (`full_data`, `commentaires`) from each row.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: If set (1–200), response is a paginated object instead of a raw array. Use with `cursor`.
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+        - name: cursor
+          in: query
+          description: Opaque cursor (country `id`); exclusive start for the next page.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: JSON array (no `limit`) or `{ items, nextCursor, hasMore }` when paginating.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+                description: Weak entity tag (`W/"..."`) over the exact response bytes; send `If-None-Match` for `304 Not Modified`.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/CountryListRow'
+                  - $ref: '#/components/schemas/CountriesPage'
+        '400':
+          description: Invalid pagination parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+        '500':
+          description: List failure
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+
+  /api/countries/{id}:
+    get:
+      tags: [countries]
+      summary: Country detail
+      operationId: getCountryById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: intelligence
+          in: query
+          description: When `1`, includes `intelligence_provenance` when available.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Country payload (Prisma-shaped, possibly augmented with aggregates).
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountryDetail'
+        '400':
+          description: Invalid id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+        '404':
+          description: Country not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+
+  /api/recommendation:
+    post:
+      tags: [engines]
+      summary: Recommendation engine (ranked countries for profile)
+      operationId: postRecommendation
+      parameters: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoProbaPostBody'
+      responses:
+        '200':
+          description: Engine result (shape varies; includes `engineVersion` and related fields).
+          headers:
+            X-Babil-Engine-Version:
+              schema: { type: string }
+            X-Babil-Engine-Kind:
+              schema: { type: string, example: recommendation }
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid JSON or Zod validation failure
+        '413':
+          description: Body too large
+        '429':
+          description: Rate limited
+
+  /api/probability:
+    post:
+      tags: [engines]
+      summary: Probability engine (per-country scores for profile)
+      operationId: postProbability
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecoProbaPostBody'
+      responses:
+        '200':
+          description: Engine result
+          headers:
+            X-Babil-Engine-Version:
+              schema: { type: string }
+            X-Babil-Engine-Kind:
+              schema: { type: string, example: probability }
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid JSON or Zod validation failure
+        '413':
+          description: Body too large
+        '429':
+          description: Rate limited
+
+components:
+  schemas:
+    ErrorBody:
+      type: object
+      properties:
+        error:
+          type: string
+      additionalProperties: true
+
+    CountryListRow:
+      type: object
+      description: Legacy / merged list row; may include `full_data` and `commentaires` unless `?light=1`.
+      additionalProperties: true
+
+    CountriesPage:
+      type: object
+      required: [items, nextCursor, hasMore]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CountryListRow'
+        nextCursor:
+          type: string
+          nullable: true
+        hasMore:
+          type: boolean
+
+    CountryDetail:
+      type: object
+      additionalProperties: true
+
+    RecoProbaPostBody:
+      type: object
+      description: Validated subset; unknown top-level keys are accepted for forward compatibility.
+      properties:
+        profile:
+          type: object
+          additionalProperties: true
+        playground:
+          type: boolean
+      additionalProperties: true

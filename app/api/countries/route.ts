@@ -9,6 +9,7 @@ import {
   type CountriesListPaginationMode,
 } from '@/lib/countries-list-pagination'
 import { augmentPrismaCountriesForPublicPayload, buildMergedCountriesList } from '@/lib/countries-prisma-merge'
+import { jsonWithCacheAndWeakEtag } from '@/lib/json-response-with-etag'
 import { COUNTRIES_LIST_CACHE_CONTROL } from '@/lib/public-api-cache'
 
 /**
@@ -19,6 +20,7 @@ import { COUNTRIES_LIST_CACHE_CONTROL } from '@/lib/public-api-cache'
  *   Response shape: `{ items, nextCursor, hasMore }`. Omit `limit` to keep the legacy **array** body.
  *
  * @see {@link COUNTRIES_LIST_CACHE_CONTROL} — edge caching for anonymous reads.
+ * Weak **ETag** over the serialized JSON body; **`If-None-Match`** → **304** (catalogue D.64).
  */
 function parseLightMode(req: Request): boolean {
   const v = new URL(req.url).searchParams.get('light')
@@ -29,21 +31,25 @@ function maybeLightList(light: boolean, rows: LegacyCountryRecord[]): LegacyCoun
   return light ? mapCountriesListToLight(rows) : rows
 }
 
-const listCacheHeaders = { 'Cache-Control': COUNTRIES_LIST_CACHE_CONTROL }
-
-function respondCountriesList(rows: LegacyCountryRecord[], light: boolean, pagination: CountriesListPaginationMode) {
+function respondCountriesList(
+  req: Request,
+  rows: LegacyCountryRecord[],
+  light: boolean,
+  pagination: CountriesListPaginationMode,
+) {
   if (pagination.mode === 'full') {
-    return NextResponse.json(maybeLightList(light, rows), { headers: listCacheHeaders })
+    return jsonWithCacheAndWeakEtag(req, maybeLightList(light, rows), COUNTRIES_LIST_CACHE_CONTROL)
   }
   const { limit, cursor } = pagination
   const { items, nextCursor, hasMore } = paginateCountriesByStableId(rows, limit, cursor)
-  return NextResponse.json(
+  return jsonWithCacheAndWeakEtag(
+    req,
     {
       items: maybeLightList(light, items),
       nextCursor,
       hasMore,
     },
-    { headers: listCacheHeaders },
+    COUNTRIES_LIST_CACHE_CONTROL,
   )
 }
 
@@ -57,14 +63,14 @@ export async function GET(req: Request) {
 
   try {
     const merged = await buildMergedCountriesList()
-    if (merged.length > 0) return respondCountriesList(merged, light, pagination)
+    if (merged.length > 0) return respondCountriesList(req, merged, light, pagination)
   } catch {
     /* fallback below */
   }
 
   try {
     const staticList = await loadFallbackCountries()
-    if (staticList.length > 0) return respondCountriesList(staticList, light, pagination)
+    if (staticList.length > 0) return respondCountriesList(req, staticList, light, pagination)
   } catch {
     /* last resort: raw Prisma (no static JSON merge; comments included) */
   }
@@ -92,7 +98,7 @@ export async function GET(req: Request) {
       mergeFallback,
     )
 
-    return respondCountriesList(formatted as LegacyCountryRecord[], light, pagination)
+    return respondCountriesList(req, formatted as LegacyCountryRecord[], light, pagination)
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'List failed'
     return NextResponse.json({ error: message }, { status: 500 })

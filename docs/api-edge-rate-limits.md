@@ -1,4 +1,4 @@
-# Edge middleware, compression, engine POST limits, and validation (catalogue D.58–D.62)
+# Edge middleware, HTTP cache / ETag, OpenAPI, engine POST limits, and validation (catalogue D.58–D.65)
 
 ## D.58 — Middleware (Edge)
 
@@ -30,3 +30,19 @@
 - Schéma partagé : [`recoProbaPostBodySchema`](../lib/api-schemas/reco-proba-post-body.ts) — typage de `profile` (objet optionnel) et `playground` (booléen optionnel), **`.passthrough()`** pour clés inconnues.
 - Appliqué à **`POST /api/recommendation`** et **`POST /api/probability`** : **400** + `issues` (Zod flatten) si JSON racine invalide ou types incohérents sur ces champs.
 - **Admin / autres routes** : hors périmètre immédiat (backlog élargir).
+
+## D.63 — OpenAPI (public extract)
+
+- **File:** [`docs/openapi/babil-public-api.yaml`](openapi/babil-public-api.yaml) — OpenAPI 3.0.3, maintained in-repo (not codegen from code).
+- **HTTP:** `GET /api/openapi` — returns the same YAML (`Content-Type: application/yaml`) with a 1h browser/CDN hint + SWR.
+- **Scope:** `GET /api/countries`, `GET /api/countries/{id}`, `POST /api/recommendation`, `POST /api/probability`, plus self-reference for the spec route.
+
+## D.64 — Weak ETag on country GET JSON
+
+- Helpers: [`lib/http-weak-etag.ts`](../lib/http-weak-etag.ts) (SHA-256 prefix → `W/"..."`), [`lib/json-response-with-etag.ts`](../lib/json-response-with-etag.ts).
+- **`GET /api/countries`** and **`GET /api/countries/[id]`** — success responses include **`ETag`**; **`If-None-Match`** (exact token, comma-separated list supported) → **304** with the same `Cache-Control` + `ETag` and empty body.
+- ETag is over the **exact UTF-8 JSON bytes** returned for that request (including `?light=1`, pagination envelope, and optional `?intelligence=1` on detail).
+
+## D.65 — Home LCP / hero images
+
+- Audit: [`home-lcp-and-images.md`](home-lcp-and-images.md) — `HeroWorldCarousel` uses `next/image`, `priority` on the first slide, and `sizes`; notes crossfade vs. multi-fetch trade-off.

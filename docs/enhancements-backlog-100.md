@@ -82,7 +82,7 @@ flowchart LR
 
 > **Livré (lot B.23–B.25) :** documentation unique [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md) ; version des moteurs via `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` et constante [`BABIL_ENGINE_VERSION`](../lib/engine-version.ts) ; tests de garde + checklist calibration dans la même doc ([`lib/public-synthetic-profile.test.ts`](../lib/public-synthetic-profile.test.ts)).
 
-> **Livré (lot B.26–B.38 + C.39–C.52 + D.54–D.62) :** entrées détaillées en sections B, C et D (extrait). Synthèse pipeline + perf API : C.46–C.52, D.54–D.62 (timeouts WB, Zod moteurs) — [api-edge-rate-limits.md](api-edge-rate-limits.md).
+> **Livré (lot B.26–B.38 + C.39–C.52 + D.54–D.65) :** entrées détaillées en sections B, C et D (extrait). Synthèse pipeline + perf API : C.46–C.52, D.54–D.65 (OpenAPI, ETag pays, audit LCP home) — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md).
 
 ### B — Données, scoring et transparence (23–38)
 
@@ -120,7 +120,7 @@ flowchart LR
 51. **Cron** : documenter secrets, environnements, et rollback si matérialisation partielle. *(Livré : [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).)*
 52. **Feature flag** pour activer/désactiver collecte par source en prod. *(Livré : `INTELLIGENCE_SOURCE_DISABLED_SLUGS` + [`source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts), appliqué au collecteur WB et aux stubs multilatéraux — voir doc cron.)*
 
-> **Livré (lot D.54–D.62) :** pagination curseur + cache HTTP liste/fiche ; `unstable_cache` liste fusionnée + `revalidateTag` admin ; D.58–D.60 — [`proxy.ts`](../proxy.ts) + [api-edge-rate-limits.md](api-edge-rate-limits.md) ; **D.61–D.62** — timeout WB + Zod POST reco/proba (voir même doc + schéma [`reco-proba-post-body.ts`](../lib/api-schemas/reco-proba-post-body.ts)).
+> **Livré (lot D.54–D.65) :** pagination curseur + cache HTTP liste/fiche ; `unstable_cache` liste fusionnée + `revalidateTag` admin ; D.58–D.60 — [`proxy.ts`](../proxy.ts) + [api-edge-rate-limits.md](api-edge-rate-limits.md) ; **D.61–D.62** — timeout WB + Zod POST reco/proba ; **D.63** — spec [openapi/babil-public-api.yaml](openapi/babil-public-api.yaml) + `GET /api/openapi` ; **D.64** — ETag faible + `If-None-Match` → 304 sur `GET /api/countries` et `GET /api/countries/[id]` ([`json-response-with-etag.ts`](../lib/json-response-with-etag.ts)) ; **D.65** — audit LCP hero [home-lcp-and-images.md](home-lcp-and-images.md).
 
 ### D — API, performances et cache (53–65)
 
@@ -134,9 +134,9 @@ flowchart LR
 60. **Rate limiting** par `userId` sur POST reco/proba pour anti-abus. *(Livré : [`engine-post-rate-limit.ts`](../lib/engine-post-rate-limit.ts) — clé `user:` / `anon:` + IP ; 429 + `Retry-After` ; env `BABIL_ENGINE_RATE_LIMIT_*`.)*
 61. **Timeouts** explicites sur appels externes dans pipeline (éviter hangs). *(Livré : [`intelligencePipelineFetch`](../lib/intelligence-pipeline/http-fetch.ts) sur [`world-bank-client.ts`](../lib/intelligence-pipeline/world-bank-client.ts) ; `INTELLIGENCE_HTTP_TIMEOUT_MS` — voir [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).)*
 62. **Validation Zod** (ou équivalent) sur bodies API publiques/admin. *(Livré partiel : Zod sur **`POST /api/recommendation`** et **`POST /api/probability`** — [`reco-proba-post-body.ts`](../lib/api-schemas/reco-proba-post-body.ts) ; autres routes : backlog.)*
-63. **OpenAPI** spec générée ou maintenue pour les routes API.
-64. **ETag** sur ressources pays statiques/fallback si applicable.
-65. **Image / assets** : audit `next/image` et poids LCP sur home.
+63. **OpenAPI** spec générée ou maintenue pour les routes API. *(Livré : [`docs/openapi/babil-public-api.yaml`](openapi/babil-public-api.yaml) + exposition `GET /api/openapi` — voir [api-edge-rate-limits.md](api-edge-rate-limits.md).)*
+64. **ETag** sur ressources pays statiques/fallback si applicable. *(Livré : ETag faible (hash JSON) sur **`GET /api/countries`** et **`GET /api/countries/[id]`** ; `If-None-Match` → **304** — [`lib/json-response-with-etag.ts`](../lib/json-response-with-etag.ts).)*
+65. **Image / assets** : audit `next/image` et poids LCP sur home. *(Livré : doc [home-lcp-and-images.md](home-lcp-and-images.md) — hero `HeroWorldCarousel` déjà `priority` + `sizes` ; optimisations multi-calques : backlog.)*
 
 ### E — Sécurité, conformité et admin (66–77)
 
