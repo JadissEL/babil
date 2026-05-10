@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     'Outils connectés VisaFlow : profil, probabilités, recommandations et administration pour la mobilité internationale.',
 }
 
-export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const { userId } = auth()
+export default async function DashboardLayout({ children }: { children: ReactNode }) {
+  const { userId } = await auth()
 
   if (!userId) {
     redirect('/')

@@ -7,7 +7,7 @@ import { previewDelegatedPayload } from '@/lib/delegated-application-payload-uti
 import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const { userId } = auth()
+  const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const id = Number.parseInt(params.id, 10)

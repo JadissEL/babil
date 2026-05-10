@@ -1,0 +1,40 @@
+# Catalogue E — sécurité, conformité, supply chain (notes repo)
+
+Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.md). Ce fichier résume ce qui est **en place dans le dépôt** et ce qui reste produit / juridique.
+
+## E.66 — RBAC `/api/admin/*`
+
+- Toutes les routes sous `app/api/admin/**/route.ts` appellent `getAdminUser()` et renvoient **403** si non admin.
+- Garde automatisée : [`lib/admin-api-routes.test.ts`](../lib/admin-api-routes.test.ts).
+
+## E.69 — En-têtes de sécurité (Next)
+
+- Config : [`next.config.js`](../next.config.js) — `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-DNS-Prefetch-Control` ; **HSTS** uniquement quand `NODE_ENV === 'production'`.
+- **CSP** stricte non appliquée ici (souvent couplée à nonces / intégrations Clerk) — à traiter dans une itération dédiée si besoin.
+
+## E.70 — Secrets et GitHub Actions
+
+- Les workflows utilisent des **GitHub Encrypted Secrets** (`secrets.*`) pour `DATABASE_URL`, etc. — ne pas logger le corps des réponses ni les URLs complètes avec mot de passe.
+- **`CRON_SECRET`** (si utilisé par des routes protégées) : rotation manuelle côté hébergeur + mise à jour des secrets ; ne pas committer de valeurs.
+
+## E.73 — Chiffrement at rest / sauvegardes
+
+- **À confirmer avec l’hébergeur DB** (ex. Neon, Render) : chiffrement au repos, rétention des backups, région des données. Ce dépôt ne remplace pas une politique d’hébergement signée.
+
+## E.74 — Sous-traitants / DPA
+
+- Point d’entrée produit typique : **Clerk** (auth), **hébergeur** (app + DB), éventuellement **Vercel/Render**. Les accords (DPA) sont **hors repo** ; tenir une liste à jour côté conformité interne.
+
+## E.77 — Audit dépendances & Dependabot
+
+- **CI** : après `npm ci`, `npm run audit:ci` = `npm audit --omit=dev --audit-level=critical` — bloque les vulnérabilités **critiques** en dépendances de production ; les findings **high** (ex. avis Next.js tant que la majeure reste 14.x) restent visibles via `npm audit` local et les PR Dependabot.
+- **Dependabot** : [`.github/dependabot.yml`](../.github/dependabot.yml) (npm + GitHub Actions, hebdomadaire).
+
+## Non couverts ici (backlog code / produit)
+
+- **E.67** — journal d’audit admin persistant.
+- **E.68** — contrôles CSRF / Origin ciblés.
+- **E.71** — masquage PII dans erreurs client.
+- **E.72** — rate limit modération commentaires.
+- **E.75** — tests d’autorisation favoris / historique.
+- **E.76** — webhooks signés.

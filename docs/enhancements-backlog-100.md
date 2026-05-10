@@ -84,6 +84,8 @@ flowchart LR
 
 > **Livré (lot B.26–B.38 + C.39–C.52 + D.54–D.65) :** entrées détaillées en sections B, C et D (extrait). Synthèse pipeline + perf API : C.46–C.52, D.54–D.65 (OpenAPI, ETag pays, audit LCP home) — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md).
 
+> **Livré (lot E.66–E.77 partiel) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), en-têtes sécurité + HSTS prod, audit npm en CI (`audit:ci`), Dependabot ; doc secrets / chiffrement at rest / DPA (pointeurs) ; migration **Clerk 6** + `await auth()` / `await auth.protect()` dans le middleware.
+
 ### B — Données, scoring et transparence (23–38)
 
 23. **Documenter formules** probabilité vs recommandation dans un seul doc technique (poids, inputs).
@@ -140,18 +142,18 @@ flowchart LR
 
 ### E — Sécurité, conformité et admin (66–77)
 
-66. Revue **RBAC** : s’assurer que toutes les routes `/api/admin/*` vérifient `Role.ADMIN` côté serveur. *(Garde de tests — voir `lib/admin-api-routes.test.ts`.)*
+66. Revue **RBAC** : s’assurer que toutes les routes `/api/admin/*` vérifient `Role.ADMIN` côté serveur. *(Livré : garde [`lib/admin-api-routes.test.ts`](../lib/admin-api-routes.test.ts) + `getAdminUser` sur chaque route admin — voir [catalogue-e-security.md](catalogue-e-security.md).)*
 67. **Audit log** des actions admin (modifs pays, statuts demandes déléguées).
 68. **CSRF** / origin checks sur routes sensibles si cookies non SameSite strict partout.
-69. **Headers sécurité** (CSP, HSTS) via Next config.
-70. **Secrets** : rotation `CRON_SECRET`, pas de fuite dans logs GitHub Actions.
+69. **Headers sécurité** (CSP, HSTS) via Next config. *(Livré partiel : en-têtes baseline + HSTS en prod dans [`next.config.js`](../next.config.js) ; CSP stricte : backlog — [catalogue-e-security.md](catalogue-e-security.md).)*
+70. **Secrets** : rotation `CRON_SECRET`, pas de fuite dans logs GitHub Actions. *(Livré partiel : pratiques documentées [catalogue-e-security.md](catalogue-e-security.md) ; rotation = process hors repo.)*
 71. **Scrub** PII dans `errorSummary` / stack traces exposées au client.
 72. **Modération commentaires** : file d’attente avec raccourcis anti-spam (rate limit).
-73. **Chiffrement at rest** : vérifier politique hébergeur DB + sauvegardes.
-74. **DPA / sous-traitants** (Clerk, hébergeur) documentés pour conformité.
+73. **Chiffrement at rest** : vérifier politique hébergeur DB + sauvegardes. *(Livré partiel : checklist [catalogue-e-security.md](catalogue-e-security.md) — validation légale / hébergeur hors code.)*
+74. **DPA / sous-traitants** (Clerk, hébergeur) documentés pour conformité. *(Livré partiel : pointeurs [catalogue-e-security.md](catalogue-e-security.md) ; contrats = hors repo.)*
 75. **Tests d’autorisation** (utilisateur A ne lit pas données B) sur favoris/historique.
 76. **Webhook** sécurisé si intégrations tierces (signature).
-77. **Dependency audit** : `npm audit` en CI + Dependabot.
+77. **Dependency audit** : `npm audit` en CI + Dependabot. *(Livré : `npm run audit:ci` dans [ci.yml](../.github/workflows/ci.yml) + [dependabot.yml](../.github/dependabot.yml) — [catalogue-e-security.md](catalogue-e-security.md).)*
 
 ### F — Qualité code, tests et DX (78–88)
 

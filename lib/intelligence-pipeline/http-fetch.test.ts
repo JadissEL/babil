@@ -18,7 +18,7 @@ test('intelligencePipelineHttpTimeoutMs parses env and caps', () => {
 test('intelligencePipelineFetch aborts when response is slower than timeout', async () => {
   process.env.INTELLIGENCE_HTTP_TIMEOUT_MS = '40'
   const orig = globalThis.fetch
-  globalThis.fetch = (_input: RequestInfo, init?: RequestInit) =>
+  globalThis.fetch = (_input: RequestInfo | URL, init?: RequestInit) =>
     new Promise<Response>((resolve, reject) => {
       const s = init?.signal
       if (s?.aborted) {

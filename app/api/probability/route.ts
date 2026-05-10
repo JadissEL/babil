@@ -17,7 +17,7 @@ import { recoProbaPostBodySchema } from '@/lib/api-schemas/reco-proba-post-body'
 import { coerceStoredProfession } from '@/lib/user-profile-enums'
 
 export async function POST(req: Request) {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   const lenCheck = checkEnginePostContentLength(req)
   if (!lenCheck.ok) {

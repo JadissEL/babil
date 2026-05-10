@@ -11,7 +11,7 @@ import {
 } from '@/lib/user-profile-enums'
 
 export async function GET() {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
@@ -95,7 +95,7 @@ function parseBody(data: Record<string, unknown>) {
 }
 
 export async function POST(req: Request) {
-  const { userId } = auth();
+  const { userId } = await auth();
   const user = await currentUser();
   
   if (!userId || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

@@ -8,11 +8,12 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 |----|--------|--------|--------|
 | **T1** | Perf API | `GET /api/countries?light=1` — payload liste sans `full_data` ni `commentaires` (opt-in ; défaut inchangé) | Implémenté |
 | **T2** | Ops données | Pipeline observations C.39–C.52 : rétention, compaction, admin, alertes, idempotence WB, stubs/queue, tests mock, seed doc, démographie WB, glossaire, cap `rawPayload`, **doc cron/environnements (C.51)**, **flags collecte par source (C.52)** — voir table C.39–C.52 + [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md) | Implémenté |
-| **T3** | CI | Workflow GitHub Actions : `lint` + `test:lib` + `build` sur push/PR | Implémenté |
+| **T3** | CI | Workflow GitHub Actions : `audit:ci` + `lint` + `test:lib` + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
 | **T6** | Transparence scoring | Top 3 facteurs, signaux fiche, snapshot contract/UI, journal `_data_changelog`, lexique B.27, agrégat confiance B.31, qualité données B.32, profil enum B.34–B.35, Assist masqué B.36, export RGPD B.37, **i18n pilote B.38** — voir fichiers listés en B.23–B.38 ci-dessous | Implémenté |
 | **T7** | Perf API (catalogue D) | **D.54–D.60** pagination, cache HTTP, `unstable_cache`, Edge doc, corps max, rate limit. **D.61–D.62** timeout WB + Zod reco/proba. **D.63–D.65** OpenAPI + ETag pays + audit LCP home — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md) | Implémenté |
+| **T8** | Sécurité / supply chain (catalogue E) | **E.66** garde RBAC admin. **E.69** en-têtes + HSTS prod ([`next.config.js`](../next.config.js)). **E.70/E.73/E.74** notes [catalogue-e-security.md](catalogue-e-security.md). **E.77** `npm run audit:ci` + [dependabot.yml](../.github/dependabot.yml). **Clerk 6** + `await auth()` — voir même doc | Implémenté (partiel E.67–E.68, E.71–E.72, E.75–E.76 : backlog) |
 
 ### Lot données / transparence catalogue B (items 23–38)
 
@@ -84,10 +85,22 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | D.64 | ETag faible + 304 | [`lib/http-weak-etag.ts`](../lib/http-weak-etag.ts) ; [`lib/json-response-with-etag.ts`](../lib/json-response-with-etag.ts) ; `GET /api/countries`, `GET /api/countries/[id]` |
 | D.65 | Audit LCP home | [home-lcp-and-images.md](home-lcp-and-images.md) ; [`components/home/HeroWorldCarousel.tsx`](../components/home/HeroWorldCarousel.tsx) |
 
+### Lot sécurité catalogue E (items 66–77)
+
+| ID catalogue | Livrable | Fichiers / notes |
+|--------------|----------|------------------|
+| E.66 | RBAC `/api/admin/*` | [`lib/admin-api-routes.test.ts`](../lib/admin-api-routes.test.ts) ; `getAdminUser` sur chaque route admin |
+| E.69 | En-têtes + HSTS prod | [`next.config.js`](../next.config.js) |
+| E.70 | Hygiène secrets / GHA | [catalogue-e-security.md](catalogue-e-security.md) |
+| E.73 | Chiffrement at rest (checklist) | [catalogue-e-security.md](catalogue-e-security.md) |
+| E.74 | Sous-traitants / DPA (pointeurs) | [catalogue-e-security.md](catalogue-e-security.md) |
+| E.77 | Audit deps + Dependabot | [`npm run audit:ci`](../package.json) ; [ci.yml](../.github/workflows/ci.yml) ; [dependabot.yml](../.github/dependabot.yml) |
+| E.67–E.68, E.71–E.72, E.75–E.76 | Backlog | — |
+
 ## Références
 
 - Moteurs (formules + version + échelles B.27 + i18n pilote B.38) : [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), [lib/score-scale-lexicon.ts](../lib/score-scale-lexicon.ts), [business-strings-i18n.md](business-strings-i18n.md)
 - Limites Edge / corps / rate limit / timeout WB / Zod moteurs / OpenAPI / ETag pays / LCP home (D.58–D.65) : [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md)
 - Liste pays : [app/api/countries/route.ts](../app/api/countries/route.ts) (`?light=1`, `?limit` + `?cursor`, en-têtes cache) ; merge serveur [`lib/countries-prisma-merge.ts`](../lib/countries-prisma-merge.ts) (`unstable_cache` + `cache`, tag + `revalidateTag` admin)
 - Rétention + pipeline intelligence (C.39–C.52) : [country-observation-retention.md](country-observation-retention.md), [enrichment-run-alerts.md](enrichment-run-alerts.md), [intelligence-pipeline-queue.md](intelligence-pipeline-queue.md), [intelligence-seed-sources.md](intelligence-seed-sources.md), [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md)
-- CI : [ci.yml](../.github/workflows/ci.yml)
+- CI + audit deps : [ci.yml](../.github/workflows/ci.yml), [dependabot.yml](../.github/dependabot.yml), [catalogue-e-security.md](catalogue-e-security.md)
