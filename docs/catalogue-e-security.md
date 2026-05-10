@@ -17,6 +17,13 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 - Les workflows utilisent des **GitHub Encrypted Secrets** (`secrets.*`) pour `DATABASE_URL`, etc. — ne pas logger le corps des réponses ni les URLs complètes avec mot de passe.
 - **`CRON_SECRET`** (si utilisé par des routes protégées) : rotation manuelle côté hébergeur + mise à jour des secrets ; ne pas committer de valeurs.
 
+## E.72 — Rate limit soumission commentaires
+
+- Module : [`lib/comment-post-rate-limit.ts`](../lib/comment-post-rate-limit.ts) — appliqué à **`POST /api/comments`** après auth.
+- **Clé utilisateur** : limite par minute (défaut **12**, `BABIL_COMMENT_POST_RATE_LIMIT_PER_MINUTE`).
+- **Clé IP** (optionnelle) : `BABIL_COMMENT_POST_RATE_LIMIT_PER_IP_PER_MINUTE` (défaut **40** ; mettre **0** pour désactiver le bucket IP).
+- Réponse **429** + `Retry-After` + `{ error, retryAfterSec, limit }` ; désactivation tests : `BABIL_COMMENT_POST_RATE_LIMIT_DISABLED=1`.
+
 ## E.73 — Chiffrement at rest / sauvegardes
 
 - **À confirmer avec l’hébergeur DB** (ex. Neon, Render) : chiffrement au repos, rétention des backups, région des données. Ce dépôt ne remplace pas une politique d’hébergement signée.
@@ -24,6 +31,10 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 ## E.74 — Sous-traitants / DPA
 
 - Point d’entrée produit typique : **Clerk** (auth), **hébergeur** (app + DB), éventuellement **Vercel/Render**. Les accords (DPA) sont **hors repo** ; tenir une liste à jour côté conformité interne.
+
+## E.75 — Tests de portée API utilisateur
+
+- Garde : [`lib/user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) — vérifie que favoris, historique et export RGPD ne lisent pas un `userId` fourni par le client (query/body).
 
 ## E.77 — Audit dépendances & Dependabot
 
@@ -35,6 +46,4 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 - **E.67** — journal d’audit admin persistant.
 - **E.68** — contrôles CSRF / Origin ciblés.
 - **E.71** — masquage PII dans erreurs client.
-- **E.72** — rate limit modération commentaires.
-- **E.75** — tests d’autorisation favoris / historique.
 - **E.76** — webhooks signés.

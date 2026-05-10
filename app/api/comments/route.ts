@@ -2,6 +2,7 @@ import { CommentStatus, Role } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { checkCommentPostRateLimit } from '@/lib/comment-post-rate-limit';
 import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function GET(req: NextRequest) {
@@ -49,6 +50,17 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const rl = checkCommentPostRateLimit(userId, req);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests', retryAfterSec: rl.retryAfterSec, limit: rl.limit },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(rl.retryAfterSec) },
+      },
+    );
+  }
 
   let body: { countryId?: unknown; content?: unknown };
   try {
