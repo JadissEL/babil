@@ -14,6 +14,7 @@ import { mapCountriesListToLight } from '@/lib/country-list-light';
 import { jsonWithCacheAndWeakEtag } from '@/lib/json-response-with-etag';
 import prisma from '@/lib/prisma';
 import { COUNTRIES_LIST_CACHE_CONTROL } from '@/lib/public-api-cache';
+import { slogRequest } from '@/lib/structured-log';
 
 /**
  * Public countries list.
@@ -104,6 +105,7 @@ export async function GET(req: Request) {
     return respondCountriesList(req, formatted as LegacyCountryRecord[], light, pagination);
   } catch (error: unknown) {
     const message = publicApiErrorMessage(error, 'List failed');
+    slogRequest('error', 'api_countries_list_failed', req, { error: message });
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

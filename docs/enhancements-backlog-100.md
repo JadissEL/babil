@@ -173,7 +173,7 @@ flowchart LR
 
 89. **CI GitHub Actions** : lint + `test:lib` + build sur chaque PR (en plus du cron intelligence). *(Livré : `.github/workflows/ci.yml`.)*
 90. **Sentry** (ou équivalent) front + API avec contexte utilisateur anonymisé. *(Livré partiel : **`@sentry/nextjs`** + [`next.config.js`](../next.config.js) (`withSentryConfig`, `instrumentationHook`), [`instrumentation.ts`](../instrumentation.ts), [`sentry.client.config.ts`](../sentry.client.config.ts) / [`sentry.server.config.ts`](../sentry.server.config.ts) / [`sentry.edge.config.ts`](../sentry.edge.config.ts), [`components/SentryClerkSync.tsx`](../components/SentryClerkSync.tsx) + [`lib/sentry-anon-user-id.ts`](../lib/sentry-anon-user-id.ts), capture dans les `error.tsx` ; configurer `NEXT_PUBLIC_SENTRY_DSN` en prod — voir README / `.env.example`.)*
-91. **Logs structurés** (JSON) pour Vercel/server avec corrélation `requestId`.
+91. **Logs structurés** (JSON) pour Vercel/server avec corrélation `requestId`. *(Livré partiel : en-tête **`x-babil-request-id`** + log JSON **`api_request`** sur `/api/*` dans [`proxy.ts`](../proxy.ts) ; helpers [`lib/structured-log.ts`](../lib/structured-log.ts) + exemple erreur [`GET /api/countries`](../app/api/countries/route.ts) ; variables `BABIL_API_ACCESS_LOG` — voir README / `.env.example`.)*
 92. **Métriques** : latence p95 des routes pays / reco / proba.
 93. **Budget** : alerte coût si agents OpenAI / appels externes augmentent.
 94. **Environnements** : preview DB séparée ou feature branch Neon.
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **91** (logs structurés JSON + `requestId`), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **92** (métriques p95), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.
