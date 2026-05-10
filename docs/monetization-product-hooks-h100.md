@@ -5,7 +5,8 @@ Aligné avec [`business-commercial-analysis.md`](business-commercial-analysis.md
 ## Ce qui est en place
 
 - **`DeepReportTeaser`** (`components/monetization/DeepReportTeaser.tsx`) sur la fiche pays publique : liens vers **`/probability?countryId=…&countryName=…`** et **`/services/delegated-applications?…`** (nom de pays = libellé public uniquement).
-- **Probabilités** : `POST /api/probability` accepte **`focusCountryId`** (voir `RecoProbaPostBody` / OpenAPI) — le pays ciblé est listé en premier sans changer les scores ; la page probabilités relit les query params et affiche un bandeau + ouverture du détail du pays.
+- **Recommandations** (`/recommendations`) : mêmes query params + `focusCountryId` sur `POST /api/recommendation`, bandeau et re-fetch si le contexte change.
+- **Moteur playground** (`/recommendation-engine`) : lecture des query params ; chaque run envoie `focusCountryId` avec `playground: true`.
 - **Assist candidatures** : la page catalogue et le flux **apply** propagent les mêmes paramètres ; **`targetCountries`** du formulaire est pré-rempli lorsque le champ est encore vide.
 
 ## Principes

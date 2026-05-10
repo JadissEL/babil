@@ -27,8 +27,8 @@ export function DeepReportTeaser({ countryName, countryId }: Props) {
             Croiser probabilités et friction pour {countryName}
           </p>
           <p className="mt-1 text-sm font-medium text-muted">
-            Le moteur de probabilités et les demandes déléguées s’appuient sur les mêmes signaux que
-            cette fiche — sans vous demander plus de données ici.
+            Probabilités, recommandations profil et assist dossier s’appuient sur les mêmes signaux
+            que cette fiche — sans vous demander plus de données ici.
           </p>
         </div>
       </div>
@@ -39,6 +39,12 @@ export function DeepReportTeaser({ countryName, countryId }: Props) {
         >
           Voir les probabilités
           <ArrowRight className="h-4 w-4" aria-hidden />
+        </Link>
+        <Link
+          href={`/recommendations?${q}`}
+          className="text-center text-[10px] font-bold uppercase tracking-widest text-muted underline-offset-2 transition-colors hover:text-primary hover:underline sm:text-right"
+        >
+          Recommandations (profil)
         </Link>
         <Link
           href={`/services/delegated-applications?${q}`}
