@@ -4,6 +4,7 @@ import { CreditCard, Globe, Search, Clock, ShieldCheck, ArrowRight, Sparkles } f
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import GoogleAd from '@/components/GoogleAd'
+import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import {
   normalizeCountriesApiListResponse,
   type CountryApiListRow,
@@ -107,12 +108,9 @@ export default function InvestmentPage() {
             La base actuelle n’inclut pas encore de programmes CBI complets. Explorez les pays et suivez l’évolution du dataset.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/explorer"
-              className="rounded-2xl bg-primary px-6 py-4 font-black text-white transition-colors hover:bg-primary-hover"
-            >
+            <ObjectiveAwareExplorerLink className="rounded-2xl bg-primary px-6 py-4 font-black text-white transition-colors hover:bg-primary-hover">
               Explorer les pays <ArrowRight className="ml-2 inline h-4 w-4" />
-            </Link>
+            </ObjectiveAwareExplorerLink>
             <Link
               href="/overview"
               className="rounded-2xl border border-line bg-inset px-6 py-4 font-black text-text transition-colors hover:bg-primary-soft"

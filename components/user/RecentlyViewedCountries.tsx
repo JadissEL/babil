@@ -4,6 +4,7 @@ import { useUser } from '@clerk/nextjs'
 import { ChevronRight, History } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import { recentViewedCountryIdsFromHistory } from '@/lib/user-recent-country-views'
 
 type CountryRow = { id: number; name: string }
@@ -89,12 +90,11 @@ export function RecentlyViewedCountries() {
           >
             Tout l&apos;historique
           </Link>
-          <Link
-            href="/explorer"
+          <ObjectiveAwareExplorerLink
             className="flex items-center gap-1 text-xs font-bold text-primary hover:underline sm:text-sm"
           >
             Explorer <ChevronRight className="h-3 w-3" />
-          </Link>
+          </ObjectiveAwareExplorerLink>
         </div>
       </div>
       <p className="mb-4 text-xs font-medium text-muted sm:text-sm">

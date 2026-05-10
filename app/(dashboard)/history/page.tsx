@@ -4,6 +4,7 @@ import { History } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
+import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
@@ -181,12 +182,9 @@ export default function HistoryPage() {
                 pays.
               </p>
               <div className="flex flex-col items-center justify-center gap-3 pb-8 sm:flex-row">
-                <Link
-                  href="/explorer"
-                  className="inline-flex rounded-xl border border-line bg-surface px-5 py-3 text-sm font-bold text-primary transition-colors hover:bg-primary-soft"
-                >
+                <ObjectiveAwareExplorerLink className="inline-flex rounded-xl border border-line bg-surface px-5 py-3 text-sm font-bold text-primary transition-colors hover:bg-primary-soft">
                   Ouvrir l&apos;explorateur
-                </Link>
+                </ObjectiveAwareExplorerLink>
                 <Link
                   href="/profile"
                   className="inline-flex rounded-xl border border-line bg-inset px-5 py-3 text-sm font-bold text-text transition-colors hover:bg-primary-soft"

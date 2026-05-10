@@ -1,14 +1,24 @@
 import { Globe } from 'lucide-react'
 import Link from 'next/link'
-
-const links = [
-  { href: '/explorer', label: 'Explorer' },
-  { href: '/compare', label: 'Comparer' },
-  { href: '/schengen', label: 'Schengen' },
-  { href: '/probability', label: 'Moteur visa' },
-]
+import { useMemo } from 'react'
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
 
 export default function AppNavbar() {
+  const { preference } = useObjectivePreference()
+  const explorerHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug])
+  const compareHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug])
+
+  const links = useMemo(
+    () => [
+      { key: 'explorer', href: explorerHref, label: 'Explorer' },
+      { key: 'compare', href: compareHref, label: 'Comparer' },
+      { key: 'schengen', href: '/schengen', label: 'Schengen' },
+      { key: 'probability', href: '/probability', label: 'Moteur visa' },
+    ],
+    [compareHref, explorerHref],
+  )
+
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-[#fdf8ef]/90 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -20,7 +30,7 @@ export default function AppNavbar() {
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} className="text-sm font-semibold text-muted transition-colors hover:text-primary">
+            <Link key={link.key} href={link.href} className="text-sm font-semibold text-muted transition-colors hover:text-primary">
               {link.label}
             </Link>
           ))}

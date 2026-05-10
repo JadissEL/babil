@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import { PhDStudiesSection } from '@/components/country/PhDStudiesSection'
 import GoogleAd from '@/components/GoogleAd'
+import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 
@@ -63,9 +64,9 @@ export default function CountryDoctoratPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center font-bold text-muted">
         <p>{error ?? 'Impossible de charger ce pays.'}</p>
-        <Link href="/explorer" className="mt-6 inline-block text-primary underline underline-offset-4">
+        <ObjectiveAwareExplorerLink className="mt-6 inline-block text-primary underline underline-offset-4">
           Retour à l’explorateur
-        </Link>
+        </ObjectiveAwareExplorerLink>
       </div>
     )
   }
@@ -101,9 +102,9 @@ export default function CountryDoctoratPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 text-center font-bold text-muted">
         <p>Impossible de charger ce pays.</p>
-        <Link href="/explorer" className="mt-6 inline-block text-primary underline underline-offset-4">
+        <ObjectiveAwareExplorerLink className="mt-6 inline-block text-primary underline underline-offset-4">
           Retour à l’explorateur
-        </Link>
+        </ObjectiveAwareExplorerLink>
       </div>
     )
   }

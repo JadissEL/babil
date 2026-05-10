@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import { INTELLIGENCE_FIELDPATH_GLOSSARY } from '@/lib/intelligence-fieldpath-glossary'
 import type { Metadata } from 'next'
 
@@ -21,9 +21,9 @@ export default function IntelligenceFieldPathsPage() {
         apparaître sous un chemin dans <code className="font-mono text-xs">full_data</code> (cache lecture API).
       </p>
       <p className="mt-2 text-sm font-medium text-muted">
-        <Link href="/explorer" className="font-bold text-primary underline-offset-2 hover:underline">
+        <ObjectiveAwareExplorerLink className="font-bold text-primary underline-offset-2 hover:underline">
           Retour à l&apos;explorateur
-        </Link>
+        </ObjectiveAwareExplorerLink>
       </p>
 
       <div className="mt-10 overflow-x-auto rounded-2xl border border-line bg-surface shadow-card">

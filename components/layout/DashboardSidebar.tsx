@@ -3,6 +3,7 @@
 import { ChevronRight, Settings, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useMemo } from 'react'
 import {
   dashboardNav,
   explorerNav,
@@ -10,6 +11,8 @@ import {
   normalizeDashboardPath,
   type DashboardNavItem,
 } from '@/components/layout/dashboard-nav-config'
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
 import { cn } from '@/lib/utils'
 
 function NavLinkRow({
@@ -66,7 +69,15 @@ function NavLinkRow({
   )
 }
 
-function NavSections({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
+function NavSections({
+  pathname,
+  onNavigate,
+  explorerItems,
+}: {
+  pathname: string
+  onNavigate?: () => void
+  explorerItems: DashboardNavItem[]
+}) {
   return (
     <div className="flex flex-col gap-8">
       <nav className="flex flex-col gap-2" aria-label="Espace tableau de bord">
@@ -84,9 +95,9 @@ function NavSections({ pathname, onNavigate }: { pathname: string; onNavigate?: 
 
       <nav className="flex flex-col gap-2" aria-label="Outils mobilité">
         <div className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-muted">Mobilité</div>
-        {explorerNav.map((item) => (
+        {explorerItems.map((item) => (
           <NavLinkRow
-            key={item.href}
+            key={item.label}
             item={item}
             active={hrefDashboardActive(pathname, item)}
             onNavigate={onNavigate}
@@ -132,6 +143,18 @@ type DashboardSidebarProps = {
 export function DashboardSidebar({ mobileOpen = false, onMobileClose }: DashboardSidebarProps) {
   const pathname = normalizeDashboardPath(usePathname() || '')
   const close = () => onMobileClose?.()
+  const { preference } = useObjectivePreference()
+  const explorerHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug])
+  const compareHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug])
+  const explorerItems = useMemo(
+    () =>
+      explorerNav.map((item) => {
+        if (item.href === '/explorer') return { ...item, href: explorerHref }
+        if (item.href === '/compare') return { ...item, href: compareHref }
+        return item
+      }),
+    [compareHref, explorerHref],
+  )
 
   return (
     <>
@@ -164,14 +187,14 @@ export function DashboardSidebar({ mobileOpen = false, onMobileClose }: Dashboar
             <X className="h-5 w-5" />
           </button>
         </div>
-        <NavSections pathname={pathname} onNavigate={close} />
+        <NavSections pathname={pathname} onNavigate={close} explorerItems={explorerItems} />
         <SettingsStub />
       </aside>
 
       {/* Desktop sidebar */}
       <aside className="hidden w-72 shrink-0 flex-col gap-10 border-r border-line bg-surface p-6 lg:flex lg:p-8">
         <BrandBlock />
-        <NavSections pathname={pathname} />
+        <NavSections pathname={pathname} explorerItems={explorerItems} />
         <SettingsStub />
       </aside>
     </>

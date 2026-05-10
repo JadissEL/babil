@@ -57,11 +57,11 @@ export function normalizeDashboardPath(p: string) {
 }
 
 export function hrefDashboardActive(normalizedPathname: string, item: DashboardNavItem): boolean {
-  const h = item.href
+  const pathOnly = item.href.split('?')[0] || item.href
   if (item.match === 'prefix') {
-    return normalizedPathname === h || normalizedPathname.startsWith(`${h}/`)
+    return normalizedPathname === pathOnly || normalizedPathname.startsWith(`${pathOnly}/`)
   }
-  return normalizedPathname === h
+  return normalizedPathname === pathOnly
 }
 
 export function getDashboardNavTitle(pathname: string): string {

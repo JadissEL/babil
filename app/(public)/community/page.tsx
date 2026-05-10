@@ -1,6 +1,7 @@
 import { Globe, MessageSquare, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 import PageContainer from '@/components/layout/PageContainer'
+import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 
 export const metadata = {
   title: 'Communauté | VisaFlow',
@@ -28,9 +29,9 @@ export default function CommunityPage() {
             <Globe className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
             <span>
               Ouvrez un pays depuis l&apos;{' '}
-              <Link href="/explorer" className="font-black text-primary hover:text-primary-hover">
+              <ObjectiveAwareExplorerLink className="font-black text-primary hover:text-primary-hover">
                 Explorer
-              </Link>{' '}
+              </ObjectiveAwareExplorerLink>{' '}
               puis faites défiler jusqu&apos;à la section commentaires lorsque vous êtes connecté.
             </span>
           </li>
@@ -47,12 +48,9 @@ export default function CommunityPage() {
         </ul>
 
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link
-            href="/explorer"
-            className="inline-flex items-center rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-primary-hover"
-          >
+          <ObjectiveAwareExplorerLink className="inline-flex items-center rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-primary-hover">
             Parcourir les pays
-          </Link>
+          </ObjectiveAwareExplorerLink>
           <Link
             href="/recommendations"
             className="inline-flex items-center rounded-xl border border-line bg-[#f8f2e8] px-5 py-3 text-xs font-black uppercase tracking-widest text-text hover:bg-primary-soft"

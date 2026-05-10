@@ -30,6 +30,7 @@ import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsInt
 import { BlockFeedback } from '@/components/feedback/BlockFeedback'
 import GoogleAd from '@/components/GoogleAd'
 import { DeepReportTeaser } from '@/components/monetization/DeepReportTeaser'
+import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import { filterPublicCountryInsights } from '@/lib/country-db-insights'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
@@ -346,12 +347,11 @@ export default function CountryDetailPage() {
   return (
     <>
     <div className="mx-auto max-w-6xl px-4 pb-20 pt-2 sm:px-6 lg:px-8 print:hidden">
-      <Link
-        href="/explorer"
+      <ObjectiveAwareExplorerLink
         className="mb-6 flex items-center gap-2 font-bold text-muted transition-colors hover:text-primary"
       >
         <ChevronLeft className="h-4 w-4" /> Retour à l&apos;explorateur
-      </Link>
+      </ObjectiveAwareExplorerLink>
 
       <div className="mb-8 flex min-w-0 flex-col gap-4 rounded-[2rem] border border-line bg-surface p-5 shadow-card lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
