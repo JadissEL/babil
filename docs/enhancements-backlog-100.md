@@ -84,7 +84,7 @@ flowchart LR
 
 > **Livré (lot B.26–B.38 + C.39–C.52 + D.54–D.65) :** entrées détaillées en sections B, C et D (extrait). Synthèse pipeline + perf API : C.46–C.52, D.54–D.65 (OpenAPI, ETag pays, audit LCP home) — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md).
 
-> **Livré (lot E.66–E.77 partiel) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), **E.67** journal audit admin, **E.68** garde `Origin` / Referer mutations prod, **E.71** messages API sans PII/stack (`api-public-error`), **E.72–E.75** (voir items 71–75), en-têtes sécurité + HSTS prod, audit npm en CI (`audit:ci`), Dependabot ; doc secrets / chiffrement at rest / DPA ; migration **Clerk 6** + `await auth()` / `await auth.protect()` dans le middleware ; **E.72** rate limit `POST /api/comments` ; **E.75** garde tests scope utilisateur + délégué.
+> **Livré (lot E.66–E.77) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), **E.67** audit admin, **E.68** Origin mutations prod, **E.71** erreurs API (`api-public-error`), **E.72–E.75** (modération, checklists at rest / DPA, tests scope + délégué), **E.76** webhook signé (`/api/webhooks/ingest`), en-têtes sécurité + HSTS, **E.77** `audit:ci` + Dependabot, **Clerk 6** + middleware `auth.protect()` sur routes protégées.
 
 ### B — Données, scoring et transparence (23–38)
 
@@ -152,7 +152,7 @@ flowchart LR
 73. **Chiffrement at rest** : vérifier politique hébergeur DB + sauvegardes. *(Livré partiel : checklist étendue [catalogue-e-security.md](catalogue-e-security.md) §E.73 — Neon / Render / rétention ; validation légale hors code.)*
 74. **DPA / sous-traitants** (Clerk, hébergeur) documentés pour conformité. *(Livré partiel : registre processors §E.74 dans [catalogue-e-security.md](catalogue-e-security.md) ; contrats signés = hors repo.)*
 75. **Tests d’autorisation** (utilisateur A ne lit pas données B) sur favoris/historique. *(Livré : garde [`user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) — favoris, historique, export RGPD, **demandes déléguées** (liste + détail) ; pas de `userId` client dans query/body ; tests E2E multi-comptes : backlog.)*
-76. **Webhook** sécurisé si intégrations tierces (signature).
+76. **Webhook** sécurisé si intégrations tierces (signature). *(Livré : HMAC-SHA256 + [`POST /api/webhooks/ingest`](../app/api/webhooks/ingest/route.ts) — [`lib/webhook-signature.ts`](../lib/webhook-signature.ts), `BABIL_WEBHOOK_INGEST_SECRET` — [catalogue-e-security.md](catalogue-e-security.md) §E.76 ; dispatch métier par `event` : backlog.)*
 77. **Dependency audit** : `npm audit` en CI + Dependabot. *(Livré : `npm run audit:ci` dans [ci.yml](../.github/workflows/ci.yml) + [dependabot.yml](../.github/dependabot.yml) — [catalogue-e-security.md](catalogue-e-security.md).)*
 
 ### F — Qualité code, tests et DX (78–88)
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **71** (scrub PII erreurs client), **76** (webhooks signés), **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples, `Host` vs `Origin`).
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples), **dispatch métier** sur `/api/webhooks/ingest`, items **F.78–F.82** (tests / qualité TS).

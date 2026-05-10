@@ -77,11 +77,19 @@ Les contrats (DPA) se signent **hors dépôt**. **Processors typiques** à suivr
 
 - Garde : [`lib/user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) — vérifie que favoris, historique, export RGPD et **demandes déléguées** (liste + détail) ne lisent pas un `userId` fourni par le client (query/body) et que le détail délégué impose `row.userId === auth`.
 
+## E.76 — Webhooks signés (ingestion intégrations)
+
+- **Module** : [`lib/webhook-signature.ts`](../lib/webhook-signature.ts) — `computeBabilWebhookSignature`, `verifyBabilWebhookSignature` (comparaison **constant-time** via `timingSafeEqual`).
+- **Route** : [`POST /api/webhooks/ingest`](../app/api/webhooks/ingest/route.ts) — protégée par secret **`BABIL_WEBHOOK_INGEST_SECRET`** ; en-tête **`X-Babil-Webhook-Signature: sha256=<hmac_hex>`** où le HMAC-SHA256 (hex) couvre le **corps brut** UTF-8.
+- **Auth Clerk** : cette route n’est **pas** derrière `auth.protect()` (webhooks viennent de serveurs tiers ; pas d’`Origin` navigateur).
+- **503** si secret non configuré ; **401** si signature invalide ; **200** `{ ok: true, event? }` si JSON optionnel avec champ `event` (string).
+- Tests : [`lib/webhook-signature.test.ts`](../lib/webhook-signature.test.ts), [`lib/webhook-ingest-wiring.test.ts`](../lib/webhook-ingest-wiring.test.ts).
+
 ## E.77 — Audit dépendances & Dependabot
 
 - **CI** : après `npm ci`, `npm run audit:ci` = `npm audit --omit=dev --audit-level=critical` — bloque les vulnérabilités **critiques** en dépendances de production ; les findings **high** (ex. avis Next.js tant que la majeure reste 14.x) restent visibles via `npm audit` local et les PR Dependabot.
 - **Dependabot** : [`.github/dependabot.yml`](../.github/dependabot.yml) (npm + GitHub Actions, hebdomadaire).
 
-## Non couverts ici (backlog code / produit)
+## Suite produit (hors sécurité « baseline »)
 
-- **E.76** — webhooks signés.
+- Logique métier sur **`POST /api/webhooks/ingest`** (réactions à des `event` précis) : à définir selon la roadmap.

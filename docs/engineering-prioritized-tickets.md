@@ -13,7 +13,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
 | **T6** | Transparence scoring | Top 3 facteurs, signaux fiche, snapshot contract/UI, journal `_data_changelog`, lexique B.27, agrégat confiance B.31, qualité données B.32, profil enum B.34–B.35, Assist masqué B.36, export RGPD B.37, **i18n pilote B.38** — voir fichiers listés en B.23–B.38 ci-dessous | Implémenté |
 | **T7** | Perf API (catalogue D) | **D.54–D.60** pagination, cache HTTP, `unstable_cache`, Edge doc, corps max, rate limit. **D.61–D.62** timeout WB + Zod reco/proba. **D.63–D.65** OpenAPI + ETag pays + audit LCP home — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md) | Implémenté |
-| **T8** | Sécurité / supply chain (catalogue E) | **E.66–E.75** + **E.77** — voir [catalogue-e-security.md](catalogue-e-security.md) et tableau E.66–E.77 ci-dessous (RBAC, audit admin, Origin prod, erreurs API E.71, modération + UI, checklists at rest / DPA, tests scope user + délégué, Dependabot, Clerk 6) | Implémenté (partiel **E.76** webhooks : backlog) |
+| **T8** | Sécurité / supply chain (catalogue E) | **E.66–E.77** — voir [catalogue-e-security.md](catalogue-e-security.md) (RBAC, audit admin, Origin prod, erreurs API, modération, checklists at rest / DPA, tests scope, **webhook signé E.76**, Dependabot, Clerk 6) | Implémenté |
 
 ### Lot données / transparence catalogue B (items 23–38)
 
@@ -99,8 +99,8 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | E.73 | Chiffrement at rest (checklist) | [catalogue-e-security.md](catalogue-e-security.md) §E.73 |
 | E.74 | Sous-traitants / DPA (registre) | [catalogue-e-security.md](catalogue-e-security.md) §E.74 |
 | E.75 | Garde scope API utilisateur (+ délégué) | [`lib/user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) |
+| E.76 | Webhook signé ingest | [`lib/webhook-signature.ts`](../lib/webhook-signature.ts) ; [`POST /api/webhooks/ingest`](../app/api/webhooks/ingest/route.ts) ; [`lib/webhook-signature.test.ts`](../lib/webhook-signature.test.ts) ; [`lib/webhook-ingest-wiring.test.ts`](../lib/webhook-ingest-wiring.test.ts) |
 | E.77 | Audit deps + Dependabot | [`npm run audit:ci`](../package.json) ; [ci.yml](../.github/workflows/ci.yml) ; [dependabot.yml](../.github/dependabot.yml) |
-| E.76 | Webhooks signés | Backlog |
 
 ## Références
 
