@@ -165,14 +165,14 @@ flowchart LR
 83. **Prettier** + format CI pour éviter drift CRLF/LF. *(Livré partiel : Prettier + CI ; périmètre étendu à **`agents/**/*.ts`**, [`app/error.tsx`](../app/error.tsx), [`app/(dashboard)/error.tsx`](../app/(dashboard)/error.tsx), en plus de `app/api/**`, `lib/types/**`, `lib/api-schemas/**`.)*
 84. **Architecture** : scinder `agents/runner.ts` si > seuil de maintenabilité (modules par étape). *(Livré partiel : [`agents/runner-types.ts`](../agents/runner-types.ts), [`agents/runner-constants.ts`](../agents/runner-constants.ts), [`agents/runner-persistence.ts`](../agents/runner-persistence.ts), [`agents/runner-schedule-seeds.ts`](../agents/runner-schedule-seeds.ts) ; orchestration dans [`agents/runner.ts`](../agents/runner.ts).)*
 85. **Dead code** : inventaire `server.js` / scripts legacy vs App Router. *(Livré : [`docs/dead-code-and-legacy.md`](dead-code-and-legacy.md) — `server.js`, deps Express, **`package.json` / `main` orphelin**, scripts npm.)*
-86. **Error boundaries** React sur layouts dashboard/public. *(Livré : [`app/error.tsx`](../app/error.tsx), [`app/(dashboard)/error.tsx`](../app/(dashboard)/error.tsx) — client boundaries Next.js App Router.)*
+86. **Error boundaries** React sur layouts dashboard/public. *(Livré : [`app/error.tsx`](../app/error.tsx), [`app/global-error.tsx`](../app/global-error.tsx), [`app/(dashboard)/error.tsx`](../app/(dashboard)/error.tsx) — boundaries App Router + rapport Sentry optionnel sur erreurs capturées — G.90.)*
 87. **Convention** fichiers client/server (`'use client'` minimal). *(Livré : section README [Conventions App Router](../README.md#conventions-app-router).)*
 88. **README** développeur : variables d’environnement, ordre `db:setup`, intelligence pipeline. *(Livré : [`README.md`](../README.md) à la racine.)*
 
 ### G — DevOps, observabilité et coûts (89–96)
 
 89. **CI GitHub Actions** : lint + `test:lib` + build sur chaque PR (en plus du cron intelligence). *(Livré : `.github/workflows/ci.yml`.)*
-90. **Sentry** (ou équivalent) front + API avec contexte utilisateur anonymisé.
+90. **Sentry** (ou équivalent) front + API avec contexte utilisateur anonymisé. *(Livré partiel : **`@sentry/nextjs`** + [`next.config.js`](../next.config.js) (`withSentryConfig`, `instrumentationHook`), [`instrumentation.ts`](../instrumentation.ts), [`sentry.client.config.ts`](../sentry.client.config.ts) / [`sentry.server.config.ts`](../sentry.server.config.ts) / [`sentry.edge.config.ts`](../sentry.edge.config.ts), [`components/SentryClerkSync.tsx`](../components/SentryClerkSync.tsx) + [`lib/sentry-anon-user-id.ts`](../lib/sentry-anon-user-id.ts), capture dans les `error.tsx` ; configurer `NEXT_PUBLIC_SENTRY_DSN` en prod — voir README / `.env.example`.)*
 91. **Logs structurés** (JSON) pour Vercel/server avec corrélation `requestId`.
 92. **Métriques** : latence p95 des routes pays / reco / proba.
 93. **Budget** : alerte coût si agents OpenAI / appels externes augmentent.
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **90–91** (observabilité), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **91** (logs structurés JSON + `requestId`), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.

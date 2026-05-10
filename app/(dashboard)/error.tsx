@@ -1,9 +1,10 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
-/** Error boundary pour l’espace connecté — F.86. */
+/** Error boundary pour l’espace connecté — F.86 / G.90. */
 export default function DashboardError({
   error,
   reset,
@@ -13,6 +14,7 @@ export default function DashboardError({
 }) {
   useEffect(() => {
     console.error(error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

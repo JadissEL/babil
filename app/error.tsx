@@ -1,10 +1,11 @@
 'use client';
 
+import * as Sentry from '@sentry/nextjs';
 import Link from 'next/link';
 import { useEffect } from 'react';
 
 /**
- * Error boundary segment (App Router) — F.86.
+ * Error boundary segment (App Router) — F.86 / G.90.
  * Couvre les erreurs de rendu sous le layout racine (hors erreurs du layout lui-même).
  */
 export default function AppError({
@@ -16,6 +17,7 @@ export default function AppError({
 }) {
   useEffect(() => {
     console.error(error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

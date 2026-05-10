@@ -35,6 +35,12 @@ npm run dev
 
 Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, pipeline intelligence (`INTELLIGENCE_*`), sécurité (`BABIL_*`, webhook ingest, rate limits moteur, etc.).
 
+## Observabilité (Sentry — G.90)
+
+- **Variables :** voir [`.env.example`](.env.example) (`NEXT_PUBLIC_SENTRY_DSN`, échantillonnage traces, optionnel `SENTRY_ORG` / `SENTRY_PROJECT` / `SENTRY_AUTH_TOKEN` pour les source maps en build).
+- **Sans DSN :** aucun envoi ; l’app se comporte comme avant.
+- **Confidentialité :** le navigateur n’envoie pas l’id Clerk brut — voir [`components/SentryClerkSync.tsx`](components/SentryClerkSync.tsx) et [`lib/sentry-anon-user-id.ts`](lib/sentry-anon-user-id.ts).
+
 ## Intelligence pipeline
 
 - **Doc :** [`docs/intelligence-cron-and-environments.md`](docs/intelligence-cron-and-environments.md), [`docs/country-intelligence-system.md`](docs/country-intelligence-system.md)
@@ -48,7 +54,7 @@ Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, 
 
 - **Server Components par défaut** : pas de `'use client'` sur une page ou un layout tant qu’il n’y a pas besoin de hooks React, d’écouteurs d’événements ou d’API navigateur.
 - **Client** : regrouper l’UI interactive dans `components/` (ex. `DashboardLayoutClient`) ou marquer uniquement la feuille qui en a besoin.
-- **Error boundaries** : [`app/error.tsx`](app/error.tsx) (arbre sous le layout racine), [`app/(dashboard)/error.tsx`](app/(dashboard)/error.tsx) (segment dashboard).
+- **Error boundaries** : [`app/error.tsx`](app/error.tsx), [`app/global-error.tsx`](app/global-error.tsx) (échec du layout racine), [`app/(dashboard)/error.tsx`](app/(dashboard)/error.tsx) (segment dashboard) — envoi Sentry si configuré (G.90).
 
 - **Types API moteur** : préférer `import type { … } from '@/lib/types'` ([`lib/types/index.ts`](lib/types/index.ts)) pour `RecommendationApiItem`, `ProbabilityApiRow`, `EngineCountryListRow`.
 
