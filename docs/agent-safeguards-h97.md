@@ -19,7 +19,7 @@ Fichier : [`lib/agent-full-data-persist-guard.ts`](../lib/agent-full-data-persis
 Contrôles :
 
 - JSON sérialisable (`JSON.stringify` — détecte références circulaires / `BigInt` non supportés).
-- Taille du JSON UTF-8 ≤ **`AGENT_FULL_DATA_JSON_MAX_BYTES`** (défaut **12_000_000** octets, plafond **32 Mo** ; valeurs &lt; **64** ignorées → défaut).
+- Taille du JSON UTF-8 ≤ **`AGENT_FULL_DATA_JSON_MAX_BYTES`** (défaut **12_000_000** octets, plafond **32 Mo** ; valeurs strictement inférieures à **64** ignorées → défaut).
 - Si présents : `travel_reasons` et `traveler_quotes` doivent être des **tableaux** ; `_agent` doit être un **objet** (pas un tableau).
 
 En cas d’échec, le runner lève `persist_guard:<reason>` → la tâche passe par le chemin d’**erreur** habituel (retry / `failed`).
