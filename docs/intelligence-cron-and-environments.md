@@ -59,6 +59,6 @@ Les appels sortants du client [`world-bank-client.ts`](../lib/intelligence-pipel
 3. `prisma migrate deploy` si le schéma était en retard.
 4. Relancer **collecte** et/ou **matérialisation** selon le besoin (full vs `materialize` seul).
 
-Voir aussi [environments-preview-database-g94.md](environments-preview-database-g94.md) (preview vs prod), [runbooks-incidents-g95.md](runbooks-incidents-g95.md) (incidents), [observability-budget-alerts-g93.md](observability-budget-alerts-g93.md) (coût / volume d’appels).
+Voir aussi [environments-preview-database-g94.md](environments-preview-database-g94.md) (preview vs prod), [runbooks-incidents-g95.md](runbooks-incidents-g95.md) (incidents), [observability-budget-alerts-g93.md](observability-budget-alerts-g93.md) (coût / volume d’appels), [healthcheck-g96.md](healthcheck-g96.md) (sondes HTTP).
 
 Voir aussi [intelligence-seed-sources.md](intelligence-seed-sources.md) pour l’ordre migrate → seed sources → seed pays.

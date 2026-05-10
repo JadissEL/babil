@@ -16,7 +16,7 @@ Procédures courtes pour les scénarios les plus fréquents. Détail pipeline : 
 
 ## 2. Base de données indisponible
 
-**Symptômes** : erreurs 500 sur routes utilisant Prisma ; listes vides là où le code retombe sur du statique.
+**Symptômes** : erreurs 500 sur routes utilisant Prisma ; listes vides là où le code retombe sur du statique ; **`GET /api/health`** renvoie **503** avec `checks.database: "down"` ou `"error"`.
 
 **Étapes**
 
@@ -43,4 +43,5 @@ Si la DB est down mais que le site doit rester **consultable** : les merges pays
 
 - Sécurité / webhook : [catalogue-e-security.md](catalogue-e-security.md) §E.76  
 - Coût / volume d’appels WB : [observability-budget-alerts-g93.md](observability-budget-alerts-g93.md)  
+- **Healthchecks** : [healthcheck-g96.md](healthcheck-g96.md) (`GET /api/health`, admin agents health)  
 - Preview vs prod DB : [environments-preview-database-g94.md](environments-preview-database-g94.md)

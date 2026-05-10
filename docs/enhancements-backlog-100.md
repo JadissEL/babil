@@ -178,7 +178,7 @@ flowchart LR
 93. **Budget** : alerte coût si agents OpenAI / appels externes augmentent. *(Livré partiel : seuil **`INTELLIGENCE_PIPELINE_WB_HTTP_SOFT_LIMIT`** + log `pipeline_external_calls_budget_soft_exceeded` après run — [`lib/pipeline-external-budget.ts`](../lib/pipeline-external-budget.ts) ; guide fournisseurs / LLM — [observability-budget-alerts-g93.md](observability-budget-alerts-g93.md).)*
 94. **Environnements** : preview DB séparée ou feature branch Neon. *(Livré partiel : guide — [environments-preview-database-g94.md](environments-preview-database-g94.md).)*
 95. **Runbooks** incident (pipeline cassé, DB down, fallback static). *(Livré partiel : [runbooks-incidents-g95.md](runbooks-incidents-g95.md) + liens depuis [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).)*
-96. **Healthcheck** unifié (`/api/admin/agents/health` déjà présent — documenter dépendances).
+96. **Healthcheck** unifié (`/api/admin/agents/health` déjà présent — documenter dépendances). *(Livré : **`GET /api/health`** public (DB) ; champ **`healthcheck`** sur **`GET /api/admin/agents/health`** ; doc [healthcheck-g96.md](../docs/healthcheck-g96.md) ; extrait OpenAPI.)*
 
 ### H — Agents, contenu et croissance (97–100)
 
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **G.96** (healthcheck unifié / doc dépendances), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **H.97** (garde-fous agents), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.

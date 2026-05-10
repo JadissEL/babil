@@ -18,6 +18,63 @@ tags:
   - name: meta
 
 paths:
+  /api/health:
+    get:
+      tags: [meta]
+      summary: Public liveness probe (database)
+      description: |
+        Executes a minimal SQL check via Prisma. No authentication.
+        For deep agent metrics (admin), use `GET /api/admin/agents/health` — see `docs/healthcheck-g96.md`.
+      operationId: getHealth
+      responses:
+        '200':
+          description: Database reachable
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                example: no-store
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, service, checks]
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  service:
+                    type: string
+                    example: babil
+                  engineVersion:
+                    type: string
+                  checks:
+                    type: object
+                    properties:
+                      database:
+                        type: string
+                        enum: [up]
+        '503':
+          description: Database unavailable or check error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  service:
+                    type: string
+                  engineVersion:
+                    type: string
+                  checks:
+                    type: object
+                    properties:
+                      database:
+                        type: string
+                        enum: [down, error]
+
   /api/openapi:
     get:
       tags: [meta]

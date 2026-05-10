@@ -9,6 +9,25 @@ import { hasCountryPhdStoredData } from '@/lib/country-phd-studies';
 import { isDbUnavailable } from '@/lib/db-resilience';
 import prisma from '@/lib/prisma';
 
+/** G.96 — metadata for operators; see docs/healthcheck-g96.md */
+const AGENTS_HEALTH_PROBE = {
+  probe: 'admin_agents_deep' as const,
+  doc: 'docs/healthcheck-g96.md',
+  dependencies: [
+    {
+      name: 'postgresql',
+      required: true,
+      usage: 'Prisma read on Country (name, full_data) for aggregate metrics',
+    },
+    {
+      name: 'agent_state_tasks_json',
+      required: false,
+      path: '.agent-state/tasks.json',
+      usage: 'Background runner task queue snapshot when file exists',
+    },
+  ],
+};
+
 type TaskStatus = 'queued' | 'running' | 'done' | 'failed';
 type ResearchTask = {
   id: string;
@@ -166,6 +185,7 @@ export async function GET() {
     }
 
     return NextResponse.json({
+      healthcheck: AGENTS_HEALTH_PROBE,
       stateStatus,
       stateGeneratedAt,
       taskSummary,
@@ -189,6 +209,7 @@ export async function GET() {
     if (isDbUnavailable(error)) {
       return NextResponse.json(
         {
+          healthcheck: AGENTS_HEALTH_PROBE,
           stateStatus,
           stateGeneratedAt,
           taskSummary,
@@ -202,7 +223,10 @@ export async function GET() {
       );
     }
     return NextResponse.json(
-      { error: publicApiErrorMessage(error, 'Failed to read health') },
+      {
+        healthcheck: AGENTS_HEALTH_PROBE,
+        error: publicApiErrorMessage(error, 'Failed to read health'),
+      },
       { status: 500 },
     );
   }

@@ -25,7 +25,7 @@ npm run dev
 | Commande | Rôle |
 |----------|------|
 | `npm run test:lib` | Tests `lib/**/*.test.ts` (runtime Node `tsx --test`) |
-| `npm run test:vitest` | Vitest — routes API critiques (`lib/api-routes-critical.vitest.ts`) |
+| `npm run test:vitest` | Vitest — routes API critiques + health + latence budget (`lib/*.vitest.ts`) |
 | `npm run lint` | ESLint (Next + `@typescript-eslint/no-explicit-any` en **warn**) |
 | `npm run format:check` | Prettier sur `app/api/**`, `app/error.tsx`, `app/global-error.tsx`, dashboard `error.tsx`, `agents/**`, `lib/types/**`, `lib/api-schemas/**`, `lib/api-route-latency.ts`, `lib/pipeline-external-budget.ts`, `lib/request-id*.ts`, `lib/structured-log.ts`, `lib/*.vitest.ts`, `vitest.config.ts` |
 | `npm run format` | Applique Prettier sur les mêmes chemins |
@@ -64,6 +64,12 @@ Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, 
 ### Runbooks incidents (G.95)
 
 - **Pipeline, DB, timeouts, fallback pays** : [`docs/runbooks-incidents-g95.md`](docs/runbooks-incidents-g95.md).
+
+### Healthchecks (G.96)
+
+- **`GET /api/health`** (public) : `SELECT 1` / Prisma — **200** si la DB répond, **503** sinon ; `Cache-Control: no-store`.
+- **`GET /api/admin/agents/health`** (admin) : métriques agents + champ `healthcheck` (dépendances documentées).
+- **Référence** : [`docs/healthcheck-g96.md`](docs/healthcheck-g96.md).
 
 ## Intelligence pipeline
 
