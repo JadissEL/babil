@@ -11,12 +11,26 @@ import { useState, useEffect } from 'react'
 import CountryFlag from '@/components/country/CountryFlag'
 import GoogleAd from '@/components/GoogleAd'
 import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
-import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import {
+  normalizeCountriesApiListResponse,
+  type CountryApiListRow,
+} from '@/lib/country-full-data-materialize'
 import { isSchengenMember } from '@/lib/schengen-members'
 
-function toNum(value: any, fallback = 0) {
-  const n = Number.parseInt(String(value || ''), 10)
+function toNum(value: unknown, fallback = 0) {
+  const n = Number.parseInt(String(value ?? ''), 10)
   return Number.isFinite(n) ? n : fallback
+}
+
+function asFrictionAnalysis(full: Record<string, unknown>): Record<string, unknown> | undefined {
+  const fa = full.friction_analysis
+  if (!fa || typeof fa !== 'object' || Array.isArray(fa)) return undefined
+  return fa as Record<string, unknown>
+}
+
+function cellStr(v: unknown, fallback = '—'): string {
+  if (v === undefined || v === null || v === '') return fallback
+  return String(v)
 }
 
 function scoreClass(score: number) {
@@ -27,7 +41,7 @@ function scoreClass(score: number) {
 }
 
 export default function SchengenPage() {
-  const [countries, setCountries] = useState<any[]>([])
+  const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [compareIds, setCompareIds] = useState<string[]>([])
@@ -44,9 +58,7 @@ export default function SchengenPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const filtered = countries.filter(c => 
-    c.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = countries.filter((c) => c.name.toLowerCase().includes(search.toLowerCase()))
   const compareCountries = countries.filter((c) => compareIds.includes(String(c.id)))
 
   const toggleCompare = (id: string) => {
@@ -85,7 +97,7 @@ export default function SchengenPage() {
         <span className="text-xs font-black uppercase tracking-widest text-muted">Comparer (2–4)</span>
         {compareCountries.map((c) => (
           <button
-            key={c.id}
+            key={String(c.id)}
             type="button"
             onClick={() => toggleCompare(String(c.id))}
             className="inline-flex items-center gap-2 rounded-xl border border-line bg-inset px-3 py-1.5 text-xs font-black text-text hover:bg-primary-soft"
@@ -110,7 +122,7 @@ export default function SchengenPage() {
               <tr className="text-muted">
                 <th className="p-3 text-left font-black uppercase tracking-wider text-muted">Indicateur</th>
                 {compareCountries.map((c) => (
-                  <th key={c.id} className="whitespace-nowrap p-3 text-left font-bold text-text">
+                  <th key={String(c.id)} className="whitespace-nowrap p-3 text-left font-bold text-text">
                     {c.name}
                   </th>
                 ))}
@@ -119,16 +131,19 @@ export default function SchengenPage() {
             <tbody>
               <CompareRow
                 label="Acceptation (Maroc)"
-                values={compareCountries.map((c) => c.full_data?.acceptance_rate_morocco || '—')}
+                values={compareCountries.map((c) => cellStr(c.full_data.acceptance_rate_morocco))}
               />
               <CompareRow
                 label="Score de friction"
-                values={compareCountries.map((c) => `${toNum(c.full_data?.friction_score, 50)}/100`)}
+                values={compareCountries.map((c) => `${toNum(c.full_data.friction_score, 50)}/100`)}
               />
-              <CompareRow label="Niveau de risque" values={compareCountries.map((c) => c.full_data?.friction_analysis?.risk_level || '—')} />
+              <CompareRow
+                label="Niveau de risque"
+                values={compareCountries.map((c) => cellStr(asFrictionAnalysis(c.full_data)?.risk_level))}
+              />
               <CompareRow
                 label="Délai rendez-vous"
-                values={compareCountries.map((c) => c.full_data?.friction_analysis?.real_delay || '—')}
+                values={compareCountries.map((c) => cellStr(asFrictionAnalysis(c.full_data)?.real_delay))}
               />
             </tbody>
           </table>
@@ -144,18 +159,20 @@ export default function SchengenPage() {
       ) : (
         <div className="grid grid-cols-1 gap-8">
           <ul className="grid gap-3 md:hidden">
-            {filtered.map((c: any) => {
-              const full = c.full_data ?? {}
+            {filtered.map((c) => {
+              const full = c.full_data
               const acc = typeof full.acceptance_rate_morocco === 'string' ? full.acceptance_rate_morocco : '—'
               const accNum =
                 typeof acc === 'string' ? Number.parseInt(acc.replace(/[^\d]/g, ''), 10) || 0 : Number(acc) || 0
-              const accWidth = typeof acc === 'string' && acc.includes('%') ? acc : `${Math.min(100, accNum)}%`
+              const accWidth: string =
+                typeof acc === 'string' && acc.includes('%') ? acc : `${Math.min(100, accNum)}%`
               const frictionN = toNum(full.friction_score, 50)
               const embassy = typeof full.embassy_behavior === 'string' ? full.embassy_behavior : ''
-              const riskLvl = full.friction_analysis?.risk_level ?? '—'
+              const fa = asFrictionAnalysis(full)
+              const riskLvl = fa?.risk_level != null ? String(fa.risk_level) : '—'
               return (
                 <li
-                  key={c.id}
+                  key={String(c.id)}
                   className="rounded-2xl border border-line bg-surface p-4 shadow-soft"
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -228,8 +245,14 @@ export default function SchengenPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((c) => (
-                    <tr key={c.id} className="group border-b border-line transition-colors hover:bg-inset">
+                  {filtered.map((c) => {
+                    const full = c.full_data
+                    const fa = asFrictionAnalysis(full)
+                    const risk = fa?.risk_level != null ? String(fa.risk_level) : ''
+                    const acceptRaw = full.acceptance_rate_morocco
+                    const acceptStr = cellStr(acceptRaw, '0')
+                    return (
+                    <tr key={String(c.id)} className="group border-b border-line transition-colors hover:bg-inset">
                       <td className="px-4 py-4 lg:px-8 lg:py-6">
                         <Link
                           href={`/countries/${c.id}`}
@@ -250,46 +273,46 @@ export default function SchengenPage() {
                       </td>
                       <td className="px-4 py-4 lg:px-8 lg:py-6">
                         <div className="flex items-center gap-4">
-                          <span className="w-12 font-black text-text">{c.full_data?.acceptance_rate_morocco}</span>
+                          <span className="w-12 font-black text-text">{cellStr(acceptRaw)}</span>
                           <div className="h-2 w-32 overflow-hidden rounded-full bg-[#eadfcf]">
                             <div
                               className={`h-full rounded-full ${
-                                parseInt(String(c.full_data?.acceptance_rate_morocco ?? '0'), 10) > 70
+                                parseInt(String(acceptRaw ?? '0'), 10) > 70
                                   ? 'bg-emerald-500'
-                                  : parseInt(String(c.full_data?.acceptance_rate_morocco ?? '0'), 10) > 40
+                                  : parseInt(String(acceptRaw ?? '0'), 10) > 40
                                     ? 'bg-blue-500'
                                     : 'bg-amber-500'
                               }`}
-                              style={{ width: c.full_data?.acceptance_rate_morocco ?? '0%' }}
+                              style={{ width: acceptStr.includes('%') ? acceptStr : `${parseInt(String(acceptRaw ?? '0'), 10) || 0}%` }}
                             />
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-center lg:px-8 lg:py-6">
                         <span
-                          className={`rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest sm:px-4 sm:py-2 ${scoreClass(toNum(c.full_data?.friction_score, 50))}`}
+                          className={`rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest sm:px-4 sm:py-2 ${scoreClass(toNum(full.friction_score, 50))}`}
                         >
-                          {c.full_data?.friction_score ?? '—'}/100
+                          {`${cellStr(full.friction_score, '—')}/100`}
                         </span>
                       </td>
                       <td className="px-4 py-4 lg:px-8 lg:py-6">
                         <div className="flex items-center gap-2">
                           <span
                             className={`h-2.5 w-2.5 rounded-full ${
-                              c.full_data?.friction_analysis?.risk_level === 'High' ? 'bg-red-400' : 'bg-amber-400'
+                              risk === 'High' ? 'bg-red-400' : 'bg-amber-400'
                             }`}
                           />
                           <span
                             className={`text-xs font-black uppercase tracking-widest ${
-                              c.full_data?.friction_analysis?.risk_level === 'High' ? 'text-red-400' : 'text-amber-300'
+                              risk === 'High' ? 'text-red-400' : 'text-amber-300'
                             }`}
                           >
-                            {c.full_data?.friction_analysis?.risk_level}
+                            {risk || '—'}
                           </span>
                         </div>
                       </td>
                       <td className="max-w-xs px-4 py-4 text-sm font-medium italic leading-relaxed text-slate-400 lg:px-8 lg:py-6">
-                        &quot;{c.full_data?.embassy_behavior}&quot;
+                        &quot;{cellStr(full.embassy_behavior, '')}&quot;
                       </td>
                       <td className="px-3 py-4 lg:px-4 lg:py-6">
                         <button
@@ -305,7 +328,8 @@ export default function SchengenPage() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

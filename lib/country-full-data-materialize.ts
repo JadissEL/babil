@@ -54,17 +54,26 @@ export function attachCanonicalSchengenFlag(
   return { ...full, schengen_flag: isSchengenMember(countryName) }
 }
 
+/** One row from `GET /api/countries` after list normalization — `full_data` is always a parsed object. */
+export type CountryApiListRow = Record<string, unknown> & {
+  id: unknown
+  name: string
+  full_data: Record<string, unknown>
+}
+
 /** One row from `GET /api/countries` or `GET /api/countries/[id]` — guarantees `full_data` is parsed + friction-normalized. */
 export function materializeCountryApiRow<T extends Record<string, unknown>>(row: T): T & { full_data: Record<string, unknown> } {
   return { ...row, full_data: materializePublicFullDataForApi(row.full_data ?? null) }
 }
 
 /** Client-side defense after `fetch('/api/countries')` — handles non-array payloads and string `full_data`. */
-export function normalizeCountriesApiListResponse(data: unknown): Record<string, unknown>[] {
+export function normalizeCountriesApiListResponse(data: unknown): CountryApiListRow[] {
   if (!Array.isArray(data)) return []
   return data.map((row) =>
     materializeCountryApiRow(
-      row !== null && typeof row === 'object' && !Array.isArray(row) ? (row as Record<string, unknown>) : {},
-    ),
+      row !== null && typeof row === 'object' && !Array.isArray(row)
+        ? (row as Record<string, unknown>)
+        : ({ name: '', id: 0 } as Record<string, unknown>),
+    ) as CountryApiListRow,
   )
 }

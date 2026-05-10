@@ -13,8 +13,11 @@ import {
   isoForCountryName,
   scoreToMobilityTier,
 } from '@/lib/country-card-mappers'
-import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
-import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
+import {
+  normalizeCountriesApiListResponse,
+  type CountryApiListRow,
+} from '@/lib/country-full-data-materialize'
+import { enrichCountryApiRecord, type EnrichedCountryApi } from '@/lib/enrich-country-api'
 import {
   explorerRegionToFilterBarValue,
   explorerRegionToUrlParam,
@@ -75,7 +78,7 @@ function ExplorerPageInner() {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [countries, setCountries] = useState<any[]>([])
+  const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [mode, setMode] = useState<Mode>('explorer')
   const [search, setSearch] = useState('')
   const [region, setRegion] = useState<ExplorerRegionFilter>('all')
@@ -192,7 +195,7 @@ function ExplorerPageInner() {
   }, [])
 
   const normalized = useMemo(
-    () => countries.map((c: Record<string, unknown>) => enrichCountryApiRecord(c)),
+    () => countries.map((c) => enrichCountryApiRecord(c)),
     [countries],
   )
 
@@ -209,7 +212,7 @@ function ExplorerPageInner() {
   )
 
   const filtered = normalized
-    .filter((c: any) => {
+    .filter((c: EnrichedCountryApi) => {
       const nameStr = String(c.name ?? '')
       const matchesSearch = nameStr.toLowerCase().includes(search.toLowerCase())
       const matchesRegion = matchesExplorerRegionFilter(region, {
@@ -236,11 +239,11 @@ function ExplorerPageInner() {
       const matchesSchengen = matchesExplorerSchengenOnlyToggle(schengenOnly, { name: nameStr })
       return matchesSearch && matchesRegion && matchesDifficulty && matchesGoal && matchesBudget && matchesSchengen
     })
-    .sort((a: any, b: any) =>
+    .sort((a: EnrichedCountryApi, b: EnrichedCountryApi) =>
       mode === 'recommendation' ? b._finalScore - a._finalScore : a.name.localeCompare(b.name)
     )
 
-  const gridCountries = filtered.map((c: any) => ({
+  const gridCountries = filtered.map((c: EnrichedCountryApi) => ({
     id: String(c.id),
     name: c.name,
     code: isoForCountryName(c.name),

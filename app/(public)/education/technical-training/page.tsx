@@ -4,7 +4,10 @@ import { Wrench, Search, Globe, BookOpen, Coins, CreditCard, Briefcase, ArrowLef
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import GoogleAd from '@/components/GoogleAd'
-import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import {
+  normalizeCountriesApiListResponse,
+  type CountryApiListRow,
+} from '@/lib/country-full-data-materialize'
 
 type YesNoAll = 'all' | 'oui' | 'non'
 type WorkRights = 'all' | 'autorisé' | 'limité' | 'interdit'
@@ -34,8 +37,23 @@ function workRightsBucket(value: unknown): Exclude<WorkRights, 'all'> | 'limité
   return 'limité'
 }
 
+type TechnicalTrainingRow = {
+  country: CountryApiListRow
+  edu: Record<string, unknown>
+  types: string[]
+  accessBac: boolean
+  accessNoBac: boolean
+  workRights: string
+  workBucket: Exclude<WorkRights, 'all'> | 'limité'
+  visa: string
+  costText: string
+  costLevel: Exclude<CostLevel, 'all'> | 'Moyen'
+  access: string
+  insight: string
+}
+
 export default function TechnicalTrainingPage() {
-  const [countries, setCountries] = useState<any[]>([])
+  const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [bacAccess, setBacAccess] = useState<YesNoAll>('all')
@@ -52,12 +70,15 @@ export default function TechnicalTrainingPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const rows = useMemo(() => {
+  const rows = useMemo((): TechnicalTrainingRow[] => {
     return countries
       .map((c) => {
-        const edu = c.full_data?.education_mobility?.technical_training
-        if (!edu) return null
-        const types: string[] = Array.isArray(edu.types) ? edu.types : []
+        const mob = c.full_data['education_mobility']
+        if (!mob || typeof mob !== 'object' || Array.isArray(mob)) return null
+        const eduRaw = (mob as Record<string, unknown>)['technical_training']
+        if (!eduRaw || typeof eduRaw !== 'object' || Array.isArray(eduRaw)) return null
+        const edu = eduRaw as Record<string, unknown>
+        const types: string[] = Array.isArray(edu.types) ? (edu.types as string[]) : []
         const accessBac = Boolean(edu.access_bac)
         const accessNoBac = Boolean(edu.access_no_bac)
         return {
@@ -75,20 +96,7 @@ export default function TechnicalTrainingPage() {
           insight: normalize(edu.market_insight || edu.insight),
         }
       })
-      .filter(Boolean) as Array<{
-      country: any
-      edu: any
-      types: string[]
-      accessBac: boolean
-      accessNoBac: boolean
-      workRights: string
-      workBucket: Exclude<WorkRights, 'all'> | 'limité'
-      visa: string
-      costText: string
-      costLevel: Exclude<CostLevel, 'all'> | 'Moyen'
-      access: string
-      insight: string
-    }>
+      .filter((r): r is TechnicalTrainingRow => r !== null)
   }, [countries])
 
   const domains = useMemo(() => {
@@ -239,7 +247,7 @@ export default function TechnicalTrainingPage() {
         <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((r) => (
             <div
-              key={r.country.id}
+              key={String(r.country.id)}
               className="flex flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#111827] shadow-xl shadow-black/20 transition-all duration-300 hover:border-emerald-500/35"
             >
               <div className="border-b border-white/10 p-8">
@@ -247,7 +255,7 @@ export default function TechnicalTrainingPage() {
                   <div>
                     <h3 className="text-2xl font-black text-white">{r.country.name}</h3>
                     <div className="mt-1 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                      <Globe className="h-3 w-3" /> {r.country.region}
+                      <Globe className="h-3 w-3" /> {String(r.country.region ?? '')}
                     </div>
                   </div>
                   {accessBadge(r.access)}

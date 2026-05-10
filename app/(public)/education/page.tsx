@@ -17,7 +17,10 @@ import {
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import GoogleAd from '@/components/GoogleAd'
-import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import {
+  normalizeCountriesApiListResponse,
+  type CountryApiListRow,
+} from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 
 type EducationCategory = 'languages' | 'technical' | 'short'
@@ -36,7 +39,7 @@ function eduText(v: unknown, fallback: string) {
 }
 
 export default function EducationPage() {
-  const [countries, setCountries] = useState<any[]>([])
+  const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [activeTab, setActiveTab] = useState<EducationCategory>('languages')
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -74,8 +77,8 @@ export default function EducationPage() {
     },
   ] as const
 
-  const getEducationData = (country: any, type: EducationCategory) => {
-    const full = country.full_data || {}
+  const getEducationData = (country: CountryApiListRow, type: EducationCategory) => {
+    const full = country.full_data
     const edu = full.education_mobility as Record<string, unknown> | undefined
     const block = edu?.[EDUCATION_MOBILITY_TAB_KEY[type]]
 
@@ -212,14 +215,14 @@ export default function EducationPage() {
             const hasPhd = hasCountryPhdStoredData((c.full_data ?? {}) as Record<string, unknown>)
             return (
               <div
-                key={c.id}
+                key={String(c.id)}
                 className="group flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-line bg-surface p-8 shadow-card transition-all duration-300 hover:border-primary/35 hover:shadow-soft"
               >
                 <div className="mb-8 flex min-w-0 items-start justify-between gap-3">
                   <div className="min-w-0">
                     <h3 className="mb-1 break-words text-2xl font-black text-text">{c.name}</h3>
                     <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted">
-                      <Globe className="h-3 w-3" /> {c.region}
+                      <Globe className="h-3 w-3" /> {String(c.region ?? '')}
                     </div>
                   </div>
                   <div

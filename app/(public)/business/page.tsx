@@ -12,11 +12,14 @@ import {
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import GoogleAd from '@/components/GoogleAd'
-import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import {
+  normalizeCountriesApiListResponse,
+  type CountryApiListRow,
+} from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 
 export default function BusinessPage() {
-  const [countries, setCountries] = useState<any[]>([])
+  const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
@@ -69,14 +72,15 @@ export default function BusinessPage() {
         <div className="grid auto-rows-fr grid-cols-1 gap-8 lg:grid-cols-2">
           {filtered.map((c) => {
             const enriched = enrichCountryApiRecord(c)
-            const full = c.full_data || {}
-            const biz = full.visa_system?.business || {}
-            const street = full.street_food || {}
-            const cbi = full.cbi_program
+            const full = c.full_data as Record<string, unknown>
+            const visaSystem = full.visa_system as Record<string, unknown> | undefined
+            const biz = (visaSystem?.business as Record<string, unknown> | undefined) ?? {}
+            const street = (full.street_food as Record<string, unknown> | undefined) ?? {}
+            const cbi = full.cbi_program as Record<string, unknown> | undefined
 
             return (
               <div
-                key={c.id}
+                key={String(c.id)}
                 className="flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card transition-all duration-500 hover:border-success/30"
               >
                 <div className="flex min-w-0 items-start justify-between gap-4 border-b border-line bg-inset p-8">
@@ -108,13 +112,13 @@ export default function BusinessPage() {
                           Droit d&apos;investir
                         </div>
                         <p className="break-words text-sm font-bold text-text">
-                          {biz.rights || 'Information non disponible'}
+                          {String(biz.rights ?? 'Information non disponible')}
                         </p>
                       </div>
                       <div className="rounded-2xl border border-line bg-inset p-4">
                         <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Mise en place</div>
                         <p className="break-words text-sm font-bold text-text">
-                          {biz.setup || 'Information non disponible'}
+                          {String(biz.setup ?? 'Information non disponible')}
                         </p>
                       </div>
                     </div>
@@ -130,14 +134,14 @@ export default function BusinessPage() {
                           <span className="text-[10px] font-black uppercase tracking-widest text-accent">
                             Opportunité
                           </span>
-                          <span className="text-xs font-black text-text">{street.opportunity || 'N/D'}</span>
+                          <span className="text-xs font-black text-text">{String(street.opportunity ?? 'N/D')}</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs font-bold text-muted">
-                          <Coins className="h-3 w-3" /> Invest. min : {street.investment_min || 'Variable'}
+                          <Coins className="h-3 w-3" /> Invest. min : {String(street.investment_min ?? 'Variable')}
                         </div>
                       </div>
                       <p className="break-words text-xs font-medium italic leading-relaxed text-muted">
-                        &quot;{street.barriers || 'Conditions locales standard.'}&quot;
+                        &quot;{String(street.barriers ?? 'Conditions locales standard.')}&quot;
                       </p>
                     </div>
                   </div>
@@ -158,15 +162,15 @@ export default function BusinessPage() {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Investissement Min.</div>
-                            <div className="text-sm font-black text-text">{cbi.cost_min}</div>
+                            <div className="text-sm font-black text-text">{String(cbi.cost_min ?? '—')}</div>
                           </div>
                           <div>
                             <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Délai Nationalité</div>
-                            <div className="text-sm font-black text-text">{cbi.time}</div>
+                            <div className="text-sm font-black text-text">{String(cbi.time ?? '—')}</div>
                           </div>
                         </div>
                         <div className="mt-4 flex items-center justify-between border-t border-line pt-4">
-                          <span className="text-[10px] font-bold text-muted">{cbi.type}</span>
+                          <span className="text-[10px] font-bold text-muted">{String(cbi.type ?? '')}</span>
                           <ArrowUpRight className="h-4 w-4 text-success" />
                         </div>
                       </div>

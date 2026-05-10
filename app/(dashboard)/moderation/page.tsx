@@ -13,8 +13,19 @@ import {
 import React, { useState, useEffect } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 
+type ModerationComment = {
+  id: number
+  content: string
+  status: string
+  createdAt: string
+  userId: string
+  countryId: number
+  user: { name: string | null; email: string | null } | null
+  country: { name: string | null } | null
+}
+
 export default function ModerationPage() {
-  const [comments, setComments] = useState<any[]>([])
+  const [comments, setComments] = useState<ModerationComment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -26,8 +37,8 @@ export default function ModerationPage() {
     try {
       const res = await fetch('/api/comments')
       if (res.ok) {
-        const data = await res.json()
-        setComments(data)
+        const data: unknown = await res.json()
+        setComments(Array.isArray(data) ? (data as ModerationComment[]) : [])
       } else if (res.status === 403) {
         setError('Accès réservé aux administrateurs.')
       } else {
@@ -122,12 +133,12 @@ export default function ModerationPage() {
                       <User className="h-5 w-5 sm:h-6 sm:w-6" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="font-black text-text">{c.user.name || 'Utilisateur anonyme'}</h3>
-                      <p className="break-all text-xs font-bold text-muted">{c.user.email}</p>
+                      <h3 className="font-black text-text">{c.user?.name || 'Utilisateur anonyme'}</h3>
+                      <p className="break-all text-xs font-bold text-muted">{c.user?.email ?? '—'}</p>
                     </div>
                   </div>
                   <div className="flex shrink-0 items-center gap-2 text-sm font-bold text-muted">
-                    <Globe className="h-4 w-4 shrink-0" /> {c.country.name}
+                    <Globe className="h-4 w-4 shrink-0" /> {c.country?.name ?? '—'}
                   </div>
                 </div>
 
@@ -170,8 +181,8 @@ export default function ModerationPage() {
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-text">{c.user.name}</p>
-                  <p className="break-all text-[10px] text-muted">{c.user.email}</p>
+                  <p className="text-sm font-bold text-text">{c.user?.name ?? '—'}</p>
+                  <p className="break-all text-[10px] text-muted">{c.user?.email ?? '—'}</p>
                 </div>
                 <span
                   className={`shrink-0 rounded-lg px-2 py-1 text-[10px] font-black uppercase ${
@@ -181,7 +192,7 @@ export default function ModerationPage() {
                   {c.status}
                 </span>
               </div>
-              <p className="mt-2 text-xs font-bold text-muted">{c.country.name}</p>
+              <p className="mt-2 text-xs font-bold text-muted">{c.country?.name ?? '—'}</p>
               <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-muted">{c.content}</p>
               <button
                 type="button"
@@ -211,10 +222,10 @@ export default function ModerationPage() {
               {history.slice(0, 10).map((c) => (
                 <tr key={c.id} className="transition-colors hover:bg-[#f8f2e8]">
                   <td className="p-4">
-                    <div className="text-sm font-bold text-text">{c.user.name}</div>
-                    <div className="text-[10px] text-muted">{c.user.email}</div>
+                    <div className="text-sm font-bold text-text">{c.user?.name ?? '—'}</div>
+                    <div className="text-[10px] text-muted">{c.user?.email ?? '—'}</div>
                   </td>
-                  <td className="p-4 text-sm font-bold text-muted">{c.country.name}</td>
+                  <td className="p-4 text-sm font-bold text-muted">{c.country?.name ?? '—'}</td>
                   <td className="max-w-xs p-4 text-sm text-muted">
                     <span className="line-clamp-2 break-words">{c.content}</span>
                   </td>

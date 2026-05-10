@@ -4,7 +4,10 @@ import { GraduationCap, Languages, Search, Globe, BookOpen, Coins, CreditCard, A
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import GoogleAd from '@/components/GoogleAd'
-import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import {
+  normalizeCountriesApiListResponse,
+  type CountryApiListRow,
+} from '@/lib/country-full-data-materialize'
 
 type CostLevel = 'all' | 'Bas' | 'Moyen' | 'Élevé'
 type BacFilter = 'all' | 'requis' | 'non requis' | "dépend de l'école"
@@ -24,8 +27,18 @@ function costLevelFromEstimatedCost(value: unknown): Exclude<CostLevel, 'all'> |
   return 'Moyen'
 }
 
+type LanguageStudyRow = {
+  country: CountryApiListRow
+  edu: Record<string, unknown>
+  bacRequired: string
+  estCostLevel: Exclude<CostLevel, 'all'> | 'Moyen'
+  programType: string
+  visaType: string
+  access: string
+}
+
 export default function LanguageStudyPage() {
-  const [countries, setCountries] = useState<any[]>([])
+  const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [bac, setBac] = useState<BacFilter>('all')
@@ -41,11 +54,14 @@ export default function LanguageStudyPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const rows = useMemo(() => {
+  const rows = useMemo((): LanguageStudyRow[] => {
     return countries
       .map((c) => {
-        const edu = c.full_data?.education_mobility?.language_study
-        if (!edu) return null
+        const mob = c.full_data['education_mobility']
+        if (!mob || typeof mob !== 'object' || Array.isArray(mob)) return null
+        const eduRaw = (mob as Record<string, unknown>)['language_study']
+        if (!eduRaw || typeof eduRaw !== 'object' || Array.isArray(eduRaw)) return null
+        const edu = eduRaw as Record<string, unknown>
         return {
           country: c,
           edu,
@@ -56,15 +72,7 @@ export default function LanguageStudyPage() {
           access: normalize(edu.access) || 'Moyen',
         }
       })
-      .filter(Boolean) as Array<{
-      country: any
-      edu: any
-      bacRequired: string
-      estCostLevel: Exclude<CostLevel, 'all'> | 'Moyen'
-      programType: string
-      visaType: string
-      access: string
-    }>
+      .filter((r): r is LanguageStudyRow => r !== null)
   }, [countries])
 
   const programTypes = useMemo(() => {
@@ -220,7 +228,7 @@ export default function LanguageStudyPage() {
         <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((r) => (
             <div
-              key={r.country.id}
+              key={String(r.country.id)}
               className="flex flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[#111827] shadow-xl shadow-black/20 transition-all duration-300 hover:border-blue-500/35"
             >
               <div className="border-b border-white/10 p-8">
@@ -228,7 +236,7 @@ export default function LanguageStudyPage() {
                   <div>
                     <h3 className="text-2xl font-black text-white">{r.country.name}</h3>
                     <div className="mt-1 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500">
-                      <Globe className="h-3 w-3" /> {r.country.region}
+                      <Globe className="h-3 w-3" /> {String(r.country.region ?? '')}
                     </div>
                   </div>
                   {accessBadge(r.access)}

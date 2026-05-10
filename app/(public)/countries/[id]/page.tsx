@@ -48,8 +48,26 @@ import { isSchengenMember } from '@/lib/schengen-members'
 import { SCORE_SCALE_LEGEND_FR } from '@/lib/score-scale-lexicon'
 import { appToast } from '@/lib/toast-store'
 
+type PublicCountryComment = {
+  id: number
+  content: string
+  createdAt: string
+  user?: { name?: string | null }
+}
+
+type ApiCountryDetail = Record<string, unknown> & {
+  name: string
+  comments?: PublicCountryComment[]
+}
+
+type CountryDetailLoadState = null | { error: string } | ApiCountryDetail
+
+function isCountryLoadError(s: CountryDetailLoadState): s is { error: string } {
+  return s !== null && typeof s === 'object' && 'error' in s && !('name' in s)
+}
+
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
-const toNum = (v: any, fallback = 0) => {
+const toNum = (v: unknown, fallback = 0) => {
   const n = Number(v)
   return Number.isFinite(n) ? n : fallback
 }
@@ -155,7 +173,7 @@ export default function CountryDetailPage() {
   const params = useParams()
   const id = params?.id
   const { user } = useUser()
-  const [country, setCountry] = useState<any>(null)
+  const [country, setCountry] = useState<CountryDetailLoadState>(null)
   const [loading, setLoading] = useState(true)
   const [comment, setComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -171,8 +189,19 @@ export default function CountryDetailPage() {
         if (!res.ok) throw new Error(payload?.error || 'Failed to load country')
         return payload
       })
-      .then(data => {
-        setCountry(data)
+      .then((data: unknown) => {
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+          setCountry({ error: 'Réponse invalide' })
+          setLoading(false)
+          return
+        }
+        const row = data as Record<string, unknown>
+        if (typeof row.name !== 'string') {
+          setCountry({ error: 'Réponse invalide' })
+          setLoading(false)
+          return
+        }
+        setCountry(row as ApiCountryDetail)
         setLoading(false)
       })
       .catch((error) => {
@@ -265,10 +294,10 @@ export default function CountryDetailPage() {
       </div>
     )
 
-  if (!country || country.error) {
+  if (!country || isCountryLoadError(country)) {
     return (
       <div className="p-20 text-center font-bold text-muted">
-        {country?.error ? `Erreur: ${country.error}` : 'Pays non trouvé.'}
+        {country && isCountryLoadError(country) ? `Erreur: ${country.error}` : 'Pays non trouvé.'}
       </div>
     )
   }
@@ -424,7 +453,8 @@ export default function CountryDetailPage() {
                 <div className="min-w-0">
                   <h1 className="text-3xl font-black tracking-tight text-text sm:text-4xl md:text-5xl">{country.name}</h1>
                   <p className="mt-1 flex items-center gap-2 font-medium text-muted">
-                    <MapPin className="h-4 w-4" /> {country.region} {isSchengenMember(String(country.name ?? '')) && '• Schengen'}
+                    <MapPin className="h-4 w-4" /> {String(country.region ?? '')}{' '}
+                    {isSchengenMember(String(country.name ?? '')) && '• Schengen'}
                   </p>
                 </div>
               </div>
@@ -669,15 +699,15 @@ export default function CountryDetailPage() {
             )}
 
             <div className="space-y-4">
-              {country.comments?.length > 0 ? (
-                country.comments.map((c: any) => (
+              {country.comments && country.comments.length > 0 ? (
+                country.comments.map((c: PublicCountryComment) => (
                   <div key={c.id} className="rounded-3xl border border-line bg-surface p-6 shadow-soft">
                     <div className="mb-4 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-soft text-xs font-black text-primary ring-1 ring-primary/35">
-                          {c.user.name?.[0] || 'U'}
+                          {c.user?.name?.[0] || 'U'}
                         </div>
-                        <span className="text-sm font-black text-text">{c.user.name}</span>
+                        <span className="text-sm font-black text-text">{c.user?.name ?? '—'}</span>
                       </div>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-muted">
                         {new Date(c.createdAt).toLocaleDateString()}
@@ -779,7 +809,7 @@ export default function CountryDetailPage() {
           <p className="text-xs font-bold uppercase tracking-widest text-gray-500">VisaFlow — résumé fiche pays</p>
           <h1 className="mt-2 text-2xl font-black text-gray-900">{country.name}</h1>
           <p className="mt-1 text-sm text-gray-600">
-            {country.region}
+            {String(country.region ?? '')}
             {isSchengenMember(String(country.name ?? '')) ? ' · Schengen' : ''} —{' '}
             {new Date().toLocaleDateString('fr-FR', { dateStyle: 'long' })}
           </p>

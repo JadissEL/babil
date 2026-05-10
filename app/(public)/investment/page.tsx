@@ -4,7 +4,10 @@ import { CreditCard, Globe, Search, Clock, ShieldCheck, ArrowRight, Sparkles } f
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import GoogleAd from '@/components/GoogleAd'
-import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import {
+  normalizeCountriesApiListResponse,
+  type CountryApiListRow,
+} from '@/lib/country-full-data-materialize'
 
 function normalize(value: unknown) {
   return String(value ?? '').trim()
@@ -14,8 +17,17 @@ function toLower(value: unknown) {
   return normalize(value).toLowerCase()
 }
 
+type InvestmentProgramRow = {
+  country: CountryApiListRow
+  program: Record<string, unknown>
+  cost: string
+  processing: string
+  benefits: unknown
+  requirements: unknown
+}
+
 export default function InvestmentPage() {
-  const [countries, setCountries] = useState<any[]>([])
+  const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
@@ -27,22 +39,23 @@ export default function InvestmentPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const programs = useMemo(() => {
-    return countries
-      .map((c) => {
-        const full = c.full_data || {}
-        const p = full.cbi_program
-        if (!p) return null
-        return {
-          country: c,
-          program: p,
-          cost: normalize(p.cost || p.investment_min || p.minimum_investment),
-          processing: normalize(p.processing_time || p.timeline),
-          benefits: p.benefits,
-          requirements: p.requirements,
-        }
+  const programs = useMemo((): InvestmentProgramRow[] => {
+    const out: InvestmentProgramRow[] = []
+    for (const c of countries) {
+      const full = c.full_data
+      const p = full.cbi_program
+      if (!p || typeof p !== 'object' || Array.isArray(p)) continue
+      const program = p as Record<string, unknown>
+      out.push({
+        country: c,
+        program,
+        cost: normalize(program.cost || program.investment_min || program.minimum_investment),
+        processing: normalize(program.processing_time || program.timeline),
+        benefits: program.benefits,
+        requirements: program.requirements,
       })
-      .filter(Boolean) as any[]
+    }
+    return out
   }, [countries])
 
   const filtered = useMemo(() => {
@@ -112,7 +125,7 @@ export default function InvestmentPage() {
         <div className="grid auto-rows-fr grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
             <div
-              key={p.country.id}
+              key={String(p.country.id)}
               className="flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card transition-all duration-300 hover:border-accent/35"
             >
               <div className="border-b border-line p-8">
@@ -120,7 +133,7 @@ export default function InvestmentPage() {
                   <div className="min-w-0">
                     <h3 className="break-words text-2xl font-black text-text">{p.country.name}</h3>
                     <div className="mt-1 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted">
-                      <Globe className="h-3 w-3" /> {p.country.region}
+                      <Globe className="h-3 w-3" /> {String(p.country.region ?? '')}
                     </div>
                   </div>
                   <span className="shrink-0 rounded-xl border border-accent/35 bg-accent-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-accent">

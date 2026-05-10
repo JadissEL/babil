@@ -8,10 +8,21 @@ import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 
+type CountryExperienceRow = Record<string, unknown> & {
+  name: string
+  full_data: Record<string, unknown>
+}
+
+type CountrySubpageLoadState = null | { error: string } | CountryExperienceRow
+
+function isCountrySubpageError(s: CountrySubpageLoadState): s is { error: string } {
+  return s !== null && typeof s === 'object' && 'error' in s && !('name' in s)
+}
+
 export default function CountryReasonsPage() {
   const params = useParams()
   const id = params?.id
-  const [country, setCountry] = useState<any>(null)
+  const [country, setCountry] = useState<CountrySubpageLoadState>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -22,8 +33,19 @@ export default function CountryReasonsPage() {
         if (!res.ok) throw new Error(payload?.error || 'Failed to load country')
         return payload
       })
-      .then((data) => {
-        setCountry(materializeCountryApiRow(data as Record<string, unknown>))
+      .then((data: unknown) => {
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+          setCountry({ error: 'Réponse invalide' })
+          setLoading(false)
+          return
+        }
+        const row = materializeCountryApiRow(data as Record<string, unknown>)
+        if (typeof row.name !== 'string') {
+          setCountry({ error: 'Réponse invalide' })
+          setLoading(false)
+          return
+        }
+        setCountry(row as CountryExperienceRow)
         setLoading(false)
       })
       .catch((error) => {
@@ -40,10 +62,10 @@ export default function CountryReasonsPage() {
     )
   }
 
-  if (!country || country.error) {
+  if (!country || isCountrySubpageError(country)) {
     return (
       <div className="p-20 text-center font-bold text-muted">
-        {country?.error ? `Erreur: ${country.error}` : 'Pays non trouvé.'}
+        {country && isCountrySubpageError(country) ? `Erreur: ${country.error}` : 'Pays non trouvé.'}
       </div>
     )
   }
