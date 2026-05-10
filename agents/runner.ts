@@ -1,6 +1,5 @@
 import 'dotenv/config'
 import { promises as fs } from 'node:fs'
-import path from 'node:path'
 import prisma from '../lib/prisma'
 import { parseCountryFullData } from '../lib/country-full-data-json'
 import {
@@ -38,60 +37,29 @@ import { appendSupervisorMetricEvent } from '../lib/agent-supervisor-metrics'
 import { loadChildKnowledge } from '../lib/agent-child-knowledge'
 import { maybeBuildCanaryChildFullData, runChildShadowCompare } from '../lib/agent-child-runner'
 import { runManifestUrlFetchBatch } from '../lib/agent-manifest-source-fetch'
-
-type TaskStatus = 'queued' | 'running' | 'done' | 'failed'
-
-type CountryTask = {
-  id: string
-  country: string
-  region: string
-  domain: Domain
-  query: string
-  priority: number
-  attempts: number
-  pass: number
-  nextRunAt: string
-  status: TaskStatus
-  completenessScore: number
-  missingCritical: string[]
-  lastError?: string
-}
-
-type AgentState = {
-  tasks: CountryTask[]
-  generatedAt: string
-  contractVersion: string
-  /** Index into world-country-run-order.json; advances only after a terminal `done` or `failed` when sequential mode is active. */
-  worldOrderCursor?: number
-}
-
-const STATE_DIR = path.join(process.cwd(), '.agent-state')
-const STATE_FILE = path.join(STATE_DIR, 'tasks.json')
-
-const TICK_MS = Number(process.env.AGENT_TICK_MS || 30_000)
-const REFRESH_MS = Number(process.env.AGENT_REFRESH_MS || 6 * 60 * 60 * 1000)
-const WORKER_BATCH = Number(process.env.AGENT_WORKER_BATCH || 1)
-const TASK_TTL_HOURS = Number(process.env.AGENT_TASK_TTL_HOURS || 72)
-const RETRY_BASE_DELAY_MS = Number(process.env.AGENT_RETRY_BASE_DELAY_MS || 10 * 60 * 1000)
-const RETRY_MAX_DELAY_MS = Number(process.env.AGENT_RETRY_MAX_DELAY_MS || 6 * 60 * 60 * 1000)
-const AGENT_VERBOSE_LEVEL = Number(process.env.AGENT_VERBOSE || 1)
-const MAX_RECURSION_PASSES = Number(process.env.AGENT_MAX_RECURSION_PASSES || 4)
-const COMPLETENESS_TARGET_SCORE = Number(process.env.AGENT_COMPLETENESS_TARGET || 85)
-const STABLE_SCORE_MIN_ATTEMPTS = Number(process.env.AGENT_STABLE_SCORE_MIN_ATTEMPTS || 3)
-const STABLE_SCORE_DELTA = Number(process.env.AGENT_STABLE_SCORE_DELTA || 0)
-const REENRICH_INTERVAL_HOURS = Number(process.env.AGENT_REENRICH_INTERVAL_HOURS || 24)
-/** When unset or not `0`, runner processes `data/world-country-run-order.json` strictly one country at a time in file order (wrap after last). */
-const SEQUENTIAL_WORLD_ORDER_ENABLED = process.env.AGENT_SEQUENTIAL_WORLD_ORDER !== '0'
-/** `AGENT_STRICT_COUNTRY_GATE=1`: mark task `done` only when `advancementGate.passed` (no plateau shortcut). */
-const AGENT_STRICT_COUNTRY_GATE = process.env.AGENT_STRICT_COUNTRY_GATE === '1'
-/** `AGENT_STRICT_QUALITY_MANIFEST=1`: gate requires critical fields to be `ok` or `single_official_ok` in quality manifest (heuristic). */
-const AGENT_STRICT_QUALITY_MANIFEST = process.env.AGENT_STRICT_QUALITY_MANIFEST === '1'
-/** `AGENT_CHILD_MODE=shadow|canary`: shadow compares child vs supervisor metrics; canary may apply child payload when `AGENT_CHILD_CANARY_WRITE=1`. */
-const AGENT_CHILD_MODE = (process.env.AGENT_CHILD_MODE || 'off').toLowerCase()
-/** When > 0, exit after this many ms (e.g. `180000` for 3 minutes). `0` or unset = no limit. */
-const AGENT_MAX_RUNTIME_MS = Math.max(0, Math.floor(Number(process.env.AGENT_MAX_RUNTIME_MS || 0)))
-/** Set `AGENT_MANIFEST_FETCH_ENABLED=0` to skip manifest URL-map HTTP batch. */
-const AGENT_MANIFEST_FETCH_ENABLED = process.env.AGENT_MANIFEST_FETCH_ENABLED !== '0'
+import type { AgentState, CountryTask, TaskStatus } from './runner-types'
+import {
+  AGENT_CHILD_MODE,
+  AGENT_MANIFEST_FETCH_ENABLED,
+  AGENT_MAX_RUNTIME_MS,
+  AGENT_STRICT_COUNTRY_GATE,
+  AGENT_STRICT_QUALITY_MANIFEST,
+  AGENT_VERBOSE_LEVEL,
+  COMPLETENESS_TARGET_SCORE,
+  MAX_RECURSION_PASSES,
+  REFRESH_MS,
+  REENRICH_INTERVAL_HOURS,
+  RETRY_BASE_DELAY_MS,
+  RETRY_MAX_DELAY_MS,
+  SEQUENTIAL_WORLD_ORDER_ENABLED,
+  STABLE_SCORE_DELTA,
+  STABLE_SCORE_MIN_ATTEMPTS,
+  STATE_DIR,
+  STATE_FILE,
+  TASK_TTL_HOURS,
+  TICK_MS,
+  WORKER_BATCH,
+} from './runner-constants'
 
 let memoryState: AgentState = {
   tasks: [],

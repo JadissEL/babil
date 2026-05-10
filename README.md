@@ -42,6 +42,18 @@ Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, 
 - **Webhook signé :** `POST /api/webhooks/ingest` (secret `BABIL_WEBHOOK_INGEST_SECRET`) — événements documentés dans [`docs/catalogue-e-security.md`](docs/catalogue-e-security.md) §E.76
 - **CI hebdo :** [`.github/workflows/intelligence-pipeline-weekly.yml`](.github/workflows/intelligence-pipeline-weekly.yml)
 
+## Conventions App Router
+
+*(Backlog F.87.)*
+
+- **Server Components par défaut** : pas de `'use client'` sur une page ou un layout tant qu’il n’y a pas besoin de hooks React, d’écouteurs d’événements ou d’API navigateur.
+- **Client** : regrouper l’UI interactive dans `components/` (ex. `DashboardLayoutClient`) ou marquer uniquement la feuille qui en a besoin.
+- **Error boundaries** : [`app/error.tsx`](app/error.tsx) (arbre sous le layout racine), [`app/(dashboard)/error.tsx`](app/(dashboard)/error.tsx) (segment dashboard).
+
+## Legacy / hors Next
+
+- Inventaire **`server.js`** (Express) vs App Router : [`docs/dead-code-and-legacy.md`](docs/dead-code-and-legacy.md).
+
 ## Autres docs utiles
 
 - Backlog produit : [`docs/enhancements-backlog-100.md`](docs/enhancements-backlog-100.md)

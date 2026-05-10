@@ -2,6 +2,12 @@
 
 This folder contains the autonomous country intelligence engine.
 
+## Code layout
+
+- Main orchestration: `runner.ts`
+- Shared types: `runner-types.ts`
+- Environment constants (tick intervals, gates, paths): `runner-constants.ts`
+
 ## What runs
 
 - `Country-first completion loop`:

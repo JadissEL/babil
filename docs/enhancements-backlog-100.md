@@ -163,10 +163,10 @@ flowchart LR
 81. **ESLint stricter** (`no-explicit-any`, import order) progressivement. *(Livré partiel : `@typescript-eslint/parser` + plugin, règle **`@typescript-eslint/no-explicit-any`: warn** dans [`.eslintrc.json`](../.eslintrc.json) ; import order : backlog.)*
 82. **Types partagés** `ApiRecommendation` / probabilité dans `lib/types/` unique. *(Livré : [`lib/types/api-recommendation-probability.ts`](../lib/types/api-recommendation-probability.ts) — `RecommendationApiItem`, `ProbabilityApiRow` ; câblage routes + page [`/probability`](../app/(public)/probability/page.tsx).)*
 83. **Prettier** + format CI pour éviter drift CRLF/LF. *(Livré partiel : Prettier, [`.prettierrc`](../.prettierrc), [`.prettierignore`](../.prettierignore), [`.gitattributes`](../.gitattributes), scripts `format` / `format:check`, étape CI ; périmètre : `app/api/**`, `lib/types/**`, `lib/api-schemas/**` — extension progressive possible.)*
-84. **Architecture** : scinder `agents/runner.ts` si > seuil de maintenabilité (modules par étape).
-85. **Dead code** : inventaire `server.js` / scripts legacy vs App Router.
-86. **Error boundaries** React sur layouts dashboard/public.
-87. **Convention** fichiers client/server (`'use client'` minimal).
+84. **Architecture** : scinder `agents/runner.ts` si > seuil de maintenabilité (modules par étape). *(Livré partiel : extraction [`agents/runner-types.ts`](../agents/runner-types.ts) + [`agents/runner-constants.ts`](../agents/runner-constants.ts) ; logique d’orchestration toujours dans [`agents/runner.ts`](../agents/runner.ts) — poursuivre par étapes si besoin.)*
+85. **Dead code** : inventaire `server.js` / scripts legacy vs App Router. *(Livré : [`docs/dead-code-and-legacy.md`](dead-code-and-legacy.md) — rôle de `server.js`, écart avec `app/api`, recommandations.)*
+86. **Error boundaries** React sur layouts dashboard/public. *(Livré : [`app/error.tsx`](../app/error.tsx), [`app/(dashboard)/error.tsx`](../app/(dashboard)/error.tsx) — client boundaries Next.js App Router.)*
+87. **Convention** fichiers client/server (`'use client'` minimal). *(Livré : section README [Conventions App Router](../README.md#conventions-app-router).)*
 88. **README** développeur : variables d’environnement, ordre `db:setup`, intelligence pipeline. *(Livré : [`README.md`](../README.md) à la racine.)*
 
 ### G — DevOps, observabilité et coûts (89–96)
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples), nouveaux **types d’événements** webhook (CRM, notifications — étendre `webhook-ingest-dispatch`), **F.84–F.87** (runner agents, dead code, error boundaries, conventions client), **import/order** ESLint + extension Prettier.
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples), nouveaux **types d’événements** webhook, **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), **import/order** ESLint + extension Prettier.
