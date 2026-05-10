@@ -84,7 +84,7 @@ flowchart LR
 
 > **Livré (lot B.26–B.38 + C.39–C.52 + D.54–D.65) :** entrées détaillées en sections B, C et D (extrait). Synthèse pipeline + perf API : C.46–C.52, D.54–D.65 (OpenAPI, ETag pays, audit LCP home) — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md).
 
-> **Livré (lot E.66–E.77 partiel) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), **E.67** journal audit admin (`AdminAuditLog`, `recordAdminAudit`, `GET /api/admin/audit-log`, tests câblage), en-têtes sécurité + HSTS prod, audit npm en CI (`audit:ci`), Dependabot ; doc secrets / chiffrement at rest / DPA (pointeurs) ; migration **Clerk 6** + `await auth()` / `await auth.protect()` dans le middleware ; **E.72** rate limit `POST /api/comments` ; **E.75** garde tests scope favoris/historique/export.
+> **Livré (lot E.66–E.77 partiel) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), **E.67** journal audit admin, **E.68** garde `Origin` / Referer sur mutations en prod ([`lib/mutation-origin-guard.ts`](../lib/mutation-origin-guard.ts)), en-têtes sécurité + HSTS prod, audit npm en CI (`audit:ci`), Dependabot ; doc secrets / chiffrement at rest / DPA (pointeurs) ; migration **Clerk 6** + `await auth()` / `await auth.protect()` dans le middleware ; **E.72** rate limit `POST /api/comments` ; **E.75** garde tests scope favoris/historique/export.
 
 ### B — Données, scoring et transparence (23–38)
 
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **68** (CSRF / origin), **71** (scrub PII erreurs client), **76** (webhooks signés), **90–91** (observabilité Sentry / logs structurés).
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **71** (scrub PII erreurs client), **76** (webhooks signés), **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples, `Host` vs `Origin`).

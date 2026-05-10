@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { getAdminUser } from '@/lib/admin-auth'
 import { recordAdminAudit } from '@/lib/admin-audit-log'
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import { redactDelegatedPayloadDeep } from '@/lib/delegated-application-payload-utils'
 import prisma from '@/lib/prisma'
 import { isDelegatedRequestStatus } from '@/lib/delegated-application-status'
@@ -60,6 +61,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const denied = mutationOriginDeniedResponse(req)
+  if (denied) return denied
+
   const admin = await getAdminUser()
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 

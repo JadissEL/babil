@@ -15,6 +15,17 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 - **Lecture** : [`GET /api/admin/audit-log`](../app/api/admin/audit-log/route.ts) — admin uniquement, `?limit=1..100` (défaut 50), tri récent d’abord.
 - **Garde tests** : [`lib/admin-audit-wiring.test.ts`](../lib/admin-audit-wiring.test.ts).
 
+## E.68 — CSRF / contrôle d’`Origin` (mutations en production)
+
+- Module : [`lib/mutation-origin-guard.ts`](../lib/mutation-origin-guard.ts) — pour **`POST` / `PUT` / `PATCH` / `DELETE`**, en **`NODE_ENV === 'production'`** uniquement, exige que l’en-tête **`Origin`** (ou à défaut l’origine du **`Referer`**) soit dans une liste dérivée de l’environnement.
+- **Sources d’origines autorisées** : `NEXT_PUBLIC_APP_URL`, `BABIL_APP_URL`, `BABIL_ALLOWED_ORIGINS` (liste séparée par virgules), `VERCEL_URL` → `https://…`, `RENDER_EXTERNAL_URL`.
+- **Hors production** : garde désactivée (dev local). **Tests / scripts** : `BABIL_MUTATION_ORIGIN_GUARD_DISABLED=1`.
+- **Handlers couverts** : mutations sous `app/api/user/*`, `POST /api/comments`, `PATCH`/`DELETE /api/comments/[id]`, `POST /api/delegated-application-requests`, `PATCH` admin pays / demandes déléguées, **`POST /api/recommendation`** et **`POST /api/probability`**.
+- **Non couvert** : `GET` (y compris cron `CRON_SECRET`) — pas de garde `Origin` sur les lectures planifiées.
+- Garde câblage : [`lib/mutation-origin-wiring.test.ts`](../lib/mutation-origin-wiring.test.ts).
+
+> **Domaine personnalisé (Vercel / Render)** : si le navigateur envoie `Origin: https://votredomaine.com`, ajoutez cette URL (ou utilisez `BABIL_ALLOWED_ORIGINS` avec plusieurs origines) en plus de `VERCEL_URL` si besoin.
+
 ## E.69 — En-têtes de sécurité (Next)
 
 - Config : [`next.config.js`](../next.config.js) — `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-DNS-Prefetch-Control` ; **HSTS** uniquement quand `NODE_ENV === 'production'`.
@@ -51,6 +62,5 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 
 ## Non couverts ici (backlog code / produit)
 
-- **E.68** — contrôles CSRF / Origin ciblés.
 - **E.71** — masquage PII dans erreurs client.
 - **E.76** — webhooks signés.

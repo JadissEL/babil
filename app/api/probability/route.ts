@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import prisma from '@/lib/prisma'
 import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
@@ -17,6 +18,9 @@ import { recoProbaPostBodySchema } from '@/lib/api-schemas/reco-proba-post-body'
 import { coerceStoredProfession } from '@/lib/user-profile-enums'
 
 export async function POST(req: Request) {
+  const denied = mutationOriginDeniedResponse(req)
+  if (denied) return denied
+
   const { userId } = await auth();
 
   const lenCheck = checkEnginePostContentLength(req)

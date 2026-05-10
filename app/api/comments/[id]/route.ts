@@ -2,12 +2,16 @@ import { CommentStatus, Role } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
 import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const denied = mutationOriginDeniedResponse(req);
+  if (denied) return denied;
+
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
@@ -59,6 +63,9 @@ export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const denied = mutationOriginDeniedResponse(req);
+  if (denied) return denied;
+
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { checkCommentPostRateLimit } from '@/lib/comment-post-rate-limit';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
 import { isDbUnavailable } from '@/lib/db-resilience'
 
 export async function GET(req: NextRequest) {
@@ -48,6 +49,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: Request) {
+  const denied = mutationOriginDeniedResponse(req);
+  if (denied) return denied;
+
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 

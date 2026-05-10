@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import prisma from '@/lib/prisma'
 import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback'
 import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge'
@@ -58,6 +59,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const denied = mutationOriginDeniedResponse(req)
+  if (denied) return denied
+
   const { userId } = await auth()
   const user = await currentUser()
   if (!userId || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

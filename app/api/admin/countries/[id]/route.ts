@@ -4,6 +4,7 @@ import type { Prisma } from '@prisma/client'
 
 import { getAdminUser } from '@/lib/admin-auth'
 import { recordAdminAudit } from '@/lib/admin-audit-log'
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import { MERGED_COUNTRIES_LIST_CACHE_TAG } from '@/lib/countries-prisma-merge'
 import prisma from '@/lib/prisma'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
@@ -16,6 +17,9 @@ function isRecord(v: unknown): v is Record<string, unknown> {
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const denied = mutationOriginDeniedResponse(req)
+  if (denied) return denied
+
   const admin = await getAdminUser()
   if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 

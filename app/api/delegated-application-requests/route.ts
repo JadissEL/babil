@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import prisma from '@/lib/prisma'
 import {
   DELEGATED_APPLICATION_PAYLOAD_SCHEMA_VERSION,
@@ -53,6 +54,9 @@ function parseCategory(v: unknown): DelegatedCategory | null {
 }
 
 export async function POST(req: Request) {
+  const denied = mutationOriginDeniedResponse(req)
+  if (denied) return denied
+
   const { userId } = await auth()
   const userClerk = await currentUser()
 

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma'
 import { isDbUnavailable } from '@/lib/db-resilience'
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import {
   USER_GOAL_TYPES,
   USER_PROFESSIONS,
@@ -95,6 +96,9 @@ function parseBody(data: Record<string, unknown>) {
 }
 
 export async function POST(req: Request) {
+  const denied = mutationOriginDeniedResponse(req)
+  if (denied) return denied
+
   const { userId } = await auth();
   const user = await currentUser();
   
