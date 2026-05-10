@@ -30,8 +30,11 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Unit tests (lib)
+      - name: Unit tests (lib, tsx)
         run: npm run test:lib
+
+      - name: Unit tests (Vitest — routes critiques)
+        run: npm run test:vitest
 
       - name: Build
         run: npm run build

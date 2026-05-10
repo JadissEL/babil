@@ -15,7 +15,8 @@ import { buildCountrySheetSignals, inferProbabilitySheetDefaultsFromFull } from 
 import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version'
 import { computeProbabilityTopDrivers } from '@/lib/score-driver-explain'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
-import { recoProbaPostBodySchema } from '@/lib/api-schemas/reco-proba-post-body'
+import { recoProbaPostBodySchema, type RecoProbaPostBody } from '@/lib/api-schemas/reco-proba-post-body'
+import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row'
 import { coerceStoredProfession } from '@/lib/user-profile-enums'
 
 export async function POST(req: Request) {
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
     )
   }
 
-  let body: Record<string, unknown>;
+  let body: RecoProbaPostBody;
   try {
     const raw = await req.json();
     const parsed = recoProbaPostBodySchema.safeParse(raw);
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
         { status: 400, headers: engineVersionHeaders('probability') },
       );
     }
-    body = parsed.data as Record<string, unknown>;
+    body = parsed.data;
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
@@ -95,7 +96,7 @@ export async function POST(req: Request) {
       }
     }
 
-    let countries: any[] = []
+    let countries: EngineCountryListRow[] = []
     try {
       countries = await buildMergedCountriesList()
     } catch {
@@ -118,7 +119,7 @@ export async function POST(req: Request) {
     const safeSavings = Number.isFinite(savings) && savings >= 0 ? savings : 0
     const safeIncome = Number.isFinite(income) && income >= 0 ? income : 0
     
-    const results = countries.map((c: any) => {
+    const results = countries.map((c) => {
       const full = materializePublicFullDataForApi(c.full_data ?? null);
       const defaultsUsed = inferProbabilitySheetDefaultsFromFull(full as Record<string, unknown>)
       const phdStudiesData = hasCountryPhdStoredData(full);
@@ -246,7 +247,7 @@ export async function POST(req: Request) {
           riskImmigration: breakdown.riskImmigration,
         }),
       };
-    }).sort((a: any, b: any) => b.globalScore - a.globalScore);
+    }).sort((a, b) => b.globalScore - a.globalScore);
 
     return NextResponse.json(results, { headers: engineVersionHeaders('probability') });
   } catch (error: unknown) {

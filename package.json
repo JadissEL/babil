@@ -18,7 +18,7 @@
     "start:render": "npm run db:migrate-deploy && npm run seed && next start",
     "seed": "tsx prisma/seed.ts",
     "lint": "next lint",
-    "check": "npm run test:lib && npm run validate:schengen-keys && npm run lint",
+    "check": "npm run test:lib && npm run test:vitest && npm run validate:schengen-keys && npm run lint",
     "agents:start": "tsx agents/runner.ts",
     "agent:extract-patterns": "tsx scripts/agent-extract-patterns.ts",
     "agent:manifest-scaffold": "tsx scripts/scaffold-agent-manifest-url-map.ts",
@@ -50,6 +50,7 @@
     "db:compact-observations:dry": "tsx scripts/compact-country-observations.ts --dry-run",
     "db:compact-observations": "tsx scripts/compact-country-observations.ts",
     "test:lib": "tsx --test \"lib/**/*.test.ts\"",
+    "test:vitest": "vitest run",
     "audit:ci": "npm audit --omit=dev --audit-level=critical"
   },
   "keywords": [],
@@ -84,6 +85,7 @@
     "tailwindcss": "^3.4.3",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^3.2.0"
   }
 }

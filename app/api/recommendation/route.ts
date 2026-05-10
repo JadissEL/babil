@@ -19,7 +19,8 @@ import { appendProfileContextNarratives } from '@/lib/probability-profile-narrat
 import { buildCountrySheetSignals } from '@/lib/probability-result-display'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 import { sanitizePublicSyntheticProfile } from '@/lib/public-synthetic-profile'
-import { recoProbaPostBodySchema } from '@/lib/api-schemas/reco-proba-post-body'
+import { recoProbaPostBodySchema, type RecoProbaPostBody } from '@/lib/api-schemas/reco-proba-post-body'
+import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row'
 import { parseUserGoalType, userGoalTypeToEngineGoal } from '@/lib/user-profile-enums'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
@@ -40,7 +41,7 @@ const toNumber = (value: unknown, fallback = 0) => {
   return Number.isFinite(n) ? n : fallback;
 };
 
-function normalizeProfile(profile: any): NormalizedProfile {
+function normalizeProfile(profile: Record<string, unknown>): NormalizedProfile {
   const goal = userGoalTypeToEngineGoal(parseUserGoalType(profile.goal ?? profile.goal_type)) as Goal
 
   return {
@@ -53,14 +54,14 @@ function normalizeProfile(profile: any): NormalizedProfile {
   };
 }
 
-function inferCountryBudgetThreshold(country: any): number {
+function inferCountryBudgetThreshold(country: Pick<EngineCountryListRow, 'name'>): number {
   const name = String(country.name || '').toLowerCase();
   if (['switzerland', 'norway', 'denmark', 'sweden', 'finland', 'canada', 'usa'].some((x) => name.includes(x))) return 14000;
   if (['france', 'italie', 'italy', 'espagne', 'spain', 'germany', 'allemagne', 'netherlands', 'uk', 'united kingdom'].some((x) => name.includes(x))) return 10000;
   return 7000;
 }
 
-function readCountrySignals(country: any) {
+function readCountrySignals(country: EngineCountryListRow) {
   const full = materializePublicFullDataForApi(country.full_data ?? null);
   const normalizedVisa = country.visa ?? {};
   const normalizedFriction = country.friction ?? {};
@@ -141,7 +142,7 @@ function readCountrySignals(country: any) {
   };
 }
 
-function computeRecommendation(country: any, profile: NormalizedProfile) {
+function computeRecommendation(country: EngineCountryListRow, profile: NormalizedProfile) {
   const s = readCountrySignals(country);
   const explanations: string[] = [];
   const warnings: string[] = [];
@@ -294,7 +295,7 @@ export async function POST(req: Request) {
     )
   }
 
-  let body: Record<string, unknown>;
+  let body: RecoProbaPostBody;
   try {
     const raw = await req.json();
     const parsed = recoProbaPostBodySchema.safeParse(raw);
@@ -304,7 +305,7 @@ export async function POST(req: Request) {
         { status: 400, headers: engineVersionHeaders('recommendation') },
       );
     }
-    body = parsed.data as Record<string, unknown>;
+    body = parsed.data;
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
@@ -324,7 +325,7 @@ export async function POST(req: Request) {
 
   try {
     const normalizedProfile = normalizeProfile(profile);
-    let countries: any[] = []
+    let countries: EngineCountryListRow[] = []
     try {
       countries = await buildMergedCountriesList()
     } catch {
@@ -338,7 +339,7 @@ export async function POST(req: Request) {
       }
     }
     const recommendations = countries
-      .map((c: any) => computeRecommendation(c, normalizedProfile))
+      .map((c) => computeRecommendation(c, normalizedProfile))
       .sort((a, b) => b.score - a.score)
 
     const profileRecord =
