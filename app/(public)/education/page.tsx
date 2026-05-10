@@ -15,13 +15,15 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import GoogleAd from '@/components/GoogleAd'
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
 import {
   normalizeCountriesApiListResponse,
   type CountryApiListRow,
 } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+import { educationHubExplorerHref } from '@/lib/cta-hrefs'
 
 type EducationCategory = 'languages' | 'technical' | 'short'
 
@@ -39,6 +41,11 @@ function eduText(v: unknown, fallback: string) {
 }
 
 export default function EducationPage() {
+  const { preference } = useObjectivePreference()
+  const hubExplorerHref = useMemo(
+    () => educationHubExplorerHref(preference.primarySlug),
+    [preference.primarySlug],
+  )
   const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [activeTab, setActiveTab] = useState<EducationCategory>('languages')
   const [loading, setLoading] = useState(true)
@@ -121,7 +128,7 @@ export default function EducationPage() {
       </div>
 
       <Link
-        href="/explorer?goal=education"
+        href={hubExplorerHref}
         className="group mb-10 flex flex-col gap-4 rounded-[2rem] border border-primary/25 bg-surface p-6 shadow-card transition-all hover:border-primary/40 hover:shadow-soft sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="flex items-start gap-4">
