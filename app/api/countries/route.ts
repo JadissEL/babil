@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import prisma from '@/lib/prisma'
 import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback'
 import { mapCountriesListToLight } from '@/lib/country-list-light'
@@ -100,7 +101,7 @@ export async function GET(req: Request) {
 
     return respondCountriesList(req, formatted as LegacyCountryRecord[], light, pagination)
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'List failed'
+    const message = publicApiErrorMessage(error, 'List failed')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

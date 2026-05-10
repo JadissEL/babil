@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import prisma from '@/lib/prisma'
 import { isDbUnavailable } from '@/lib/db-resilience'
 import { buildGdprExportBundle } from '@/lib/user-gdpr-export'
@@ -80,7 +81,7 @@ export async function GET(req: Request) {
     if (isDbUnavailable(error)) {
       return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })
     }
-    const message = error instanceof Error ? error.message : 'Export failed'
+    const message = publicApiErrorMessage(error, 'Export failed')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

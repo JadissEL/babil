@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import prisma from '@/lib/prisma'
 import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
@@ -248,9 +249,12 @@ export async function POST(req: Request) {
     }).sort((a: any, b: any) => b.globalScore - a.globalScore);
 
     return NextResponse.json(results, { headers: engineVersionHeaders('probability') });
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message, engineVersion: BABIL_ENGINE_VERSION },
+      {
+        error: publicApiErrorMessage(error, 'Probability failed'),
+        engineVersion: BABIL_ENGINE_VERSION,
+      },
       { status: 500, headers: engineVersionHeaders('probability') },
     );
   }

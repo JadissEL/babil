@@ -30,4 +30,17 @@ describe('user private API scope (E.75)', () => {
     assert.ok(occurrences.length >= 3, 'expected multiple userId-scoped where clauses')
     assert.doesNotMatch(src, /searchParams\.get\(\s*['"]userId['"]\s*\)/)
   })
+
+  it('delegated requests list scopes to auth userId only', () => {
+    const src = read('app/api/delegated-application-requests/route.ts')
+    assert.match(src, /where:\s*\{\s*userId[,\s}]/)
+    assert.doesNotMatch(src, /searchParams\.get\(\s*['"]userId['"]\s*\)/)
+    assert.doesNotMatch(src, /body\.userId/)
+  })
+
+  it('delegated request detail scopes read to auth user and route id only', () => {
+    const src = read('app/api/delegated-application-requests/[id]/route.ts')
+    assert.match(src, /row\.userId\s*!==\s*userId/)
+    assert.doesNotMatch(src, /searchParams\.get\(\s*['"]userId['"]\s*\)/)
+  })
 })

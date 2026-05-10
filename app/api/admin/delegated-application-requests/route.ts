@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { getAdminUser } from '@/lib/admin-auth'
 import {
   maskEmailForAdminList,
@@ -45,7 +46,7 @@ export async function GET() {
     return NextResponse.json({ items })
   } catch (error: unknown) {
     if (isDbUnavailable(error)) return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })
-    const message = error instanceof Error ? error.message : 'List failed'
+    const message = publicApiErrorMessage(error, 'List failed')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

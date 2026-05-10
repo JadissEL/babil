@@ -2,6 +2,7 @@ import { CommentStatus, Role } from '@prisma/client';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
+import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
 import { isDbUnavailable } from '@/lib/db-resilience'
 
@@ -23,7 +24,10 @@ export async function PATCH(
     });
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Moderation prep failed') },
+      { status: 500 },
+    )
   }
 
   if (user?.role !== Role.ADMIN) {
@@ -53,9 +57,12 @@ export async function PATCH(
       data: { status: statusStr as CommentStatus }
     });
     return NextResponse.json(comment);
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Comment update failed') },
+      { status: 500 },
+    );
   }
 }
 
@@ -77,7 +84,10 @@ export async function DELETE(
     });
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Moderation prep failed') },
+      { status: 500 },
+    )
   }
 
   if (user?.role !== Role.ADMIN) {
@@ -94,8 +104,11 @@ export async function DELETE(
       where: { id: commentId }
     });
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Comment delete failed') },
+      { status: 500 },
+    );
   }
 }

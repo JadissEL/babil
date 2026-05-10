@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
@@ -364,9 +365,12 @@ export async function POST(req: Request) {
     return NextResponse.json(merged.slice(0, 10), {
       headers: engineVersionHeaders('recommendation'),
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: error.message, engineVersion: BABIL_ENGINE_VERSION },
+      {
+        error: publicApiErrorMessage(error, 'Recommendation failed'),
+        engineVersion: BABIL_ENGINE_VERSION,
+      },
       { status: 500, headers: engineVersionHeaders('recommendation') },
     )
   }

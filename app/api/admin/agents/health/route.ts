@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 
+import { publicApiErrorMessage, scrubSensitiveClientText } from '@/lib/api-public-error'
 import { getAdminUser } from '@/lib/admin-auth'
 import { materializePublicFullData } from '@/lib/country-full-data-materialize'
 import { hasCuratedHighlightByCountryName } from '@/lib/country-highlights'
@@ -39,7 +40,7 @@ function topFailedTasks(tasks: ResearchTask[], limit = 5) {
       country: t.country || 'Unknown',
       domain: t.domain || 'unknown',
       query: t.query || '',
-      error: t.lastError || 'Unknown error',
+      error: scrubSensitiveClientText(t.lastError || 'Unknown error'),
     }))
 }
 
@@ -187,7 +188,9 @@ export async function GET() {
         { status: 503 },
       )
     }
-    const message = error instanceof Error ? error.message : 'Failed to read health'
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Failed to read health') },
+      { status: 500 },
+    )
   }
 }

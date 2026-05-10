@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import prisma from '@/lib/prisma'
 import {
@@ -36,7 +37,7 @@ export async function GET() {
     return NextResponse.json({ items })
   } catch (error: unknown) {
     if (isDbUnavailable(error)) return NextResponse.json({ items: [], degraded: true })
-    const message = error instanceof Error ? error.message : 'List failed'
+    const message = publicApiErrorMessage(error, 'List failed')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
@@ -217,7 +218,7 @@ export async function POST(req: Request) {
     if (isDbUnavailable(error)) {
       return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })
     }
-    const message = error instanceof Error ? error.message : 'Create failed'
+    const message = publicApiErrorMessage(error, 'Create failed')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

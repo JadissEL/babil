@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { auth } from '@clerk/nextjs/server'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import prisma from '@/lib/prisma'
 import { previewDelegatedPayload } from '@/lib/delegated-application-payload-utils'
 import { isDbUnavailable } from '@/lib/db-resilience'
@@ -46,7 +47,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     if (isDbUnavailable(error)) {
       return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })
     }
-    const message = error instanceof Error ? error.message : 'Read failed'
+    const message = publicApiErrorMessage(error, 'Read failed')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import prisma from '@/lib/prisma'
 import { isDbUnavailable } from '@/lib/db-resilience'
@@ -27,7 +28,10 @@ export async function GET(req: Request) {
     )
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json([])
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'History read failed') },
+      { status: 500 },
+    )
   }
 }
 
@@ -55,7 +59,10 @@ export async function POST(req: Request) {
     })
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json({ ok: true, degraded: true })
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'History sync failed') },
+      { status: 500 },
+    )
   }
 
   const body = await req.json()
@@ -76,7 +83,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true })
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json({ ok: true, degraded: true })
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'History write failed') },
+      { status: 500 },
+    )
   }
 }
 

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { checkCommentPostRateLimit } from '@/lib/comment-post-rate-limit';
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
 import { isDbUnavailable } from '@/lib/db-resilience'
 
@@ -17,7 +18,10 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json([])
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Comments admin read failed') },
+      { status: 500 },
+    )
   }
 
   if (user?.role !== Role.ADMIN) {
@@ -42,9 +46,12 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
     return NextResponse.json(comments);
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (isDbUnavailable(error)) return NextResponse.json([])
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Comments list failed') },
+      { status: 500 },
+    );
   }
 }
 
@@ -93,10 +100,13 @@ export async function POST(req: Request) {
       },
     });
     return NextResponse.json(comment);
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (isDbUnavailable(error)) {
       return NextResponse.json({ ok: true, degraded: true, queued: false, message: 'Service temporairement indisponible' })
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Comment create failed') },
+      { status: 500 },
+    );
   }
 }

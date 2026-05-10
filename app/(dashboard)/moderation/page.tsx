@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useUser } from '@clerk/nextjs'
 import { 
   CheckCircle, 
   XCircle, 
@@ -9,13 +8,13 @@ import {
   User, 
   Globe, 
   Clock,
-  ShieldAlert
+  ShieldAlert,
+  RefreshCw,
 } from 'lucide-react'
 
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 
 export default function ModerationPage() {
-  const { user: clerkUser } = useUser()
   const [comments, setComments] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -79,14 +78,28 @@ export default function ModerationPage() {
 
   return (
     <div className="mx-auto max-w-6xl pb-16 pt-0 sm:pb-20 sm:pt-2">
-      <div className="mb-8 sm:mb-10">
-        <h1 className="flex flex-wrap items-center gap-3 text-2xl font-black text-text sm:gap-4 sm:text-3xl lg:text-4xl">
-          <MessageSquare className="h-8 w-8 shrink-0 text-primary sm:h-10 sm:w-10" /> Modération
-        </h1>
-        <p className="mt-2 text-sm font-medium text-muted sm:text-base">
-          Valider ou refuser les retours utilisateurs.
-        </p>
-      </div>
+        <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="flex flex-wrap items-center gap-3 text-2xl font-black text-text sm:gap-4 sm:text-3xl lg:text-4xl">
+              <MessageSquare className="h-8 w-8 shrink-0 text-primary sm:h-10 sm:w-10" /> Modération
+            </h1>
+            <p className="mt-2 text-sm font-medium text-muted sm:text-base">
+              Valider ou refuser les retours utilisateurs.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setLoading(true)
+              setError('')
+              void fetchComments()
+            }}
+            className="inline-flex items-center justify-center gap-2 self-start rounded-2xl border-2 border-line bg-surface px-4 py-2.5 text-sm font-black text-text shadow-soft transition-colors hover:border-primary/30 sm:self-auto"
+          >
+            <RefreshCw className="h-4 w-4 shrink-0" aria-hidden />
+            Actualiser
+          </button>
+        </div>
 
       <section className="mb-12 sm:mb-16">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-black text-text sm:mb-6 sm:text-xl">

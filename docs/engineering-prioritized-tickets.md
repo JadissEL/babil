@@ -13,7 +13,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
 | **T6** | Transparence scoring | Top 3 facteurs, signaux fiche, snapshot contract/UI, journal `_data_changelog`, lexique B.27, agrégat confiance B.31, qualité données B.32, profil enum B.34–B.35, Assist masqué B.36, export RGPD B.37, **i18n pilote B.38** — voir fichiers listés en B.23–B.38 ci-dessous | Implémenté |
 | **T7** | Perf API (catalogue D) | **D.54–D.60** pagination, cache HTTP, `unstable_cache`, Edge doc, corps max, rate limit. **D.61–D.62** timeout WB + Zod reco/proba. **D.63–D.65** OpenAPI + ETag pays + audit LCP home — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md) | Implémenté |
-| **T8** | Sécurité / supply chain (catalogue E) | **E.66** garde RBAC admin. **E.67** journal audit admin. **E.68** garde `Origin` mutations prod. **E.69** en-têtes + HSTS prod. **E.70/E.73/E.74** notes [catalogue-e-security.md](catalogue-e-security.md). **E.72** rate limit `POST /api/comments`. **E.75** garde scope favoris/historique/export. **E.77** `audit:ci` + Dependabot. **Clerk 6** + `await auth()` — [catalogue-e-security.md](catalogue-e-security.md) | Implémenté (partiel E.71, E.76 : backlog) |
+| **T8** | Sécurité / supply chain (catalogue E) | **E.66–E.75** + **E.77** — voir [catalogue-e-security.md](catalogue-e-security.md) et tableau E.66–E.77 ci-dessous (RBAC, audit admin, Origin prod, erreurs API E.71, modération + UI, checklists at rest / DPA, tests scope user + délégué, Dependabot, Clerk 6) | Implémenté (partiel **E.76** webhooks : backlog) |
 
 ### Lot données / transparence catalogue B (items 23–38)
 
@@ -91,14 +91,16 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 |--------------|----------|------------------|
 | E.66 | RBAC `/api/admin/*` | [`lib/admin-api-routes.test.ts`](../lib/admin-api-routes.test.ts) ; `getAdminUser` sur chaque route admin |
 | E.67 | Journal audit admin | [`prisma/schema.prisma`](../prisma/schema.prisma) `AdminAuditLog` ; [`lib/admin-audit-log.ts`](../lib/admin-audit-log.ts) ; [`GET /api/admin/audit-log`](../app/api/admin/audit-log/route.ts) ; [`lib/admin-audit-wiring.test.ts`](../lib/admin-audit-wiring.test.ts) |
+| E.68 | Garde `Origin` mutations (prod) | [`lib/mutation-origin-guard.ts`](../lib/mutation-origin-guard.ts) ; [`lib/mutation-origin-wiring.test.ts`](../lib/mutation-origin-wiring.test.ts) |
 | E.69 | En-têtes + HSTS prod | [`next.config.js`](../next.config.js) |
 | E.70 | Hygiène secrets / GHA | [catalogue-e-security.md](catalogue-e-security.md) |
-| E.72 | Rate limit POST commentaires | [`lib/comment-post-rate-limit.ts`](../lib/comment-post-rate-limit.ts) ; [`POST /api/comments`](../app/api/comments/route.ts) |
-| E.73 | Chiffrement at rest (checklist) | [catalogue-e-security.md](catalogue-e-security.md) |
-| E.74 | Sous-traitants / DPA (pointeurs) | [catalogue-e-security.md](catalogue-e-security.md) |
-| E.75 | Garde scope API utilisateur | [`lib/user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) |
+| E.71 | Erreurs API sans PII / stack | [`lib/api-public-error.ts`](../lib/api-public-error.ts) ; [`lib/api-public-error.test.ts`](../lib/api-public-error.test.ts) |
+| E.72 | Rate limit POST commentaires + UI modération | [`lib/comment-post-rate-limit.ts`](../lib/comment-post-rate-limit.ts) ; [`POST /api/comments`](../app/api/comments/route.ts) ; [`/moderation`](../app/(dashboard)/moderation/page.tsx) |
+| E.73 | Chiffrement at rest (checklist) | [catalogue-e-security.md](catalogue-e-security.md) §E.73 |
+| E.74 | Sous-traitants / DPA (registre) | [catalogue-e-security.md](catalogue-e-security.md) §E.74 |
+| E.75 | Garde scope API utilisateur (+ délégué) | [`lib/user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) |
 | E.77 | Audit deps + Dependabot | [`npm run audit:ci`](../package.json) ; [ci.yml](../.github/workflows/ci.yml) ; [dependabot.yml](../.github/dependabot.yml) |
-| E.71, E.76 | Backlog | — |
+| E.76 | Webhooks signés | Backlog |
 
 ## Références
 

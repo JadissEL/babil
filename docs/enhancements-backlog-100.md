@@ -84,7 +84,7 @@ flowchart LR
 
 > **Livré (lot B.26–B.38 + C.39–C.52 + D.54–D.65) :** entrées détaillées en sections B, C et D (extrait). Synthèse pipeline + perf API : C.46–C.52, D.54–D.65 (OpenAPI, ETag pays, audit LCP home) — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md).
 
-> **Livré (lot E.66–E.77 partiel) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), **E.67** journal audit admin, **E.68** garde `Origin` / Referer sur mutations en prod ([`lib/mutation-origin-guard.ts`](../lib/mutation-origin-guard.ts)), en-têtes sécurité + HSTS prod, audit npm en CI (`audit:ci`), Dependabot ; doc secrets / chiffrement at rest / DPA (pointeurs) ; migration **Clerk 6** + `await auth()` / `await auth.protect()` dans le middleware ; **E.72** rate limit `POST /api/comments` ; **E.75** garde tests scope favoris/historique/export.
+> **Livré (lot E.66–E.77 partiel) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), **E.67** journal audit admin, **E.68** garde `Origin` / Referer mutations prod, **E.71** messages API sans PII/stack (`api-public-error`), **E.72–E.75** (voir items 71–75), en-têtes sécurité + HSTS prod, audit npm en CI (`audit:ci`), Dependabot ; doc secrets / chiffrement at rest / DPA ; migration **Clerk 6** + `await auth()` / `await auth.protect()` dans le middleware ; **E.72** rate limit `POST /api/comments` ; **E.75** garde tests scope utilisateur + délégué.
 
 ### B — Données, scoring et transparence (23–38)
 
@@ -144,14 +144,14 @@ flowchart LR
 
 66. Revue **RBAC** : s’assurer que toutes les routes `/api/admin/*` vérifient `Role.ADMIN` côté serveur. *(Livré : garde [`lib/admin-api-routes.test.ts`](../lib/admin-api-routes.test.ts) + `getAdminUser` sur chaque route admin — voir [catalogue-e-security.md](catalogue-e-security.md).)*
 67. **Audit log** des actions admin (modifs pays, statuts demandes déléguées). *(Livré : modèle `AdminAuditLog`, [`recordAdminAudit`](../lib/admin-audit-log.ts), `GET /api/admin/audit-log`, câblage PATCH pays + demandes déléguées — [catalogue-e-security.md](catalogue-e-security.md) §E.67.)*
-68. **CSRF** / origin checks sur routes sensibles si cookies non SameSite strict partout.
+68. **CSRF** / origin checks sur routes sensibles si cookies non SameSite strict partout. *(Livré partiel : garde **production** `Origin`/`Referer` sur mutations — [`lib/mutation-origin-guard.ts`](../lib/mutation-origin-guard.ts) ; voir [catalogue-e-security.md](catalogue-e-security.md) §E.68.)*
 69. **Headers sécurité** (CSP, HSTS) via Next config. *(Livré partiel : en-têtes baseline + HSTS en prod dans [`next.config.js`](../next.config.js) ; CSP stricte : backlog — [catalogue-e-security.md](catalogue-e-security.md).)*
 70. **Secrets** : rotation `CRON_SECRET`, pas de fuite dans logs GitHub Actions. *(Livré partiel : pratiques documentées [catalogue-e-security.md](catalogue-e-security.md) ; rotation = process hors repo.)*
-71. **Scrub** PII dans `errorSummary` / stack traces exposées au client.
-72. **Modération commentaires** : file d’attente avec raccourcis anti-spam (rate limit). *(Livré partiel : rate limit **soumission** `POST /api/comments` — [`comment-post-rate-limit.ts`](../lib/comment-post-rate-limit.ts) ; file d’attente `PENDING` existait déjà ; raccourcis UI modération : backlog.)*
-73. **Chiffrement at rest** : vérifier politique hébergeur DB + sauvegardes. *(Livré partiel : checklist [catalogue-e-security.md](catalogue-e-security.md) — validation légale / hébergeur hors code.)*
-74. **DPA / sous-traitants** (Clerk, hébergeur) documentés pour conformité. *(Livré partiel : pointeurs [catalogue-e-security.md](catalogue-e-security.md) ; contrats = hors repo.)*
-75. **Tests d’autorisation** (utilisateur A ne lit pas données B) sur favoris/historique. *(Livré : garde [`user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) — pas de `userId` client sur listes / export ; tests E2E multi-comptes : backlog.)*
+71. **Scrub** PII dans `errorSummary` / stack traces exposées au client. *(Livré : [`lib/api-public-error.ts`](../lib/api-public-error.ts) — `publicApiErrorMessage` / `scrubSensitiveClientText` sur réponses 5xx API ; détail admin intelligence + erreurs agents — [catalogue-e-security.md](catalogue-e-security.md) §E.71.)*
+72. **Modération commentaires** : file d’attente avec raccourcis anti-spam (rate limit). *(Livré partiel : rate limit **soumission** `POST /api/comments` — [`comment-post-rate-limit.ts`](../lib/comment-post-rate-limit.ts) ; file d’attente `PENDING` + actions Approuver/Refuser/Supprimer ; bouton **Actualiser** sur [`/moderation`](../app/(dashboard)/moderation/page.tsx) ; raccourcis bulk / E2E : backlog.)*
+73. **Chiffrement at rest** : vérifier politique hébergeur DB + sauvegardes. *(Livré partiel : checklist étendue [catalogue-e-security.md](catalogue-e-security.md) §E.73 — Neon / Render / rétention ; validation légale hors code.)*
+74. **DPA / sous-traitants** (Clerk, hébergeur) documentés pour conformité. *(Livré partiel : registre processors §E.74 dans [catalogue-e-security.md](catalogue-e-security.md) ; contrats signés = hors repo.)*
+75. **Tests d’autorisation** (utilisateur A ne lit pas données B) sur favoris/historique. *(Livré : garde [`user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) — favoris, historique, export RGPD, **demandes déléguées** (liste + détail) ; pas de `userId` client dans query/body ; tests E2E multi-comptes : backlog.)*
 76. **Webhook** sécurisé si intégrations tierces (signature).
 77. **Dependency audit** : `npm audit` en CI + Dependabot. *(Livré : `npm run audit:ci` dans [ci.yml](../.github/workflows/ci.yml) + [dependabot.yml](../.github/dependabot.yml) — [catalogue-e-security.md](catalogue-e-security.md).)*
 

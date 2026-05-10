@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { runEnrichmentPipeline } from '@/lib/intelligence-pipeline/run-enrichment-stub'
 
 /**
@@ -46,8 +47,10 @@ export async function GET(req: NextRequest) {
     })
     return NextResponse.json(result)
   } catch (e) {
-    const message = e instanceof Error ? e.message : String(e)
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(e, 'Pipeline run failed') },
+      { status: 500 },
+    )
   }
 }
 

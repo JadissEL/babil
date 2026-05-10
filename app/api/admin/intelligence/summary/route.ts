@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { getAdminUser } from '@/lib/admin-auth'
 import {
   computeEnrichmentRunAlertLevel,
@@ -202,7 +203,7 @@ export async function GET() {
       },
     })
   } catch (e) {
-    const message = e instanceof Error ? e.message : String(e)
+    const message = publicApiErrorMessage(e, 'Intelligence summary unavailable')
     return NextResponse.json(
       { error: 'Intelligence tables unavailable', detail: message },
       { status: 503 },

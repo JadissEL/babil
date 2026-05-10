@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { revalidateTag } from 'next/cache'
 import type { Prisma } from '@prisma/client'
 
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { getAdminUser } from '@/lib/admin-auth'
 import { recordAdminAudit } from '@/lib/admin-audit-log'
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
@@ -161,7 +162,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     if (isDbUnavailable(error)) {
       return NextResponse.json({ error: 'Database temporarily unavailable' }, { status: 503 })
     }
-    const message = error instanceof Error ? error.message : 'Update failed'
+    const message = publicApiErrorMessage(error, 'Update failed')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

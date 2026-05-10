@@ -36,24 +36,46 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 - Les workflows utilisent des **GitHub Encrypted Secrets** (`secrets.*`) pour `DATABASE_URL`, etc. — ne pas logger le corps des réponses ni les URLs complètes avec mot de passe.
 - **`CRON_SECRET`** (si utilisé par des routes protégées) : rotation manuelle côté hébergeur + mise à jour des secrets ; ne pas committer de valeurs.
 
-## E.72 — Rate limit soumission commentaires
+## E.71 — Messages d’erreur API sans PII ni stack (client)
+
+- Module : [`lib/api-public-error.ts`](../lib/api-public-error.ts).
+- **`publicApiErrorMessage(error, fallback)`** — utilisé dans les réponses **5xx** des route handlers (`{ error: … }`) pour éviter emails, URL de connexion DB (`postgresql://…`), jetons `Bearer`, JWT, clés type Stripe, et **lignes de stack** (`at …`).
+- **`scrubSensitiveClientText`** — appliqué aux champs d’erreur **admin agents** (`failedTasks[].error`) et au **`detail`** de l’API intelligence summary en dégradation.
+- Tests : [`lib/api-public-error.test.ts`](../lib/api-public-error.test.ts).
+
+## E.72 — Rate limit soumission commentaires + UI modération
 
 - Module : [`lib/comment-post-rate-limit.ts`](../lib/comment-post-rate-limit.ts) — appliqué à **`POST /api/comments`** après auth.
 - **Clé utilisateur** : limite par minute (défaut **12**, `BABIL_COMMENT_POST_RATE_LIMIT_PER_MINUTE`).
 - **Clé IP** (optionnelle) : `BABIL_COMMENT_POST_RATE_LIMIT_PER_IP_PER_MINUTE` (défaut **40** ; mettre **0** pour désactiver le bucket IP).
 - Réponse **429** + `Retry-After` + `{ error, retryAfterSec, limit }` ; désactivation tests : `BABIL_COMMENT_POST_RATE_LIMIT_DISABLED=1`.
+- **UI** : page [`/moderation`](../app/(dashboard)/moderation/page.tsx) — file `PENDING`, actions Approuver / Refuser / Supprimer, bouton **Actualiser** (recharge liste).
 
 ## E.73 — Chiffrement at rest / sauvegardes
 
-- **À confirmer avec l’hébergeur DB** (ex. Neon, Render) : chiffrement au repos, rétention des backups, région des données. Ce dépôt ne remplace pas une politique d’hébergement signée.
+À valider avec l’hébergeur PostgreSQL et l’équipe conformité (hors code). **Checklist repo :**
 
-## E.74 — Sous-traitants / DPA
+| Sujet | Vérification typique |
+|--------|------------------------|
+| Chiffrement au repos | Console **Neon** / **Render PostgreSQL** : doc « encryption at rest » / disques managés. |
+| Région des données | Région du cluster DB vs exigences RGPD / transferts. |
+| Sauvegardes (PITR / snapshots) | Rétention, restauration testée, accès restreint. |
+| Secrets | `DATABASE_URL` uniquement en variables d’environnement / secrets CI — jamais dans les réponses API (voir **E.71**). |
 
-- Point d’entrée produit typique : **Clerk** (auth), **hébergeur** (app + DB), éventuellement **Vercel/Render**. Les accords (DPA) sont **hors repo** ; tenir une liste à jour côté conformité interne.
+## E.74 — Sous-traitants / DPA (registre produit)
+
+Les contrats (DPA) se signent **hors dépôt**. **Processors typiques** à suivre dans le registre interne :
+
+| Service | Rôle |
+|---------|------|
+| **Clerk** | Authentification / sessions |
+| **Hébergeur app** (ex. Vercel, Render) | Exécution Next.js, logs runtime |
+| **PostgreSQL managé** (ex. Neon sur Render) | Données applicatives |
+| **GitHub** | CI, secrets Actions, code |
 
 ## E.75 — Tests de portée API utilisateur
 
-- Garde : [`lib/user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) — vérifie que favoris, historique et export RGPD ne lisent pas un `userId` fourni par le client (query/body).
+- Garde : [`lib/user-private-api-scope.test.ts`](../lib/user-private-api-scope.test.ts) — vérifie que favoris, historique, export RGPD et **demandes déléguées** (liste + détail) ne lisent pas un `userId` fourni par le client (query/body) et que le détail délégué impose `row.userId === auth`.
 
 ## E.77 — Audit dépendances & Dependabot
 
@@ -62,5 +84,4 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 
 ## Non couverts ici (backlog code / produit)
 
-- **E.71** — masquage PII dans erreurs client.
 - **E.76** — webhooks signés.

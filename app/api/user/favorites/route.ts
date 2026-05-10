@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth, currentUser } from '@clerk/nextjs/server'
+import { publicApiErrorMessage } from '@/lib/api-public-error'
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
 import prisma from '@/lib/prisma'
 import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback'
@@ -25,7 +26,10 @@ export async function GET(req: Request) {
       return NextResponse.json({ favorited: Boolean(existing) })
     } catch (error) {
       if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true })
-      return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+      return NextResponse.json(
+        { error: publicApiErrorMessage(error, 'Favorites lookup failed') },
+        { status: 500 },
+      )
     }
   }
 
@@ -54,7 +58,10 @@ export async function GET(req: Request) {
     )
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json([])
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Favorites list failed') },
+      { status: 500 },
+    )
   }
 }
 
@@ -82,7 +89,10 @@ export async function POST(req: Request) {
     })
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true })
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Favorites sync failed') },
+      { status: 500 },
+    )
   }
 
   let body: { countryId?: unknown }
@@ -114,7 +124,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ favorited: true })
   } catch (error) {
     if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true })
-    return NextResponse.json({ error: String((error as Error)?.message || error) }, { status: 500 })
+    return NextResponse.json(
+      { error: publicApiErrorMessage(error, 'Favorites update failed') },
+      { status: 500 },
+    )
   }
 }
 
