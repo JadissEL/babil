@@ -27,7 +27,7 @@ npm run dev
 | `npm run test:lib` | Tests `lib/**/*.test.ts` (runtime Node `tsx --test`) |
 | `npm run test:vitest` | Vitest — routes API critiques (`lib/api-routes-critical.vitest.ts`) |
 | `npm run lint` | ESLint (Next + `@typescript-eslint/no-explicit-any` en **warn**) |
-| `npm run format:check` | Prettier sur `app/api/**`, `app/error.tsx`, `app/global-error.tsx`, dashboard `error.tsx`, `agents/**`, `lib/types/**`, `lib/api-schemas/**`, `lib/request-id*.ts`, `lib/structured-log.ts`, `lib/*.vitest.ts`, `vitest.config.ts` |
+| `npm run format:check` | Prettier sur `app/api/**`, `app/error.tsx`, `app/global-error.tsx`, dashboard `error.tsx`, `agents/**`, `lib/types/**`, `lib/api-schemas/**`, `lib/api-route-latency.ts`, `lib/request-id*.ts`, `lib/structured-log.ts`, `lib/*.vitest.ts`, `vitest.config.ts` |
 | `npm run format` | Applique Prettier sur les mêmes chemins |
 | `npm run check` | `test:lib` + `test:vitest` + `validate:schengen-keys` + `format:check` + `lint` |
 
@@ -46,6 +46,12 @@ Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, 
 - **En-tête** `x-babil-request-id` : fixé sur la requête et la réponse par [`proxy.ts`](proxy.ts) (Edge, avant Clerk `protect`). Réutilise `x-request-id` / `x-vercel-id` s’ils existent, sinon UUID.
 - **Ligne JSON** par appel `/api/*` sur Vercel (`VERCEL=1`) : `{ level, msg: "api_request", requestId, method, path, ts, service: "babil-edge" }`. Désactiver : `BABIL_API_ACCESS_LOG=0`. Forcer en local : `BABIL_API_ACCESS_LOG=1`.
 - **Handlers Node** : [`lib/structured-log.ts`](lib/structured-log.ts) (`slog`, `slogRequest`, `getRequestId`) pour journaliser des événements métier avec le même `requestId` (ex. erreur liste pays dans [`app/api/countries/route.ts`](app/api/countries/route.ts)).
+
+## Latence routes critiques + p95 (G.92)
+
+- **Événement** `api_route_latency` : une ligne JSON par requête sur **`GET /api/countries`**, **`GET /api/countries/[id]`**, **`POST /api/recommendation`**, **`POST /api/probability`** lorsque `VERCEL=1` (ou `BABIL_API_ROUTE_LATENCY_LOG=1`). Champs utiles : `routeKey`, `method`, `status`, `durationMs`, `requestId` (voir [`lib/api-route-latency.ts`](lib/api-route-latency.ts)).
+- **p95** : agréger `durationMs` par `routeKey` dans l’outil de logs (drain Vercel, Datadog, etc.) ; ce dépôt n’installe pas de time-series séparé.
+- **Désactiver** : `BABIL_API_ROUTE_LATENCY_LOG=0`.
 
 ## Intelligence pipeline
 

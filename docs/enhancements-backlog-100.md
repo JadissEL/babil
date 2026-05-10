@@ -174,7 +174,7 @@ flowchart LR
 89. **CI GitHub Actions** : lint + `test:lib` + build sur chaque PR (en plus du cron intelligence). *(Livré : `.github/workflows/ci.yml`.)*
 90. **Sentry** (ou équivalent) front + API avec contexte utilisateur anonymisé. *(Livré partiel : **`@sentry/nextjs`** + [`next.config.js`](../next.config.js) (`withSentryConfig`, `instrumentationHook`), [`instrumentation.ts`](../instrumentation.ts), [`sentry.client.config.ts`](../sentry.client.config.ts) / [`sentry.server.config.ts`](../sentry.server.config.ts) / [`sentry.edge.config.ts`](../sentry.edge.config.ts), [`components/SentryClerkSync.tsx`](../components/SentryClerkSync.tsx) + [`lib/sentry-anon-user-id.ts`](../lib/sentry-anon-user-id.ts), capture dans les `error.tsx` ; configurer `NEXT_PUBLIC_SENTRY_DSN` en prod — voir README / `.env.example`.)*
 91. **Logs structurés** (JSON) pour Vercel/server avec corrélation `requestId`. *(Livré partiel : en-tête **`x-babil-request-id`** + log JSON **`api_request`** sur `/api/*` dans [`proxy.ts`](../proxy.ts) ; helpers [`lib/structured-log.ts`](../lib/structured-log.ts) + exemple erreur [`GET /api/countries`](../app/api/countries/route.ts) ; variables `BABIL_API_ACCESS_LOG` — voir README / `.env.example`.)*
-92. **Métriques** : latence p95 des routes pays / reco / proba.
+92. **Métriques** : latence p95 des routes pays / reco / proba. *(Livré partiel : événement JSON **`api_route_latency`** avec `durationMs` + `routeKey` sur liste/détail pays et POST reco/proba — [`lib/api-route-latency.ts`](../lib/api-route-latency.ts) ; p95 = agrégation côté plateforme de logs ; `BABIL_API_ROUTE_LATENCY_LOG` — README / `.env.example`.)*
 93. **Budget** : alerte coût si agents OpenAI / appels externes augmentent.
 94. **Environnements** : preview DB séparée ou feature branch Neon.
 95. **Runbooks** incident (pipeline cassé, DB down, fallback static).
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **92** (métriques p95), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **93** (budget / alertes coût agents), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
+import { API_ROUTE_LATENCY_KEYS, withApiRouteLatency } from '@/lib/api-route-latency';
 import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback';
 import {
   paginateCountriesByStableId,
@@ -58,54 +59,56 @@ function respondCountriesList(
 }
 
 export async function GET(req: Request) {
-  const light = parseLightMode(req);
-  const parsed = parseCountriesListPagination(new URL(req.url).searchParams);
-  if (!parsed.ok) {
-    return NextResponse.json({ error: parsed.error }, { status: 400 });
-  }
-  const pagination = parsed.query;
-
-  try {
-    const merged = await buildMergedCountriesList();
-    if (merged.length > 0) return respondCountriesList(req, merged, light, pagination);
-  } catch {
-    /* fallback below */
-  }
-
-  try {
-    const staticList = await loadFallbackCountries();
-    if (staticList.length > 0) return respondCountriesList(req, staticList, light, pagination);
-  } catch {
-    /* last resort: raw Prisma (no static JSON merge; comments included) */
-  }
-
-  try {
-    const countries = await prisma.country.findMany({
-      orderBy: { id: 'asc' },
-      include: {
-        comments: {
-          where: { status: 'APPROVED' },
-          include: { user: { select: { name: true } } },
-          orderBy: { createdAt: 'desc' },
-        },
-      },
-    });
-
-    let mergeFallback: LegacyCountryRecord[] = [];
-    try {
-      mergeFallback = await loadFallbackCountries();
-    } catch {
-      mergeFallback = [];
+  return withApiRouteLatency(req, API_ROUTE_LATENCY_KEYS.countriesList, async () => {
+    const light = parseLightMode(req);
+    const parsed = parseCountriesListPagination(new URL(req.url).searchParams);
+    if (!parsed.ok) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 });
     }
-    const formatted = augmentPrismaCountriesForPublicPayload(
-      countries as unknown as Array<Record<string, unknown>>,
-      mergeFallback,
-    );
+    const pagination = parsed.query;
 
-    return respondCountriesList(req, formatted as LegacyCountryRecord[], light, pagination);
-  } catch (error: unknown) {
-    const message = publicApiErrorMessage(error, 'List failed');
-    slogRequest('error', 'api_countries_list_failed', req, { error: message });
-    return NextResponse.json({ error: message }, { status: 500 });
-  }
+    try {
+      const merged = await buildMergedCountriesList();
+      if (merged.length > 0) return respondCountriesList(req, merged, light, pagination);
+    } catch {
+      /* fallback below */
+    }
+
+    try {
+      const staticList = await loadFallbackCountries();
+      if (staticList.length > 0) return respondCountriesList(req, staticList, light, pagination);
+    } catch {
+      /* last resort: raw Prisma (no static JSON merge; comments included) */
+    }
+
+    try {
+      const countries = await prisma.country.findMany({
+        orderBy: { id: 'asc' },
+        include: {
+          comments: {
+            where: { status: 'APPROVED' },
+            include: { user: { select: { name: true } } },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      });
+
+      let mergeFallback: LegacyCountryRecord[] = [];
+      try {
+        mergeFallback = await loadFallbackCountries();
+      } catch {
+        mergeFallback = [];
+      }
+      const formatted = augmentPrismaCountriesForPublicPayload(
+        countries as unknown as Array<Record<string, unknown>>,
+        mergeFallback,
+      );
+
+      return respondCountriesList(req, formatted as LegacyCountryRecord[], light, pagination);
+    } catch (error: unknown) {
+      const message = publicApiErrorMessage(error, 'List failed');
+      slogRequest('error', 'api_countries_list_failed', req, { error: message });
+      return NextResponse.json({ error: message }, { status: 500 });
+    }
+  });
 }

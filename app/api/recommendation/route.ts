@@ -1,6 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
+import { API_ROUTE_LATENCY_KEYS, withApiRouteLatency } from '@/lib/api-route-latency';
 import {
   recoProbaPostBodySchema,
   type RecoProbaPostBody,
@@ -316,116 +317,118 @@ function computeRecommendation(
 }
 
 export async function POST(req: Request) {
-  const denied = mutationOriginDeniedResponse(req);
-  if (denied) return denied;
+  return withApiRouteLatency(req, API_ROUTE_LATENCY_KEYS.recommendationPost, async () => {
+    const denied = mutationOriginDeniedResponse(req);
+    if (denied) return denied;
 
-  const { userId } = await auth();
+    const { userId } = await auth();
 
-  const lenCheck = checkEnginePostContentLength(req);
-  if (!lenCheck.ok) {
-    return NextResponse.json(
-      { error: `Request body too large (max ${lenCheck.maxBytes} bytes)` },
-      { status: 413, headers: engineVersionHeaders('recommendation') },
-    );
-  }
-
-  const rl = checkEnginePostRateLimit(userId, req);
-  if (!rl.ok) {
-    return NextResponse.json(
-      { error: 'Too many requests', retryAfterSec: rl.retryAfterSec, limit: rl.limit },
-      {
-        status: 429,
-        headers: {
-          ...engineVersionHeaders('recommendation'),
-          'Retry-After': String(rl.retryAfterSec),
-        },
-      },
-    );
-  }
-
-  let body: RecoProbaPostBody;
-  try {
-    const raw = await req.json();
-    const parsed = recoProbaPostBodySchema.safeParse(raw);
-    if (!parsed.success) {
+    const lenCheck = checkEnginePostContentLength(req);
+    if (!lenCheck.ok) {
       return NextResponse.json(
-        { error: 'Invalid request body', issues: parsed.error.flatten() },
-        { status: 400, headers: engineVersionHeaders('recommendation') },
+        { error: `Request body too large (max ${lenCheck.maxBytes} bytes)` },
+        { status: 413, headers: engineVersionHeaders('recommendation') },
       );
     }
-    body = parsed.data;
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
-  }
 
-  const playground = body.playground === true;
-  let profile: Record<string, unknown>;
-  if (userId) {
-    profile =
-      body.profile && typeof body.profile === 'object' && body.profile !== null
-        ? (body.profile as Record<string, unknown>)
-        : {};
-  } else if (
-    playground &&
-    body.profile &&
-    typeof body.profile === 'object' &&
-    body.profile !== null
-  ) {
-    profile = sanitizePublicSyntheticProfile(body.profile as Record<string, unknown>);
-  } else {
-    profile = { ...PUBLIC_READ_ONLY_DEMO_PROFILE };
-  }
-
-  try {
-    const normalizedProfile = normalizeProfile(profile);
-    let countries: EngineCountryListRow[] = [];
-    try {
-      countries = await buildMergedCountriesList();
-    } catch {
-      countries = [];
+    const rl = checkEnginePostRateLimit(userId, req);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: 'Too many requests', retryAfterSec: rl.retryAfterSec, limit: rl.limit },
+        {
+          status: 429,
+          headers: {
+            ...engineVersionHeaders('recommendation'),
+            'Retry-After': String(rl.retryAfterSec),
+          },
+        },
+      );
     }
-    if (!countries.length) {
+
+    let body: RecoProbaPostBody;
+    try {
+      const raw = await req.json();
+      const parsed = recoProbaPostBodySchema.safeParse(raw);
+      if (!parsed.success) {
+        return NextResponse.json(
+          { error: 'Invalid request body', issues: parsed.error.flatten() },
+          { status: 400, headers: engineVersionHeaders('recommendation') },
+        );
+      }
+      body = parsed.data;
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
+
+    const playground = body.playground === true;
+    let profile: Record<string, unknown>;
+    if (userId) {
+      profile =
+        body.profile && typeof body.profile === 'object' && body.profile !== null
+          ? (body.profile as Record<string, unknown>)
+          : {};
+    } else if (
+      playground &&
+      body.profile &&
+      typeof body.profile === 'object' &&
+      body.profile !== null
+    ) {
+      profile = sanitizePublicSyntheticProfile(body.profile as Record<string, unknown>);
+    } else {
+      profile = { ...PUBLIC_READ_ONLY_DEMO_PROFILE };
+    }
+
+    try {
+      const normalizedProfile = normalizeProfile(profile);
+      let countries: EngineCountryListRow[] = [];
       try {
-        countries = await loadFallbackCountries();
+        countries = await buildMergedCountriesList();
       } catch {
         countries = [];
       }
-    }
-    const recommendations = countries
-      .map((c) => computeRecommendation(c, normalizedProfile))
-      .sort((a, b) => b.score - a.score);
+      if (!countries.length) {
+        try {
+          countries = await loadFallbackCountries();
+        } catch {
+          countries = [];
+        }
+      }
+      const recommendations = countries
+        .map((c) => computeRecommendation(c, normalizedProfile))
+        .sort((a, b) => b.score - a.score);
 
-    const profileRecord =
-      profile && typeof profile === 'object' && profile !== null
-        ? (profile as Record<string, unknown>)
-        : {};
-    const narrativePrimary: string[] = [];
-    const narrativeSecondary: string[] = [];
-    appendProfileContextNarratives(profileRecord, {
-      primary: narrativePrimary,
-      secondary: narrativeSecondary,
-    });
-    const narrativePrefix = [...narrativePrimary, ...narrativeSecondary];
-    let top = recommendations[0];
-    if (narrativePrefix.length > 0 && top) {
-      top = {
-        ...top,
-        explanation: [...narrativePrefix, ...(top.explanation ?? [])].slice(0, 12),
-      };
-    }
-    const rest = recommendations.slice(1);
-    const merged = top ? [top, ...rest] : recommendations;
+      const profileRecord =
+        profile && typeof profile === 'object' && profile !== null
+          ? (profile as Record<string, unknown>)
+          : {};
+      const narrativePrimary: string[] = [];
+      const narrativeSecondary: string[] = [];
+      appendProfileContextNarratives(profileRecord, {
+        primary: narrativePrimary,
+        secondary: narrativeSecondary,
+      });
+      const narrativePrefix = [...narrativePrimary, ...narrativeSecondary];
+      let top = recommendations[0];
+      if (narrativePrefix.length > 0 && top) {
+        top = {
+          ...top,
+          explanation: [...narrativePrefix, ...(top.explanation ?? [])].slice(0, 12),
+        };
+      }
+      const rest = recommendations.slice(1);
+      const merged = top ? [top, ...rest] : recommendations;
 
-    return NextResponse.json(merged.slice(0, 10), {
-      headers: engineVersionHeaders('recommendation'),
-    });
-  } catch (error: unknown) {
-    return NextResponse.json(
-      {
-        error: publicApiErrorMessage(error, 'Recommendation failed'),
-        engineVersion: BABIL_ENGINE_VERSION,
-      },
-      { status: 500, headers: engineVersionHeaders('recommendation') },
-    );
-  }
+      return NextResponse.json(merged.slice(0, 10), {
+        headers: engineVersionHeaders('recommendation'),
+      });
+    } catch (error: unknown) {
+      return NextResponse.json(
+        {
+          error: publicApiErrorMessage(error, 'Recommendation failed'),
+          engineVersion: BABIL_ENGINE_VERSION,
+        },
+        { status: 500, headers: engineVersionHeaders('recommendation') },
+      );
+    }
+  });
 }
