@@ -33,6 +33,7 @@ import { loadChildKnowledge } from '../lib/agent-child-knowledge';
 import { maybeBuildCanaryChildFullData, runChildShadowCompare } from '../lib/agent-child-runner';
 import { runManifestUrlFetchBatch } from '../lib/agent-manifest-source-fetch';
 import { loadAgentStateFromDisk, saveAgentStateToDisk } from './runner-persistence';
+import { resolveScheduleSeeds } from './runner-schedule-seeds';
 import type { AgentState, CountryTask, TaskStatus } from './runner-types';
 import {
   AGENT_CHILD_MODE,
@@ -67,16 +68,6 @@ function id() {
   return `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function inferRegion(raw: string): string {
-  const v = String(raw || 'Other');
-  if (v === 'Europe') return 'Europe';
-  if (v === 'Asia') return 'Asia';
-  if (v === 'Africa') return 'Africa';
-  if (v === 'Americas') return 'Americas';
-  if (v === 'Oceania') return 'Oceania';
-  return 'Other';
-}
-
 function normalizeDomain(domain: unknown): Domain {
   if (domain === 'economy') return 'economy';
   if (domain === 'education') return 'education';
@@ -92,24 +83,6 @@ async function loadState() {
 
 async function saveState() {
   await saveAgentStateToDisk(memoryState);
-}
-
-async function fetchCountriesSeed() {
-  const res = await fetch('https://restcountries.com/v3.1/all?fields=name,region');
-  if (!res.ok) throw new Error(`restcountries ${res.status}`);
-  const data = (await res.json()) as Array<{ name?: { common?: string }; region?: string }>;
-  return data
-    .map((c) => ({
-      country: String(c.name?.common || '').trim(),
-      region: inferRegion(String(c.region || 'Other')),
-    }))
-    .filter((c) => c.country.length > 0);
-}
-
-async function resolveScheduleSeeds(): Promise<Array<{ country: string; region: string }>> {
-  const fileOrder = await tryLoadWorldCountryRunOrderFile();
-  if (fileOrder?.length) return fileOrder;
-  return fetchCountriesSeed();
 }
 
 function getTaskByCountry(country: string) {

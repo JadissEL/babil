@@ -1,8 +1,7 @@
 import { Suspense } from 'react'
-
-import PageContainer from '@/components/layout/PageContainer'
 import { CompareExperience } from '@/components/compare/CompareExperience'
 import { CompareExperienceSkeleton } from '@/components/compare/CompareExperienceSkeleton'
+import PageContainer from '@/components/layout/PageContainer'
 
 export const metadata = {
   title: 'Comparer les pays | VisaFlow',

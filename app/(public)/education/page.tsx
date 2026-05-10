@@ -1,7 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { 
   GraduationCap, 
   Languages, 
@@ -16,6 +14,8 @@ import {
   Microscope,
   ArrowRight,
 } from 'lucide-react'
+import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import GoogleAd from '@/components/GoogleAd'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'

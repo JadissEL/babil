@@ -13,13 +13,12 @@
 
 import { unstable_cache } from 'next/cache'
 import { cache } from 'react'
-
-import prisma from '@/lib/prisma'
 import type { LegacyCountryRecord } from '@/lib/countries-fallback'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
 import { mergeDisplayedFullData } from '@/lib/merge-displayed-full-data'
+import prisma from '@/lib/prisma'
 import { dedupeSchengenMembersByCanonicalName, warnIfSchengenCardinalityExceeded } from '@/lib/schengen-duplicate-merge'
 import { isSchengenMember } from '@/lib/schengen-members'
 

@@ -1,6 +1,6 @@
-import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
 import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
 import { intelligencePipelineFetch } from '@/lib/intelligence-pipeline/http-fetch'
+import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
 import { iso2FromIntelligenceOverride } from './country-iso-overrides'
 import { normalizeCountryMatchKey } from './country-match-key'
 

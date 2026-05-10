@@ -1,29 +1,29 @@
-import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
-import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
-import prisma from '@/lib/prisma';
-import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize';
-import { hasCountryPhdStoredData } from '@/lib/country-phd-studies';
+import {
+  recoProbaPostBodySchema,
+  type RecoProbaPostBody,
+} from '@/lib/api-schemas/reco-proba-post-body';
 import { loadFallbackCountries } from '@/lib/countries-fallback';
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge';
+import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize';
+import { hasCountryPhdStoredData } from '@/lib/country-phd-studies';
 import { checkEnginePostContentLength } from '@/lib/engine-post-body-limits';
 import { checkEnginePostRateLimit } from '@/lib/engine-post-rate-limit';
-import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot';
+import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
+import prisma from '@/lib/prisma';
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative';
 import {
   buildCountrySheetSignals,
   inferProbabilitySheetDefaultsFromFull,
 } from '@/lib/probability-result-display';
-import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version';
-import { computeProbabilityTopDrivers } from '@/lib/score-driver-explain';
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile';
-import {
-  recoProbaPostBodySchema,
-  type RecoProbaPostBody,
-} from '@/lib/api-schemas/reco-proba-post-body';
-import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row';
+import { computeProbabilityTopDrivers } from '@/lib/score-driver-explain';
+import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot';
 import type { ProbabilityApiRow } from '@/lib/types/api-recommendation-probability';
+import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row';
 import { coerceStoredProfession } from '@/lib/user-profile-enums';
 
 export async function POST(req: Request) {

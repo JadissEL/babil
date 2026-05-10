@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { test, afterEach } from 'node:test'
-
 import { intelligencePipelineFetch, intelligencePipelineHttpTimeoutMs } from '@/lib/intelligence-pipeline/http-fetch'
 
 afterEach(() => {

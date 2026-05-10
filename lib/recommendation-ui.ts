@@ -1,10 +1,9 @@
 import type { RecommendationResultRow } from '@/components/engine/RecommendationPanel'
-
 import type { ProbabilityCountrySignals } from '@/lib/probability-result-display'
 import { formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
+import type { ScoreDriver } from '@/lib/score-driver-explain'
 import { englishScoreLevelToFr } from '@/lib/score-level-fr'
 
-import type { ScoreDriver } from '@/lib/score-driver-explain'
 
 /** Shape returned by `POST /api/recommendation` */
 export type ApiRecommendation = {

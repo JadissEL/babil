@@ -1,8 +1,5 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
-import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
 import { 
   Globe, 
@@ -20,34 +17,36 @@ import {
   Printer,
   GraduationCap
 } from 'lucide-react'
-
-import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsIntelSection'
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
 import { CountryDbInsightsCollapsible } from '@/components/country/CountryDbInsightsCollapsible'
 import { IntelligenceProvenanceCollapsible } from '@/components/country/IntelligenceProvenanceCollapsible'
-import GoogleAd from '@/components/GoogleAd'
-import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
-import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
-import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryTeaser'
 import { OfficialSourcesCard } from '@/components/country/OfficialSourcesCard'
+import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryTeaser'
+import { TravelerQuotesSection } from '@/components/country/TravelerQuotesSection'
+import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
+import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsIntelSection'
 import { BlockFeedback } from '@/components/feedback/BlockFeedback'
+import GoogleAd from '@/components/GoogleAd'
+import { filterPublicCountryInsights } from '@/lib/country-db-insights'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
-import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
-import { filterPublicCountryInsights } from '@/lib/country-db-insights'
-import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
-import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
-import { isSchengenMember } from '@/lib/schengen-members'
-import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
 import {
   formatObservationConfidencePrintFr,
   formatObservationConfidenceSidebarFr,
   parseObservationConfidenceAggregatePayload,
 } from '@/lib/country-observation-confidence-aggregate'
+import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
+import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
+import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
+import { parseDataQualityAnomaliesPayload } from '@/lib/intelligence-data-anomalies'
+import { officialSourcesForCountry } from '@/lib/official-sources'
+import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
+import { isSchengenMember } from '@/lib/schengen-members'
 import { SCORE_SCALE_LEGEND_FR } from '@/lib/score-scale-lexicon'
 import { appToast } from '@/lib/toast-store'
-import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
-import { officialSourcesForCountry } from '@/lib/official-sources'
-import { parseDataQualityAnomaliesPayload } from '@/lib/intelligence-data-anomalies'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 const toNum = (v: any, fallback = 0) => {

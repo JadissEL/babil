@@ -1,8 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
-import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 import { COMPARE_OBJECTIVES, objectiveWeightedScore } from '@/lib/compare-objectives'
+import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 
 function fakeCountry(partial: Partial<EnrichedCountryApi>): EnrichedCountryApi {
   return {

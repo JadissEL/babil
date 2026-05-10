@@ -5,7 +5,6 @@
 
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
-
 import { countryNameMergeKey, getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
 import { HOMEPAGE_SHOWCASE_NAMES } from '@/lib/home-showcase-countries'
 

@@ -1,12 +1,11 @@
 'use client'
 
-import React, { Suspense, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'next/navigation'
 import { Car, MapPin, Search, ShieldAlert, X } from 'lucide-react'
 import Link from 'next/link'
-
-import GoogleAd from '@/components/GoogleAd'
+import { useSearchParams } from 'next/navigation'
+import React, { Suspense, useEffect, useMemo, useState } from 'react'
 import { DrivingRightsIntelSection, VisualBadge } from '@/components/driving/DrivingRightsIntelSection'
+import GoogleAd from '@/components/GoogleAd'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import type { ResidencyDrivingCategory } from '@/lib/driving-rights-intel'
 import {

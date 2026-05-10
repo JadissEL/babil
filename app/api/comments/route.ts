@@ -1,11 +1,11 @@
+import { auth } from '@clerk/nextjs/server';
 import { CommentStatus, Role } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma';
-import { checkCommentPostRateLimit } from '@/lib/comment-post-rate-limit';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
-import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
+import { checkCommentPostRateLimit } from '@/lib/comment-post-rate-limit';
 import { isDbUnavailable } from '@/lib/db-resilience';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
+import prisma from '@/lib/prisma';
 
 export async function GET(req: NextRequest) {
   const { userId } = await auth();

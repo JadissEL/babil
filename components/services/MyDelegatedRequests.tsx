@@ -1,9 +1,8 @@
 'use client'
 
-import { Fragment, useCallback, useEffect, useState } from 'react'
-import Link from 'next/link'
 import { ChevronDown, ChevronRight, FileStack, Loader2, RefreshCw } from 'lucide-react'
-
+import Link from 'next/link'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 import { formatPriceMad } from '@/lib/delegated-application-catalog'
 
 type Item = {

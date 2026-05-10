@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { ChevronRight, GraduationCap } from 'lucide-react'
+import Link from 'next/link'
 import type { PhdStudiesModel } from '@/lib/country-phd-studies'
 
 function statusPills(meta: PhdStudiesModel['meta']) {

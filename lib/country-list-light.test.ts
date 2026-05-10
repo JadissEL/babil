@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
 import { toLightCountryListRecord } from './country-list-light'
 
 describe('country-list-light', () => {

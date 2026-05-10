@@ -1,6 +1,6 @@
+import prisma from '@/lib/prisma'
 import type { Prisma } from '@prisma/client'
 
-import prisma from '@/lib/prisma'
 
 export type RecordAdminAuditInput = {
   action: string

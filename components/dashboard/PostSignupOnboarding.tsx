@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
 import { useUser } from '@clerk/nextjs'
 import { CheckCircle2, Circle, ListChecks, X } from 'lucide-react'
-
-import { ONBOARDING_STORAGE_UPDATED_EVENT, readOnboarding, writeOnboarding } from '@/lib/onboarding-storage'
+import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
+import { ONBOARDING_STORAGE_UPDATED_EVENT, readOnboarding, writeOnboarding } from '@/lib/onboarding-storage'
 
 function profileLooksComplete(p: Record<string, unknown> | null): boolean {
   if (!p || (p as { error?: unknown }).error) return false

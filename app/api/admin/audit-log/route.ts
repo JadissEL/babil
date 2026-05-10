@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-
-import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { getAdminUser } from '@/lib/admin-auth';
-import prisma from '@/lib/prisma';
+import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { isDbUnavailable } from '@/lib/db-resilience';
+import prisma from '@/lib/prisma';
 
 /**
  * E.67 — read recent admin audit entries (newest first). Admin-only.

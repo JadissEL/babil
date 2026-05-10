@@ -1,12 +1,11 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
-import Link from 'next/link'
 import { Menu } from 'lucide-react'
-
-import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { ReactNode, useEffect, useState } from 'react'
 import { getDashboardNavTitle } from '@/components/layout/dashboard-nav-config'
+import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
 
 export default function DashboardLayoutClient({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '/'

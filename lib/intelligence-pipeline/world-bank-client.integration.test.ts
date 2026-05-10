@@ -3,7 +3,6 @@
  */
 import assert from 'node:assert/strict'
 import { afterEach, describe, it } from 'node:test'
-
 import { fetchWorldBankLatestDataForCountriesBatch } from './world-bank-client'
 
 describe('world-bank-client integration (mock HTTP)', () => {

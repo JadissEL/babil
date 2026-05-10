@@ -3,12 +3,12 @@
  */
 
 import prisma from '@/lib/prisma'
-import { materializeEconomyObservationsForAllCountries } from './materialize-economy-observations'
 import { DEFAULT_INTELLIGENCE_SOURCES } from './default-sources'
-import type { WorldBankCollectorResult } from './world-bank-collector'
+import { materializeEconomyObservationsForAllCountries } from './materialize-economy-observations'
+import { runStubMultilateralCollectors } from './stub-multilateral-collectors'
 import { runWorldBankCollector } from './world-bank-collector'
 import type { StubCollectorResult } from './stub-multilateral-collectors'
-import { runStubMultilateralCollectors } from './stub-multilateral-collectors'
+import type { WorldBankCollectorResult } from './world-bank-collector'
 
 export type PipelineResult = {
   runId: string

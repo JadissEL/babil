@@ -2,7 +2,6 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, it } from 'node:test'
-
 import { COUNTRY_DETAIL_PAGE_CONTRACT_MARKERS } from './country-intelligence-contract-display-snapshot'
 
 describe('country-intelligence-contract-display-snapshot (B.29)', () => {

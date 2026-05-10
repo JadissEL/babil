@@ -1,16 +1,13 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, ChevronRight, Scale, Share2 } from 'lucide-react'
-
-import { CompareStickyBar } from '@/components/compare/CompareStickyBar'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { CompareExperienceSkeleton } from '@/components/compare/CompareExperienceSkeleton'
+import { CompareStickyBar } from '@/components/compare/CompareStickyBar'
 import { CompareTable } from '@/components/compare/CompareTable'
 import { CountryComparePicker, type CountryOption } from '@/components/compare/CountryComparePicker'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { enrichedToCompareRow } from '@/lib/compare-rows'
 import {
   COMPARE_CATEGORIES,
   COMPARE_OBJECTIVES,
@@ -21,16 +18,18 @@ import {
   pickSuggestedCountryIds,
   recommendationForWinner,
 } from '@/lib/compare-objectives'
+import { enrichedToCompareRow } from '@/lib/compare-rows'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
-import { appToast } from '@/lib/toast-store'
 import {
   matchesExplorerRegionFilter,
   matchesExplorerSchengenOnlyToggle,
   parseExplorerRegionFilter,
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
+import { appToast } from '@/lib/toast-store'
+import { cn } from '@/lib/utils'
 
 const MAX = 4
 

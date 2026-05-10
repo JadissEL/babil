@@ -10,7 +10,6 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts'
-
 import { RECO_RADAR_AXIS_DESCRIPTIONS } from '@/lib/recommendation-radar-axes'
 import { cn } from '@/lib/utils'
 

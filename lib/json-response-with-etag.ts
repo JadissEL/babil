@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-
 import { ifNoneMatchReturns304, weakEtagFromUtf8 } from '@/lib/http-weak-etag'
 
 export function jsonWithCacheAndWeakEtag(

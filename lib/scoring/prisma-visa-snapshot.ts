@@ -4,10 +4,10 @@
 
 import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize'
 import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
+import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
 import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
-import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 
 export type PrismaVisaScalarInput = {
   tourist_visa_score?: unknown

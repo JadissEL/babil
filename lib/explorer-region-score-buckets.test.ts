@@ -1,5 +1,5 @@
-import test from 'node:test'
 import assert from 'node:assert/strict'
+import test from 'node:test'
 import { buildExplorerRegionScoreBuckets } from './explorer-region-score-buckets'
 
 test('buildExplorerRegionScoreBuckets averages scores per region', () => {

@@ -2,18 +2,7 @@
  * Multi-pass fetch + merge used by the supervisor and (with smaller maxPasses) by the child shadow runner.
  */
 
-import { CONTRACT_VERSION } from './country-intelligence-contract'
-import { isSchengenMember } from './schengen-members'
-import {
-  buildCompletenessReport,
-  buildCoverageManifest,
-  type CompletenessReport,
-} from './country-completeness'
-import { buildPlannerHintSuffix } from './agent-orchestration'
-import { buildAgentResearchSourcesPayload } from './agent-research-sources'
-import type { Domain } from './agent-adaptive-query'
 import { resolveAdaptiveQuery, resolveAdaptiveQueryFromSnapshot } from './agent-adaptive-query'
-import type { CountrySnapshot } from './agent-country-enrichment-merge'
 import {
   fetchWikipediaSummary,
   fetchWorldBankGdp,
@@ -21,7 +10,18 @@ import {
   loadVerifiedTravelerQuotes,
   mergeCountryData,
 } from './agent-country-enrichment-merge'
+import { buildPlannerHintSuffix } from './agent-orchestration'
+import { buildAgentResearchSourcesPayload } from './agent-research-sources'
+import {
+  buildCompletenessReport,
+  buildCoverageManifest,
+  type CompletenessReport,
+} from './country-completeness'
+import { CONTRACT_VERSION } from './country-intelligence-contract'
 import { syncDrivingRightsIntelIntoFullData } from './driving-rights-intel'
+import { isSchengenMember } from './schengen-members'
+import type { Domain } from './agent-adaptive-query'
+import type { CountrySnapshot } from './agent-country-enrichment-merge'
 
 export type EnrichmentLoopTask = {
   id: string

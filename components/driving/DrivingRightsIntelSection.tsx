@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
 import {
   AlertTriangle,
   BookOpen,
@@ -15,7 +14,7 @@ import {
   Timer,
 } from 'lucide-react'
 import Link from 'next/link'
-
+import React, { useMemo, useState } from 'react'
 import type { DrivingRightsIntelV1 } from '@/lib/driving-rights-intel'
 import {
   conversionRequirementLabelFr,

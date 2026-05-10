@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
 import { SCORE_SCALE_LEGEND_FR, SCALE_ENGINE_MAX, SCALE_VISA_PRISMA_MAX } from './score-scale-lexicon'
 
 describe('score-scale-lexicon', () => {

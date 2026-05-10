@@ -1,6 +1,5 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
 import { 
   CheckCircle, 
   XCircle, 
@@ -11,7 +10,7 @@ import {
   ShieldAlert,
   RefreshCw,
 } from 'lucide-react'
-
+import React, { useState, useEffect } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 
 export default function ModerationPage() {

@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
-
-import prisma from '@/lib/prisma';
 import { loadFallbackCountries } from '@/lib/countries-fallback';
 import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge';
-import { jsonWithCacheAndWeakEtag } from '@/lib/json-response-with-etag';
-import { COUNTRY_DETAIL_CACHE_CONTROL } from '@/lib/public-api-cache';
 import { getObservationConfidenceAggregateForCountry } from '@/lib/country-observation-confidence-db';
 import { analyzeEconomyIndicatorsAnomalies } from '@/lib/intelligence-data-anomalies';
 import { fetchObservationJumpAnomaliesForCountry } from '@/lib/intelligence-data-anomalies-db';
 import { getIntelligenceProvenanceForCountry } from '@/lib/intelligence-pipeline/provenance';
+import { jsonWithCacheAndWeakEtag } from '@/lib/json-response-with-etag';
+import prisma from '@/lib/prisma';
+import { COUNTRY_DETAIL_CACHE_CONTROL } from '@/lib/public-api-cache';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const id = Number.parseInt(params.id, 10);

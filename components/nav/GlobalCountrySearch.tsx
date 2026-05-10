@@ -1,10 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Search } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Search } from 'lucide-react'
-
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
 import { cn } from '@/lib/utils'
 

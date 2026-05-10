@@ -1,10 +1,9 @@
 'use client'
 
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { ChevronRight, History } from 'lucide-react'
-
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import { recentViewedCountryIdsFromHistory } from '@/lib/user-recent-country-views'
 
 type CountryRow = { id: number; name: string }

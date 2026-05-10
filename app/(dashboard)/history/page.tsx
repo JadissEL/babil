@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
 import { History } from 'lucide-react'
-
-import { Card, CardContent } from '@/components/ui/card'
+import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import {
   Select,

@@ -1,5 +1,5 @@
-import Link from 'next/link'
 import { Globe } from 'lucide-react'
+import Link from 'next/link'
 
 const links = [
   { href: '/explorer', label: 'Explorer' },

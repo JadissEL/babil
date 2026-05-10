@@ -3,15 +3,15 @@
  * Normalizes `full_data` (driving_rights v1, friction, street_food top-level) for structure/quality.
  */
 
+import { mergeAgentProvenanceIntoFullData } from '@/lib/agent-provenance-full-data'
 import { buildContractCoverageSnapshotFromReport, DATA_BACKFILL_META_KEY } from '@/lib/contract-coverage-snapshot'
 import { buildCompletenessReportForCountryRow } from '@/lib/country-completeness-row'
-import { mergeAgentProvenanceIntoFullData } from '@/lib/agent-provenance-full-data'
-import { enrichCountryRecordWithDrivingRights } from '@/lib/driving-rights-intel'
 import { attachCanonicalSchengenFlag, materializePublicFullData } from '@/lib/country-full-data-materialize'
 import {
   ensureStreetFoodBusinessAccessOnFullData,
   deriveStreetFoodBusinessAccessFromFullData,
 } from '@/lib/country-street-food-access'
+import { enrichCountryRecordWithDrivingRights } from '@/lib/driving-rights-intel'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot'
 

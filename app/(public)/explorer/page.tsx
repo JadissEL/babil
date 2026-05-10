@@ -1,13 +1,13 @@
 'use client'
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { Search, Globe, SlidersHorizontal, Target, Scale } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Search, Globe, SlidersHorizontal, Target, Scale } from 'lucide-react'
-import GoogleAd from '@/components/GoogleAd'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import CountryGrid from '@/components/country/CountryGrid'
 import { ExplorerRegionScoreStrip } from '@/components/explorer/ExplorerRegionScoreStrip'
 import { FilterBar } from '@/components/filters/FilterBar'
+import GoogleAd from '@/components/GoogleAd'
 import {
   frictionTierFromCountry,
   isoForCountryName,
@@ -24,6 +24,7 @@ import {
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
 import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-objective'
+import { buildExplorerRegionScoreBuckets } from '@/lib/explorer-region-score-buckets'
 import {
   buildExplorerQueryStringFromSaved,
   clearExplorerSavedFilters,
@@ -31,7 +32,6 @@ import {
   readExplorerSavedFilters,
   writeExplorerSavedFilters,
 } from '@/lib/explorer-saved-filters'
-import { buildExplorerRegionScoreBuckets } from '@/lib/explorer-region-score-buckets'
 import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
 import { appToast } from '@/lib/toast-store'
 

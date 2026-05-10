@@ -1,5 +1,4 @@
 import { ExternalLink } from 'lucide-react'
-
 import type { OfficialSourceLink } from '@/lib/official-sources'
 
 type Props = {

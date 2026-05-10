@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { runEnrichmentPipeline } from '@/lib/intelligence-pipeline/run-enrichment-stub';
 

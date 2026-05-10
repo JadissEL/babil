@@ -7,10 +7,10 @@ import { materializePublicFullDataForApi } from '@/lib/country-full-data-materia
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
+import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
 import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
-import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 

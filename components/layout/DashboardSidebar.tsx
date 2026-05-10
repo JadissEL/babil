@@ -1,10 +1,8 @@
 'use client'
 
+import { ChevronRight, Settings, X } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronRight, Settings, X } from 'lucide-react'
-
-import { cn } from '@/lib/utils'
 import {
   dashboardNav,
   explorerNav,
@@ -12,6 +10,7 @@ import {
   normalizeDashboardPath,
   type DashboardNavItem,
 } from '@/components/layout/dashboard-nav-config'
+import { cn } from '@/lib/utils'
 
 function NavLinkRow({
   item,

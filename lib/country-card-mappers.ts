@@ -1,5 +1,5 @@
-import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
 import type { CountryCardProps, MobilityTier } from '@/components/country/CountryCard'
+import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
 
 /** Typical ISO mappings for French-facing country names — extend as needed */
 export const countryNameToIso: Record<string, string> = {

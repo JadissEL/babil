@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react'
-import Link from 'next/link'
 import { AlertTriangle, GraduationCap, XCircle } from 'lucide-react'
+import Link from 'next/link'
 import type { PhdStudiesModel } from '@/lib/country-phd-studies'
+import type { ReactNode } from 'react'
 
 /** Outer shell; inner scroll avoids long JSON/text blowing card width on small screens. */
 const PHD_OUTER =

@@ -3,8 +3,8 @@
  * Used by compare objectives (config-driven weights) — keep extraction logic here only.
  */
 
-import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 
 export type CompareSignalId =
   | 'tourism'

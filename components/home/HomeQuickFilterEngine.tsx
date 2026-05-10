@@ -1,10 +1,10 @@
 'use client'
 
+import { ArrowRight, Scale } from 'lucide-react'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { ArrowRight, Scale } from 'lucide-react'
-import GoalFilter from '@/components/filters/GoalFilter'
 import BudgetFilter from '@/components/filters/BudgetFilter'
+import GoalFilter from '@/components/filters/GoalFilter'
 import RegionFilter from '@/components/filters/RegionFilter'
 import RiskFilter from '@/components/filters/RiskFilter'
 import { compareHrefForHomeQuickFilters } from '@/lib/explorer-goal-to-compare-objective'

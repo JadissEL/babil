@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-
 import { ifNoneMatchReturns304, weakEtagFromUtf8 } from '@/lib/http-weak-etag'
 
 test('weakEtagFromUtf8 is deterministic', () => {

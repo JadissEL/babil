@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
 import { computeStudyMobility100, educationAccessTo01to100 } from '@/lib/scoring/study-mobility'
 
 describe('educationAccessTo01to100', () => {

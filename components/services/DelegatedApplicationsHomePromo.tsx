@@ -1,6 +1,5 @@
-import Link from 'next/link'
 import { FileStack, ShieldCheck, ArrowRight } from 'lucide-react'
-
+import Link from 'next/link'
 import {
   APPLICATION_GUARANTEE_MICRO,
   APPLICATION_GUARANTEE_TITLE,

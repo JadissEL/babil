@@ -1,8 +1,8 @@
-import prisma from '@/lib/prisma'
 import {
   mapPrismaObservationConfidenceAggregate,
   type ObservationConfidenceAggregatePayload,
 } from '@/lib/country-observation-confidence-aggregate'
+import prisma from '@/lib/prisma'
 
 export async function getObservationConfidenceAggregateForCountry(
   countryId: number,

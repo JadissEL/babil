@@ -1,9 +1,8 @@
-import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-
+import { NextResponse } from 'next/server';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
-import prisma from '@/lib/prisma';
 import { isDbUnavailable } from '@/lib/db-resilience';
+import prisma from '@/lib/prisma';
 import { buildGdprExportBundle } from '@/lib/user-gdpr-export';
 
 const HISTORY_CAP = 500;

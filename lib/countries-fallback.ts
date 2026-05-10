@@ -1,6 +1,5 @@
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
-
 import { isSchengenMember } from '@/lib/schengen-members'
 import { businessMobilityToScalar01to10 } from '@/lib/scoring/business-mobility'
 import { studyMobilityToScalar01to10 } from '@/lib/scoring/study-mobility'

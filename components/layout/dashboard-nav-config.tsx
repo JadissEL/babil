@@ -1,5 +1,3 @@
-import type { LucideProps } from 'lucide-react'
-import type { ComponentType } from 'react'
 import {
   LayoutDashboard,
   Brain,
@@ -20,6 +18,8 @@ import {
   SwatchBook,
   History,
 } from 'lucide-react'
+import type { LucideProps } from 'lucide-react'
+import type { ComponentType } from 'react'
 
 export type DashboardNavItem = {
   label: string

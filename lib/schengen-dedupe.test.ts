@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
 import type { LegacyCountryRecord } from '@/lib/countries-fallback'
 import { dedupeSchengenMembersByCanonicalName } from '@/lib/schengen-duplicate-merge'
 import { listSchengenNormalizedLookupKeys, schengenCanonicalEnglishName } from '@/lib/schengen-members'

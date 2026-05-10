@@ -1,5 +1,4 @@
 import * as React from 'react'
-
 import { cn } from '@/lib/utils'
 
 export type BadgeProps = React.HTMLAttributes<HTMLDivElement> & {

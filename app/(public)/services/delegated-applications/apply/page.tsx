@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
+import DelegatedApplicationApplyClient from './DelegatedApplicationApplyClient'
 import type { Metadata } from 'next'
 
-import DelegatedApplicationApplyClient from './DelegatedApplicationApplyClient'
 
 export const metadata: Metadata = {
   title: 'Demande Assist candidatures | VisaFlow',

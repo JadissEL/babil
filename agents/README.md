@@ -8,6 +8,7 @@ This folder contains the autonomous country intelligence engine.
 - Shared types: `runner-types.ts`
 - Environment constants (tick intervals, gates, paths): `runner-constants.ts`
 - Task queue persistence (`.agent-state/tasks.json`): `runner-persistence.ts`
+- Schedule seeds (world order file vs restcountries API): `runner-schedule-seeds.ts`
 
 ## What runs
 

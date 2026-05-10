@@ -1,4 +1,6 @@
 import prisma from '@/lib/prisma'
+import { capObservationRawPayloadJson } from './observation-raw-payload'
+import { isIntelligenceSourceCollectionEnabled } from './source-collection-flags'
 import {
   FIELD_DEMOGRAPHICS_URBAN_POPULATION_PCT,
   FIELD_ECONOMY_GDP_USD_CURRENT,
@@ -8,15 +10,13 @@ import {
   FIELD_WORK_UNEMPLOYMENT_RATE_PCT,
   WORLD_BANK_INDICATORS,
 } from './taxonomy-v1'
-import { capObservationRawPayloadJson } from './observation-raw-payload'
-import { worldBankObservationDedupeKey } from './world-bank-dedupe'
 import {
   chunkIso2ForWorldBank,
   fetchWorldBankCountryIso2Map,
   fetchWorldBankLatestDataForCountriesBatch,
   resolveIso2ForBabilCountryName,
 } from './world-bank-client'
-import { isIntelligenceSourceCollectionEnabled } from './source-collection-flags'
+import { worldBankObservationDedupeKey } from './world-bank-dedupe'
 
 const BATCH_DELAY_MS = 200
 const ISO2_PER_BATCH = 40

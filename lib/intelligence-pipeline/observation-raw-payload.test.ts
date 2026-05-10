@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
 import { capObservationRawPayloadJson, OBSERVATION_RAW_PAYLOAD_MAX_BYTES } from './observation-raw-payload'
 
 describe('observation-raw-payload (C.50)', () => {

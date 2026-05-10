@@ -1,9 +1,8 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-
-import type { LegacyCountryRecord } from '@/lib/countries-fallback';
 import { GET as getCountries } from '@/app/api/countries/route';
-import { POST as postRecommendation } from '@/app/api/recommendation/route';
 import { POST as postProbability } from '@/app/api/probability/route';
+import { POST as postRecommendation } from '@/app/api/recommendation/route';
+import type { LegacyCountryRecord } from '@/lib/countries-fallback';
 
 beforeAll(() => {
   process.env.BABIL_ENGINE_RATE_LIMIT_DISABLED = '1';

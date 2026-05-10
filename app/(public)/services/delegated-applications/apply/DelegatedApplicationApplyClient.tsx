@@ -1,11 +1,10 @@
 'use client'
 
+import { useUser } from '@clerk/nextjs'
+import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
-import { Loader2 } from 'lucide-react'
-import { useUser } from '@clerk/nextjs'
-
 import {
   APPLICATION_GUARANTEE_SUMMARY,
   APPLICATION_GUARANTEE_TITLE,

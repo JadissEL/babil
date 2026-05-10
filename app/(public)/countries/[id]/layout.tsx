@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
 
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
 import prisma from '@/lib/prisma'
 import { isSchengenMember } from '@/lib/schengen-members'
+import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 
 type PageParams = { id: string }
 

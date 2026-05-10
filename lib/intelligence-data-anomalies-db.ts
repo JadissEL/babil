@@ -1,4 +1,3 @@
-import prisma from '@/lib/prisma'
 import {
   observationPairToJumpAnomaly,
   type DataQualityAnomaly,
@@ -7,6 +6,7 @@ import {
   FIELD_ECONOMY_GDP_USD_CURRENT,
   FIELD_GENERAL_POPULATION_TOTAL,
 } from '@/lib/intelligence-pipeline/taxonomy-v1'
+import prisma from '@/lib/prisma'
 
 const TAKE = 2
 

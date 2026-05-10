@@ -1,8 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { UserCircle } from 'lucide-react'
-
+import Link from 'next/link'
 import { formatGoalTypeLabelFr } from '@/lib/probability-profile-narrative'
 
 type Props = {

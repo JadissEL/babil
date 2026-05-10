@@ -1,9 +1,8 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import Link from 'next/link'
 import { Activity, Loader2, RefreshCw, Sparkles } from 'lucide-react'
-
+import Link from 'next/link'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RecommendationPanel } from '@/components/engine/RecommendationPanel'
 import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart'
 import { Button } from '@/components/ui/button'

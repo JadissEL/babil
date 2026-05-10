@@ -1,4 +1,3 @@
-import { isoForCountryName } from '@/lib/country-card-mappers'
 
 import type { CompareKpiColumnKey } from '@/lib/compare-objectives'
 import {
@@ -6,7 +5,7 @@ import {
   objectiveWeightedScore,
   type CompareObjectiveDefinition,
 } from '@/lib/compare-objectives'
-
+import { isoForCountryName } from '@/lib/country-card-mappers'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 
 export type CompareKpiCell = {

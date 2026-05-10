@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
 import { buildGdprExportBundle, GDPR_EXPORT_SCHEMA_VERSION } from './user-gdpr-export'
 
 describe('user-gdpr-export (B.37)', () => {

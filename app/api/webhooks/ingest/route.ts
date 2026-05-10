@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-
 import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { dispatchWebhookIngest } from '@/lib/webhook-ingest-dispatch';
 import { verifyBabilWebhookSignature } from '@/lib/webhook-signature';

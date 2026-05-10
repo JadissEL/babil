@@ -1,12 +1,12 @@
 import './globals.css'
-import type { Metadata } from 'next'
 import { ClerkProvider, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
+import { Globe, Heart, LayoutDashboard } from 'lucide-react'
 import { Inter } from 'next/font/google'
 import Link from 'next/link'
-import { Globe, Heart, LayoutDashboard } from 'lucide-react'
-import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate'
 import { AppToaster } from '@/components/AppToaster'
 import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch'
+import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate'
+import type { Metadata } from 'next'
 
 const inter = Inter({ subsets: ['latin'] })
 

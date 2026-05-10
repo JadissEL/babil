@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
-
-import { publicApiErrorMessage } from '@/lib/api-public-error';
-import { getAdminUser } from '@/lib/admin-auth';
 import { recordAdminAudit } from '@/lib/admin-audit-log';
-import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
-import { redactDelegatedPayloadDeep } from '@/lib/delegated-application-payload-utils';
-import prisma from '@/lib/prisma';
-import { isDelegatedRequestStatus } from '@/lib/delegated-application-status';
+import { getAdminUser } from '@/lib/admin-auth';
+import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { isDbUnavailable } from '@/lib/db-resilience';
+import { redactDelegatedPayloadDeep } from '@/lib/delegated-application-payload-utils';
+import { isDelegatedRequestStatus } from '@/lib/delegated-application-status';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
+import prisma from '@/lib/prisma';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const admin = await getAdminUser();

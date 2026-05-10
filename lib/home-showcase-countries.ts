@@ -6,8 +6,8 @@
 import type { CountryGridItem } from '@/components/country/CountryGrid'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { countryNameMergeKey, getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
-import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import { frictionTierFromCountry, isoForCountryName, scoreToMobilityTier } from '@/lib/country-card-mappers'
+import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 
 /** Curated spotlight destinations (names must match `data/countries.json` / DB `Country.name`). */
 export const SHOWCASE: { name: string; fallbackCode: string }[] = [

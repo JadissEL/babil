@@ -1,6 +1,6 @@
+import OverviewPageClient from './OverviewPageClient'
 import type { Metadata } from 'next'
 
-import OverviewPageClient from './OverviewPageClient'
 
 export const metadata: Metadata = {
   title: 'Tableau de bord',

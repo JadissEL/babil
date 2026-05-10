@@ -1,7 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
 import { useUser } from '@clerk/nextjs'
 import { 
   User, 
@@ -19,7 +17,8 @@ import {
   Sparkles,
   Download
 } from 'lucide-react'
-
+import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { appToast } from '@/lib/toast-store'
 

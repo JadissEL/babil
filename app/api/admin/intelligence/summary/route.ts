@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-
-import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { getAdminUser } from '@/lib/admin-auth';
+import { publicApiErrorMessage } from '@/lib/api-public-error';
 import {
   computeEnrichmentRunAlertLevel,
   FAILED_ENRICHMENT_LOOKBACK_MS,

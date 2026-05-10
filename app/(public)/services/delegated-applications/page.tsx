@@ -1,6 +1,6 @@
+import { DelegatedServiceCatalog } from '@/components/services/DelegatedServiceCatalog'
 import type { Metadata } from 'next'
 
-import { DelegatedServiceCatalog } from '@/components/services/DelegatedServiceCatalog'
 
 export const metadata: Metadata = {
   title: 'Assist candidatures — emploi & universités | VisaFlow',

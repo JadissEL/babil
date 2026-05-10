@@ -1,11 +1,9 @@
-import { NextResponse } from 'next/server';
-
 import { auth } from '@clerk/nextjs/server';
-
+import { NextResponse } from 'next/server';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
-import prisma from '@/lib/prisma';
-import { previewDelegatedPayload } from '@/lib/delegated-application-payload-utils';
 import { isDbUnavailable } from '@/lib/db-resilience';
+import { previewDelegatedPayload } from '@/lib/delegated-application-payload-utils';
+import prisma from '@/lib/prisma';
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const { userId } = await auth();

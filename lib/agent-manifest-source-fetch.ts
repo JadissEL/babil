@@ -10,8 +10,8 @@ import {
   AGENT_RESEARCH_SOURCE_CATEGORIES,
   AGENT_MOROCCO_SOURCE_CATEGORIES,
 } from './agent-research-sources'
-import type { RunMemory, RunMemorySourceIndexEntry } from './agent-run-memory'
 import { orchestrationSlugForCountry } from './agent-run-memory'
+import type { RunMemory, RunMemorySourceIndexEntry } from './agent-run-memory'
 
 const DEFAULT_MAP_REL = path.join('data', 'agent-manifest-url-map.json')
 const DEFAULT_PER_CYCLE = Number(process.env.AGENT_MANIFEST_FETCH_PER_CYCLE || 25)

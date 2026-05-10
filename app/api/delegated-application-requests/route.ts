@@ -1,16 +1,15 @@
-import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
-
+import { NextResponse } from 'next/server';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
-import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
-import prisma from '@/lib/prisma';
+import { isDbUnavailable } from '@/lib/db-resilience';
 import {
   DELEGATED_APPLICATION_PAYLOAD_SCHEMA_VERSION,
   type DelegatedCategory,
   findDelegatedPackage,
 } from '@/lib/delegated-application-catalog';
 import { previewDelegatedPayload } from '@/lib/delegated-application-payload-utils';
-import { isDbUnavailable } from '@/lib/db-resilience';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
+import prisma from '@/lib/prisma';
 
 export async function GET() {
   const { userId } = await auth();

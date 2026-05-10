@@ -1,8 +1,6 @@
 import Link from 'next/link'
-
 import type { CompareRow } from '@/lib/compare-rows'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
-
 import { cn } from '@/lib/utils'
 
 export type CompareTableProps = {

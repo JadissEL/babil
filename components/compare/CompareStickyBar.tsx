@@ -1,7 +1,6 @@
 'use client'
 
 import { Scale, X } from 'lucide-react'
-
 import { Button } from '@/components/ui/button'
 
 export type CompareStickyBarProps = {

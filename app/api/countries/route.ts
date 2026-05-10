@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
-
 import { publicApiErrorMessage } from '@/lib/api-public-error';
-import prisma from '@/lib/prisma';
 import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback';
-import { mapCountriesListToLight } from '@/lib/country-list-light';
 import {
   paginateCountriesByStableId,
   parseCountriesListPagination,
@@ -13,7 +10,9 @@ import {
   augmentPrismaCountriesForPublicPayload,
   buildMergedCountriesList,
 } from '@/lib/countries-prisma-merge';
+import { mapCountriesListToLight } from '@/lib/country-list-light';
 import { jsonWithCacheAndWeakEtag } from '@/lib/json-response-with-etag';
+import prisma from '@/lib/prisma';
 import { COUNTRIES_LIST_CACHE_CONTROL } from '@/lib/public-api-cache';
 
 /**

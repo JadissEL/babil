@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-
 import { recoProbaPostBodySchema } from '@/lib/api-schemas/reco-proba-post-body';
 
 test('recoProbaPostBodySchema accepts empty object and playground', () => {

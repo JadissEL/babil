@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import {
   Briefcase,
   TrendingUp,
@@ -11,9 +10,10 @@ import {
   Search,
   Store,
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import GoogleAd from '@/components/GoogleAd'
-import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 
 export default function BusinessPage() {
   const [countries, setCountries] = useState<any[]>([])

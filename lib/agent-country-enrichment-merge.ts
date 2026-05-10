@@ -6,9 +6,8 @@
 import { createHash } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
-
-import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot'
 import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel'
+import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot'
 
 export type QuoteSentiment = 'positive' | 'neutral' | 'negative'
 

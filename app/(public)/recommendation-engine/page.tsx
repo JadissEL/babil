@@ -1,6 +1,6 @@
+import RecommendationEnginePage from '@/components/recommendation/RecommendationEnginePage'
 import type { Metadata } from 'next'
 
-import RecommendationEnginePage from '@/components/recommendation/RecommendationEnginePage'
 
 export const metadata: Metadata = {
   title: 'Moteur de recommandation',

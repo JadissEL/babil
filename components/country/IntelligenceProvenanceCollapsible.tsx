@@ -1,8 +1,8 @@
 'use client'
 
+import { BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
 import Link from 'next/link'
 import { useCallback, useId, useState } from 'react'
-import { BookOpen, ChevronDown, ChevronUp } from 'lucide-react'
 
 type ProvenanceRow = {
   fieldPath: string

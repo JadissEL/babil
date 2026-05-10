@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { buildCompletenessReport } from './country-completeness'
 import { mergeAgentProvenanceIntoFullData } from './agent-provenance-full-data'
+import { buildCompletenessReport } from './country-completeness'
 
 describe('mergeAgentProvenanceIntoFullData', () => {
   it('fills completeness and manifest; sets updatedAt when absent', () => {

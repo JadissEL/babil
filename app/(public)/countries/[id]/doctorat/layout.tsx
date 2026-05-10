@@ -1,8 +1,8 @@
+import { getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
+import prisma from '@/lib/prisma'
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
-import prisma from '@/lib/prisma'
-import { getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
 
 type Params = { id: string }
 

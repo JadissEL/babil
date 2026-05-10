@@ -1,6 +1,3 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { ReactNode } from 'react'
 import {
   ArrowRight,
   BarChart3,
@@ -13,15 +10,18 @@ import {
   Zap,
   FileStack,
 } from 'lucide-react'
-import PageContainer from '@/components/layout/PageContainer'
-import AppSidebar from '@/components/layout/AppSidebar'
-import HomeQuickFilterEngine from '@/components/home/HomeQuickFilterEngine'
+import Link from 'next/link'
+import { ReactNode } from 'react'
 import CountryGrid from '@/components/country/CountryGrid'
-import GoogleAd from '../components/GoogleAd'
 import HeroWorldCarousel from '@/components/home/HeroWorldCarousel'
+import HomeQuickFilterEngine from '@/components/home/HomeQuickFilterEngine'
+import AppSidebar from '@/components/layout/AppSidebar'
+import PageContainer from '@/components/layout/PageContainer'
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo'
 import { buildHomeHeroSlides } from '@/lib/home-hero-slides'
 import { resolveHomeShowcaseCountries } from '@/lib/home-showcase-countries'
+import GoogleAd from '../components/GoogleAd'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'VisaFlow — Mobilité internationale pour profils marocains',

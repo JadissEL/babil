@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import curatedSlidesStatic from '@/data/hero-slides.json'
-
 import type { HomeHeroSlide } from '@/lib/home-hero-slides'
 
 function isRenderableSlide(slide: HomeHeroSlide) {

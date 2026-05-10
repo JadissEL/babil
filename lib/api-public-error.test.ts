@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-
 import { publicApiErrorMessage, scrubSensitiveClientText } from '@/lib/api-public-error'
 
 test('scrubSensitiveClientText removes emails and DB URLs', () => {

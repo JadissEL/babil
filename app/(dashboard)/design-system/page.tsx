@@ -1,20 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-
+import { CountryCard } from '@/components/country/CountryCard'
+import { OfficialSourcesCard } from '@/components/country/OfficialSourcesCard'
+import { ExplorerRegionScoreStrip } from '@/components/explorer/ExplorerRegionScoreStrip'
+import { BlockFeedback } from '@/components/feedback/BlockFeedback'
+import { FilterBar } from '@/components/filters/FilterBar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { FilterBar } from '@/components/filters/FilterBar'
-import { CountryCard } from '@/components/country/CountryCard'
-import { OfficialSourcesCard } from '@/components/country/OfficialSourcesCard'
-import { ExplorerRegionScoreStrip } from '@/components/explorer/ExplorerRegionScoreStrip'
-import { BlockFeedback } from '@/components/feedback/BlockFeedback'
-import { officialSourcesForCountry } from '@/lib/official-sources'
 import type { RegionScoreBucket } from '@/lib/explorer-region-score-buckets'
+import { officialSourcesForCountry } from '@/lib/official-sources'
 
 const palette = [
   { name: 'bg', hex: '#f7f3eb', className: 'bg-bg text-text' },

@@ -1,7 +1,6 @@
+import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-
-import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 
 /** E.76 — ingest route must verify Babil webhook signature. */

@@ -1,7 +1,7 @@
 import Link from 'next/link'
+import { INTELLIGENCE_FIELDPATH_GLOSSARY } from '@/lib/intelligence-fieldpath-glossary'
 import type { Metadata } from 'next'
 
-import { INTELLIGENCE_FIELDPATH_GLOSSARY } from '@/lib/intelligence-fieldpath-glossary'
 
 export const metadata: Metadata = {
   title: 'Glossaire intelligence (fieldPath) — VisaFlow',

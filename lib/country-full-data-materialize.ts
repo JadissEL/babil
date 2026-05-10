@@ -7,8 +7,8 @@
  */
 
 import { parseCountryFullData } from '@/lib/country-full-data-json'
-import { stripFullDataChangelog } from '@/lib/full-data-changelog'
 import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel'
+import { stripFullDataChangelog } from '@/lib/full-data-changelog'
 import { isSchengenMember } from '@/lib/schengen-members'
 
 function frictionTopLevelWeak(v: unknown): boolean {

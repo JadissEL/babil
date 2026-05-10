@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { buildCountryPrismaPayloadFromStaticRecord } from './country-upsert-from-static'
-import { parseCountryFullData } from './country-full-data-json'
 import { DATA_BACKFILL_META_KEY } from './contract-coverage-snapshot'
+import { parseCountryFullData } from './country-full-data-json'
+import { buildCountryPrismaPayloadFromStaticRecord } from './country-upsert-from-static'
 
 describe('buildCountryPrismaPayloadFromStaticRecord', () => {
   it('produces normalized full_data with driving_rights and Prisma columns', () => {

@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
-
-import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { getAdminUser } from '@/lib/admin-auth';
+import { publicApiErrorMessage } from '@/lib/api-public-error';
+import { isDbUnavailable } from '@/lib/db-resilience';
+import { findDelegatedPackage, type DelegatedCategory } from '@/lib/delegated-application-catalog';
 import {
   maskEmailForAdminList,
   previewDelegatedPayload,
 } from '@/lib/delegated-application-payload-utils';
 import prisma from '@/lib/prisma';
-import { findDelegatedPackage, type DelegatedCategory } from '@/lib/delegated-application-catalog';
-import { isDbUnavailable } from '@/lib/db-resilience';
 
 export async function GET() {
   const admin = await getAdminUser();

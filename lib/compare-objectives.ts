@@ -1,9 +1,8 @@
-import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
-import { frictionTierFromCountry, scoreToMobilityTier } from '@/lib/country-card-mappers'
-import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
-
 import type { CompareSignalId } from '@/lib/compare-signals'
 import { extractCompareSignals } from '@/lib/compare-signals'
+import { frictionTierFromCountry, scoreToMobilityTier } from '@/lib/country-card-mappers'
+import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
+import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 
 /** Leaf objective — add new IDs here + entry in COMPARE_OBJECTIVES. */
 export type CompareObjectiveId =

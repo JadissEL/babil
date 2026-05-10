@@ -4,8 +4,8 @@
  * B.38 — Libellés issus du catalogue i18n (`lib/i18n/catalog-scoring.ts`).
  */
 
-import { interpolate } from '@/lib/i18n/interpolate'
 import { scoringMessages } from '@/lib/i18n/catalog-scoring'
+import { interpolate } from '@/lib/i18n/interpolate'
 import type { BabilLocale } from '@/lib/i18n/locale'
 
 export type ScoreDriver = {

@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
 import { worldBankObservationDedupeKey } from './world-bank-dedupe'
 
 describe('world-bank-dedupe (C.43)', () => {

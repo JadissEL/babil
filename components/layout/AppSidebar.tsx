@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import {
   Briefcase,
   Car,
@@ -11,6 +10,7 @@ import {
   ShieldCheck,
   Zap,
 } from 'lucide-react'
+import Link from 'next/link'
 
 const items = [
   { href: '/overview', label: 'Tableau de bord', icon: LayoutDashboard },

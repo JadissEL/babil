@@ -1,6 +1,6 @@
-import prisma from '@/lib/prisma'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
 import { appendFullDataChangelog } from '@/lib/full-data-changelog'
+import prisma from '@/lib/prisma'
 import { setDeep } from './merge-observations'
 import { INTELLIGENCE_TAXONOMY_VERSION, MATERIALIZE_TARGETS } from './taxonomy-v1'
 

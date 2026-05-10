@@ -1,6 +1,5 @@
-import Link from 'next/link'
 import { Globe, MessageSquare, Sparkles } from 'lucide-react'
-
+import Link from 'next/link'
 import PageContainer from '@/components/layout/PageContainer'
 
 export const metadata = {

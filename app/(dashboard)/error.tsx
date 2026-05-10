@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 /** Error boundary pour l’espace connecté — F.86. */
 export default function DashboardError({

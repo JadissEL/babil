@@ -4,9 +4,9 @@
  * (caller supplies snapshotInit). Optional canary write is handled in the supervisor.
  */
 
-import type { CountrySnapshot } from './agent-country-enrichment-merge'
-import { runEnrichmentPassLoop, type EnrichmentLoopTask } from './agent-enrichment-loop'
 import { loadChildKnowledge } from './agent-child-knowledge'
+import { runEnrichmentPassLoop, type EnrichmentLoopTask } from './agent-enrichment-loop'
+import type { CountrySnapshot } from './agent-country-enrichment-merge'
 
 function deepCloneSnapshot(s: CountrySnapshot): CountrySnapshot {
   return JSON.parse(JSON.stringify(s)) as CountrySnapshot

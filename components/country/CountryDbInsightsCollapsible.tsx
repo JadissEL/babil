@@ -1,8 +1,7 @@
 'use client'
 
-import { useId, useState } from 'react'
 import { Newspaper, ChevronDown, ChevronUp } from 'lucide-react'
-
+import { useId, useState } from 'react'
 import type { CountryDbInsightPublic } from '@/lib/country-db-insights'
 
 function FieldBlock({

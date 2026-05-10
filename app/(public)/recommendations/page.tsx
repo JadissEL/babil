@@ -1,14 +1,13 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import Link from 'next/link'
-import { AlertCircle } from 'lucide-react'
 import { SignInButton, useUser } from '@clerk/nextjs'
-
-import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart'
-import RecommendationPanel from '@/components/engine/RecommendationPanel'
-import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+import { AlertCircle } from 'lucide-react'
+import Link from 'next/link'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
+import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+import RecommendationPanel from '@/components/engine/RecommendationPanel'
+import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import {
@@ -18,13 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
+import { writeOnboarding } from '@/lib/onboarding-storage'
+import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 import type { ApiRecommendation } from '@/lib/recommendation-ui'
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui'
 import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
-import { writeOnboarding } from '@/lib/onboarding-storage'
-import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import { appToast } from '@/lib/toast-store'
-import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 
 function RecoMetricBar({ label, value }: { label: string; value: number }) {
   return (

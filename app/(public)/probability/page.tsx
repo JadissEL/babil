@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { Brain, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Lightbulb, TrendingUp, Scale, Star, ShieldAlert, Info } from 'lucide-react'
 import { SignInButton, useUser } from '@clerk/nextjs'
-
-import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+import { Brain, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Lightbulb, TrendingUp, Scale, Star, ShieldAlert, Info } from 'lucide-react'
+import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
+import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
+import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import {
   describeTopCountrySignals,
   orderedProbabilityBreakdown,
@@ -14,11 +14,10 @@ import {
   type ProbabilityCountrySignals,
   type ProbabilitySheetFieldDefault,
 } from '@/lib/probability-result-display'
-import { englishScoreLevelToFr } from '@/lib/score-level-fr'
-import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
-import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
-import { appToast } from '@/lib/toast-store'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
+import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
+import { englishScoreLevelToFr } from '@/lib/score-level-fr'
+import { appToast } from '@/lib/toast-store'
 import type { ProbabilityApiRow } from '@/lib/types'
 
 export default function ProbabilityPage() {

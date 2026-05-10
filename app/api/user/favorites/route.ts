@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
-import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
-import prisma from '@/lib/prisma';
 import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback';
 import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge';
 import { isDbUnavailable } from '@/lib/db-resilience';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
+import prisma from '@/lib/prisma';
 
 export async function GET(req: Request) {
   const { userId } = await auth();

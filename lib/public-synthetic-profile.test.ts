@@ -1,5 +1,5 @@
-import test from 'node:test'
 import assert from 'node:assert/strict'
+import test from 'node:test'
 import { sanitizePublicSyntheticProfile } from './public-synthetic-profile'
 
 test('sanitizePublicSyntheticProfile clamps income and savings', () => {

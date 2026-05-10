@@ -1,8 +1,7 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
 import { CheckCircle2, Info, X, XCircle } from 'lucide-react'
-
+import { useSyncExternalStore } from 'react'
 import { dismissToast, getServerToastSnapshot, getToastSnapshot, subscribeToasts } from '@/lib/toast-store'
 import { cn } from '@/lib/utils'
 

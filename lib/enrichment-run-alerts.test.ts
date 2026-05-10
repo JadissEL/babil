@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-
 import { computeEnrichmentRunAlertLevel, isStuckEnrichmentStatus } from './enrichment-run-alerts'
 
 describe('enrichment-run-alerts (C.42)', () => {

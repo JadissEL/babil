@@ -1,30 +1,30 @@
-import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
-import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
-import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize';
-import { hasCountryPhdStoredData } from '@/lib/country-phd-studies';
-import { buildMergedCountriesList } from '@/lib/countries-prisma-merge';
-import { loadFallbackCountries } from '@/lib/countries-fallback';
-import { checkEnginePostContentLength } from '@/lib/engine-post-body-limits';
-import { checkEnginePostRateLimit } from '@/lib/engine-post-rate-limit';
-import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility';
-import { computeStudyMobility100 } from '@/lib/scoring/study-mobility';
-import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility';
-import { computeWorkMobility100 } from '@/lib/scoring/work-mobility';
-import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override';
-import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version';
-import { computeRecommendationTopDrivers } from '@/lib/score-driver-explain';
-import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative';
-import { buildCountrySheetSignals } from '@/lib/probability-result-display';
-import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile';
-import { sanitizePublicSyntheticProfile } from '@/lib/public-synthetic-profile';
 import {
   recoProbaPostBodySchema,
   type RecoProbaPostBody,
 } from '@/lib/api-schemas/reco-proba-post-body';
-import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row';
+import { loadFallbackCountries } from '@/lib/countries-fallback';
+import { buildMergedCountriesList } from '@/lib/countries-prisma-merge';
+import { materializePublicFullDataForApi } from '@/lib/country-full-data-materialize';
+import { hasCountryPhdStoredData } from '@/lib/country-phd-studies';
+import { checkEnginePostContentLength } from '@/lib/engine-post-body-limits';
+import { checkEnginePostRateLimit } from '@/lib/engine-post-rate-limit';
+import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
+import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative';
+import { buildCountrySheetSignals } from '@/lib/probability-result-display';
+import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile';
+import { sanitizePublicSyntheticProfile } from '@/lib/public-synthetic-profile';
+import { computeRecommendationTopDrivers } from '@/lib/score-driver-explain';
+import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility';
+import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override';
+import { computeStudyMobility100 } from '@/lib/scoring/study-mobility';
+import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility';
+import { computeWorkMobility100 } from '@/lib/scoring/work-mobility';
 import type { RecommendationApiItem } from '@/lib/types/api-recommendation-probability';
+import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row';
 import { parseUserGoalType, userGoalTypeToEngineGoal } from '@/lib/user-profile-enums';
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';

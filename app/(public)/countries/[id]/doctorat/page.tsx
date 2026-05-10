@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { ChevronLeft } from 'lucide-react'
-
-import GoogleAd from '@/components/GoogleAd'
+import { useEffect, useMemo, useState } from 'react'
 import { PhDStudiesSection } from '@/components/country/PhDStudiesSection'
+import GoogleAd from '@/components/GoogleAd'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 
