@@ -8,7 +8,7 @@ Ces chantiers sont **en cours de livraison** dans le dépôt (voir implémentati
 |----|--------|--------|--------|
 | **T1** | Perf API | `GET /api/countries?light=1` — payload liste sans `full_data` ni `commentaires` (opt-in ; défaut inchangé) | Implémenté |
 | **T2** | Ops données | Pipeline observations C.39–C.52 : rétention, compaction, admin, alertes, idempotence WB, stubs/queue, tests mock, seed doc, démographie WB, glossaire, cap `rawPayload`, **doc cron/environnements (C.51)**, **flags collecte par source (C.52)** — voir table C.39–C.52 + [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md) | Implémenté |
-| **T3** | CI | Workflow GitHub Actions : `audit:ci` + `lint` + `test:lib` + `build` sur push/PR | Implémenté |
+| **T3** | CI | Workflow GitHub Actions : `audit:ci` + `lint` + **`format:check`** + `test:lib` + **`test:vitest`** + `build` sur push/PR | Implémenté |
 | **T4** | Sécurité | Vérification RBAC admin : toutes les routes `/api/admin/*` passent par `getAdminUser()` ; test de garde | Implémenté |
 | **T5** | Doc moteur | Formules reco vs proba + version API — [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md), `lib/engine-version.ts`, en-têtes `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` | Implémenté |
 | **T6** | Transparence scoring | Top 3 facteurs, signaux fiche, snapshot contract/UI, journal `_data_changelog`, lexique B.27, agrégat confiance B.31, qualité données B.32, profil enum B.34–B.35, Assist masqué B.36, export RGPD B.37, **i18n pilote B.38** — voir fichiers listés en B.23–B.38 ci-dessous | Implémenté |

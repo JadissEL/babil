@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 /**
  * Shared POST body for `/api/recommendation` and `/api/probability` (D.62).
@@ -9,6 +9,6 @@ export const recoProbaPostBodySchema = z
     profile: z.record(z.string(), z.unknown()).optional(),
     playground: z.boolean().optional(),
   })
-  .passthrough()
+  .passthrough();
 
-export type RecoProbaPostBody = z.infer<typeof recoProbaPostBodySchema>
+export type RecoProbaPostBody = z.infer<typeof recoProbaPostBodySchema>;

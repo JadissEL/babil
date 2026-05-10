@@ -1,20 +1,20 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
-import { publicApiErrorMessage } from '@/lib/api-public-error'
-import { getAdminUser } from '@/lib/admin-auth'
-import prisma from '@/lib/prisma'
-import { isDbUnavailable } from '@/lib/db-resilience'
+import { publicApiErrorMessage } from '@/lib/api-public-error';
+import { getAdminUser } from '@/lib/admin-auth';
+import prisma from '@/lib/prisma';
+import { isDbUnavailable } from '@/lib/db-resilience';
 
 /**
  * E.67 — read recent admin audit entries (newest first). Admin-only.
  */
 export async function GET(req: Request) {
-  const admin = await getAdminUser()
-  if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const admin = await getAdminUser();
+  if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const url = new URL(req.url)
-  const raw = Number.parseInt(url.searchParams.get('limit') ?? '50', 10)
-  const take = Number.isFinite(raw) ? Math.min(100, Math.max(1, raw)) : 50
+  const url = new URL(req.url);
+  const raw = Number.parseInt(url.searchParams.get('limit') ?? '50', 10);
+  const take = Number.isFinite(raw) ? Math.min(100, Math.max(1, raw)) : 50;
 
   try {
     const rows = await prisma.adminAuditLog.findMany({
@@ -29,16 +29,16 @@ export async function GET(req: Request) {
         detail: true,
         metadata: true,
       },
-    })
+    });
     return NextResponse.json(
       rows.map((r) => ({
         ...r,
         createdAt: r.createdAt.toISOString(),
       })),
-    )
+    );
   } catch (error: unknown) {
-    if (isDbUnavailable(error)) return NextResponse.json([], { status: 200 })
-    const message = publicApiErrorMessage(error, 'List failed')
-    return NextResponse.json({ error: message }, { status: 500 })
+    if (isDbUnavailable(error)) return NextResponse.json([], { status: 200 });
+    const message = publicApiErrorMessage(error, 'List failed');
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import prisma from '@/lib/prisma'
-import { isDbUnavailable } from '@/lib/db-resilience'
-import { publicApiErrorMessage } from '@/lib/api-public-error'
-import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
+import prisma from '@/lib/prisma';
+import { isDbUnavailable } from '@/lib/db-resilience';
+import { publicApiErrorMessage } from '@/lib/api-public-error';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
 import {
   USER_GOAL_TYPES,
   USER_PROFESSIONS,
   coerceStoredProfession,
   parseUserGoalType,
   parseUserProfession,
-} from '@/lib/user-profile-enums'
+} from '@/lib/user-profile-enums';
 
 export async function GET() {
   const { userId } = await auth();
@@ -27,10 +27,10 @@ export async function GET() {
       goal_type:
         profile.goal_type == null || !String(profile.goal_type).trim()
           ? profile.goal_type
-          : parseUserGoalType(profile.goal_type) ?? 'tourism',
+          : (parseUserGoalType(profile.goal_type) ?? 'tourism'),
     });
   } catch (error: unknown) {
-    if (isDbUnavailable(error)) return NextResponse.json(null)
+    if (isDbUnavailable(error)) return NextResponse.json(null);
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Profile read failed') },
       { status: 500 },
@@ -39,49 +39,50 @@ export async function GET() {
 }
 
 function parseBody(data: Record<string, unknown>) {
-  const age = Number.parseInt(String(data.age ?? ''), 10)
+  const age = Number.parseInt(String(data.age ?? ''), 10);
   if (!Number.isFinite(age) || age < 16 || age > 120) {
-    return { error: 'age must be a number between 16 and 120' as const }
+    return { error: 'age must be a number between 16 and 120' as const };
   }
 
-  const income = Number.parseFloat(String(data.income ?? ''))
-  const savings = Number.parseFloat(String(data.savings ?? ''))
+  const income = Number.parseFloat(String(data.income ?? ''));
+  const savings = Number.parseFloat(String(data.savings ?? ''));
   if (!Number.isFinite(income) || income < 0) {
-    return { error: 'income must be a non-negative number' as const }
+    return { error: 'income must be a non-negative number' as const };
   }
   if (!Number.isFinite(savings) || savings < 0) {
-    return { error: 'savings must be a non-negative number' as const }
+    return { error: 'savings must be a non-negative number' as const };
   }
 
   const marital_status =
     typeof data.marital_status === 'string' && data.marital_status.trim()
       ? data.marital_status.trim()
-      : null
+      : null;
   const family_details =
-    typeof data.family_details === 'string' ? data.family_details.trim().slice(0, 4000) : null
+    typeof data.family_details === 'string' ? data.family_details.trim().slice(0, 4000) : null;
 
   const professionRaw =
-    typeof data.profession === 'string' && data.profession.trim() ? data.profession.trim() : null
+    typeof data.profession === 'string' && data.profession.trim() ? data.profession.trim() : null;
   if (professionRaw) {
-    const p = parseUserProfession(professionRaw)
+    const p = parseUserProfession(professionRaw);
     if (!p) {
       return {
         error: `profession must be one of: ${USER_PROFESSIONS.join(', ')}` as const,
-      }
+      };
     }
   }
 
   const goalRaw =
-    typeof data.goal_type === 'string' && data.goal_type.trim() ? data.goal_type.trim() : null
-  let goal_type: string | null = null
+    typeof data.goal_type === 'string' && data.goal_type.trim() ? data.goal_type.trim() : null;
+  let goal_type: string | null = null;
   if (goalRaw) {
-    const g = parseUserGoalType(goalRaw)
+    const g = parseUserGoalType(goalRaw);
     if (!g) {
       return {
-        error: `goal_type must be one of: ${USER_GOAL_TYPES.join(', ')} (synonymes: education → study)` as const,
-      }
+        error:
+          `goal_type must be one of: ${USER_GOAL_TYPES.join(', ')} (synonymes: education → study)` as const,
+      };
     }
-    goal_type = g
+    goal_type = g;
   }
 
   return {
@@ -96,16 +97,16 @@ function parseBody(data: Record<string, unknown>) {
       family_details,
       goal_type,
     },
-  }
+  };
 }
 
 export async function POST(req: Request) {
-  const denied = mutationOriginDeniedResponse(req)
-  if (denied) return denied
+  const denied = mutationOriginDeniedResponse(req);
+  if (denied) return denied;
 
   const { userId } = await auth();
   const user = await currentUser();
-  
+
   if (!userId || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   let data: Record<string, unknown>;
@@ -165,11 +166,11 @@ export async function POST(req: Request) {
       goal_type:
         profile.goal_type == null || !String(profile.goal_type).trim()
           ? profile.goal_type
-          : parseUserGoalType(profile.goal_type) ?? 'tourism',
+          : (parseUserGoalType(profile.goal_type) ?? 'tourism'),
     });
   } catch (error: unknown) {
     if (isDbUnavailable(error)) {
-      return NextResponse.json({ ok: true, degraded: true, profile: parsed.value })
+      return NextResponse.json({ ok: true, degraded: true, profile: parsed.value });
     }
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Profile update failed') },

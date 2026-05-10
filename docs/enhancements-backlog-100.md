@@ -160,14 +160,14 @@ flowchart LR
 78. Ajouter **vitest** (ou **playwright**) en devDependency aligné avec `npm run test:lib`. *(Livré : **Vitest** + [`vitest.config.ts`](../vitest.config.ts), script `npm run test:vitest` ; `npm run check` et [ci.yml](../.github/workflows/ci.yml) exécutent `test:lib` puis `test:vitest`.)*
 79. **Couverture** minimale sur routes API critiques (reco, proba, pays). *(Livré partiel : [`lib/api-routes-critical.vitest.ts`](../lib/api-routes-critical.vitest.ts) — GET pays, POST reco/proba 200/400 avec merge mocké ; E2E Playwright : backlog.)*
 80. Réduire **`any`** dans [app/api/recommendation/route.ts](../app/api/recommendation/route.ts) et [app/api/probability/route.ts](../app/api/probability/route.ts). *(Livré : typage `RecoProbaPostBody`, [`EngineCountryListRow`](../lib/types/engine-country-list-row.ts), helpers sans `any`.)*
-81. **ESLint stricter** (`no-explicit-any`, import order) progressivement.
-82. **Types partagés** `ApiRecommendation` / probabilité dans `lib/types/` unique.
-83. **Prettier** + format CI pour éviter drift CRLF/LF.
+81. **ESLint stricter** (`no-explicit-any`, import order) progressivement. *(Livré partiel : `@typescript-eslint/parser` + plugin, règle **`@typescript-eslint/no-explicit-any`: warn** dans [`.eslintrc.json`](../.eslintrc.json) ; import order : backlog.)*
+82. **Types partagés** `ApiRecommendation` / probabilité dans `lib/types/` unique. *(Livré : [`lib/types/api-recommendation-probability.ts`](../lib/types/api-recommendation-probability.ts) — `RecommendationApiItem`, `ProbabilityApiRow` ; câblage routes + page [`/probability`](../app/(public)/probability/page.tsx).)*
+83. **Prettier** + format CI pour éviter drift CRLF/LF. *(Livré partiel : Prettier, [`.prettierrc`](../.prettierrc), [`.prettierignore`](../.prettierignore), [`.gitattributes`](../.gitattributes), scripts `format` / `format:check`, étape CI ; périmètre : `app/api/**`, `lib/types/**`, `lib/api-schemas/**` — extension progressive possible.)*
 84. **Architecture** : scinder `agents/runner.ts` si > seuil de maintenabilité (modules par étape).
 85. **Dead code** : inventaire `server.js` / scripts legacy vs App Router.
 86. **Error boundaries** React sur layouts dashboard/public.
 87. **Convention** fichiers client/server (`'use client'` minimal).
-88. **README** développeur : variables d’environnement, ordre `db:setup`, intelligence pipeline.
+88. **README** développeur : variables d’environnement, ordre `db:setup`, intelligence pipeline. *(Livré : [`README.md`](../README.md) à la racine.)*
 
 ### G — DevOps, observabilité et coûts (89–96)
 
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples), nouveaux **types d’événements** webhook (CRM, notifications — étendre `webhook-ingest-dispatch`), items **F.81+** (ESLint stricter, types API partagés complets, Prettier CI).
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **90–91** (observabilité Sentry / logs structurés), raffinement **E.68** (domaines multiples), nouveaux **types d’événements** webhook (CRM, notifications — étendre `webhook-ingest-dispatch`), **F.84–F.87** (runner agents, dead code, error boundaries, conventions client), **import/order** ESLint + extension Prettier.

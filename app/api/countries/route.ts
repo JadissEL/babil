@@ -1,17 +1,20 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
-import { publicApiErrorMessage } from '@/lib/api-public-error'
-import prisma from '@/lib/prisma'
-import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback'
-import { mapCountriesListToLight } from '@/lib/country-list-light'
+import { publicApiErrorMessage } from '@/lib/api-public-error';
+import prisma from '@/lib/prisma';
+import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback';
+import { mapCountriesListToLight } from '@/lib/country-list-light';
 import {
   paginateCountriesByStableId,
   parseCountriesListPagination,
   type CountriesListPaginationMode,
-} from '@/lib/countries-list-pagination'
-import { augmentPrismaCountriesForPublicPayload, buildMergedCountriesList } from '@/lib/countries-prisma-merge'
-import { jsonWithCacheAndWeakEtag } from '@/lib/json-response-with-etag'
-import { COUNTRIES_LIST_CACHE_CONTROL } from '@/lib/public-api-cache'
+} from '@/lib/countries-list-pagination';
+import {
+  augmentPrismaCountriesForPublicPayload,
+  buildMergedCountriesList,
+} from '@/lib/countries-prisma-merge';
+import { jsonWithCacheAndWeakEtag } from '@/lib/json-response-with-etag';
+import { COUNTRIES_LIST_CACHE_CONTROL } from '@/lib/public-api-cache';
 
 /**
  * Public countries list.
@@ -24,12 +27,12 @@ import { COUNTRIES_LIST_CACHE_CONTROL } from '@/lib/public-api-cache'
  * Weak **ETag** over the serialized JSON body; **`If-None-Match`** → **304** (catalogue D.64).
  */
 function parseLightMode(req: Request): boolean {
-  const v = new URL(req.url).searchParams.get('light')
-  return v === '1' || v === 'true' || v === 'yes'
+  const v = new URL(req.url).searchParams.get('light');
+  return v === '1' || v === 'true' || v === 'yes';
 }
 
 function maybeLightList(light: boolean, rows: LegacyCountryRecord[]): LegacyCountryRecord[] {
-  return light ? mapCountriesListToLight(rows) : rows
+  return light ? mapCountriesListToLight(rows) : rows;
 }
 
 function respondCountriesList(
@@ -39,10 +42,10 @@ function respondCountriesList(
   pagination: CountriesListPaginationMode,
 ) {
   if (pagination.mode === 'full') {
-    return jsonWithCacheAndWeakEtag(req, maybeLightList(light, rows), COUNTRIES_LIST_CACHE_CONTROL)
+    return jsonWithCacheAndWeakEtag(req, maybeLightList(light, rows), COUNTRIES_LIST_CACHE_CONTROL);
   }
-  const { limit, cursor } = pagination
-  const { items, nextCursor, hasMore } = paginateCountriesByStableId(rows, limit, cursor)
+  const { limit, cursor } = pagination;
+  const { items, nextCursor, hasMore } = paginateCountriesByStableId(rows, limit, cursor);
   return jsonWithCacheAndWeakEtag(
     req,
     {
@@ -51,27 +54,27 @@ function respondCountriesList(
       hasMore,
     },
     COUNTRIES_LIST_CACHE_CONTROL,
-  )
+  );
 }
 
 export async function GET(req: Request) {
-  const light = parseLightMode(req)
-  const parsed = parseCountriesListPagination(new URL(req.url).searchParams)
+  const light = parseLightMode(req);
+  const parsed = parseCountriesListPagination(new URL(req.url).searchParams);
   if (!parsed.ok) {
-    return NextResponse.json({ error: parsed.error }, { status: 400 })
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
-  const pagination = parsed.query
+  const pagination = parsed.query;
 
   try {
-    const merged = await buildMergedCountriesList()
-    if (merged.length > 0) return respondCountriesList(req, merged, light, pagination)
+    const merged = await buildMergedCountriesList();
+    if (merged.length > 0) return respondCountriesList(req, merged, light, pagination);
   } catch {
     /* fallback below */
   }
 
   try {
-    const staticList = await loadFallbackCountries()
-    if (staticList.length > 0) return respondCountriesList(req, staticList, light, pagination)
+    const staticList = await loadFallbackCountries();
+    if (staticList.length > 0) return respondCountriesList(req, staticList, light, pagination);
   } catch {
     /* last resort: raw Prisma (no static JSON merge; comments included) */
   }
@@ -86,22 +89,22 @@ export async function GET(req: Request) {
           orderBy: { createdAt: 'desc' },
         },
       },
-    })
+    });
 
-    let mergeFallback: LegacyCountryRecord[] = []
+    let mergeFallback: LegacyCountryRecord[] = [];
     try {
-      mergeFallback = await loadFallbackCountries()
+      mergeFallback = await loadFallbackCountries();
     } catch {
-      mergeFallback = []
+      mergeFallback = [];
     }
     const formatted = augmentPrismaCountriesForPublicPayload(
       countries as unknown as Array<Record<string, unknown>>,
       mergeFallback,
-    )
+    );
 
-    return respondCountriesList(req, formatted as LegacyCountryRecord[], light, pagination)
+    return respondCountriesList(req, formatted as LegacyCountryRecord[], light, pagination);
   } catch (error: unknown) {
-    const message = publicApiErrorMessage(error, 'List failed')
-    return NextResponse.json({ error: message }, { status: 500 })
+    const message = publicApiErrorMessage(error, 'List failed');
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

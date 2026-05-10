@@ -19,10 +19,11 @@ import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import { appToast } from '@/lib/toast-store'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
+import type { ProbabilityApiRow } from '@/lib/types/api-recommendation-probability'
 
 export default function ProbabilityPage() {
   const { user, isLoaded } = useUser()
-  const [results, setResults] = useState<any[]>([])
+  const [results, setResults] = useState<ProbabilityApiRow[]>([])
   const [loading, setLoading] = useState(true)
   const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null)
   const [readOnlyDemo, setReadOnlyDemo] = useState(false)
@@ -55,7 +56,7 @@ export default function ProbabilityPage() {
             appToast.error('Réponse probabilité inattendue.')
             setResults([])
           } else {
-            setResults(data)
+            setResults(data as ProbabilityApiRow[])
           }
           return
         }
@@ -88,7 +89,7 @@ export default function ProbabilityPage() {
           appToast.error('Réponse probabilité inattendue.')
           setResults([])
         } else {
-          setResults(data)
+          setResults(data as ProbabilityApiRow[])
         }
       } catch (err) {
         console.error(err)
@@ -252,7 +253,7 @@ export default function ProbabilityPage() {
                 </span>
               </div>
               <div className="space-y-3">
-                {backupCountries.map((c: any) => (
+                {backupCountries.map((c) => (
                   <div
                     key={c.country}
                     className="flex items-center justify-between rounded-xl border border-line bg-inset p-3"
@@ -272,7 +273,7 @@ export default function ProbabilityPage() {
                 </span>
               </div>
               <div className="space-y-3">
-                {highRiskCountries.map((c: any) => (
+                {highRiskCountries.map((c) => (
                   <div
                     key={c.country}
                     className="flex items-center justify-between rounded-xl border border-red-500/25 bg-red-500/10 p-3"
@@ -299,7 +300,7 @@ export default function ProbabilityPage() {
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {results.filter(r => comparisonList.includes(r.country)).map((r: any) => (
+                {results.filter(r => comparisonList.includes(r.country)).map((r) => (
                   <div key={r.country} className="rounded-3xl border border-line bg-inset p-6">
                     <h3 className="text-2xl font-black mb-6">{r.country}</h3>
                     <div className="space-y-6">
@@ -336,7 +337,7 @@ export default function ProbabilityPage() {
               <h2 className="text-xl font-black text-text">Analyse par pays</h2>
               <p className="text-sm font-bold italic text-muted">Cliquez pour détails et stratégie.</p>
             </div>
-            {results.map((r: any) => (
+            {results.map((r) => (
               <div
                 key={r.country}
                 className={`rounded-3xl border transition-all duration-300 ${

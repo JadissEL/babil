@@ -1,35 +1,35 @@
-import { NextResponse } from 'next/server'
-import { auth, currentUser } from '@clerk/nextjs/server'
-import { publicApiErrorMessage } from '@/lib/api-public-error'
-import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard'
-import prisma from '@/lib/prisma'
-import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback'
-import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge'
-import { isDbUnavailable } from '@/lib/db-resilience'
+import { NextResponse } from 'next/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { publicApiErrorMessage } from '@/lib/api-public-error';
+import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
+import prisma from '@/lib/prisma';
+import { loadFallbackCountries, type LegacyCountryRecord } from '@/lib/countries-fallback';
+import { augmentCountryDetailPayload } from '@/lib/countries-prisma-merge';
+import { isDbUnavailable } from '@/lib/db-resilience';
 
 export async function GET(req: Request) {
-  const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const url = new URL(req.url)
-  const countryId = url.searchParams.get('countryId')
+  const url = new URL(req.url);
+  const countryId = url.searchParams.get('countryId');
 
   if (countryId) {
-    const cid = Number.parseInt(countryId, 10)
+    const cid = Number.parseInt(countryId, 10);
     if (!Number.isFinite(cid)) {
-      return NextResponse.json({ error: 'Invalid countryId' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid countryId' }, { status: 400 });
     }
     try {
       const existing = await prisma.favoriteCountry.findUnique({
         where: { userId_countryId: { userId: userId as string, countryId: cid } },
-      })
-      return NextResponse.json({ favorited: Boolean(existing) })
+      });
+      return NextResponse.json({ favorited: Boolean(existing) });
     } catch (error) {
-      if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true })
+      if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true });
       return NextResponse.json(
         { error: publicApiErrorMessage(error, 'Favorites lookup failed') },
         { status: 500 },
-      )
+      );
     }
   }
 
@@ -38,13 +38,13 @@ export async function GET(req: Request) {
       where: { userId: userId as string },
       include: { country: true },
       orderBy: { createdAt: 'desc' },
-    })
+    });
 
-    let mergeFallback: LegacyCountryRecord[] = []
+    let mergeFallback: LegacyCountryRecord[] = [];
     try {
-      mergeFallback = await loadFallbackCountries()
+      mergeFallback = await loadFallbackCountries();
     } catch {
-      mergeFallback = []
+      mergeFallback = [];
     }
 
     return NextResponse.json(
@@ -55,23 +55,23 @@ export async function GET(req: Request) {
         ),
         favoritedAt: f.createdAt,
       })),
-    )
+    );
   } catch (error) {
-    if (isDbUnavailable(error)) return NextResponse.json([])
+    if (isDbUnavailable(error)) return NextResponse.json([]);
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Favorites list failed') },
       { status: 500 },
-    )
+    );
   }
 }
 
 export async function POST(req: Request) {
-  const denied = mutationOriginDeniedResponse(req)
-  if (denied) return denied
+  const denied = mutationOriginDeniedResponse(req);
+  if (denied) return denied;
 
-  const { userId } = await auth()
-  const user = await currentUser()
-  if (!userId || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { userId } = await auth();
+  const user = await currentUser();
+  if (!userId || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   // ensure user exists in DB (same pattern as profile route)
   try {
@@ -86,48 +86,47 @@ export async function POST(req: Request) {
         email: user.emailAddresses?.[0]?.emailAddress ?? `${userId}@unknown.local`,
         name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || null,
       },
-    })
+    });
   } catch (error) {
-    if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true })
+    if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true });
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Favorites sync failed') },
       { status: 500 },
-    )
+    );
   }
 
-  let body: { countryId?: unknown }
+  let body: { countryId?: unknown };
   try {
-    body = await req.json()
+    body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const countryId = Number(body.countryId)
+  const countryId = Number(body.countryId);
   if (!Number.isFinite(countryId)) {
-    return NextResponse.json({ error: 'countryId required' }, { status: 400 })
+    return NextResponse.json({ error: 'countryId required' }, { status: 400 });
   }
 
   try {
     const existing = await prisma.favoriteCountry.findUnique({
       where: { userId_countryId: { userId: userId as string, countryId } },
-    })
+    });
 
     if (existing) {
-      await prisma.favoriteCountry.delete({ where: { id: existing.id } })
-      return NextResponse.json({ favorited: false })
+      await prisma.favoriteCountry.delete({ where: { id: existing.id } });
+      return NextResponse.json({ favorited: false });
     }
 
     await prisma.favoriteCountry.create({
       data: { userId: userId as string, countryId },
-    })
+    });
 
-    return NextResponse.json({ favorited: true })
+    return NextResponse.json({ favorited: true });
   } catch (error) {
-    if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true })
+    if (isDbUnavailable(error)) return NextResponse.json({ favorited: false, degraded: true });
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Favorites update failed') },
       { status: 500 },
-    )
+    );
   }
 }
-

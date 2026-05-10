@@ -3,25 +3,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { checkCommentPostRateLimit } from '@/lib/comment-post-rate-limit';
-import { publicApiErrorMessage } from '@/lib/api-public-error'
+import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
-import { isDbUnavailable } from '@/lib/db-resilience'
+import { isDbUnavailable } from '@/lib/db-resilience';
 
 export async function GET(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  let user
+  let user;
   try {
     user = await prisma.user.findUnique({
-      where: { id: userId as string }
+      where: { id: userId as string },
     });
   } catch (error) {
-    if (isDbUnavailable(error)) return NextResponse.json([])
+    if (isDbUnavailable(error)) return NextResponse.json([]);
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Comments admin read failed') },
       { status: 500 },
-    )
+    );
   }
 
   if (user?.role !== Role.ADMIN) {
@@ -41,13 +41,13 @@ export async function GET(req: NextRequest) {
       where: status ? { status } : undefined,
       include: {
         user: { select: { name: true, email: true } },
-        country: { select: { name: true } }
+        country: { select: { name: true } },
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
     return NextResponse.json(comments);
   } catch (error: unknown) {
-    if (isDbUnavailable(error)) return NextResponse.json([])
+    if (isDbUnavailable(error)) return NextResponse.json([]);
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Comments list failed') },
       { status: 500 },
@@ -102,7 +102,12 @@ export async function POST(req: Request) {
     return NextResponse.json(comment);
   } catch (error: unknown) {
     if (isDbUnavailable(error)) {
-      return NextResponse.json({ ok: true, degraded: true, queued: false, message: 'Service temporairement indisponible' })
+      return NextResponse.json({
+        ok: true,
+        degraded: true,
+        queued: false,
+        message: 'Service temporairement indisponible',
+      });
     }
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Comment create failed') },

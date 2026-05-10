@@ -4,12 +4,9 @@ import { auth } from '@clerk/nextjs/server';
 import prisma from '@/lib/prisma';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
-import { isDbUnavailable } from '@/lib/db-resilience'
+import { isDbUnavailable } from '@/lib/db-resilience';
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const denied = mutationOriginDeniedResponse(req);
   if (denied) return denied;
 
@@ -17,17 +14,17 @@ export async function PATCH(
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   // Check if user is admin
-  let user
+  let user;
   try {
     user = await prisma.user.findUnique({
-      where: { id: userId as string }
+      where: { id: userId as string },
     });
   } catch (error) {
-    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
+    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 });
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Moderation prep failed') },
       { status: 500 },
-    )
+    );
   }
 
   if (user?.role !== Role.ADMIN) {
@@ -54,11 +51,11 @@ export async function PATCH(
   try {
     const comment = await prisma.comment.update({
       where: { id: commentId },
-      data: { status: statusStr as CommentStatus }
+      data: { status: statusStr as CommentStatus },
     });
     return NextResponse.json(comment);
   } catch (error: unknown) {
-    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
+    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 });
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Comment update failed') },
       { status: 500 },
@@ -66,10 +63,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const denied = mutationOriginDeniedResponse(req);
   if (denied) return denied;
 
@@ -77,17 +71,17 @@ export async function DELETE(
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   // Check if user is admin
-  let user
+  let user;
   try {
     user = await prisma.user.findUnique({
-      where: { id: userId as string }
+      where: { id: userId as string },
     });
   } catch (error) {
-    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
+    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 });
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Moderation prep failed') },
       { status: 500 },
-    )
+    );
   }
 
   if (user?.role !== Role.ADMIN) {
@@ -101,11 +95,11 @@ export async function DELETE(
 
   try {
     await prisma.comment.delete({
-      where: { id: commentId }
+      where: { id: commentId },
     });
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
-    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 })
+    if (isDbUnavailable(error)) return NextResponse.json({ degraded: true }, { status: 503 });
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Comment delete failed') },
       { status: 500 },

@@ -1,31 +1,31 @@
-import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server';
 
-import { publicApiErrorMessage } from '@/lib/api-public-error'
-import { getAdminUser } from '@/lib/admin-auth'
+import { publicApiErrorMessage } from '@/lib/api-public-error';
+import { getAdminUser } from '@/lib/admin-auth';
 import {
   computeEnrichmentRunAlertLevel,
   FAILED_ENRICHMENT_LOOKBACK_MS,
   STALE_ENRICHMENT_RUN_MS,
-} from '@/lib/enrichment-run-alerts'
-import prisma from '@/lib/prisma'
+} from '@/lib/enrichment-run-alerts';
+import prisma from '@/lib/prisma';
 
 function parseStatsJson(raw: string | null | undefined): unknown {
-  if (!raw || raw.trim() === '') return null
+  if (!raw || raw.trim() === '') return null;
   try {
-    return JSON.parse(raw) as unknown
+    return JSON.parse(raw) as unknown;
   } catch {
-    return null
+    return null;
   }
 }
 
 /** Résumé admin (C.41–C.45) : volumes, alertes runs, file jobs pipeline. */
 export async function GET() {
-  const admin = await getAdminUser()
-  if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const admin = await getAdminUser();
+  if (!admin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   try {
-    const staleCutoff = new Date(Date.now() - STALE_ENRICHMENT_RUN_MS)
-    const failedLookbackStart = new Date(Date.now() - FAILED_ENRICHMENT_LOOKBACK_MS)
+    const staleCutoff = new Date(Date.now() - STALE_ENRICHMENT_RUN_MS);
+    const failedLookbackStart = new Date(Date.now() - FAILED_ENRICHMENT_LOOKBACK_MS);
 
     const [
       lastRun,
@@ -104,52 +104,52 @@ export async function GET() {
       }),
       prisma.intelligencePipelineJob.count({ where: { status: 'PENDING' } }),
       prisma.intelligencePipelineJob.count({ where: { status: 'RUNNING' } }),
-    ])
+    ]);
 
     const fieldPathBreakdown = observationsByField.map((r) => ({
       fieldPath: r.fieldPath,
       count: r._count.fieldPath,
-    }))
+    }));
 
-    const sourceIds = observationsBySourceId.map((r) => r.sourceId)
+    const sourceIds = observationsBySourceId.map((r) => r.sourceId);
     const sources = await prisma.intelligenceSource.findMany({
       where: { id: { in: sourceIds } },
       select: { id: true, slug: true, name: true, tier: true },
-    })
-    const sourceMap = new Map(sources.map((s) => [s.id, s]))
+    });
+    const sourceMap = new Map(sources.map((s) => [s.id, s]));
     const observationsBySource = observationsBySourceId.map((r) => {
-      const meta = sourceMap.get(r.sourceId)
+      const meta = sourceMap.get(r.sourceId);
       return {
         sourceId: r.sourceId,
         slug: meta?.slug ?? 'unknown',
         name: meta?.name ?? 'Source inconnue',
         tier: meta?.tier ?? null,
         count: r._count.sourceId,
-      }
-    })
+      };
+    });
 
-    const countryIds = observationsByCountryId.map((r) => r.countryId)
+    const countryIds = observationsByCountryId.map((r) => r.countryId);
     const countries = await prisma.country.findMany({
       where: { id: { in: countryIds } },
       select: { id: true, name: true, region: true },
-    })
-    const countryMap = new Map(countries.map((c) => [c.id, c]))
+    });
+    const countryMap = new Map(countries.map((c) => [c.id, c]));
     const observationsByCountry = observationsByCountryId.map((r) => {
-      const meta = countryMap.get(r.countryId)
+      const meta = countryMap.get(r.countryId);
       return {
         countryId: r.countryId,
         name: meta?.name ?? `#${r.countryId}`,
         region: meta?.region ?? null,
         count: r._count.countryId,
-      }
-    })
+      };
+    });
 
     const lastRunParsed = lastRun
       ? {
           ...lastRun,
           stats: parseStatsJson(lastRun.statsJson),
         }
-      : null
+      : null;
 
     const runsWithStats = recentRuns.map((run) => ({
       id: run.id,
@@ -160,7 +160,7 @@ export async function GET() {
       errorSummary: run.errorSummary,
       observationCount: run._count.observations,
       stats: parseStatsJson(run.statsJson),
-    }))
+    }));
 
     const runAlerts = {
       level: computeEnrichmentRunAlertLevel({
@@ -185,7 +185,7 @@ export async function GET() {
         trigger: r.trigger,
         errorSummary: r.errorSummary,
       })),
-    }
+    };
 
     return NextResponse.json({
       lastRun: lastRunParsed,
@@ -201,12 +201,12 @@ export async function GET() {
         pending: pendingPipelineJobs,
         running: runningPipelineJobs,
       },
-    })
+    });
   } catch (e) {
-    const message = publicApiErrorMessage(e, 'Intelligence summary unavailable')
+    const message = publicApiErrorMessage(e, 'Intelligence summary unavailable');
     return NextResponse.json(
       { error: 'Intelligence tables unavailable', detail: message },
       { status: 503 },
-    )
+    );
   }
 }
