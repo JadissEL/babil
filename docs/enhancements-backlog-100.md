@@ -82,7 +82,7 @@ flowchart LR
 
 > **Livré (lot B.23–B.25) :** documentation unique [engine-probability-vs-recommendation.md](engine-probability-vs-recommendation.md) ; version des moteurs via `X-Babil-Engine-Version` / `X-Babil-Engine-Kind` et constante [`BABIL_ENGINE_VERSION`](../lib/engine-version.ts) ; tests de garde + checklist calibration dans la même doc ([`lib/public-synthetic-profile.test.ts`](../lib/public-synthetic-profile.test.ts)).
 
-> **Livré (lot B.26–B.38 + C.39–C.52) :** entrées détaillées en sections B et C. Synthèse **C.46–C.50** : tests mock WB, [intelligence-seed-sources.md](intelligence-seed-sources.md), démographie WB + glossaire `/intelligence-fieldpaths`, cap `rawPayload`. **C.51** — [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md). **C.52** — `INTELLIGENCE_SOURCE_DISABLED_SLUGS` + [`source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts).
+> **Livré (lot B.26–B.38 + C.39–C.52 + D.54–D.60) :** entrées détaillées en sections B, C et D (extrait). Synthèse **C.46–C.52** : tests mock WB, seed sources, démographie WB + glossaire, cap `rawPayload`, doc cron, flags source. **D.54–D.60** : pagination/cache liste pays, `unstable_cache` merge, middleware Edge doc, limite corps + rate limit POST moteurs — [api-edge-rate-limits.md](api-edge-rate-limits.md).
 
 ### B — Données, scoring et transparence (23–38)
 
@@ -120,7 +120,7 @@ flowchart LR
 51. **Cron** : documenter secrets, environnements, et rollback si matérialisation partielle. *(Livré : [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).)*
 52. **Feature flag** pour activer/désactiver collecte par source en prod. *(Livré : `INTELLIGENCE_SOURCE_DISABLED_SLUGS` + [`source-collection-flags.ts`](../lib/intelligence-pipeline/source-collection-flags.ts), appliqué au collecteur WB et aux stubs multilatéraux — voir doc cron.)*
 
-> **Livré (lot D.54–D.57) :** pagination curseur `id` sur [`GET /api/countries`](../app/api/countries/route.ts) ; en-têtes cache public + SWR via [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) (liste + fiche `[id]`) ; **D.56–D.57** — `unstable_cache` + `cache()` sur la liste fusionnée [`countries-prisma-merge.ts`](../lib/countries-prisma-merge.ts) + `revalidateTag` après PATCH admin pays.
+> **Livré (lot D.54–D.60) :** pagination curseur + cache HTTP liste/fiche ; `unstable_cache` liste fusionnée + `revalidateTag` admin ; **D.58–D.60** — doc + commentaires Edge [`proxy.ts`](../proxy.ts), garde-fou `Content-Length` + rate limit POST moteurs [`docs/api-edge-rate-limits.md`](api-edge-rate-limits.md).
 
 ### D — API, performances et cache (53–65)
 
@@ -129,9 +129,9 @@ flowchart LR
 55. **`Cache-Control`** / `stale-while-revalidate` sur réponses publiques sûres. *(Livré : [`lib/public-api-cache.ts`](../lib/public-api-cache.ts) sur `GET /api/countries` et `GET /api/countries/[id]`.)*
 56. **React `cache()`** ou équivalent déjà partiellement utilisé — étendre aux lectures lourdes répétées. *(Livré : `unstable_cache` (120s, tag `babil-merged-countries-list`) + `cache()` sur [`getMergedCountriesListCached`](../lib/countries-prisma-merge.ts) ; `buildMergedCountriesList` délègue à ce chemin.)*
 57. **Déduplication** des appels `buildMergedCountriesList` dans une même requête (si patterns N+1). *(Livré : même module — `cache()` pour un rendu / handler ; invalidation `revalidateTag` sur [`PATCH /api/admin/countries/[id]`](../app/api/admin/countries/[id]/route.ts).)*
-58. **Edge** : évaluer middleware géo ou redirections uniquement (pas de logique lourde).
-59. **Compression** Brotli côté plateforme (souvent auto) + vérifier taille JSON max.
-60. **Rate limiting** par `userId` sur POST reco/proba pour anti-abus.
+58. **Edge** : évaluer middleware géo ou redirections uniquement (pas de logique lourde). *(Livré : commentaire architecture [`proxy.ts`](../proxy.ts) + synthèse [api-edge-rate-limits.md](api-edge-rate-limits.md) — middleware = auth Clerk uniquement, pas de géo/DB.)*
+59. **Compression** Brotli côté plateforme (souvent auto) + vérifier taille JSON max. *(Livré : doc plateforme + plafond `Content-Length` sur POST reco/proba [`engine-post-body-limits.ts`](../lib/engine-post-body-limits.ts), variable `BABIL_ENGINE_POST_MAX_CONTENT_LENGTH`.)*
+60. **Rate limiting** par `userId` sur POST reco/proba pour anti-abus. *(Livré : [`engine-post-rate-limit.ts`](../lib/engine-post-rate-limit.ts) — clé `user:` / `anon:` + IP ; 429 + `Retry-After` ; env `BABIL_ENGINE_RATE_LIMIT_*`.)*
 61. **Timeouts** explicites sur appels externes dans pipeline (éviter hangs).
 62. **Validation Zod** (ou équivalent) sur bodies API publiques/admin.
 63. **OpenAPI** spec générée ou maintenue pour les routes API.

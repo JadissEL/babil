@@ -4,6 +4,8 @@ import { materializePublicFullDataForApi } from '@/lib/country-full-data-materia
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
+import { checkEnginePostContentLength } from '@/lib/engine-post-body-limits'
+import { checkEnginePostRateLimit } from '@/lib/engine-post-rate-limit'
 import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility'
 import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
 import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
@@ -263,6 +265,28 @@ function computeRecommendation(country: any, profile: NormalizedProfile) {
 
 export async function POST(req: Request) {
   const { userId } = auth();
+
+  const lenCheck = checkEnginePostContentLength(req)
+  if (!lenCheck.ok) {
+    return NextResponse.json(
+      { error: `Request body too large (max ${lenCheck.maxBytes} bytes)` },
+      { status: 413, headers: engineVersionHeaders('recommendation') },
+    )
+  }
+
+  const rl = checkEnginePostRateLimit(userId, req)
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests', retryAfterSec: rl.retryAfterSec, limit: rl.limit },
+      {
+        status: 429,
+        headers: {
+          ...engineVersionHeaders('recommendation'),
+          'Retry-After': String(rl.retryAfterSec),
+        },
+      },
+    )
+  }
 
   let body: Record<string, unknown>;
   try {

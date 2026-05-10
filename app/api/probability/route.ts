@@ -5,6 +5,8 @@ import { materializePublicFullDataForApi } from '@/lib/country-full-data-materia
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { buildMergedCountriesList } from '@/lib/countries-prisma-merge'
+import { checkEnginePostContentLength } from '@/lib/engine-post-body-limits'
+import { checkEnginePostRateLimit } from '@/lib/engine-post-rate-limit'
 import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot'
 import { appendProfileContextNarratives } from '@/lib/probability-profile-narrative'
 import { buildCountrySheetSignals, inferProbabilitySheetDefaultsFromFull } from '@/lib/probability-result-display'
@@ -15,6 +17,28 @@ import { coerceStoredProfession } from '@/lib/user-profile-enums'
 
 export async function POST(req: Request) {
   const { userId } = auth();
+
+  const lenCheck = checkEnginePostContentLength(req)
+  if (!lenCheck.ok) {
+    return NextResponse.json(
+      { error: `Request body too large (max ${lenCheck.maxBytes} bytes)` },
+      { status: 413, headers: engineVersionHeaders('probability') },
+    )
+  }
+
+  const rl = checkEnginePostRateLimit(userId, req)
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Too many requests', retryAfterSec: rl.retryAfterSec, limit: rl.limit },
+      {
+        status: 429,
+        headers: {
+          ...engineVersionHeaders('probability'),
+          'Retry-After': String(rl.retryAfterSec),
+        },
+      },
+    )
+  }
 
   let body: Record<string, unknown>;
   try {

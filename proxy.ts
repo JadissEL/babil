@@ -1,5 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
+/**
+ * Clerk auth boundary only (catalogue **D.58**).
+ *
+ * - Runs on the **Edge** runtime — keep this file free of DB/Prisma, large JSON parsing, or geo lookups.
+ * - Geo / personalization belong in Route Handlers or `next.config` rewrites, not here.
+ * - Matcher skips static assets (`_next`, images, fonts, …) — see `config.matcher`.
+ */
 const isProtectedRoute = createRouteMatcher([
   '/services/delegated-applications(.*)',
   '/overview(.*)',
