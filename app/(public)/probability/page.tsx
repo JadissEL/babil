@@ -19,7 +19,7 @@ import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import { appToast } from '@/lib/toast-store'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
-import type { ProbabilityApiRow } from '@/lib/types/api-recommendation-probability'
+import type { ProbabilityApiRow } from '@/lib/types'
 
 export default function ProbabilityPage() {
   const { user, isLoaded } = useUser()

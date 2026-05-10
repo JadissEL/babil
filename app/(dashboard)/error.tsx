@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
-import Link from 'next/link'
+import { useEffect } from 'react';
+import Link from 'next/link';
 
 /** Error boundary pour l’espace connecté — F.86. */
 export default function DashboardError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <div className="mx-auto flex min-h-[40vh] max-w-lg flex-col items-center justify-center gap-6 px-4 py-12 text-center">
@@ -40,5 +40,5 @@ export default function DashboardError({
         </Link>
       </div>
     </div>
-  )
+  );
 }

@@ -7,6 +7,7 @@ This folder contains the autonomous country intelligence engine.
 - Main orchestration: `runner.ts`
 - Shared types: `runner-types.ts`
 - Environment constants (tick intervals, gates, paths): `runner-constants.ts`
+- Task queue persistence (`.agent-state/tasks.json`): `runner-persistence.ts`
 
 ## What runs
 

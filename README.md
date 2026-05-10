@@ -27,7 +27,7 @@ npm run dev
 | `npm run test:lib` | Tests `lib/**/*.test.ts` (runtime Node `tsx --test`) |
 | `npm run test:vitest` | Vitest — routes API critiques (`lib/api-routes-critical.vitest.ts`) |
 | `npm run lint` | ESLint (Next + `@typescript-eslint/no-explicit-any` en **warn**) |
-| `npm run format:check` | Prettier sur `app/api/**`, `lib/types/**`, `lib/api-schemas/**` |
+| `npm run format:check` | Prettier sur `app/api/**`, `app/error.tsx`, dashboard `error.tsx`, `agents/**`, `lib/types/**`, `lib/api-schemas/**` |
 | `npm run format` | Applique Prettier sur les mêmes chemins |
 | `npm run check` | `test:lib` + `test:vitest` + `validate:schengen-keys` + `format:check` + `lint` |
 
@@ -49,6 +49,8 @@ Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, 
 - **Server Components par défaut** : pas de `'use client'` sur une page ou un layout tant qu’il n’y a pas besoin de hooks React, d’écouteurs d’événements ou d’API navigateur.
 - **Client** : regrouper l’UI interactive dans `components/` (ex. `DashboardLayoutClient`) ou marquer uniquement la feuille qui en a besoin.
 - **Error boundaries** : [`app/error.tsx`](app/error.tsx) (arbre sous le layout racine), [`app/(dashboard)/error.tsx`](app/(dashboard)/error.tsx) (segment dashboard).
+
+- **Types API moteur** : préférer `import type { … } from '@/lib/types'` ([`lib/types/index.ts`](lib/types/index.ts)) pour `RecommendationApiItem`, `ProbabilityApiRow`, `EngineCountryListRow`.
 
 ## Legacy / hors Next
 

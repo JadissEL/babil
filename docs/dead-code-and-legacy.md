@@ -13,6 +13,11 @@ Ce document répond au backlog **F.85** : ce qui existe encore **à côté** de 
 
 - **`express`**, **`cors`** : utilisées par `server.js` ; Next.js ne les utilise pas pour les routes App Router.
 
+## `package.json` (audit rapide)
+
+- **`main`: `index.js`** — entrée npm par défaut ; **aucun `index.js` à la racine** du dépôt : l’app tourne via **`next dev` / `next start`** (voir scripts `dev`, `build`, `start`).
+- **Scripts `npm`** : aucun ne lance `server.js` (recherche manuelle + CI : préférer `grep server\\.js package.json` lors des revues).
+
 ## Recommandations (hors périmètre immédiat)
 
 1. Confirmer qu’aucun environnement (staging, scripts ops) ne démarre `node server.js`.
