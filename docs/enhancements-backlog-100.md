@@ -84,7 +84,7 @@ flowchart LR
 
 > **Livré (lot B.26–B.38 + C.39–C.52 + D.54–D.65) :** entrées détaillées en sections B, C et D (extrait). Synthèse pipeline + perf API : C.46–C.52, D.54–D.65 (OpenAPI, ETag pays, audit LCP home) — [api-edge-rate-limits.md](api-edge-rate-limits.md), [home-lcp-and-images.md](home-lcp-and-images.md).
 
-> **Livré (lot E.66–E.77 partiel) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), en-têtes sécurité + HSTS prod, audit npm en CI (`audit:ci`), Dependabot ; doc secrets / chiffrement at rest / DPA (pointeurs) ; migration **Clerk 6** + `await auth()` / `await auth.protect()` dans le middleware ; **E.72** rate limit `POST /api/comments` ; **E.75** garde tests scope favoris/historique/export.
+> **Livré (lot E.66–E.77 partiel) :** [catalogue-e-security.md](catalogue-e-security.md) — RBAC admin (tests), **E.67** journal audit admin (`AdminAuditLog`, `recordAdminAudit`, `GET /api/admin/audit-log`, tests câblage), en-têtes sécurité + HSTS prod, audit npm en CI (`audit:ci`), Dependabot ; doc secrets / chiffrement at rest / DPA (pointeurs) ; migration **Clerk 6** + `await auth()` / `await auth.protect()` dans le middleware ; **E.72** rate limit `POST /api/comments` ; **E.75** garde tests scope favoris/historique/export.
 
 ### B — Données, scoring et transparence (23–38)
 
@@ -143,7 +143,7 @@ flowchart LR
 ### E — Sécurité, conformité et admin (66–77)
 
 66. Revue **RBAC** : s’assurer que toutes les routes `/api/admin/*` vérifient `Role.ADMIN` côté serveur. *(Livré : garde [`lib/admin-api-routes.test.ts`](../lib/admin-api-routes.test.ts) + `getAdminUser` sur chaque route admin — voir [catalogue-e-security.md](catalogue-e-security.md).)*
-67. **Audit log** des actions admin (modifs pays, statuts demandes déléguées).
+67. **Audit log** des actions admin (modifs pays, statuts demandes déléguées). *(Livré : modèle `AdminAuditLog`, [`recordAdminAudit`](../lib/admin-audit-log.ts), `GET /api/admin/audit-log`, câblage PATCH pays + demandes déléguées — [catalogue-e-security.md](catalogue-e-security.md) §E.67.)*
 68. **CSRF** / origin checks sur routes sensibles si cookies non SameSite strict partout.
 69. **Headers sécurité** (CSP, HSTS) via Next config. *(Livré partiel : en-têtes baseline + HSTS en prod dans [`next.config.js`](../next.config.js) ; CSP stricte : backlog — [catalogue-e-security.md](catalogue-e-security.md).)*
 70. **Secrets** : rotation `CRON_SECRET`, pas de fuite dans logs GitHub Actions. *(Livré partiel : pratiques documentées [catalogue-e-security.md](catalogue-e-security.md) ; rotation = process hors repo.)*
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **54–55** (pagination / cache), **23–24** (doc + version moteur), **67** (audit log admin), **75** (tests authz favoris/historique).
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **68** (CSRF / origin), **71** (scrub PII erreurs client), **76** (webhooks signés), **90–91** (observabilité Sentry / logs structurés).

@@ -3,6 +3,7 @@ import { revalidateTag } from 'next/cache'
 import type { Prisma } from '@prisma/client'
 
 import { getAdminUser } from '@/lib/admin-auth'
+import { recordAdminAudit } from '@/lib/admin-audit-log'
 import { MERGED_COUNTRIES_LIST_CACHE_TAG } from '@/lib/countries-prisma-merge'
 import prisma from '@/lib/prisma'
 import { parseCountryFullData } from '@/lib/country-full-data-json'
@@ -146,6 +147,11 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     } catch {
       /* revalidateTag requires Next server context */
     }
+    void recordAdminAudit(admin.id, {
+      action: 'country.patch',
+      resource: `country:${id}`,
+      detail: detailParts.length ? detailParts.join(';') : 'country.patch',
+    })
     return NextResponse.json(updated)
   } catch (error: unknown) {
     if (isDbUnavailable(error)) {

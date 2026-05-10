@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import { getAdminUser } from '@/lib/admin-auth'
+import { recordAdminAudit } from '@/lib/admin-audit-log'
 import { redactDelegatedPayloadDeep } from '@/lib/delegated-application-payload-utils'
 import prisma from '@/lib/prisma'
 import { isDelegatedRequestStatus } from '@/lib/delegated-application-status'
@@ -78,12 +79,23 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 
   try {
+    const existing = await prisma.delegatedApplicationRequest.findUnique({
+      where: { id },
+      select: { status: true },
+    })
+    if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
     const updated = await prisma.delegatedApplicationRequest.update({
       where: { id },
       data: { status },
       include: {
         user: { select: { email: true, name: true } },
       },
+    })
+    void recordAdminAudit(admin.id, {
+      action: 'delegated_request.status_change',
+      resource: `delegated_application_request:${id}`,
+      detail: `${existing.status}->${status}`,
     })
     return NextResponse.json({
       ok: true,

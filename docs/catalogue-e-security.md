@@ -7,6 +7,14 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 - Toutes les routes sous `app/api/admin/**/route.ts` appellent `getAdminUser()` et renvoient **403** si non admin.
 - Garde automatisée : [`lib/admin-api-routes.test.ts`](../lib/admin-api-routes.test.ts).
 
+## E.67 — Journal d’audit admin (persistant)
+
+- **Modèle** : `AdminAuditLog` dans [`prisma/schema.prisma`](../prisma/schema.prisma) (`adminUserId`, `action`, `resource`, `detail`, `metadata` JSON optionnel) ; migration `20260510130000_admin_audit_log`.
+- **Écriture** : [`lib/admin-audit-log.ts`](../lib/admin-audit-log.ts) — `recordAdminAudit` (erreurs DB ignorées pour ne pas bloquer les mutations admin).
+- **Call sites (exemples)** : après succès sur [`PATCH /api/admin/countries/[id]`](../app/api/admin/countries/[id]/route.ts) (`country.patch`) et changement de statut [`PATCH .../delegated-application-requests/[id]`](../app/api/admin/delegated-application-requests/[id]/route.ts) (`delegated_request.status_change`).
+- **Lecture** : [`GET /api/admin/audit-log`](../app/api/admin/audit-log/route.ts) — admin uniquement, `?limit=1..100` (défaut 50), tri récent d’abord.
+- **Garde tests** : [`lib/admin-audit-wiring.test.ts`](../lib/admin-audit-wiring.test.ts).
+
 ## E.69 — En-têtes de sécurité (Next)
 
 - Config : [`next.config.js`](../next.config.js) — `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-DNS-Prefetch-Control` ; **HSTS** uniquement quand `NODE_ENV === 'production'`.
@@ -43,7 +51,6 @@ Items **E.66–E.77** du [enhancements-backlog-100.md](enhancements-backlog-100.
 
 ## Non couverts ici (backlog code / produit)
 
-- **E.67** — journal d’audit admin persistant.
 - **E.68** — contrôles CSRF / Origin ciblés.
 - **E.71** — masquage PII dans erreurs client.
 - **E.76** — webhooks signés.

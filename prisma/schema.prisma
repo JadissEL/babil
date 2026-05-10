@@ -203,6 +203,20 @@ model DelegatedApplicationRequest {
   @@index([userId, createdAt])
 }
 
+/** E.67 — journal append-only des actions admin mutatrices (sans payload brut ni PII). */
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  adminUserId String
+  action      String
+  resource    String
+  detail      String?
+  metadata    Json?
+
+  @@index([createdAt(sort: Desc)])
+  @@index([adminUserId, createdAt(sort: Desc)])
+}
+
 enum Role {
   USER
   ADMIN
