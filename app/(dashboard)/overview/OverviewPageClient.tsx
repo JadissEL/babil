@@ -19,13 +19,25 @@ import {
   FileStack,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useMemo } from 'react'
 import { ObjectivePreferencePanel } from '@/components/dashboard/ObjectivePreferencePanel'
 import { PostSignupOnboarding } from '@/components/dashboard/PostSignupOnboarding'
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
 import { MyDelegatedRequests } from '@/components/services/MyDelegatedRequests'
 import { RecentlyViewedCountries } from '@/components/user/RecentlyViewedCountries'
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
 
 export default function OverviewPageClient() {
   const { user } = useUser()
+  const { preference } = useObjectivePreference()
+  const explorerHref = useMemo(
+    () => ctaExploreHref(preference.primarySlug),
+    [preference.primarySlug],
+  )
+  const compareHref = useMemo(
+    () => ctaCompareHref(preference.primarySlug),
+    [preference.primarySlug],
+  )
 
   const stats = [
     { label: 'Score de succès moyen', value: '64%', icon: TrendingUp, tone: 'text-success ring-[#94dfbd] bg-[#e9f9f1]' },
@@ -34,7 +46,8 @@ export default function OverviewPageClient() {
     { label: 'Avis communauté', value: '124', icon: MessageSquare, tone: 'text-accent ring-accent/30 bg-accent-soft' },
   ]
 
-  const modules = [
+  const modules = useMemo(
+    () => [
     {
       title: 'Moteur de probabilités',
       description: "Calculez vos chances réelles d'obtention de visa selon votre profil.",
@@ -55,7 +68,7 @@ export default function OverviewPageClient() {
       title: 'Comparer pays',
       description: "Jusqu'à 4 destinations, tableau et mise en avant du meilleur score.",
       icon: Scale,
-      link: '/compare',
+      link: compareHref,
       color: 'bg-[#2f8bb9]',
       status: 'Prêt',
     },
@@ -71,7 +84,7 @@ export default function OverviewPageClient() {
       title: 'Friction Map',
       description: 'Découvrez les pays où les rendez-vous sont les plus saturés.',
       icon: Map,
-      link: '/explorer',
+      link: explorerHref,
       color: 'bg-[#475569]',
       status: 'Mise à jour',
     },
@@ -108,7 +121,9 @@ export default function OverviewPageClient() {
       color: 'bg-success',
       status: 'Prêt',
     },
-  ]
+  ],
+    [compareHref, explorerHref],
+  )
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -221,7 +236,7 @@ export default function OverviewPageClient() {
             </div>
 
             <Link
-              href="/explorer"
+              href={explorerHref}
               className="mt-8 flex w-full items-center justify-center rounded-2xl border border-line bg-inset py-4 text-sm font-black text-text transition-colors hover:bg-primary-soft"
             >
               Ouvrir l&apos;Explorer

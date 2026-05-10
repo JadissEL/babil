@@ -3,14 +3,27 @@
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Globe, Heart, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch';
 import { HeaderObjectiveSelector } from '@/components/objectives/HeaderObjectiveSelector';
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate';
 
 /**
  * Global sticky header + compact objective strip on small screens.
  */
 export function SiteHeader() {
+  const { preference } = useObjectivePreference();
+  const explorerNavHref = useMemo(
+    () => ctaExploreHref(preference.primarySlug),
+    [preference.primarySlug],
+  );
+  const compareNavHref = useMemo(
+    () => ctaCompareHref(preference.primarySlug),
+    [preference.primarySlug],
+  );
+
   return (
     <>
       <header className="sticky top-0 z-50 border-b border-line bg-[#fdf8ef]/90 text-text backdrop-blur">
@@ -25,7 +38,7 @@ export function SiteHeader() {
 
             <nav className="hidden items-center gap-4 lg:flex xl:gap-5">
               <Link
-                href="/explorer"
+                href={explorerNavHref}
                 className="text-sm font-semibold text-muted transition-colors hover:text-primary"
               >
                 Explorer
@@ -37,7 +50,7 @@ export function SiteHeader() {
                 Schengen
               </Link>
               <Link
-                href="/compare"
+                href={compareNavHref}
                 className="text-sm font-semibold text-muted transition-colors hover:text-primary"
               >
                 Comparer

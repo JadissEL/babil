@@ -25,6 +25,7 @@ import AppSidebar from '@/components/layout/AppSidebar';
 import PageContainer from '@/components/layout/PageContainer';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo';
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import type { HomeHeroSlide } from '@/lib/home-hero-slides';
 import {
   focusStripForObjective,
@@ -119,6 +120,8 @@ export function HomeExperience({
   );
   const focusStrip = useMemo(() => focusStripForObjective(preference.primarySlug), [preference.primarySlug]);
   const quickGoal = primaryDefinition?.explorerGoalDefault ?? 'all';
+  const exploreCtaHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug]);
+  const compareCtaHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug]);
 
   const testimonials = [
     {
@@ -180,7 +183,7 @@ export function HomeExperience({
                 Lancer une analyse <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/explorer"
+                href={exploreCtaHref}
                 className="inline-flex items-center gap-2 rounded-xl border border-line bg-inset px-5 py-3 text-xs font-black uppercase tracking-widest text-text hover:bg-primary-soft"
               >
                 Ouvrir l&apos;Explorer
@@ -214,7 +217,7 @@ export function HomeExperience({
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-black text-text">Pays à la une</h2>
           <Link
-            href="/explorer"
+            href={exploreCtaHref}
             className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-hover"
           >
             Tout voir
@@ -233,7 +236,8 @@ export function HomeExperience({
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {featureKeys.map((key) => {
               const f = FEATURE_MAP[key];
-              return <Feature key={key} href={f.href} icon={f.icon} title={f.title} description={f.description} />;
+              const href = key === 'compare' ? compareCtaHref : f.href;
+              return <Feature key={key} href={href} icon={f.icon} title={f.title} description={f.description} />;
             })}
           </div>
         </div>
@@ -297,10 +301,10 @@ export function HomeExperience({
           <div>
             <p className="text-sm font-black text-text">Plateforme</p>
             <div className="mt-3 space-y-2 text-sm">
-              <Link href="/explorer" className="block font-medium text-muted hover:text-primary">
+              <Link href={exploreCtaHref} className="block font-medium text-muted hover:text-primary">
                 Explorer
               </Link>
-              <Link href="/compare" className="block font-medium text-muted hover:text-primary">
+              <Link href={compareCtaHref} className="block font-medium text-muted hover:text-primary">
                 Comparer
               </Link>
               <Link href="/schengen" className="block font-medium text-muted hover:text-primary">
