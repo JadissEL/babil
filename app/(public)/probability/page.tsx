@@ -1,136 +1,203 @@
-'use client'
+'use client';
 
-import { SignInButton, useUser } from '@clerk/nextjs'
-import { Brain, ChevronDown, ChevronUp, CheckCircle2, AlertCircle, Lightbulb, TrendingUp, Scale, Star, ShieldAlert, Info } from 'lucide-react'
-import Link from 'next/link'
-import { useState, useEffect } from 'react'
-import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
-import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner'
-import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
+import { SignInButton, useUser } from '@clerk/nextjs';
+import {
+  Brain,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
+  AlertCircle,
+  Lightbulb,
+  TrendingUp,
+  Scale,
+  Star,
+  ShieldAlert,
+  Info,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useMemo, useRef, Suspense } from 'react';
+import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton';
+import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner';
+import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs';
 import {
   describeTopCountrySignals,
   orderedProbabilityBreakdown,
   PROBABILITY_DEFAULT_FIELD_LABELS_FR,
   type ProbabilityCountrySignals,
   type ProbabilitySheetFieldDefault,
-} from '@/lib/probability-result-display'
-import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
-import { formatScoreDriversFrench } from '@/lib/score-driver-explain'
-import { englishScoreLevelToFr } from '@/lib/score-level-fr'
-import { appToast } from '@/lib/toast-store'
-import type { ProbabilityApiRow } from '@/lib/types'
+} from '@/lib/probability-result-display';
+import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile';
+import { formatScoreDriversFrench } from '@/lib/score-driver-explain';
+import { englishScoreLevelToFr } from '@/lib/score-level-fr';
+import { appToast } from '@/lib/toast-store';
+import type { ProbabilityApiRow } from '@/lib/types';
 
 export default function ProbabilityPage() {
-  const { user, isLoaded } = useUser()
-  const [results, setResults] = useState<ProbabilityApiRow[]>([])
-  const [loading, setLoading] = useState(true)
-  const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null)
-  const [readOnlyDemo, setReadOnlyDemo] = useState(false)
-  const [expanded, setExpanded] = useState<string | null>(null)
-  const [comparisonList, setComparisonList] = useState<string[]>([])
-  const [showComparison, setShowComparison] = useState(false)
+  return (
+    <Suspense fallback={<ProbabilityPageFallback />}>
+      <ProbabilityPageInner />
+    </Suspense>
+  );
+}
+
+function ProbabilityPageFallback() {
+  return (
+    <div className="mx-auto max-w-6xl pb-16 sm:pb-20">
+      <div className="mb-8 flex min-w-0 items-center gap-3 sm:mb-10 sm:gap-4">
+        <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
+          <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
+        </div>
+        <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl">
+          Moteur de probabilités visa
+        </h1>
+      </div>
+      <DashboardPageSkeleton />
+    </div>
+  );
+}
+
+function ProbabilityPageInner() {
+  const searchParams = useSearchParams();
+  const focusCountryId = useMemo(() => {
+    const raw = searchParams?.get('countryId');
+    if (!raw) return undefined;
+    const n = Number.parseInt(raw, 10);
+    return Number.isFinite(n) && n >= 1 ? n : undefined;
+  }, [searchParams]);
+
+  const focusCountryName = useMemo(() => {
+    const n = searchParams?.get('countryName')?.trim();
+    return n ? n : undefined;
+  }, [searchParams]);
+
+  const didAutoExpand = useRef(false);
+  const { user, isLoaded } = useUser();
+  const [results, setResults] = useState<ProbabilityApiRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [profileUsed, setProfileUsed] = useState<Record<string, unknown> | null>(null);
+  const [readOnlyDemo, setReadOnlyDemo] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [comparisonList, setComparisonList] = useState<string[]>([]);
+  const [showComparison, setShowComparison] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded) return
+    didAutoExpand.current = false;
+  }, [focusCountryId]);
+
+  useEffect(() => {
+    if (didAutoExpand.current || focusCountryId == null || results.length === 0) return;
+    const row = results.find((r) => r.id === focusCountryId);
+    if (row) {
+      setExpanded(row.country);
+      didAutoExpand.current = true;
+    }
+  }, [focusCountryId, results]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
 
     const loadData = async () => {
       try {
+        const withFocus = (body: Record<string, unknown>) =>
+          focusCountryId != null ? { ...body, focusCountryId } : body;
+
         if (!user) {
-          setReadOnlyDemo(true)
-          setProfileUsed({ ...PUBLIC_READ_ONLY_DEMO_PROFILE })
+          setReadOnlyDemo(true);
+          setProfileUsed({ ...PUBLIC_READ_ONLY_DEMO_PROFILE });
           const probRes = await fetch('/api/probability', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}),
-          })
-          const data = await probRes.json()
+            body: JSON.stringify(withFocus({})),
+          });
+          const data = await probRes.json();
           if (!probRes.ok) {
             const msg =
               typeof (data as { error?: unknown })?.error === 'string'
                 ? (data as { error: string }).error
-                : 'Le moteur de probabilités a échoué.'
-            appToast.error(msg)
-            setResults([])
+                : 'Le moteur de probabilités a échoué.';
+            appToast.error(msg);
+            setResults([]);
           } else if (!Array.isArray(data)) {
-            appToast.error('Réponse probabilité inattendue.')
-            setResults([])
+            appToast.error('Réponse probabilité inattendue.');
+            setResults([]);
           } else {
-            setResults(data as ProbabilityApiRow[])
+            setResults(data as ProbabilityApiRow[]);
           }
-          return
+          return;
         }
 
-        setReadOnlyDemo(false)
-        const profileRes = await fetch('/api/user/profile')
-        const profile = await profileRes.json()
+        setReadOnlyDemo(false);
+        const profileRes = await fetch('/api/user/profile');
+        const profile = await profileRes.json();
 
         if (!profile || profile.error) {
-          setProfileUsed(null)
-          setLoading(false)
-          return
+          setProfileUsed(null);
+          setLoading(false);
+          return;
         }
 
-        setProfileUsed(profile)
+        setProfileUsed(profile);
         const probRes = await fetch('/api/probability', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ profile }),
-        })
-        const data = await probRes.json()
+          body: JSON.stringify(withFocus({ profile })),
+        });
+        const data = await probRes.json();
         if (!probRes.ok) {
           const msg =
             typeof (data as { error?: unknown })?.error === 'string'
               ? (data as { error: string }).error
-              : 'Le moteur de probabilités a échoué.'
-          appToast.error(msg)
-          setResults([])
+              : 'Le moteur de probabilités a échoué.';
+          appToast.error(msg);
+          setResults([]);
         } else if (!Array.isArray(data)) {
-          appToast.error('Réponse probabilité inattendue.')
-          setResults([])
+          appToast.error('Réponse probabilité inattendue.');
+          setResults([]);
         } else {
-          setResults(data as ProbabilityApiRow[])
+          setResults(data as ProbabilityApiRow[]);
         }
       } catch (err) {
-        console.error(err)
-        appToast.error('Erreur réseau — probabilités non chargées.')
-        setResults([])
+        console.error(err);
+        appToast.error('Erreur réseau — probabilités non chargées.');
+        setResults([]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadData()
-  }, [isLoaded, user])
+    loadData();
+  }, [isLoaded, user, focusCountryId]);
 
   const toggleComparison = (country: string) => {
     if (comparisonList.includes(country)) {
-      setComparisonList(comparisonList.filter(c => c !== country))
+      setComparisonList(comparisonList.filter((c) => c !== country));
     } else if (comparisonList.length < 3) {
-      setComparisonList([...comparisonList, country])
+      setComparisonList([...comparisonList, country]);
     }
-  }
+  };
 
   const getLevelColor = (level: string) => {
     switch (level) {
       case 'Very High':
-        return 'border-[#94dfbd] bg-[#e9f9f1] text-success'
+        return 'border-[#94dfbd] bg-[#e9f9f1] text-success';
       case 'High':
-        return 'border-primary/40 bg-primary-soft text-primary'
+        return 'border-primary/40 bg-primary-soft text-primary';
       case 'Medium':
-        return 'border-[#f2c27a] bg-[#fff5e7] text-warning'
+        return 'border-[#f2c27a] bg-[#fff5e7] text-warning';
       case 'Low':
-        return 'border-accent/40 bg-accent-soft text-accent'
+        return 'border-accent/40 bg-accent-soft text-accent';
       case 'Very Low':
-        return 'border-[#f3afaf] bg-[#fff0f0] text-danger'
+        return 'border-[#f3afaf] bg-[#fff0f0] text-danger';
       default:
-        return 'border-line bg-inset text-muted'
+        return 'border-line bg-inset text-muted';
     }
-  }
+  };
 
   // Calculate Global Strategy based on results
-  const topCountry = results[0]
-  const backupCountries = results.slice(1, 4)
-  const highRiskCountries = results.filter((r) => r.globalScore < 40).slice(0, 3)
+  const topCountry = results[0];
+  const backupCountries = results.slice(1, 4);
+  const highRiskCountries = results.filter((r) => r.globalScore < 40).slice(0, 3);
 
   if (!isLoaded || loading) {
     return (
@@ -139,11 +206,13 @@ export default function ProbabilityPage() {
           <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
             <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
           </div>
-          <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl">Moteur de probabilités visa</h1>
+          <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl">
+            Moteur de probabilités visa
+          </h1>
         </div>
         <DashboardPageSkeleton />
       </div>
-    )
+    );
   }
 
   return (
@@ -175,15 +244,17 @@ export default function ProbabilityPage() {
             }`}
           >
             <Scale className="h-5 w-5 shrink-0" />
-            <span className="truncate">{showComparison ? 'Masquer la comparaison' : `Comparer (${comparisonList.length})`}</span>
+            <span className="truncate">
+              {showComparison ? 'Masquer la comparaison' : `Comparer (${comparisonList.length})`}
+            </span>
           </button>
         </div>
       </div>
 
       {readOnlyDemo ? (
         <div className="mb-6 rounded-2xl border border-primary/35 bg-primary-soft/50 p-4 text-sm font-medium text-text shadow-card sm:p-5">
-          <span className="font-black text-primary">Mode découverte.</span> Scores calculés avec un profil de démonstration
-          fixe.{' '}
+          <span className="font-black text-primary">Mode découverte.</span> Scores calculés avec un
+          profil de démonstration fixe.{' '}
           <SignInButton mode="modal">
             <button
               type="button"
@@ -196,12 +267,37 @@ export default function ProbabilityPage() {
         </div>
       ) : null}
 
+      {focusCountryId != null ? (
+        <div
+          className="mb-6 rounded-2xl border border-accent/35 bg-accent-soft/45 p-4 text-sm font-medium text-text shadow-card sm:p-5"
+          role="status"
+        >
+          <span className="font-black text-accent">Contexte pays.</span> Classement priorisé pour{' '}
+          <strong>{focusCountryName ?? `le pays #${focusCountryId}`}</strong>
+          {focusCountryName ? ` (#${focusCountryId})` : null}.{' '}
+          <Link
+            href={`/countries/${focusCountryId}`}
+            className="font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+          >
+            Revoir la fiche
+          </Link>
+          {' · '}
+          <Link
+            href="/probability"
+            className="font-black text-muted underline decoration-muted/50 underline-offset-2 hover:text-primary hover:decoration-primary"
+          >
+            Effacer le contexte
+          </Link>
+        </div>
+      ) : null}
+
       {results.length === 0 ? (
         <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface px-5 py-10 text-center shadow-card sm:rounded-[2rem] sm:p-12">
           <ShieldAlert className="mx-auto mb-6 h-16 w-16 text-warning" />
           <h2 className="mb-4 text-2xl font-black text-text">Profil incomplet</h2>
           <p className="mb-8 font-medium leading-relaxed text-muted">
-            Pour calculer vos probabilités, renseignez votre situation financière et professionnelle.
+            Pour calculer vos probabilités, renseignez votre situation financière et
+            professionnelle.
           </p>
           <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
             <Link
@@ -226,20 +322,28 @@ export default function ProbabilityPage() {
         </div>
       ) : (
         <div className="space-y-12">
-          {profileUsed ? <ProfileContextBanner profile={profileUsed} variant="probability" /> : null}
+          {profileUsed ? (
+            <ProfileContextBanner profile={profileUsed} variant="probability" />
+          ) : null}
 
           {/* Global Output Section */}
           <section className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="min-w-0 bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-3xl text-white shadow-xl shadow-green-100">
               <div className="flex items-center gap-2 mb-4">
                 <Star className="w-5 h-5" />
-                <span className="text-xs font-black uppercase tracking-widest opacity-80">Meilleur choix</span>
+                <span className="text-xs font-black uppercase tracking-widest opacity-80">
+                  Meilleur choix
+                </span>
               </div>
               <h3 className="text-3xl font-black mb-1">{topCountry?.country}</h3>
-              <p className="text-green-100 text-sm font-bold mb-6">Score de succès estimé: {topCountry?.globalScore}%</p>
+              <p className="text-green-100 text-sm font-bold mb-6">
+                Score de succès estimé: {topCountry?.globalScore}%
+              </p>
               <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
                 <p className="text-xs font-bold leading-relaxed">
-                  {describeTopCountrySignals(topCountry?.countrySignals as ProbabilityCountrySignals | undefined)}
+                  {describeTopCountrySignals(
+                    topCountry?.countrySignals as ProbabilityCountrySignals | undefined,
+                  )}
                 </p>
               </div>
             </div>
@@ -289,7 +393,9 @@ export default function ProbabilityPage() {
           {showComparison && (
             <section className="rounded-2xl border border-line bg-surface p-5 text-text shadow-card sm:rounded-[2.5rem] sm:p-8 md:p-10">
               <div className="mb-6 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-xl font-black sm:text-2xl md:text-3xl">Comparaison Détaillée</h2>
+                <h2 className="text-xl font-black sm:text-2xl md:text-3xl">
+                  Comparaison Détaillée
+                </h2>
                 <button
                   type="button"
                   onClick={() => setComparisonList([])}
@@ -299,33 +405,38 @@ export default function ProbabilityPage() {
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {results.filter(r => comparisonList.includes(r.country)).map((r) => (
-                  <div key={r.country} className="rounded-3xl border border-line bg-inset p-6">
-                    <h3 className="text-2xl font-black mb-6">{r.country}</h3>
-                    <div className="space-y-6">
-                      {orderedProbabilityBreakdown(
-                        r.breakdown as Record<string, unknown>,
-                        r.defaultsUsed as ProbabilitySheetFieldDefault[] | undefined,
-                      ).map(
-                        ({ key, label, value }) => (
+                {results
+                  .filter((r) => comparisonList.includes(r.country))
+                  .map((r) => (
+                    <div key={r.country} className="rounded-3xl border border-line bg-inset p-6">
+                      <h3 className="text-2xl font-black mb-6">{r.country}</h3>
+                      <div className="space-y-6">
+                        {orderedProbabilityBreakdown(
+                          r.breakdown as Record<string, unknown>,
+                          r.defaultsUsed as ProbabilitySheetFieldDefault[] | undefined,
+                        ).map(({ key, label, value }) => (
                           <div key={key}>
                             <div className="mb-2 flex justify-between text-xs font-bold uppercase tracking-widest text-muted">
                               <span>{label}</span>
                               <span>{value}%</span>
                             </div>
                             <div className="h-1.5 overflow-hidden rounded-full bg-[#eadfcf]">
-                              <div className="h-full bg-blue-500 rounded-full" style={{ width: `${value}%` }}></div>
+                              <div
+                                className="h-full bg-blue-500 rounded-full"
+                                style={{ width: `${value}%` }}
+                              ></div>
                             </div>
                           </div>
-                        ),
-                      )}
-                      <div className="border-t border-line pt-6">
-                        <div className="text-4xl font-black text-center">{r.globalScore}%</div>
-                        <div className="mt-2 text-center text-[10px] font-black uppercase tracking-widest text-muted">Probabilité Totale</div>
+                        ))}
+                        <div className="border-t border-line pt-6">
+                          <div className="text-4xl font-black text-center">{r.globalScore}%</div>
+                          <div className="mt-2 text-center text-[10px] font-black uppercase tracking-widest text-muted">
+                            Probabilité Totale
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </section>
           )}
@@ -334,7 +445,9 @@ export default function ProbabilityPage() {
           <div className="grid grid-cols-1 gap-6">
             <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-xl font-black text-text">Analyse par pays</h2>
-              <p className="text-sm font-bold italic text-muted">Cliquez pour détails et stratégie.</p>
+              <p className="text-sm font-bold italic text-muted">
+                Cliquez pour détails et stratégie.
+              </p>
             </div>
             {results.map((r) => (
               <div
@@ -351,7 +464,9 @@ export default function ProbabilityPage() {
                 >
                   <div className="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:gap-6 md:w-auto">
                     <div className="min-w-0 shrink-0 text-left">
-                      <h3 className="text-xl font-black tracking-tight text-text sm:text-2xl">{r.country}</h3>
+                      <h3 className="text-xl font-black tracking-tight text-text sm:text-2xl">
+                        {r.country}
+                      </h3>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <div
                           className={`inline-block rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${getLevelColor(r.level)}`}
@@ -373,7 +488,9 @@ export default function ProbabilityPage() {
                         <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">
                           Score global
                         </div>
-                        <div className="text-2xl font-black text-text sm:text-3xl">{r.globalScore}%</div>
+                        <div className="text-2xl font-black text-text sm:text-3xl">
+                          {r.globalScore}%
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -382,8 +499,8 @@ export default function ProbabilityPage() {
                     <button
                       type="button"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        toggleComparison(r.country)
+                        e.stopPropagation();
+                        toggleComparison(r.country);
                       }}
                       className={`rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition-all ${
                         comparisonList.includes(r.country)
@@ -435,19 +552,20 @@ export default function ProbabilityPage() {
                             {orderedProbabilityBreakdown(
                               r.breakdown as Record<string, unknown>,
                               r.defaultsUsed as ProbabilitySheetFieldDefault[] | undefined,
-                            ).map(
-                              ({ key, label, value }) => (
-                                <div key={key} className="space-y-2">
-                                  <div className="flex justify-between text-xs font-bold text-muted">
-                                    <span>{label}</span>
-                                    <span>{value}%</span>
-                                  </div>
-                                  <div className="h-2 overflow-hidden rounded-full bg-[#eadfcf]">
-                                    <div className="h-full rounded-full bg-blue-500" style={{ width: `${value}%` }} />
-                                  </div>
+                            ).map(({ key, label, value }) => (
+                              <div key={key} className="space-y-2">
+                                <div className="flex justify-between text-xs font-bold text-muted">
+                                  <span>{label}</span>
+                                  <span>{value}%</span>
                                 </div>
-                              ),
-                            )}
+                                <div className="h-2 overflow-hidden rounded-full bg-[#eadfcf]">
+                                  <div
+                                    className="h-full rounded-full bg-blue-500"
+                                    style={{ width: `${value}%` }}
+                                  />
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
 
@@ -496,7 +614,9 @@ export default function ProbabilityPage() {
                         </h4>
                         <div className="rounded-2xl border border-line bg-surface p-5 text-sm font-medium leading-relaxed text-muted">
                           <p>
-                            {describeTopCountrySignals(r.countrySignals as ProbabilityCountrySignals | undefined)}
+                            {describeTopCountrySignals(
+                              r.countrySignals as ProbabilityCountrySignals | undefined,
+                            )}
                           </p>
                         </div>
                       </div>
@@ -509,6 +629,5 @@ export default function ProbabilityPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
-

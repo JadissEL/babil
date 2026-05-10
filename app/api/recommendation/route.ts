@@ -18,6 +18,7 @@ import { appendProfileContextNarratives } from '@/lib/probability-profile-narrat
 import { buildCountrySheetSignals } from '@/lib/probability-result-display';
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile';
 import { sanitizePublicSyntheticProfile } from '@/lib/public-synthetic-profile';
+import { pinCountryFirst } from '@/lib/reco-proba-focus-country';
 import { computeRecommendationTopDrivers } from '@/lib/score-driver-explain';
 import { computeBusinessMobility100 } from '@/lib/scoring/business-mobility';
 import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override';
@@ -417,8 +418,9 @@ export async function POST(req: Request) {
       }
       const rest = recommendations.slice(1);
       const merged = top ? [top, ...rest] : recommendations;
+      const ranked = pinCountryFirst(merged, body.focusCountryId);
 
-      return NextResponse.json(merged.slice(0, 10), {
+      return NextResponse.json(ranked.slice(0, 10), {
         headers: engineVersionHeaders('recommendation'),
       });
     } catch (error: unknown) {

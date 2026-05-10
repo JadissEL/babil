@@ -1,5 +1,5 @@
-import { Briefcase, GraduationCap, Check, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
+import { Briefcase, GraduationCap, Check, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import {
   APPLICATION_GUARANTEE_MICRO,
   APPLICATION_GUARANTEE_SUMMARY,
@@ -8,9 +8,15 @@ import {
   UNIVERSITY_PACKAGES,
   formatPriceMad,
   type DelegatedPackage,
-} from '@/lib/delegated-application-catalog'
+} from '@/lib/delegated-application-catalog';
 
-function PackageCard({ pkg }: { pkg: DelegatedPackage }) {
+function PackageCard({
+  pkg,
+  applyQuerySuffix = '',
+}: {
+  pkg: DelegatedPackage;
+  applyQuerySuffix?: string;
+}) {
   return (
     <article
       className={`flex flex-col rounded-2xl border bg-surface p-5 shadow-soft transition-all sm:rounded-[2rem] sm:p-6 ${
@@ -24,7 +30,9 @@ function PackageCard({ pkg }: { pkg: DelegatedPackage }) {
           Recommandé
         </p>
       ) : (
-        <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted">{pkg.tierLabel}</p>
+        <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted">
+          {pkg.tierLabel}
+        </p>
       )}
       <h3 className="text-lg font-black text-text">{pkg.name}</h3>
       <p className="mt-2 text-xs font-medium text-muted">{pkg.tagline}</p>
@@ -40,32 +48,40 @@ function PackageCard({ pkg }: { pkg: DelegatedPackage }) {
         ))}
       </ul>
       <Link
-        href={`/services/delegated-applications/apply?category=${pkg.category}&package=${encodeURIComponent(pkg.id)}`}
+        href={`/services/delegated-applications/apply?category=${pkg.category}&package=${encodeURIComponent(pkg.id)}${applyQuerySuffix}`}
         className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-center text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-primary-hover"
       >
         Prendre ce forfait <ArrowRight className="h-4 w-4" />
       </Link>
     </article>
-  )
+  );
 }
 
 function ComparisonTable({ pkgs }: { pkgs: DelegatedPackage[] }) {
-  const labels = pkgs.map((p) => p.name)
+  const labels = pkgs.map((p) => p.name);
   const criterionRows = [
     { label: 'Investissement', cells: pkgs.map((p) => formatPriceMad(p.priceMad)) },
     { label: 'Portée dossiers', cells: pkgs.map((p) => p.applicationsScope) },
     { label: 'Calendrier', cells: pkgs.map((p) => p.turnaroundNote) },
-  ]
+  ];
 
   return (
     <div className="mt-10 min-w-0">
       <div className="space-y-3 md:hidden">
         {criterionRows.map((row) => (
-          <div key={row.label} className="rounded-2xl border border-line bg-surface p-4 shadow-soft">
-            <p className="text-[10px] font-black uppercase tracking-wider text-muted">{row.label}</p>
+          <div
+            key={row.label}
+            className="rounded-2xl border border-line bg-surface p-4 shadow-soft"
+          >
+            <p className="text-[10px] font-black uppercase tracking-wider text-muted">
+              {row.label}
+            </p>
             <ul className="mt-3 space-y-2">
               {pkgs.map((p, i) => (
-                <li key={p.id} className="flex justify-between gap-3 border-b border-line/60 pb-2 last:border-0 last:pb-0">
+                <li
+                  key={p.id}
+                  className="flex justify-between gap-3 border-b border-line/60 pb-2 last:border-0 last:pb-0"
+                >
                   <span className="min-w-0 shrink text-xs font-black text-text">{p.name}</span>
                   <span className="text-right text-xs font-medium text-muted">{row.cells[i]}</span>
                 </li>
@@ -77,49 +93,49 @@ function ComparisonTable({ pkgs }: { pkgs: DelegatedPackage[] }) {
 
       <div className="hidden overflow-x-auto rounded-2xl border border-line bg-[#f8f2e8] md:block">
         <table className="w-full min-w-[520px] text-left text-xs">
-        <thead>
-          <tr className="border-b border-line bg-surface">
-            <th className="p-3 font-black uppercase tracking-wider text-muted">Critère</th>
-            {labels.map((lbl) => (
-              <th key={lbl} className="border-l border-line p-3 font-black text-text">
-                {lbl}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="border-b border-line">
-            <td className="p-3 font-bold text-muted">Investissement</td>
-            {pkgs.map((p) => (
-              <td key={p.id} className="border-l border-line p-3 font-black text-primary">
-                {formatPriceMad(p.priceMad)}
-              </td>
-            ))}
-          </tr>
-          <tr className="border-b border-line">
-            <td className="p-3 font-bold text-muted">Portée dossiers</td>
-            {pkgs.map((p) => (
-              <td key={p.id} className="border-l border-line p-3 font-medium text-text">
-                {p.applicationsScope}
-              </td>
-            ))}
-          </tr>
-          <tr>
-            <td className="p-3 font-bold text-muted">Calendrier</td>
-            {pkgs.map((p) => (
-              <td key={p.id} className="border-l border-line p-3 font-medium text-muted">
-                {p.turnaroundNote}
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+          <thead>
+            <tr className="border-b border-line bg-surface">
+              <th className="p-3 font-black uppercase tracking-wider text-muted">Critère</th>
+              {labels.map((lbl) => (
+                <th key={lbl} className="border-l border-line p-3 font-black text-text">
+                  {lbl}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-line">
+              <td className="p-3 font-bold text-muted">Investissement</td>
+              {pkgs.map((p) => (
+                <td key={p.id} className="border-l border-line p-3 font-black text-primary">
+                  {formatPriceMad(p.priceMad)}
+                </td>
+              ))}
+            </tr>
+            <tr className="border-b border-line">
+              <td className="p-3 font-bold text-muted">Portée dossiers</td>
+              {pkgs.map((p) => (
+                <td key={p.id} className="border-l border-line p-3 font-medium text-text">
+                  {p.applicationsScope}
+                </td>
+              ))}
+            </tr>
+            <tr>
+              <td className="p-3 font-bold text-muted">Calendrier</td>
+              {pkgs.map((p) => (
+                <td key={p.id} className="border-l border-line p-3 font-medium text-muted">
+                  {p.turnaroundNote}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  )
+  );
 }
 
-export function DelegatedServiceCatalog() {
+export function DelegatedServiceCatalog({ applyQuerySuffix = '' }: { applyQuerySuffix?: string }) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 pb-20 sm:px-6 lg:px-8">
       <div
@@ -131,7 +147,9 @@ export function DelegatedServiceCatalog() {
         </div>
         <div>
           <h2 className="text-lg font-black text-text sm:text-xl">{APPLICATION_GUARANTEE_TITLE}</h2>
-          <p className="mt-2 text-sm font-medium leading-relaxed text-text">{APPLICATION_GUARANTEE_SUMMARY}</p>
+          <p className="mt-2 text-sm font-medium leading-relaxed text-text">
+            {APPLICATION_GUARANTEE_SUMMARY}
+          </p>
           <p className="mt-3 border-t border-emerald-500/25 pt-3 text-[11px] font-bold italic text-muted">
             {APPLICATION_GUARANTEE_MICRO}
           </p>
@@ -146,8 +164,9 @@ export function DelegatedServiceCatalog() {
           Déléguez vos candidatures emploi ou universités
         </h1>
         <p className="mt-3 max-w-3xl text-sm font-medium leading-relaxed text-muted sm:text-base md:text-base">
-          Nous optimisons vos supports (CV, lettres, messages), structurons votre stratégie et exécutons les dépôts pour
-          vous à hauteur du forfait choisi — avec transparence sur le volume et les délais.
+          Nous optimisons vos supports (CV, lettres, messages), structurons votre stratégie et
+          exécutons les dépôts pour vous à hauteur du forfait choisi — avec transparence sur le
+          volume et les délais.
         </p>
       </header>
 
@@ -158,10 +177,16 @@ export function DelegatedServiceCatalog() {
           </div>
           <div>
             <h2 className="text-xl font-black text-text sm:text-2xl">A. Candidatures emploi</h2>
-            <p className="text-sm font-medium text-muted">Progression claire : matériels → volume → exécution terrain.</p>
+            <p className="text-sm font-medium text-muted">
+              Progression claire : matériels → volume → exécution terrain.
+            </p>
           </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">{JOB_PACKAGES.map((p) => <PackageCard key={p.id} pkg={p} />)}</div>
+        <div className="grid gap-6 md:grid-cols-3">
+          {JOB_PACKAGES.map((p) => (
+            <PackageCard key={p.id} pkg={p} applyQuerySuffix={applyQuerySuffix} />
+          ))}
+        </div>
         <ComparisonTable pkgs={JOB_PACKAGES} />
       </section>
 
@@ -171,13 +196,17 @@ export function DelegatedServiceCatalog() {
             <GraduationCap className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-xl font-black text-text sm:text-2xl">B. Candidatures universitaires</h2>
-            <p className="text-sm font-medium text-muted">De la lettre ciblée au pilotage multi-portails.</p>
+            <h2 className="text-xl font-black text-text sm:text-2xl">
+              B. Candidatures universitaires
+            </h2>
+            <p className="text-sm font-medium text-muted">
+              De la lettre ciblée au pilotage multi-portails.
+            </p>
           </div>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           {UNIVERSITY_PACKAGES.map((p) => (
-            <PackageCard key={p.id} pkg={p} />
+            <PackageCard key={p.id} pkg={p} applyQuerySuffix={applyQuerySuffix} />
           ))}
         </div>
         <ComparisonTable pkgs={UNIVERSITY_PACKAGES} />
@@ -190,10 +219,13 @@ export function DelegatedServiceCatalog() {
         >
           ← Mes demandes (tableau de bord)
         </Link>
-        <Link href="/overview" className="text-xs font-black uppercase tracking-widest text-muted hover:text-primary-hover">
+        <Link
+          href="/overview"
+          className="text-xs font-black uppercase tracking-widest text-muted hover:text-primary-hover"
+        >
           Tableau de bord
         </Link>
       </div>
     </div>
-  )
+  );
 }

@@ -20,4 +20,12 @@ test('recoProbaPostBodySchema rejects non-object root', () => {
 test('recoProbaPostBodySchema rejects wrong types for known keys', () => {
   assert.equal(recoProbaPostBodySchema.safeParse({ playground: 'yes' }).success, false);
   assert.equal(recoProbaPostBodySchema.safeParse({ profile: 'nope' }).success, false);
+  assert.equal(recoProbaPostBodySchema.safeParse({ focusCountryId: -1 }).success, false);
+  assert.equal(recoProbaPostBodySchema.safeParse({ focusCountryId: '12' }).success, false);
+});
+
+test('recoProbaPostBodySchema accepts optional focusCountryId', () => {
+  const r = recoProbaPostBodySchema.safeParse({ focusCountryId: 12 });
+  assert.equal(r.success, true);
+  if (r.success) assert.equal(r.data.focusCountryId, 12);
 });

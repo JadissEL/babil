@@ -9,7 +9,24 @@ beforeAll(() => {
 });
 
 const { testMergedCountries } = vi.hoisted(() => {
-  const row: LegacyCountryRecord = {
+  const high: LegacyCountryRecord = {
+    id: 99,
+    name: 'HighScoreland',
+    region: 'Other',
+    schengen_flag: false,
+    tourist_visa_score: 10,
+    study_visa_score: 10,
+    work_visa_score: 10,
+    business_visa_score: 10,
+    appointment_difficulty: 'Low',
+    full_data: {
+      acceptance_rate_morocco: '99',
+      friction_score: 5,
+      brutal_reality_score: 1,
+    },
+    comments: [],
+  };
+  const low: LegacyCountryRecord = {
     id: 42,
     name: 'Testland',
     region: 'Other',
@@ -20,13 +37,13 @@ const { testMergedCountries } = vi.hoisted(() => {
     business_visa_score: 6,
     appointment_difficulty: 'Low',
     full_data: {
-      acceptance_rate_morocco: '55',
-      friction_score: 40,
-      brutal_reality_score: 3,
+      acceptance_rate_morocco: '40',
+      friction_score: 80,
+      brutal_reality_score: 6,
     },
     comments: [],
   };
-  return { testMergedCountries: [row] };
+  return { testMergedCountries: [high, low] };
 });
 
 vi.mock('@clerk/nextjs/server', () => ({
@@ -46,15 +63,15 @@ describe('GET /api/countries (minimal)', () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(Array.isArray(data)).toBe(true);
-    expect(data.length).toBe(1);
-    expect(data[0]).toMatchObject({ id: 42, name: 'Testland' });
+    expect(data.length).toBe(2);
+    expect(data[0]).toMatchObject({ id: 99, name: 'HighScoreland' });
   });
 
   it('returns paginated envelope when limit is set', async () => {
     const res = await getCountries(new Request('http://test.local/api/countries?limit=10'));
     expect(res.status).toBe(200);
     const data = await res.json();
-    expect(data.items).toHaveLength(1);
+    expect(data.items).toHaveLength(2);
     expect(data.hasMore).toBe(false);
   });
 });
@@ -85,10 +102,24 @@ describe('POST /api/recommendation (minimal)', () => {
     expect(data.length).toBeGreaterThan(0);
     expect(data.length).toBeLessThanOrEqual(10);
     expect(data[0]).toMatchObject({
-      id: 42,
+      id: 99,
       score: expect.any(Number),
       breakdown: expect.any(Object),
     });
+  });
+
+  it('pins focusCountryId first when provided', async () => {
+    const res = await postRecommendation(
+      new Request('http://test.local/api/recommendation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ focusCountryId: 42 }),
+      }),
+    );
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(Array.isArray(data)).toBe(true);
+    expect(data[0]).toMatchObject({ id: 42, name: 'Testland' });
   });
 });
 
@@ -117,10 +148,24 @@ describe('POST /api/probability (minimal)', () => {
     expect(Array.isArray(data)).toBe(true);
     expect(data.length).toBeGreaterThan(0);
     expect(data[0]).toMatchObject({
-      id: 42,
-      country: 'Testland',
+      id: 99,
+      country: 'HighScoreland',
       globalScore: expect.any(Number),
       breakdown: expect.any(Object),
     });
+  });
+
+  it('pins focusCountryId first when provided', async () => {
+    const res = await postProbability(
+      new Request('http://test.local/api/probability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ focusCountryId: 42 }),
+      }),
+    );
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(Array.isArray(data)).toBe(true);
+    expect(data[0]).toMatchObject({ id: 42, country: 'Testland' });
   });
 });

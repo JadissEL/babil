@@ -590,7 +590,7 @@ export default function CountryDetailPage() {
               <BlockFeedback blockId="country-reality" countryId={countryPageId} />
             </div>
 
-            <DeepReportTeaser countryName={country.name} />
+            <DeepReportTeaser countryName={country.name} countryId={countryPageId} />
 
             <GoogleAd slot="country_detail_mid" />
           </section>

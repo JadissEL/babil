@@ -1,51 +1,61 @@
-'use client'
+'use client';
 
-import { useUser } from '@clerk/nextjs'
-import { Loader2 } from 'lucide-react'
-import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useUser } from '@clerk/nextjs';
+import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import {
   APPLICATION_GUARANTEE_SUMMARY,
   APPLICATION_GUARANTEE_TITLE,
   findDelegatedPackage,
   formatPriceMad,
   type DelegatedCategory,
-} from '@/lib/delegated-application-catalog'
-import { appToast } from '@/lib/toast-store'
+} from '@/lib/delegated-application-catalog';
+import { appToast } from '@/lib/toast-store';
 
 export default function DelegatedApplicationApplyClient() {
-  const { user } = useUser()
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const { user } = useUser();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const categoryRaw = searchParams?.get('category') ?? ''
-  const packageId = searchParams?.get('package') ?? ''
+  const categoryRaw = searchParams?.get('category') ?? '';
+  const packageId = searchParams?.get('package') ?? '';
 
   const category: DelegatedCategory | null =
-    categoryRaw === 'job' || categoryRaw === 'university' ? categoryRaw : null
-  const pkg = category ? findDelegatedPackage(category, packageId) : null
+    categoryRaw === 'job' || categoryRaw === 'university' ? categoryRaw : null;
+  const pkg = category ? findDelegatedPackage(category, packageId) : null;
 
-  const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [preferredLanguage, setPreferredLanguage] = useState('fr')
-  const [guaranteeAck, setGuaranteeAck] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [doneId, setDoneId] = useState<number | null>(null)
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [preferredLanguage, setPreferredLanguage] = useState('fr');
+  const [guaranteeAck, setGuaranteeAck] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [doneId, setDoneId] = useState<number | null>(null);
 
   const defaultName = useMemo(() => {
-    const n = `${user?.firstName || ''} ${user?.lastName || ''}`.trim()
-    return n || ''
-  }, [user?.firstName, user?.lastName])
-  const defaultEmail = user?.primaryEmailAddress?.emailAddress ?? ''
+    const n = `${user?.firstName || ''} ${user?.lastName || ''}`.trim();
+    return n || '';
+  }, [user?.firstName, user?.lastName]);
+  const defaultEmail = user?.primaryEmailAddress?.emailAddress ?? '';
 
   useEffect(() => {
-    if (!user) return
-    setFullName((prev) => (prev ? prev : defaultName))
-    setEmail((prev) => (prev ? prev : defaultEmail))
-  }, [user, defaultName, defaultEmail])
+    if (!user) return;
+    setFullName((prev) => (prev ? prev : defaultName));
+    setEmail((prev) => (prev ? prev : defaultEmail));
+  }, [user, defaultName, defaultEmail]);
+
+  useEffect(() => {
+    const id = searchParams?.get('countryId')?.trim();
+    const name = searchParams?.get('countryName')?.trim();
+    if (!id && !name) return;
+    const label = name || (id ? `Pays #${id}` : '');
+    if (!label) return;
+    setJob((j) => (j.targetCountries.trim() ? j : { ...j, targetCountries: label }));
+    setUniversity((u) => (u.targetCountries.trim() ? u : { ...u, targetCountries: label }));
+  }, [searchParams]);
 
   const [job, setJob] = useState({
     targetRoles: '',
@@ -56,7 +66,7 @@ export default function DelegatedApplicationApplyClient() {
     linkedInUrl: '',
     urgency: '',
     additionalNotes: '',
-  })
+  });
 
   const [university, setUniversity] = useState({
     programLevel: '',
@@ -68,13 +78,13 @@ export default function DelegatedApplicationApplyClient() {
     motivationThemes: '',
     documentsReady: '',
     additionalNotes: '',
-  })
+  });
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!pkg || !category) return
-    setError(null)
-    setSubmitting(true)
+    e.preventDefault();
+    if (!pkg || !category) return;
+    setError(null);
+    setSubmitting(true);
     try {
       const res = await fetch('/api/delegated-application-requests', {
         method: 'POST',
@@ -87,16 +97,16 @@ export default function DelegatedApplicationApplyClient() {
           job: category === 'job' ? job : undefined,
           university: category === 'university' ? university : undefined,
         }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Échec envoi')
-      setDoneId(typeof data.id === 'number' ? data.id : null)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Échec envoi');
+      setDoneId(typeof data.id === 'number' ? data.id : null);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erreur'
-      setError(message)
-      appToast.error(message)
+      const message = err instanceof Error ? err.message : 'Erreur';
+      setError(message);
+      appToast.error(message);
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
   }
 
@@ -104,7 +114,9 @@ export default function DelegatedApplicationApplyClient() {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
         <p className="font-black text-text">Forfait introuvable.</p>
-        <p className="mt-2 text-sm font-medium text-muted">Sélectionnez un forfait depuis le catalogue.</p>
+        <p className="mt-2 text-sm font-medium text-muted">
+          Sélectionnez un forfait depuis le catalogue.
+        </p>
         <Link
           href="/services/delegated-applications"
           className="mt-6 inline-block text-xs font-black uppercase tracking-widest text-primary"
@@ -112,7 +124,7 @@ export default function DelegatedApplicationApplyClient() {
           Retour aux forfaits
         </Link>
       </div>
-    )
+    );
   }
 
   if (doneId !== null) {
@@ -127,7 +139,9 @@ export default function DelegatedApplicationApplyClient() {
           <strong className="font-bold text-text">Voir</strong> sur la ligne de la demande.
         </p>
         <div className="mt-6 rounded-2xl border border-primary/25 bg-primary-soft p-5 text-left">
-          <p className="text-[10px] font-black uppercase tracking-widest text-primary">{APPLICATION_GUARANTEE_TITLE}</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-primary">
+            {APPLICATION_GUARANTEE_TITLE}
+          </p>
           <p className="mt-2 text-sm font-medium text-text">{APPLICATION_GUARANTEE_SUMMARY}</p>
           <Link
             href="/services/delegated-applications#assist-garantie"
@@ -163,20 +177,24 @@ export default function DelegatedApplicationApplyClient() {
           </Link>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 pb-20 sm:px-6 lg:px-8">
       <div className="mb-8 rounded-[2rem] border border-line bg-surface p-6 shadow-card">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted">Forfait sélectionné</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted">
+          Forfait sélectionné
+        </p>
         <h1 className="mt-2 text-2xl font-black text-text">{pkg.name}</h1>
         <p className="mt-1 text-lg font-black text-primary">{formatPriceMad(pkg.priceMad)}</p>
         <p className="mt-2 text-sm font-medium text-muted">{pkg.tagline}</p>
       </div>
 
       <div className="mb-8 rounded-2xl border border-primary/25 bg-primary-soft p-5">
-        <p className="text-xs font-black uppercase tracking-widest text-primary">{APPLICATION_GUARANTEE_TITLE}</p>
+        <p className="text-xs font-black uppercase tracking-widest text-primary">
+          {APPLICATION_GUARANTEE_TITLE}
+        </p>
         <p className="mt-2 text-sm font-medium text-text">{APPLICATION_GUARANTEE_SUMMARY}</p>
         <Link
           href="/services/delegated-applications#assist-garantie"
@@ -186,11 +204,16 @@ export default function DelegatedApplicationApplyClient() {
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8 rounded-[2rem] border border-line bg-surface p-6 shadow-soft md:p-8">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 rounded-[2rem] border border-line bg-surface p-6 shadow-soft md:p-8"
+      >
         <h2 className="text-lg font-black text-text">Coordonnées</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted">Nom complet</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted">
+              Nom complet
+            </span>
             <input
               required
               className="mt-1 w-full rounded-2xl border border-line bg-[#f8f2e8] px-4 py-3 text-sm font-medium text-text outline-none focus:ring-2 focus:ring-primary/40"
@@ -199,7 +222,9 @@ export default function DelegatedApplicationApplyClient() {
             />
           </label>
           <label className="block">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted">Email</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted">
+              Email
+            </span>
             <input
               required
               type="email"
@@ -209,7 +234,9 @@ export default function DelegatedApplicationApplyClient() {
             />
           </label>
           <label className="block">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted">Téléphone</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted">
+              Téléphone
+            </span>
             <input
               required
               className="mt-1 w-full rounded-2xl border border-line bg-[#f8f2e8] px-4 py-3 text-sm font-medium text-text outline-none focus:ring-2 focus:ring-primary/40"
@@ -218,7 +245,9 @@ export default function DelegatedApplicationApplyClient() {
             />
           </label>
           <label className="block">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted">Langue de travail</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-muted">
+              Langue de travail
+            </span>
             <select
               className="mt-1 w-full rounded-2xl border border-line bg-[#f8f2e8] px-4 py-3 text-sm font-medium text-text outline-none focus:ring-2 focus:ring-primary/40"
               value={preferredLanguage}
@@ -355,10 +384,13 @@ export default function DelegatedApplicationApplyClient() {
             required
           />
           <span className="text-sm font-bold text-text">
-            Je confirme avoir lu la garantie résultats (remboursement de 50&nbsp;% en l’absence de résultats éligibles
-            dans le cadre contractuel) et accepte qu’un opérateur me transmette les conditions détaillées avant toute
-            facturation.{' '}
-            <Link href="/services/delegated-applications#assist-garantie" className="text-primary underline underline-offset-2 hover:text-primary-hover">
+            Je confirme avoir lu la garantie résultats (remboursement de 50&nbsp;% en l’absence de
+            résultats éligibles dans le cadre contractuel) et accepte qu’un opérateur me transmette
+            les conditions détaillées avant toute facturation.{' '}
+            <Link
+              href="/services/delegated-applications#assist-garantie"
+              className="text-primary underline underline-offset-2 hover:text-primary-hover"
+            >
               Voir le texte complet
             </Link>
           </span>
@@ -385,7 +417,7 @@ export default function DelegatedApplicationApplyClient() {
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 function Field({
@@ -395,11 +427,11 @@ function Field({
   textarea,
   required,
 }: {
-  label: string
-  value: string
-  onChange: (v: string) => void
-  textarea?: boolean
-  required?: boolean
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  textarea?: boolean;
+  required?: boolean;
 }) {
   return (
     <label className="block">
@@ -424,5 +456,5 @@ function Field({
         />
       )}
     </label>
-  )
+  );
 }

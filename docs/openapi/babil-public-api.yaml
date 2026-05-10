@@ -296,4 +296,8 @@ components:
           additionalProperties: true
         playground:
           type: boolean
+        focusCountryId:
+          type: integer
+          minimum: 1
+          description: Optional country id to list first in ranked results (same public id as /countries/[id]).
       additionalProperties: true

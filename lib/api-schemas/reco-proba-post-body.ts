@@ -8,6 +8,8 @@ export const recoProbaPostBodySchema = z
   .object({
     profile: z.record(z.string(), z.unknown()).optional(),
     playground: z.boolean().optional(),
+    /** Optional: pin this country first in ranked results (public numeric id only). */
+    focusCountryId: z.number().int().positive().optional(),
   })
   .passthrough();
 

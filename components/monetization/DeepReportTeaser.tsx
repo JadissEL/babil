@@ -5,12 +5,14 @@ import Link from 'next/link';
 
 type Props = {
   countryName: string;
+  countryId: string;
 };
 
 /**
  * Lightweight upsell aligned with existing public data (no extra PII collection on this surface).
  */
-export function DeepReportTeaser({ countryName }: Props) {
+export function DeepReportTeaser({ countryName, countryId }: Props) {
+  const q = `countryId=${encodeURIComponent(countryId)}&countryName=${encodeURIComponent(countryName)}`;
   return (
     <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-line bg-surface p-5 shadow-card sm:flex-row sm:items-center sm:justify-between sm:p-6">
       <div className="flex min-w-0 items-start gap-4">
@@ -32,14 +34,14 @@ export function DeepReportTeaser({ countryName }: Props) {
       </div>
       <div className="flex shrink-0 flex-col gap-2 sm:items-end">
         <Link
-          href="/probability"
+          href={`/probability?${q}`}
           className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-3.5 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-colors hover:bg-primary-hover"
         >
           Voir les probabilités
           <ArrowRight className="h-4 w-4" aria-hidden />
         </Link>
         <Link
-          href="/services/delegated-applications"
+          href={`/services/delegated-applications?${q}`}
           className="text-center text-[10px] font-bold uppercase tracking-widest text-muted underline-offset-2 transition-colors hover:text-primary hover:underline sm:text-right"
         >
           Accompagnement dossier
