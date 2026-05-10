@@ -6,6 +6,7 @@
 import { createHash } from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
+import { fetchWithAgentRetry } from '@/lib/agent-http-retry'
 import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel'
 import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot'
 
@@ -52,7 +53,7 @@ export function slugifyCountry(country: string) {
 
 export async function fetchWikipediaSummary(country: string) {
   const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(country)}`
-  const res = await fetch(url)
+  const res = await fetchWithAgentRetry(url)
   if (!res.ok) return null
   const data = (await res.json()) as Record<string, unknown>
   return {
@@ -67,7 +68,7 @@ export async function fetchWorldBankGdp(country: string) {
   const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(
     country,
   )}/indicator/NY.GDP.MKTP.CD?format=json&per_page=5`
-  const res = await fetch(url)
+  const res = await fetchWithAgentRetry(url)
   if (!res.ok) return null
   const payload = (await res.json()) as unknown[]
   const rows = Array.isArray(payload?.[1]) ? (payload[1] as Array<Record<string, unknown>>) : []

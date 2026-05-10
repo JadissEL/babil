@@ -182,7 +182,7 @@ flowchart LR
 
 ### H — Agents, contenu et croissance (97–100)
 
-97. **Garde-fous** agents : plafond tokens, retries, sortie schema-validée vers `full_data`.
+97. **Garde-fous** agents : plafond tokens, retries, sortie schema-validée vers `full_data`. *(Livré partiel : retries HTTP **`fetchWithAgentRetry`** sur Wikipedia / WB GDP — [`lib/agent-http-retry.ts`](../lib/agent-http-retry.ts) ; validation pré-upsert **`validateAgentFullDataForPersist`** — [`lib/agent-full-data-persist-guard.ts`](../lib/agent-full-data-persist-guard.ts) ; constante **`AGENT_LLM_TOKEN_BUDGET_PER_TASK`** (0 = inactif) ; doc [agent-safeguards-h97.md](../docs/agent-safeguards-h97.md).)*
 98. **Manifest** agents ([data/agent-manifest-url-map.scaffold.json](../data/agent-manifest-url-map.scaffold.json)) — process review humain avant prod.
 99. **SEO** : métadonnées dynamiques pays (déjà partiel [app/(public)/countries/[id]/layout.tsx](../app/(public)/countries/[id]/layout.tsx)) + données structurées FAQ/HowTo si pertinent.
 100. **Monétisation** (aligné [docs/business-commercial-analysis.md](business-commercial-analysis.md)) : offres “rapport approfondi” branchées sur données déjà collectées (sans sur-collecte).
@@ -191,4 +191,4 @@ flowchart LR
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **H.97** (garde-fous agents), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **H.98** (manifest agents + review humain), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.

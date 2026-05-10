@@ -28,6 +28,7 @@ import {
   runEnrichmentPassLoop,
   type EnrichmentLoopTask,
 } from '../lib/agent-enrichment-loop';
+import { validateAgentFullDataForPersist } from '../lib/agent-full-data-persist-guard';
 import { appendSupervisorMetricEvent } from '../lib/agent-supervisor-metrics';
 import { loadChildKnowledge } from '../lib/agent-child-knowledge';
 import { maybeBuildCanaryChildFullData, runChildShadowCompare } from '../lib/agent-child-runner';
@@ -410,6 +411,11 @@ async function processCountryTask(task: CountryTask) {
     action: 'enrichment.upsert',
     detail: `country=${task.country}; completeness=${reportPayload.report.score.toFixed(1)}${canaryPayload ? ';canary' : ''}`,
   });
+
+  const persistGuard = validateAgentFullDataForPersist(fullDataForUpsert);
+  if (!persistGuard.ok) {
+    throw new Error(`persist_guard:${persistGuard.reason}`);
+  }
 
   await prisma.country.upsert({
     where: { name: task.country },

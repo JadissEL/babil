@@ -96,7 +96,7 @@ Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, 
 
 - Backlog produit : [`docs/enhancements-backlog-100.md`](docs/enhancements-backlog-100.md)
 - Sécurité (catalogue E) : [`docs/catalogue-e-security.md`](docs/catalogue-e-security.md)
-- Agents locaux : [`agents/README.md`](agents/README.md)
+- Agents locaux : [`agents/README.md`](agents/README.md) — garde-fous H.97 : [`docs/agent-safeguards-h97.md`](docs/agent-safeguards-h97.md)
 
 ## Fin de ligne (LF)
 

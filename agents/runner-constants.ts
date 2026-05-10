@@ -32,3 +32,9 @@ export const AGENT_MAX_RUNTIME_MS = Math.max(
 );
 /** Set `AGENT_MANIFEST_FETCH_ENABLED=0` to skip manifest URL-map HTTP batch. */
 export const AGENT_MANIFEST_FETCH_ENABLED = process.env.AGENT_MANIFEST_FETCH_ENABLED !== '0';
+
+/** H.97 — reserved for future LLM enrichment; `0` = unused (no enforcement in runner yet). */
+export const AGENT_LLM_TOKEN_BUDGET_PER_TASK = Math.max(
+  0,
+  Math.floor(Number(process.env.AGENT_LLM_TOKEN_BUDGET_PER_TASK || 0)),
+);

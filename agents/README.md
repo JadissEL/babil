@@ -29,6 +29,10 @@ This folder contains the autonomous country intelligence engine.
 npm run agents:start
 ```
 
+## Safeguards (H.97)
+
+HTTP retries for Wikipedia / World Bank GDP fetches, JSON size / shape guard before DB upsert, and a **reserved** `AGENT_LLM_TOKEN_BUDGET_PER_TASK` for future LLM steps — see [`docs/agent-safeguards-h97.md`](../docs/agent-safeguards-h97.md).
+
 ## Environment tuning
 
 Optional variables:
