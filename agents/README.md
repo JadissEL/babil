@@ -29,6 +29,10 @@ This folder contains the autonomous country intelligence engine.
 npm run agents:start
 ```
 
+## Manifest URL map (H.98)
+
+Avant toute montée en production du fichier `agent-manifest-url-map.json` (remplissage des `urlTemplate` depuis le scaffold), suivre la **checklist de revue humaine** : [`docs/agent-manifest-review-h98.md`](../docs/agent-manifest-review-h98.md).
+
 ## Safeguards (H.97)
 
 HTTP retries for Wikipedia / World Bank GDP fetches, JSON size / shape guard before DB upsert, and a **reserved** `AGENT_LLM_TOKEN_BUDGET_PER_TASK` for future LLM steps — see [`docs/agent-safeguards-h97.md`](../docs/agent-safeguards-h97.md).

@@ -29,6 +29,7 @@ import { VisitReasonsSection } from '@/components/country/VisitReasonsSection'
 import { DrivingRightsIntelSection } from '@/components/driving/DrivingRightsIntelSection'
 import { BlockFeedback } from '@/components/feedback/BlockFeedback'
 import GoogleAd from '@/components/GoogleAd'
+import { DeepReportTeaser } from '@/components/monetization/DeepReportTeaser'
 import { filterPublicCountryInsights } from '@/lib/country-db-insights'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
@@ -588,6 +589,8 @@ export default function CountryDetailPage() {
 
               <BlockFeedback blockId="country-reality" countryId={countryPageId} />
             </div>
+
+            <DeepReportTeaser countryName={country.name} />
 
             <GoogleAd slot="country_detail_mid" />
           </section>

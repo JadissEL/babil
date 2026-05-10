@@ -183,12 +183,12 @@ flowchart LR
 ### H — Agents, contenu et croissance (97–100)
 
 97. **Garde-fous** agents : plafond tokens, retries, sortie schema-validée vers `full_data`. *(Livré partiel : retries HTTP **`fetchWithAgentRetry`** sur Wikipedia / WB GDP — [`lib/agent-http-retry.ts`](../lib/agent-http-retry.ts) ; validation pré-upsert **`validateAgentFullDataForPersist`** — [`lib/agent-full-data-persist-guard.ts`](../lib/agent-full-data-persist-guard.ts) ; constante **`AGENT_LLM_TOKEN_BUDGET_PER_TASK`** (0 = inactif) ; doc [agent-safeguards-h97.md](../docs/agent-safeguards-h97.md).)*
-98. **Manifest** agents ([data/agent-manifest-url-map.scaffold.json](../data/agent-manifest-url-map.scaffold.json)) — process review humain avant prod.
-99. **SEO** : métadonnées dynamiques pays (déjà partiel [app/(public)/countries/[id]/layout.tsx](../app/(public)/countries/[id]/layout.tsx)) + données structurées FAQ/HowTo si pertinent.
-100. **Monétisation** (aligné [docs/business-commercial-analysis.md](business-commercial-analysis.md)) : offres “rapport approfondi” branchées sur données déjà collectées (sans sur-collecte).
+98. **Manifest** agents ([data/agent-manifest-url-map.scaffold.json](../data/agent-manifest-url-map.scaffold.json)) — process review humain avant prod. *(Livré partiel : doc process [`docs/agent-manifest-review-h98.md`](agent-manifest-review-h98.md) ; rappel `_humanReview` sur le scaffold ; lien depuis [`agents/README.md`](../agents/README.md).)*
+99. **SEO** : métadonnées dynamiques pays (déjà partiel [app/(public)/countries/[id]/layout.tsx](../app/(public)/countries/[id]/layout.tsx)) + données structurées FAQ/HowTo si pertinent. *(Livré partiel : `alternates.canonical` + Open Graph / Twitter quand `NEXT_PUBLIC_APP_URL` / `VERCEL_URL` ; JSON-LD `WebPage` + `FAQPage` — [`lib/country-page-json-ld.ts`](../lib/country-page-json-ld.ts).)*
+100. **Monétisation** (aligné [docs/business-commercial-analysis.md](business-commercial-analysis.md)) : offres “rapport approfondi” branchées sur données déjà collectées (sans sur-collecte). *(Livré partiel : teaser [`DeepReportTeaser`](../components/monetization/DeepReportTeaser.tsx) sur fiche pays + doc [`monetization-product-hooks-h100.md`](monetization-product-hooks-h100.md).)*
 
 ---
 
 ## Prochaine étape recommandée
 
-Prioriser **3–5 items** à fort impact / faible risque : par ex. **H.98** (manifest agents + review humain), **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel.
+Prioriser **3–5 items** à fort impact / faible risque : par ex. **poursuite F.84** (extraire d’autres modules depuis `runner.ts`), extension **Prettier** hors périmètre actuel, pré-remplissage contextuel pays sur `/probability` ou services **si** le produit expose cette capacité sans sur-collecte.

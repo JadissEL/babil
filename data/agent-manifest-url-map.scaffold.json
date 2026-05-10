@@ -1,5 +1,9 @@
 {
   "version": "1-scaffold",
+  "_humanReview": {
+    "requiredBeforeProduction": true,
+    "processDoc": "docs/agent-manifest-review-h98.md"
+  },
   "entries": [
     {
       "categoryId": "official_global",
