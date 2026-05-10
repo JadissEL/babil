@@ -45,7 +45,7 @@ Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, 
 
 - **En-tête** `x-babil-request-id` : fixé sur la requête et la réponse par [`proxy.ts`](proxy.ts) (Edge, avant Clerk `protect`). Réutilise `x-request-id` / `x-vercel-id` s’ils existent, sinon UUID.
 - **Ligne JSON** par appel `/api/*` sur Vercel (`VERCEL=1`) : `{ level, msg: "api_request", requestId, method, path, ts, service: "babil-edge" }`. Désactiver : `BABIL_API_ACCESS_LOG=0`. Forcer en local : `BABIL_API_ACCESS_LOG=1`.
-- **Handlers Node** : [`lib/structured-log.ts`](lib/structured-log.ts) (`slog`, `slogRequest`, `getRequestId`) pour journaliser des événements métier avec le même `requestId` (ex. erreur liste pays dans [`app/api/countries/route.ts`](app/api/countries/route.ts)).
+- **Handlers Node** : [`lib/structured-log.ts`](lib/structured-log.ts) (`slog`, `slogRequest`, `slogProcess`, `getRequestId`) — `slogProcess` pour cron / pipeline sans requête HTTP ; `slog` / `slogRequest` avec `requestId` (ex. erreur liste pays dans [`app/api/countries/route.ts`](app/api/countries/route.ts)).
 
 ## Latence routes critiques + p95 (G.92)
 
