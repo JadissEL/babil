@@ -10,6 +10,9 @@ export type CompareTableProps = {
   scoringRationale: string
   /** e.g. 2+ countries and a winner */
   recommendation: string | null
+  /** Empty-state CTA (defaults: generic explorer / tourism compare). */
+  emptyExploreHref?: string
+  emptyCompareHref?: string
 }
 
 function CompareMobileCards({ rows, winnerId }: Pick<CompareTableProps, 'rows' | 'winnerId'>) {
@@ -71,6 +74,8 @@ export function CompareTable({
   objectiveLabel,
   scoringRationale,
   recommendation,
+  emptyExploreHref = CTA_EXPLORE_HREF,
+  emptyCompareHref = CTA_COMPARE_TOURISM_HREF,
 }: CompareTableProps) {
   if (rows.length === 0) {
     return (
@@ -78,16 +83,16 @@ export function CompareTable({
         <p className="mb-6 font-medium">Sélectionnez au moins un pays pour afficher le tableau.</p>
         <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
           <Link
-            href={CTA_EXPLORE_HREF}
+            href={emptyExploreHref}
             className="inline-flex justify-center rounded-xl bg-primary px-6 py-3 text-sm font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
           >
             Choisir dans l&apos;explorateur
           </Link>
           <Link
-            href={CTA_COMPARE_TOURISM_HREF}
+            href={emptyCompareHref}
             className="inline-flex justify-center rounded-xl border border-line bg-surface px-6 py-3 text-sm font-black text-text transition-colors hover:bg-primary-soft"
           >
-            Exemple : comparer (tourisme)
+            Exemple : ouvrir le comparateur
           </Link>
         </div>
       </div>

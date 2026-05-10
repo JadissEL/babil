@@ -4,6 +4,7 @@ import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { isDbUnavailable } from '@/lib/db-resilience';
 import { mutationOriginDeniedResponse } from '@/lib/mutation-origin-guard';
 import prisma from '@/lib/prisma';
+import { serializedGoalTypeForProfileResponse } from '@/lib/user-objectives/profile-goal-coalesce';
 import {
   USER_GOAL_TYPES,
   USER_PROFESSIONS,
@@ -36,10 +37,10 @@ export async function GET() {
     const base = {
       ...profile,
       profession: coerceStoredProfession(profile.profession),
-      goal_type:
-        profile.goal_type == null || !String(profile.goal_type).trim()
-          ? profile.goal_type
-          : (parseUserGoalType(profile.goal_type) ?? 'tourism'),
+      goal_type: serializedGoalTypeForProfileResponse({
+        goal_type: profile.goal_type,
+        primary_objective_slug: profile.primary_objective_slug,
+      }),
     };
     return NextResponse.json(withObjectiveFields(base as unknown as Record<string, unknown>));
   } catch (error: unknown) {
@@ -176,10 +177,10 @@ export async function POST(req: Request) {
     const base = {
       ...profile,
       profession: coerceStoredProfession(profile.profession),
-      goal_type:
-        profile.goal_type == null || !String(profile.goal_type).trim()
-          ? profile.goal_type
-          : (parseUserGoalType(profile.goal_type) ?? 'tourism'),
+      goal_type: serializedGoalTypeForProfileResponse({
+        goal_type: profile.goal_type,
+        primary_objective_slug: profile.primary_objective_slug,
+      }),
     };
     return NextResponse.json(withObjectiveFields(base as unknown as Record<string, unknown>));
   } catch (error: unknown) {

@@ -21,6 +21,7 @@ import {
 } from '@/lib/compare-objectives'
 import { enrichedToCompareRow } from '@/lib/compare-rows'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 import {
@@ -71,6 +72,15 @@ export function CompareExperience() {
 
   const objectiveParam = searchParams?.get('objective')
   const objective = useMemo(() => getObjectiveDefinition(objectiveParam), [objectiveParam])
+
+  const emptyTableExploreHref = useMemo(
+    () => ctaExploreHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  )
+  const emptyTableCompareHref = useMemo(
+    () => ctaCompareHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  )
 
   const [step, setStep] = useState<Step>('category')
   const [categoryId, setCategoryId] = useState<CompareCategoryId | null>(null)
@@ -466,6 +476,8 @@ export function CompareExperience() {
                 objectiveLabel={objective.label}
                 scoringRationale={objective.scoringRationale}
                 recommendation={recommendation}
+                emptyExploreHref={emptyTableExploreHref}
+                emptyCompareHref={emptyTableCompareHref}
               />
             </div>
           </div>

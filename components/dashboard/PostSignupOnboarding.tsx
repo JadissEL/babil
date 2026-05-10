@@ -4,7 +4,8 @@ import { useUser } from '@clerk/nextjs'
 import { CheckCircle2, Circle, ListChecks, X } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
-import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
+import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider'
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
 import { ONBOARDING_STORAGE_UPDATED_EVENT, readOnboarding, writeOnboarding } from '@/lib/onboarding-storage'
 
 function profileLooksComplete(p: Record<string, unknown> | null): boolean {
@@ -23,6 +24,15 @@ function accountIsRecent(createdAt: Date | undefined, maxDays: number) {
 
 export function PostSignupOnboarding() {
   const { user, isLoaded } = useUser()
+  const objectivePref = useObjectivePreferenceOptional()
+  const explorerStepHref = useMemo(
+    () => ctaExploreHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  )
+  const compareTipHref = useMemo(
+    () => ctaCompareHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  )
   const [profileOk, setProfileOk] = useState(false)
   const [store, setStore] = useState<ReturnType<typeof readOnboarding>>({})
   const [hydrated, setHydrated] = useState(false)
@@ -86,10 +96,10 @@ export function PostSignupOnboarding() {
           done: Boolean(store.explorerDone),
           title: 'Parcourir l’explorateur',
           description: 'Utilisez les filtres, la recherche ou ouvrez une fiche pays.',
-          href: CTA_EXPLORE_HREF,
+          href: explorerStepHref,
         },
       ] as const,
-    [profileOk, store.recoSeen, store.explorerDone],
+    [explorerStepHref, profileOk, store.recoSeen, store.explorerDone],
   )
 
   const allDone = steps.every((s) => s.done)
@@ -155,8 +165,8 @@ export function PostSignupOnboarding() {
 
       <p className="mt-4 text-[11px] font-medium text-muted">
         Astuce : essayez aussi le{' '}
-        <Link href={CTA_COMPARE_TOURISM_HREF} className="font-bold text-primary underline-offset-2 hover:underline">
-          comparateur (objectif tourisme)
+        <Link href={compareTipHref} className="font-bold text-primary underline-offset-2 hover:underline">
+          comparateur (selon votre objectif)
         </Link>
         .
       </p>

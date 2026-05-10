@@ -26,6 +26,7 @@ import { computeProbabilityTopDrivers } from '@/lib/score-driver-explain';
 import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot';
 import type { ProbabilityApiRow } from '@/lib/types/api-recommendation-probability';
 import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row';
+import { withResolvedGoalTypeOnProfileRecord } from '@/lib/user-objectives/profile-goal-coalesce';
 import { coerceStoredProfession, parseUserGoalType } from '@/lib/user-profile-enums';
 
 export async function POST(req: Request) {
@@ -122,7 +123,7 @@ export async function POST(req: Request) {
         }
       }
 
-      const p = profile as Record<string, unknown>;
+      const p = withResolvedGoalTypeOnProfileRecord(profile as Record<string, unknown>);
       const profession =
         coerceStoredProfession(typeof p.profession === 'string' ? p.profession : null) ??
         'self-employed';

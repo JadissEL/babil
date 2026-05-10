@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs';
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import { writeOnboarding } from '@/lib/onboarding-storage';
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile';
 import type { ApiRecommendation } from '@/lib/recommendation-ui';
@@ -70,6 +70,14 @@ function RecommendationsPageInner() {
     if (!slug) return undefined;
     return getObjectiveBySlug(slug)?.engineGoal;
   }, [objectivePref?.ready, objectivePref?.preference.primarySlug]);
+  const emptyCtaExploreHref = useMemo(
+    () => ctaExploreHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  );
+  const emptyCtaCompareHref = useMemo(
+    () => ctaCompareHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  );
   const focusCountryId = useMemo(() => {
     const raw = searchParams?.get('countryId');
     if (!raw) return undefined;
@@ -295,13 +303,13 @@ function RecommendationsPageInner() {
               Configurer mon profil
             </Link>
             <Link
-              href={CTA_EXPLORE_HREF}
+              href={emptyCtaExploreHref}
               className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
             >
               Explorer les pays
             </Link>
             <Link
-              href={CTA_COMPARE_TOURISM_HREF}
+              href={emptyCtaCompareHref}
               className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
             >
               Tester le comparateur

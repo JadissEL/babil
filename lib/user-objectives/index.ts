@@ -22,3 +22,9 @@ export {
   USER_OBJECTIVE_TO_COMPARE_OBJECTIVE_ID,
   userObjectiveSlugToCompareObjectiveId,
 } from '@/lib/user-objectives/compare-bridge';
+
+export {
+  effectiveUserGoalTypeFromProfileFields,
+  serializedGoalTypeForProfileResponse,
+  withResolvedGoalTypeOnProfileRecord,
+} from '@/lib/user-objectives/profile-goal-coalesce';

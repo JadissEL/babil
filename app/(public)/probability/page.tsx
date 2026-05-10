@@ -20,7 +20,7 @@ import { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton';
 import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner';
 import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider';
-import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs';
+import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import {
   describeTopCountrySignals,
   orderedProbabilityBreakdown,
@@ -68,6 +68,14 @@ function ProbabilityPageInner() {
     if (!slug) return undefined;
     return getObjectiveBySlug(slug)?.engineGoal;
   }, [objectivePref?.ready, objectivePref?.preference.primarySlug]);
+  const emptyCtaExploreHref = useMemo(
+    () => ctaExploreHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  );
+  const emptyCtaCompareHref = useMemo(
+    () => ctaCompareHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  );
   const focusCountryId = useMemo(() => {
     const raw = searchParams?.get('countryId');
     if (!raw) return undefined;
@@ -323,13 +331,13 @@ function ProbabilityPageInner() {
               Compléter mon profil
             </Link>
             <Link
-              href={CTA_EXPLORE_HREF}
+              href={emptyCtaExploreHref}
               className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
             >
               Explorer les pays
             </Link>
             <Link
-              href={CTA_COMPARE_TOURISM_HREF}
+              href={emptyCtaCompareHref}
               className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
             >
               Ouvrir le comparateur

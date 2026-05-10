@@ -27,6 +27,7 @@ import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility';
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility';
 import type { RecommendationApiItem } from '@/lib/types/api-recommendation-probability';
 import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row';
+import { effectiveUserGoalTypeFromProfileFields } from '@/lib/user-objectives/profile-goal-coalesce';
 import { parseUserGoalType, userGoalTypeToEngineGoal } from '@/lib/user-profile-enums';
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
@@ -49,7 +50,10 @@ const toNumber = (value: unknown, fallback = 0) => {
 
 function normalizeProfile(profile: Record<string, unknown>): NormalizedProfile {
   const goal = userGoalTypeToEngineGoal(
-    parseUserGoalType(profile.goal ?? profile.goal_type),
+    effectiveUserGoalTypeFromProfileFields({
+      goal_type: (profile.goal_type ?? profile.goal) as string | null | undefined,
+      primary_objective_slug: profile.primary_objective_slug as string | null | undefined,
+    }) ?? parseUserGoalType(profile.goal ?? profile.goal_type),
   ) as Goal;
 
   return {
