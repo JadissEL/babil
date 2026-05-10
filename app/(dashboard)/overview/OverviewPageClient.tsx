@@ -19,6 +19,7 @@ import {
   FileStack,
 } from 'lucide-react'
 import Link from 'next/link'
+import { ObjectivePreferencePanel } from '@/components/dashboard/ObjectivePreferencePanel'
 import { PostSignupOnboarding } from '@/components/dashboard/PostSignupOnboarding'
 import { MyDelegatedRequests } from '@/components/services/MyDelegatedRequests'
 import { RecentlyViewedCountries } from '@/components/user/RecentlyViewedCountries'
@@ -123,6 +124,8 @@ export default function OverviewPageClient() {
       <div className="mb-12">
         <MyDelegatedRequests />
       </div>
+
+      <ObjectivePreferencePanel />
 
       <PostSignupOnboarding />
 

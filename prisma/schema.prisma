@@ -34,6 +34,12 @@ model UserProfile {
   family_details   String?
   profession       String?
 
+  /** Primary user objective (slug from `lib/user-objectives/registry.ts`) — drives personalization. */
+  primary_objective_slug String?
+  /** JSON array of secondary objective slugs (same registry). */
+  secondary_objective_slugs Json?
+  objective_wizard_completed_at DateTime?
+
   user User @relation(fields: [userId], references: [id])
 }
 

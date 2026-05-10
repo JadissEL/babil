@@ -12,6 +12,18 @@ import {
   parseUserProfession,
 } from '@/lib/user-profile-enums';
 
+function withObjectiveFields(profile: Record<string, unknown>) {
+  return {
+    ...profile,
+    primary_objective_slug:
+      typeof profile.primary_objective_slug === 'string' ? profile.primary_objective_slug : null,
+    secondary_objective_slugs: Array.isArray(profile.secondary_objective_slugs)
+      ? profile.secondary_objective_slugs
+      : [],
+    objective_wizard_completed_at: profile.objective_wizard_completed_at ?? null,
+  };
+}
+
 export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -21,14 +33,15 @@ export async function GET() {
       where: { userId: userId as string },
     });
     if (!profile) return NextResponse.json(null);
-    return NextResponse.json({
+    const base = {
       ...profile,
       profession: coerceStoredProfession(profile.profession),
       goal_type:
         profile.goal_type == null || !String(profile.goal_type).trim()
           ? profile.goal_type
           : (parseUserGoalType(profile.goal_type) ?? 'tourism'),
-    });
+    };
+    return NextResponse.json(withObjectiveFields(base as unknown as Record<string, unknown>));
   } catch (error: unknown) {
     if (isDbUnavailable(error)) return NextResponse.json(null);
     return NextResponse.json(
@@ -160,18 +173,16 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({
+    const base = {
       ...profile,
       profession: coerceStoredProfession(profile.profession),
       goal_type:
         profile.goal_type == null || !String(profile.goal_type).trim()
           ? profile.goal_type
           : (parseUserGoalType(profile.goal_type) ?? 'tourism'),
-    });
+    };
+    return NextResponse.json(withObjectiveFields(base as unknown as Record<string, unknown>));
   } catch (error: unknown) {
-    if (isDbUnavailable(error)) {
-      return NextResponse.json({ ok: true, degraded: true, profile: parsed.value });
-    }
     return NextResponse.json(
       { error: publicApiErrorMessage(error, 'Profile update failed') },
       { status: 500 },

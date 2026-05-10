@@ -9,6 +9,7 @@ describe('mutation origin guard wiring (E.68)', () => {
 
   const routes = [
     'app/api/user/profile/route.ts',
+    'app/api/user/objectives/route.ts',
     'app/api/user/favorites/route.ts',
     'app/api/user/history/route.ts',
     'app/api/comments/route.ts',

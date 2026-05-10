@@ -2,7 +2,7 @@
 
 import { ArrowRight, Scale } from 'lucide-react'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import BudgetFilter from '@/components/filters/BudgetFilter'
 import GoalFilter from '@/components/filters/GoalFilter'
 import RegionFilter from '@/components/filters/RegionFilter'
@@ -25,8 +25,13 @@ function buildExplorerHref(goal: string, budget: string, region: string, risk: s
   return q ? `/explorer?${q}` : '/explorer'
 }
 
-export default function HomeQuickFilterEngine() {
-  const [goal, setGoal] = useState('all')
+export default function HomeQuickFilterEngine({
+  initialExplorerGoal = 'all',
+}: {
+  /** From primary user objective — maps to Explorer `goal` param */
+  initialExplorerGoal?: string;
+}) {
+  const [goal, setGoal] = useState(initialExplorerGoal)
   const [budget, setBudget] = useState('all')
   const [region, setRegion] = useState('all')
   const [risk, setRisk] = useState('all')
@@ -40,6 +45,10 @@ export default function HomeQuickFilterEngine() {
     () => compareHrefForHomeQuickFilters(goal, budget, region, risk),
     [goal, budget, region, risk],
   )
+
+  useEffect(() => {
+    setGoal(initialExplorerGoal && initialExplorerGoal.length > 0 ? initialExplorerGoal : 'all')
+  }, [initialExplorerGoal])
 
   return (
     <section className="mt-8 rounded-2xl border border-line bg-surface p-4 shadow-soft">
