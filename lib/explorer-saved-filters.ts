@@ -64,7 +64,8 @@ export function buildExplorerQueryStringFromSaved(s: ExplorerSavedFiltersV1): st
   const q = s.q.trim()
   if (q) params.set('q', q)
   if (s.region.trim()) params.set('region', s.region.trim())
-  if (s.goal && s.goal !== 'all') params.set('goal', s.goal)
+  const goalNorm = s.goal?.trim() ? s.goal.trim() : 'all'
+  params.set('goal', goalNorm)
   if (s.budget && s.budget !== 'all') params.set('budget', s.budget)
   if (s.difficulty && s.difficulty !== 'all' && ['Low', 'Medium', 'High', 'Extreme'].includes(s.difficulty)) {
     params.set('difficulty', s.difficulty)

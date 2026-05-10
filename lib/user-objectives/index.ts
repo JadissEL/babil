@@ -17,3 +17,9 @@ export {
   homeFeatureOrderForObjective,
   focusStripForObjective,
 } from '@/lib/user-objectives/home-orchestration';
+
+export {
+  explorerFilterGoalFromObjectiveSlug,
+  explorerFilterGoalFromEngineGoal,
+  type ExplorerFilterGoal,
+} from '@/lib/user-objectives/explorer-filter-goal';

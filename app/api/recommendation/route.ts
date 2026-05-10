@@ -377,6 +377,10 @@ export async function POST(req: Request) {
       profile = sanitizePublicSyntheticProfile(body.profile as Record<string, unknown>);
     } else {
       profile = { ...PUBLIC_READ_ONLY_DEMO_PROFILE };
+      const g = parseUserGoalType(body.anonymous_goal_type);
+      if (g) {
+        profile = { ...profile, goal_type: g };
+      }
     }
 
     try {

@@ -8,6 +8,7 @@ import CountryGrid from '@/components/country/CountryGrid'
 import { ExplorerRegionScoreStrip } from '@/components/explorer/ExplorerRegionScoreStrip'
 import { FilterBar } from '@/components/filters/FilterBar'
 import GoogleAd from '@/components/GoogleAd'
+import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider'
 import {
   frictionTierFromCountry,
   isoForCountryName,
@@ -37,6 +38,7 @@ import {
 } from '@/lib/explorer-saved-filters'
 import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
 import { appToast } from '@/lib/toast-store'
+import { explorerFilterGoalFromObjectiveSlug } from '@/lib/user-objectives/explorer-filter-goal'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -78,6 +80,7 @@ function ExplorerPageInner() {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const objectivePref = useObjectivePreferenceOptional()
   const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [mode, setMode] = useState<Mode>('explorer')
   const [search, setSearch] = useState('')
@@ -116,7 +119,7 @@ function ExplorerPageInner() {
       const params = new URLSearchParams()
       if (s.trim()) params.set('q', s.trim())
       if (r !== 'all') params.set('region', explorerRegionToUrlParam(r))
-      if (g !== 'all') params.set('goal', g)
+      params.set('goal', g)
       if (b !== 'all') params.set('budget', b)
       if (d !== 'all' && ['Low', 'Medium', 'High', 'Extreme'].includes(d)) params.set('difficulty', d)
       if (sch) params.set('schengen', '1')
@@ -146,7 +149,13 @@ function ExplorerPageInner() {
     setRegion(reg?.trim() ? parseExplorerRegionFilter(reg.trim()) : 'all')
 
     const goalParam = searchParams.get('goal')
-    setGoal(goalParam?.trim() ? filterGoalFromSelect(goalParam.trim().toLowerCase()) : 'all')
+    if (goalParam != null && String(goalParam).trim() !== '') {
+      setGoal(filterGoalFromSelect(String(goalParam).trim().toLowerCase()))
+    } else if (objectivePref?.ready) {
+      setGoal(explorerFilterGoalFromObjectiveSlug(objectivePref.preference.primarySlug))
+    } else {
+      setGoal('all')
+    }
 
     const bud = searchParams.get('budget')
     setBudget(isBudgetParam(bud) ? bud : 'all')
@@ -159,7 +168,7 @@ function ExplorerPageInner() {
 
     const modeParam = searchParams.get('mode')
     setMode(modeParam === 'recommendation' ? 'recommendation' : 'explorer')
-  }, [searchParams])
+  }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug])
 
   /** Liens partagés avec filtres / recherche = parcours explorateur utile sans clic supplémentaire. */
   useEffect(() => {

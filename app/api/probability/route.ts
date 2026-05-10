@@ -26,7 +26,7 @@ import { computeProbabilityTopDrivers } from '@/lib/score-driver-explain';
 import { mergedVisaScores100WithDb } from '@/lib/scoring/prisma-visa-snapshot';
 import type { ProbabilityApiRow } from '@/lib/types/api-recommendation-probability';
 import type { EngineCountryListRow } from '@/lib/types/engine-country-list-row';
-import { coerceStoredProfession } from '@/lib/user-profile-enums';
+import { coerceStoredProfession, parseUserGoalType } from '@/lib/user-profile-enums';
 
 export async function POST(req: Request) {
   return withApiRouteLatency(req, API_ROUTE_LATENCY_KEYS.probabilityPost, async () => {
@@ -85,7 +85,9 @@ export async function POST(req: Request) {
 
     try {
       if (!userId) {
-        profile = { ...PUBLIC_READ_ONLY_DEMO_PROFILE };
+        const base = { ...PUBLIC_READ_ONLY_DEMO_PROFILE } as Record<string, unknown>;
+        const g = parseUserGoalType(body.anonymous_goal_type);
+        profile = g ? { ...base, goal_type: g } : base;
       } else if (!profile) {
         const dbProfile = await prisma.userProfile.findUnique({
           where: { userId: userId as string },

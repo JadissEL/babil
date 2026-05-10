@@ -19,6 +19,7 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton';
 import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner';
+import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider';
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs';
 import {
   describeTopCountrySignals,
@@ -32,6 +33,7 @@ import { formatScoreDriversFrench } from '@/lib/score-driver-explain';
 import { englishScoreLevelToFr } from '@/lib/score-level-fr';
 import { appToast } from '@/lib/toast-store';
 import type { ProbabilityApiRow } from '@/lib/types';
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 
 export default function ProbabilityPage() {
   return (
@@ -59,6 +61,13 @@ function ProbabilityPageFallback() {
 
 function ProbabilityPageInner() {
   const searchParams = useSearchParams();
+  const objectivePref = useObjectivePreferenceOptional();
+  const anonymousEngineGoal = useMemo(() => {
+    if (!objectivePref?.ready) return undefined;
+    const slug = objectivePref.preference.primarySlug;
+    if (!slug) return undefined;
+    return getObjectiveBySlug(slug)?.engineGoal;
+  }, [objectivePref?.ready, objectivePref?.preference.primarySlug]);
   const focusCountryId = useMemo(() => {
     const raw = searchParams?.get('countryId');
     if (!raw) return undefined;
@@ -104,11 +113,18 @@ function ProbabilityPageInner() {
 
         if (!user) {
           setReadOnlyDemo(true);
-          setProfileUsed({ ...PUBLIC_READ_ONLY_DEMO_PROFILE });
+          setProfileUsed({
+            ...PUBLIC_READ_ONLY_DEMO_PROFILE,
+            ...(anonymousEngineGoal ? { goal_type: anonymousEngineGoal } : {}),
+          });
           const probRes = await fetch('/api/probability', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(withFocus({})),
+            body: JSON.stringify(
+              withFocus(
+                anonymousEngineGoal ? { anonymous_goal_type: anonymousEngineGoal } : {},
+              ),
+            ),
           });
           const data = await probRes.json();
           if (!probRes.ok) {
@@ -167,7 +183,7 @@ function ProbabilityPageInner() {
     };
 
     loadData();
-  }, [isLoaded, user, focusCountryId]);
+  }, [isLoaded, user, focusCountryId, anonymousEngineGoal]);
 
   const toggleComparison = (country: string) => {
     if (comparisonList.includes(country)) {

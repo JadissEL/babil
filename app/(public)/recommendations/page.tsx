@@ -9,6 +9,7 @@ import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkele
 import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner';
 import RecommendationPanel from '@/components/engine/RecommendationPanel';
 import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart';
+import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -25,6 +26,7 @@ import type { ApiRecommendation } from '@/lib/recommendation-ui';
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui';
 import { formatScoreDriversFrench } from '@/lib/score-driver-explain';
 import { appToast } from '@/lib/toast-store';
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 
 function RecoMetricBar({ label, value }: { label: string; value: number }) {
   return (
@@ -61,6 +63,13 @@ function RecommendationsPageFallback() {
 
 function RecommendationsPageInner() {
   const searchParams = useSearchParams();
+  const objectivePref = useObjectivePreferenceOptional();
+  const anonymousEngineGoal = useMemo(() => {
+    if (!objectivePref?.ready) return undefined;
+    const slug = objectivePref.preference.primarySlug;
+    if (!slug) return undefined;
+    return getObjectiveBySlug(slug)?.engineGoal;
+  }, [objectivePref?.ready, objectivePref?.preference.primarySlug]);
   const focusCountryId = useMemo(() => {
     const raw = searchParams?.get('countryId');
     if (!raw) return undefined;
@@ -91,11 +100,18 @@ function RecommendationsPageInner() {
 
         if (!user) {
           setReadOnlyDemo(true);
-          setProfileUsed({ ...PUBLIC_READ_ONLY_DEMO_PROFILE });
+          setProfileUsed({
+            ...PUBLIC_READ_ONLY_DEMO_PROFILE,
+            ...(anonymousEngineGoal ? { goal_type: anonymousEngineGoal } : {}),
+          });
           const recoRes = await fetch('/api/recommendation', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(withFocus({})),
+            body: JSON.stringify(
+              withFocus(
+                anonymousEngineGoal ? { anonymous_goal_type: anonymousEngineGoal } : {},
+              ),
+            ),
           });
           const data = await recoRes.json();
           if (!recoRes.ok) {
@@ -154,7 +170,7 @@ function RecommendationsPageInner() {
     };
 
     loadData();
-  }, [isLoaded, user, focusCountryId]);
+  }, [isLoaded, user, focusCountryId, anonymousEngineGoal]);
 
   useEffect(() => {
     if (!loading && recommendations.length > 0) {

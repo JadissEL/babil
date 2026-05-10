@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { USER_GOAL_TYPES } from '@/lib/user-profile-enums';
 
 /**
  * Shared POST body for `/api/recommendation` and `/api/probability` (D.62).
@@ -10,6 +11,11 @@ export const recoProbaPostBodySchema = z
     playground: z.boolean().optional(),
     /** Optional: pin this country first in ranked results (public numeric id only). */
     focusCountryId: z.number().int().positive().optional(),
+    /**
+     * When the caller is **not** authenticated: override demo profile `goal_type` only.
+     * Validated against the same enum as stored profiles — no arbitrary injection.
+     */
+    anonymous_goal_type: z.enum(USER_GOAL_TYPES).optional(),
   })
   .passthrough();
 
