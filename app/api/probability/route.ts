@@ -13,6 +13,7 @@ import { buildCountrySheetSignals, inferProbabilitySheetDefaultsFromFull } from 
 import { BABIL_ENGINE_VERSION, engineVersionHeaders } from '@/lib/engine-version'
 import { computeProbabilityTopDrivers } from '@/lib/score-driver-explain'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
+import { recoProbaPostBodySchema } from '@/lib/api-schemas/reco-proba-post-body'
 import { coerceStoredProfession } from '@/lib/user-profile-enums'
 
 export async function POST(req: Request) {
@@ -43,7 +44,14 @@ export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
     const raw = await req.json();
-    body = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {};
+    const parsed = recoProbaPostBodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid request body', issues: parsed.error.flatten() },
+        { status: 400, headers: engineVersionHeaders('probability') },
+      );
+    }
+    body = parsed.data as Record<string, unknown>;
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }

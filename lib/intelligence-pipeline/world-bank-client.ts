@@ -1,5 +1,6 @@
 import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
 import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
+import { intelligencePipelineFetch } from '@/lib/intelligence-pipeline/http-fetch'
 import { iso2FromIntelligenceOverride } from './country-iso-overrides'
 import { normalizeCountryMatchKey } from './country-match-key'
 
@@ -21,7 +22,7 @@ export async function fetchWorldBankCountryIso2Map(): Promise<Map<string, string
   const maxPages = 30
   for (; page <= maxPages; page += 1) {
     const url = `https://api.worldbank.org/v2/country?format=json&per_page=100&page=${page}`
-    const res = await fetch(url)
+    const res = await intelligencePipelineFetch(url)
     if (!res.ok) throw new Error(`World Bank country list HTTP ${res.status}`)
     const data = (await res.json()) as [unknown, WbCountryRow[] | null]
     const rows = data[1]
@@ -92,7 +93,7 @@ export async function fetchWorldBankLatestDataForCountriesBatch(
   if (iso2LowercaseList.length === 0) return new Map()
   const codes = iso2LowercaseList.map((c) => c.trim().toUpperCase()).join(';')
   const url = `https://api.worldbank.org/v2/country/${codes}/indicator/${encodeURIComponent(indicator)}?format=json&per_page=20000&MRV=1`
-  const res = await fetch(url)
+  const res = await intelligencePipelineFetch(url)
   if (!res.ok) throw new Error(`World Bank batch ${indicator} HTTP ${res.status}`)
   const data = (await res.json()) as [unknown, WbIndicatorObservationRow[] | null]
   const rows = data[1] ?? []
@@ -114,7 +115,7 @@ export async function fetchWorldBankLatestDatum(
 ): Promise<WbDatum | null> {
   const cc = iso2.trim().toLowerCase()
   const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(cc)}/indicator/${encodeURIComponent(indicator)}?format=json&per_page=1&MRV=1`
-  const res = await fetch(url)
+  const res = await intelligencePipelineFetch(url)
   if (!res.ok) return null
   const data = (await res.json()) as [
     { page: number; pages: number },

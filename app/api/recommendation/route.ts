@@ -17,6 +17,7 @@ import { appendProfileContextNarratives } from '@/lib/probability-profile-narrat
 import { buildCountrySheetSignals } from '@/lib/probability-result-display'
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile'
 import { sanitizePublicSyntheticProfile } from '@/lib/public-synthetic-profile'
+import { recoProbaPostBodySchema } from '@/lib/api-schemas/reco-proba-post-body'
 import { parseUserGoalType, userGoalTypeToEngineGoal } from '@/lib/user-profile-enums'
 
 type Goal = 'TOURISM' | 'STUDY' | 'WORK' | 'BUSINESS' | 'SHORT_COURSE';
@@ -291,7 +292,14 @@ export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
     const raw = await req.json();
-    body = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {};
+    const parsed = recoProbaPostBodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Invalid request body', issues: parsed.error.flatten() },
+        { status: 400, headers: engineVersionHeaders('recommendation') },
+      );
+    }
+    body = parsed.data as Record<string, unknown>;
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }

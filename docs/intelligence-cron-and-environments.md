@@ -37,6 +37,10 @@ Ne commitez jamais l’URL complète ; utilisez les stores de secrets des platef
 Variable **`INTELLIGENCE_SOURCE_DISABLED_SLUGS`** : liste de slugs séparés par des virgules (ex. `world_bank_open_data,oecd`). Voir [source-collection-flags.ts](../lib/intelligence-pipeline/source-collection-flags.ts).  
 À définir sur **Vercel**, **Render**, ou dans le workflow GitHub (`env:` sur le job) si vous devez couper une source sans déployer du code.
 
+### Timeouts HTTP World Bank (D.61)
+
+Les appels sortants du client [`world-bank-client.ts`](../lib/intelligence-pipeline/world-bank-client.ts) utilisent **`intelligencePipelineFetch`** ([`http-fetch.ts`](../lib/intelligence-pipeline/http-fetch.ts)) avec **`INTELLIGENCE_HTTP_TIMEOUT_MS`** (défaut 45 s, max 120 s). Évite les workers bloqués si l’API WB ne répond pas.
+
 ## Matérialisation partielle et « rollback »
 
 - **Collecte WB** : écritures **idempotentes** via `dedupeKey` + `upsert` — une reprise ne duplique pas les séries pour la même année/indicateur/pays.

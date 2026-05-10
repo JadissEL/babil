@@ -1,4 +1,4 @@
-# Edge middleware, compression, and engine POST limits (catalogue D.58–D.60)
+# Edge middleware, compression, engine POST limits, and validation (catalogue D.58–D.62)
 
 ## D.58 — Middleware (Edge)
 
@@ -19,3 +19,14 @@
 - **Fenêtre:** 1 minute, compteur fixe par clé (en mémoire **par instance** serverless — limite indicative sous forte horizontalité).
 - Variables: [`BABIL_ENGINE_RATE_LIMIT_AUTH_PER_MINUTE`](../.env.example), `BABIL_ENGINE_RATE_LIMIT_ANON_PER_MINUTE`, `BABIL_ENGINE_RATE_LIMIT_DISABLED` (tests / debug).
 - Réponse **429** + en-tête `Retry-After` (secondes) + corps `{ error, retryAfterSec, limit }`.
+
+## D.61 — Timeouts HTTP pipeline (World Bank)
+
+- Toutes les requêtes `fetch` vers `api.worldbank.org` passent par [`intelligencePipelineFetch`](../lib/intelligence-pipeline/http-fetch.ts) (défaut **45 s**, plafond **120 s**).
+- Variable : **`INTELLIGENCE_HTTP_TIMEOUT_MS`** (voir [`.env.example`](../.env.example)). Voir aussi [intelligence-cron-and-environments.md](intelligence-cron-and-environments.md).
+
+## D.62 — Validation Zod (corps POST moteurs)
+
+- Schéma partagé : [`recoProbaPostBodySchema`](../lib/api-schemas/reco-proba-post-body.ts) — typage de `profile` (objet optionnel) et `playground` (booléen optionnel), **`.passthrough()`** pour clés inconnues.
+- Appliqué à **`POST /api/recommendation`** et **`POST /api/probability`** : **400** + `issues` (Zod flatten) si JSON racine invalide ou types incohérents sur ces champs.
+- **Admin / autres routes** : hors périmètre immédiat (backlog élargir).
