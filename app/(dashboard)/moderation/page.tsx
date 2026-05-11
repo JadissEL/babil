@@ -87,7 +87,7 @@ export default function ModerationPage() {
   const history = comments.filter(c => c.status !== 'PENDING')
 
   return (
-    <div className="mx-auto max-w-6xl pb-16 pt-0 sm:pb-20 sm:pt-2">
+    <div className="mx-auto max-w-6xl pb-12 pt-0 sm:pb-16 sm:pt-2">
         <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="flex flex-wrap items-center gap-3 text-2xl font-black text-text sm:gap-4 sm:text-3xl lg:text-4xl">

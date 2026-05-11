@@ -73,7 +73,7 @@ export default function CountryDoctoratPage() {
 
   if (!hasPhdData) {
     return (
-      <div className="mx-auto max-w-2xl px-4 pb-20 pt-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-2xl px-4 pb-12 pt-4 sm:px-6 lg:px-8">
         <Link
           href={`/countries/${id}`}
           className="mb-6 flex items-center gap-2 font-bold text-muted transition-colors hover:text-primary"
@@ -110,7 +110,7 @@ export default function CountryDoctoratPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-20 pt-4 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 pb-12 pt-4 sm:px-6 lg:px-8">
       <Link
         href={`/countries/${id}`}
         className="mb-6 flex items-center gap-2 font-bold text-muted transition-colors hover:text-primary"

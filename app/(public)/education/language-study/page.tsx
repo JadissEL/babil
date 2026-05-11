@@ -131,7 +131,7 @@ export default function LanguageStudyPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 pb-20 sm:px-8">
+    <div className="mx-auto max-w-7xl px-6 py-10 pb-12 sm:px-8">
       <div className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-2">
         <Link
           href="/education"

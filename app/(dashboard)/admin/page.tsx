@@ -300,7 +300,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-20 sm:space-y-8 sm:pb-24">
+    <div className="mx-auto max-w-6xl space-y-6 pb-12 sm:space-y-8 sm:pb-16">
       <div>
         <h1 className="text-2xl font-black text-text sm:text-3xl">Administration</h1>
         <p className="mt-1 text-sm text-muted">Modération rapide et édition des scores pays (MVP).</p>

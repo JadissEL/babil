@@ -137,7 +137,7 @@ function ComparisonTable({ pkgs }: { pkgs: DelegatedPackage[] }) {
 
 export function DelegatedServiceCatalog({ applyQuerySuffix = '' }: { applyQuerySuffix?: string }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 pb-20 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 py-10 pb-12 sm:px-6 lg:px-8">
       <div
         id="assist-garantie"
         className="scroll-mt-28 mb-8 rounded-2xl border border-emerald-500/30 bg-[#e9f9f1]/80 p-5 shadow-soft sm:mb-10 sm:rounded-[2rem] sm:p-6 md:flex md:items-start md:gap-6"

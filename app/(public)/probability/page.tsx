@@ -45,7 +45,7 @@ export default function ProbabilityPage() {
 
 function ProbabilityPageFallback() {
   return (
-    <div className="mx-auto max-w-6xl pb-16 sm:pb-20">
+    <div className="mx-auto max-w-6xl pb-12 sm:pb-16">
       <div className="mb-8 flex min-w-0 items-center gap-3 sm:mb-10 sm:gap-4">
         <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
           <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
@@ -225,7 +225,7 @@ function ProbabilityPageInner() {
 
   if (!isLoaded || loading) {
     return (
-      <div className="mx-auto max-w-6xl pb-16 sm:pb-20">
+      <div className="mx-auto max-w-6xl pb-12 sm:pb-16">
         <div className="mb-8 flex min-w-0 items-center gap-3 sm:mb-10 sm:gap-4">
           <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
             <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
@@ -240,7 +240,7 @@ function ProbabilityPageInner() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl pb-16 sm:pb-20">
+    <div className="mx-auto max-w-6xl pb-12 sm:pb-16">
       <div className="mb-8 flex flex-col justify-between gap-4 sm:mb-10 sm:gap-6 md:flex-row md:items-center">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">

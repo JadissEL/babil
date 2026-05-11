@@ -70,7 +70,7 @@ export default function SchengenPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 pb-16 sm:space-y-8 sm:px-6 sm:py-10 sm:pb-20 lg:px-8">
+    <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 pb-12 sm:space-y-8 sm:px-6 sm:py-10 sm:pb-16 lg:px-8">
       <div className="mb-8 flex flex-col items-start justify-between gap-5 sm:mb-10 sm:gap-6 md:flex-row md:items-center">
         <div className="min-w-0">
           <h1 className="mb-2 flex flex-wrap items-center gap-2 text-2xl font-black tracking-tight text-text sm:gap-3 sm:text-3xl md:text-4xl">

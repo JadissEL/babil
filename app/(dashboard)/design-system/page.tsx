@@ -42,7 +42,7 @@ export default function DesignSystemPage() {
   const [explorerRegion, setExplorerRegion] = useState('all')
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-16 sm:space-y-8 sm:pb-20">
+    <div className="mx-auto max-w-6xl space-y-6 pb-12 sm:space-y-8 sm:pb-16">
       <header className="space-y-2">
         <h1 className="text-2xl font-black text-text sm:text-3xl">Design System Library</h1>
         <p className="text-sm leading-relaxed text-muted">

@@ -103,7 +103,7 @@ export default function EducationPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 pb-20 sm:px-8">
+    <div className="mx-auto max-w-7xl px-6 py-10 pb-12 sm:px-8">
       <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
         <div className="flex items-center gap-4">
           <div className="rounded-[2rem] bg-primary p-4 text-white shadow-soft">

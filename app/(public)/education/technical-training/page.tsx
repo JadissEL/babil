@@ -152,7 +152,7 @@ export default function TechnicalTrainingPage() {
     'w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-bold text-slate-100 outline-none'
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 pb-20 sm:px-8">
+    <div className="mx-auto max-w-7xl px-6 py-10 pb-12 sm:px-8">
       <div className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-2">
         <Link
           href="/education"

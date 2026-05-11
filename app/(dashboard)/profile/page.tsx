@@ -163,7 +163,7 @@ export default function ProfilePage() {
   if (loading) return <DashboardPageSkeleton variant="profile" />
 
   return (
-    <div className="mx-auto max-w-4xl pb-16 sm:pb-20">
+    <div className="mx-auto max-w-4xl pb-12 sm:pb-16">
       <div className="mb-8 flex flex-col justify-between gap-4 sm:mb-10 sm:flex-row sm:items-center sm:gap-6">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <div className="rounded-2xl bg-primary p-3 text-white shadow-soft sm:rounded-[2rem] sm:p-4">

@@ -68,7 +68,7 @@ export default function InvestmentPage() {
   }, [programs, search])
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 pb-20 sm:px-8">
+    <div className="mx-auto max-w-7xl px-6 py-10 pb-12 sm:px-8">
       <div className="mb-10 flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-center">
         <div className="flex items-center gap-4">
           <div className="rounded-[2rem] bg-accent p-4 text-white shadow-soft">

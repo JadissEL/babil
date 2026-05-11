@@ -346,7 +346,7 @@ export default function CountryDetailPage() {
 
   return (
     <>
-    <div className="mx-auto max-w-6xl px-4 pb-20 pt-2 sm:px-6 lg:px-8 print:hidden">
+    <div className="mx-auto max-w-6xl px-4 pb-12 pt-2 sm:px-6 lg:px-8 print:hidden">
       <ObjectiveAwareExplorerLink
         className="mb-6 flex items-center gap-2 font-bold text-muted transition-colors hover:text-primary"
       >

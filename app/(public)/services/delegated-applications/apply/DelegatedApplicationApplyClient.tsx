@@ -181,7 +181,7 @@ export default function DelegatedApplicationApplyClient() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 pb-20 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-3xl px-4 py-10 pb-12 sm:px-6 lg:px-8">
       <div className="mb-8 rounded-[2rem] border border-line bg-surface p-6 shadow-card">
         <p className="text-[10px] font-black uppercase tracking-widest text-muted">
           Forfait sélectionné
