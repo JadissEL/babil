@@ -12,13 +12,13 @@ System / Transversal (enveloppe toutes les routes)
 - Objectif de mobilité persistant (`AppObjectiveRoot` — **PAGE 41**)
 
 ### Connected Pages
-- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard).
+- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard) ; **PAGE 42** (`SentryClerkSync` — pas d’UI).
 - **Technique :** `app/layout.tsx` → `ClerkProvider` → `SiteChrome` → children
 
 ---
 
 ## 1. Page Purpose
-Documenter ce que l’utilisateur perçoit **autour** du contenu page : police Inter, fond `bg-bg`, structure colonne `min-h-screen`, intégration **toasts** (`AppToaster` — détail **PAGE 40**), **sync Sentry/Clerk**, et tout **dock / footer** issu de `SiteChrome`. Sans ce brief, Stitch produit des pages isolées incohérentes.
+Documenter ce que l’utilisateur perçoit **autour** du contenu page : police Inter, fond `bg-bg`, structure colonne `min-h-screen`, intégration **toasts** (`AppToaster` — détail **PAGE 40**), **sync Sentry/Clerk** (**PAGE 42** — sans UI), et tout **dock / footer** issu de `SiteChrome`. Sans ce brief, Stitch produit des pages isolées incohérentes.
 
 ---
 
@@ -78,7 +78,8 @@ Documenter ce que l’utilisateur perçoit **autour** du contenu page : police I
 - **Edge :** Clerk indisponible → message global minimal (coordination avec PAGE 31 si crash total).
 
 ### 5.9 Sentry / observabilité
-- **Purpose :** pas d’UI ; mais pas d’élément Stitch qui casse `SentryClerkSync` (hydration).
+- **Purpose :** pas d’UI ; **`SentryClerkSync`** aligne contexte Sentry avec Clerk (pseudonyme) — **PAGE 42**.
+- **Stitch :** aucun pixel ; éviter overlays qui supposent un ordre de mount fragile avant Clerk.
 
 ---
 

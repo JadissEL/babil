@@ -15,6 +15,7 @@ Onboarding / System overlay (Clerk)
 - **Précédent :** `/probability`, `/recommendations`, CTA navbar
 - **Suivant :** `/overview`, retour page d’origine (post-auth redirect)
 - **Politique serveur / Edge :** **PAGE 39** (`proxy.ts` — quelles routes exigent `auth.protect()`)
+- **Observabilité navigateur :** **PAGE 42** (`SentryClerkSync` — pas d’email / nom dans Sentry)
 
 ---
 

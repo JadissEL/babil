@@ -43,5 +43,6 @@
 | 39 | RAMPART | Clerk middleware Edge (`proxy.ts` — `clerkMiddleware`, routes protégées) | `pages/39-rampart-clerk-edge-middleware.md` |
 | 40 | FLARE | Toasts globaux (`AppToaster`, `lib/toast-store` — `appToast`) | `pages/40-flare-global-app-toaster.md` |
 | 41 | AZIMUTH | Objectif mobilité global (`AppObjectiveRoot`, wizard, `SiteObjectiveDock`) | `pages/41-azimuth-global-mobility-objective.md` |
+| 42 | RADAR | Sentry + Clerk sync client (`SentryClerkSync`, id pseudonyme G.90) | `pages/42-radar-sentry-clerk-sync.md` |
 
 Paths in the **Markdown file** column are relative to `docs/google-stitch/`.
