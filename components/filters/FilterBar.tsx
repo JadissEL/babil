@@ -31,14 +31,18 @@ export function FilterBar({
     <div
       role="group"
       aria-label="Filtres de l’explorateur"
-      className={cn('mb-6 flex flex-wrap gap-4 rounded-2xl border border-line bg-surface p-4 shadow-soft', className)}
+      className={cn(
+        'mb-6 flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4 shadow-soft sm:flex-row sm:flex-wrap',
+        className,
+      )}
     >
       <Select
+        className="w-full min-w-0 sm:w-[190px]"
         value={goalControlled ? goalValue : undefined}
         defaultValue={goalControlled ? undefined : 'all'}
         onValueChange={(v) => onGoalChange?.(v)}
       >
-        <SelectTrigger className="w-[190px]" aria-label="Filtrer par objectif">
+        <SelectTrigger className="w-full" aria-label="Filtrer par objectif">
           <SelectValue placeholder="Objectif" />
         </SelectTrigger>
         <SelectContent>
@@ -53,11 +57,12 @@ export function FilterBar({
       </Select>
 
       <Select
+        className="w-full min-w-0 sm:w-[190px]"
         value={regionControlled ? regionValue : undefined}
         defaultValue={regionControlled ? undefined : 'all'}
         onValueChange={(v) => onRegionChange?.(v)}
       >
-        <SelectTrigger className="w-[190px]" aria-label="Filtrer par région">
+        <SelectTrigger className="w-full" aria-label="Filtrer par région">
           <SelectValue placeholder="Région" />
         </SelectTrigger>
         <SelectContent>

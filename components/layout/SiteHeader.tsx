@@ -147,7 +147,7 @@ export function SiteHeader() {
           </div>
         </div>
       </header>
-      <div className="border-b border-line bg-primary-soft/25 px-4 py-2 md:hidden">
+      <div className="border-b border-line bg-primary-soft/25 py-2 pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(1rem,env(safe-area-inset-right,0px))] md:hidden">
         <HeaderObjectiveSelector className="w-full" />
       </div>
     </>

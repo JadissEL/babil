@@ -26,11 +26,14 @@ export function Select({
   value,
   defaultValue,
   onValueChange,
+  className,
 }: {
   children: React.ReactNode
   value?: string
   defaultValue?: string
   onValueChange?: (v: string) => void
+  /** Appliquée au conteneur racine (souvent `w-full min-w-0` pour flex / petits viewports). */
+  className?: string
 }) {
   const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue ?? '')
   const isControlled = value !== undefined
@@ -135,7 +138,7 @@ export function SelectContent({
     <div
       role="listbox"
       className={cn(
-        'absolute z-50 mt-1 max-h-[min(18rem,var(--radix-select-content-available-height,18rem))] min-w-[100%] overflow-auto rounded-xl border border-line bg-surface p-1 shadow-card',
+        'absolute z-50 mt-1 max-h-[min(18rem,50dvh,var(--radix-select-content-available-height,18rem))] min-w-[100%] overflow-auto rounded-xl border border-line bg-surface p-1 shadow-card',
         className,
       )}
     >
