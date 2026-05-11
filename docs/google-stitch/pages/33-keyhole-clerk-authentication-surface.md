@@ -44,7 +44,7 @@ Overlay full viewport blur → card auth centrée → footer légal.
 ### 5.1 Surfaces dans le repo
 - **`SignInButton mode="modal"`** (ex. **PAGE 05**, **PAGE 06**) : ouverture Clerk sans route `/sign-in` locale.
 - **`useUser` / `useAuth` :** gates côté client pour charger profil API.
-- **Dashboard :** layouts `(dashboard)` protégés — redirection Clerk selon config middleware (voir `proxy.ts` / middleware projet).
+- **Dashboard :** layouts `(dashboard)` protégés — redirection Clerk selon config **`middleware.ts`** projet.
 
 ### 5.2 États modale
 - **Loading OAuth :** spinner provider Clerk natif.
