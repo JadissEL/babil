@@ -6,7 +6,7 @@ import { ObjectivePreferenceProvider } from '@/components/objectives/ObjectivePr
 export function AppObjectiveRoot({ children }: { children: React.ReactNode }) {
   return (
     <ObjectivePreferenceProvider>
-      {children}
+      <div className="flex min-h-0 flex-1 flex-col">{children}</div>
       <FirstVisitObjectiveWizard />
     </ObjectivePreferenceProvider>
   );

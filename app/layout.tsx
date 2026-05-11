@@ -1,9 +1,8 @@
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
-import { AppToaster } from '@/components/AppToaster'
 import { AppObjectiveRoot } from '@/components/layout/AppObjectiveRoot'
-import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader'
+import { SiteChrome } from '@/components/layout/SiteChrome'
 import { SentryClerkSync } from '@/components/SentryClerkSync'
 import type { Metadata } from 'next'
 
@@ -30,10 +29,7 @@ export default function RootLayout({
         >
           <SentryClerkSync />
           <AppObjectiveRoot>
-            <SiteHeader />
-            <AppToaster />
-            <main className="flex-1 pb-12">{children}</main>
-            <SiteFooter />
+            <SiteChrome>{children}</SiteChrome>
           </AppObjectiveRoot>
         </body>
       </html>

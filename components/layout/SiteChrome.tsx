@@ -1,0 +1,24 @@
+'use client';
+
+import { ReactNode } from 'react';
+import { AppToaster } from '@/components/AppToaster';
+import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
+import { SiteObjectiveDock } from '@/components/layout/SiteObjectiveDock';
+import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
+
+export function SiteChrome({ children }: { children: ReactNode }) {
+  const { mobileOpen, setMobileOpen, closeMobile } = useSitePrimaryNavState();
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <SiteHeader onPrimaryNavOpen={() => setMobileOpen(true)} />
+      <AppToaster />
+      <div className="flex min-h-0 min-w-0 flex-1">
+        <SitePrimaryNavColumn mobileOpen={mobileOpen} onMobileClose={closeMobile} />
+        <main className="min-w-0 flex-1 px-4 py-5 sm:px-6 lg:px-8 lg:py-6">{children}</main>
+      </div>
+      <SiteObjectiveDock />
+      <SiteFooter />
+    </div>
+  );
+}
