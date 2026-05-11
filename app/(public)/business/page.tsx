@@ -6,19 +6,29 @@ import {
   Building2,
   Coins,
   ArrowUpRight,
+  ArrowRight,
   ShieldCheck,
   Search,
   Store,
+  Globe,
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { useState, useEffect, useMemo } from 'react'
 import GoogleAd from '@/components/GoogleAd'
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
 import {
   normalizeCountriesApiListResponse,
   type CountryApiListRow,
 } from '@/lib/country-full-data-materialize'
+import { businessHubExplorerHref } from '@/lib/cta-hrefs'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 
 export default function BusinessPage() {
+  const { preference } = useObjectivePreference()
+  const hubExplorerHref = useMemo(
+    () => businessHubExplorerHref(preference.primarySlug),
+    [preference.primarySlug],
+  )
   const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -61,6 +71,29 @@ export default function BusinessPage() {
           />
         </div>
       </div>
+
+      <Link
+        href={hubExplorerHref}
+        className="group mb-10 flex flex-col gap-4 rounded-[2rem] border border-success/25 bg-surface p-6 shadow-card transition-all hover:border-success/40 hover:shadow-soft sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-success/15 text-success ring-1 ring-success/30">
+            <Globe className="h-6 w-6" />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Explorer</p>
+            <p className="mt-1 text-lg font-black text-text">Filtrer les pays pour visa affaires et investissement</p>
+            <p className="mt-2 text-sm font-medium text-muted">
+              Ouvrez l&apos;explorateur avec le filtre mobilité économique (visa affaires, scores, CBI quand disponible). Le lien
+              s&apos;aligne sur votre objectif principal lorsqu&apos;il est déjà orienté business dans le registre.
+            </p>
+          </div>
+        </div>
+        <ArrowRight
+          className="h-6 w-6 shrink-0 text-success transition-transform group-hover:translate-x-1 sm:ml-4"
+          aria-hidden
+        />
+      </Link>
 
       <GoogleAd slot="business_top" />
 

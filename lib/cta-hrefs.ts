@@ -25,6 +25,24 @@ export function educationHubExplorerHref(primaryObjectiveSlug: string | null | u
   return EDUCATION_HUB_EXPLORER_HREF;
 }
 
+/** Funnel Explorer depuis le hub Business (objectifs non encore « affaires » dans le registre). */
+export const BUSINESS_HUB_EXPLORER_HREF = '/explorer?goal=business';
+
+function isBusinessHubAlignedObjectiveSlug(slug: string | null | undefined): boolean {
+  return getObjectiveBySlug(slug)?.explorerGoalDefault === 'business';
+}
+
+/**
+ * Lien « Explorer » depuis le hub Business : `?goal=business` par défaut,
+ * sauf si l’objectif principal a déjà `explorerGoalDefault === 'business'` dans le registre.
+ */
+export function businessHubExplorerHref(primaryObjectiveSlug: string | null | undefined): string {
+  if (isBusinessHubAlignedObjectiveSlug(primaryObjectiveSlug)) {
+    return ctaExploreHref(primaryObjectiveSlug);
+  }
+  return BUSINESS_HUB_EXPLORER_HREF;
+}
+
 /** Explorer avec filtre `goal` aligné sur l’objectif principal (ou générique). */
 export function ctaExploreHref(primaryObjectiveSlug: string | null | undefined): string {
   const g = explorerFilterGoalFromObjectiveSlug(primaryObjectiveSlug);
