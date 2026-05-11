@@ -4,6 +4,10 @@ import {
   businessHubExplorerHref,
   EDUCATION_HUB_EXPLORER_HREF,
   educationHubExplorerHref,
+  TOURISM_HUB_EXPLORER_HREF,
+  tourismHubExplorerHref,
+  WORK_HUB_EXPLORER_HREF,
+  workHubExplorerHref,
 } from '@/lib/cta-hrefs';
 
 describe('educationHubExplorerHref', () => {
@@ -33,5 +37,30 @@ describe('businessHubExplorerHref', () => {
     expect(businessHubExplorerHref('startup')).toBe('/explorer?goal=business');
     expect(businessHubExplorerHref('creator_influencer_abroad')).toBe('/explorer?goal=business');
     expect(businessHubExplorerHref('small_business_street_food')).toBe('/explorer?goal=business');
+  });
+});
+
+describe('workHubExplorerHref', () => {
+  it('uses work funnel when explorer default is not work', () => {
+    expect(workHubExplorerHref(null)).toBe(WORK_HUB_EXPLORER_HREF);
+    expect(workHubExplorerHref('tourism')).toBe(WORK_HUB_EXPLORER_HREF);
+    expect(workHubExplorerHref('business')).toBe(WORK_HUB_EXPLORER_HREF);
+  });
+
+  it('uses objective-aligned explorer when registry default is work', () => {
+    expect(workHubExplorerHref('work')).toBe('/explorer?goal=work');
+    expect(workHubExplorerHref('sports_professional_abroad')).toBe('/explorer?goal=work');
+  });
+});
+
+describe('tourismHubExplorerHref', () => {
+  it('uses tourism funnel when explorer default is not tourism', () => {
+    expect(tourismHubExplorerHref(null)).toBe(TOURISM_HUB_EXPLORER_HREF);
+    expect(tourismHubExplorerHref('work')).toBe(TOURISM_HUB_EXPLORER_HREF);
+    expect(tourismHubExplorerHref('studies_master')).toBe(TOURISM_HUB_EXPLORER_HREF);
+  });
+
+  it('uses objective-aligned explorer for tourism primary', () => {
+    expect(tourismHubExplorerHref('tourism')).toBe('/explorer?goal=tourism');
   });
 });

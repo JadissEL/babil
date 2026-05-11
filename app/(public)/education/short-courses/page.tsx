@@ -4,10 +4,12 @@ import { Zap, Search, Globe, BookOpen, Coins, CreditCard, Timer, ArrowLeft, Laye
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import GoogleAd from '@/components/GoogleAd'
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
 import {
   normalizeCountriesApiListResponse,
   type CountryApiListRow,
 } from '@/lib/country-full-data-materialize'
+import { educationHubExplorerHref } from '@/lib/cta-hrefs'
 
 type CostLevel = 'all' | 'Bas' | 'Moyen' | 'Élevé'
 type BacFilter = 'all' | 'oui' | 'non'
@@ -53,6 +55,11 @@ type ShortCourseRow = {
 }
 
 export default function ShortCoursesPage() {
+  const { preference } = useObjectivePreference()
+  const explorerHubHref = useMemo(
+    () => educationHubExplorerHref(preference.primarySlug),
+    [preference.primarySlug],
+  )
   const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -141,12 +148,21 @@ export default function ShortCoursesPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-10 pb-20 sm:px-8">
-      <div className="mb-8">
+      <div className="mb-8 flex flex-wrap items-center gap-x-3 gap-y-2">
         <Link
           href="/education"
           className="inline-flex items-center gap-2 text-sm font-black text-slate-500 transition-colors hover:text-white"
         >
           <ArrowLeft className="h-4 w-4" /> Hub Éducation
+        </Link>
+        <span className="hidden text-slate-600 sm:inline" aria-hidden>
+          ·
+        </span>
+        <Link
+          href={explorerHubHref}
+          className="inline-flex items-center gap-2 text-sm font-black text-violet-400 transition-colors hover:text-white"
+        >
+          <Globe className="h-4 w-4" /> Explorer
         </Link>
       </div>
 

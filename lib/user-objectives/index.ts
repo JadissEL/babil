@@ -28,3 +28,19 @@ export {
   serializedGoalTypeForProfileResponse,
   withResolvedGoalTypeOnProfileRecord,
 } from '@/lib/user-objectives/profile-goal-coalesce';
+
+/** Liens Explorer / Comparer (objectif + hubs verticaux) — réexport pratique depuis le module objectifs. */
+export {
+  BUSINESS_HUB_EXPLORER_HREF,
+  businessHubExplorerHref,
+  CTA_COMPARE_TOURISM_HREF,
+  CTA_EXPLORE_HREF,
+  ctaCompareHref,
+  ctaExploreHref,
+  EDUCATION_HUB_EXPLORER_HREF,
+  educationHubExplorerHref,
+  TOURISM_HUB_EXPLORER_HREF,
+  tourismHubExplorerHref,
+  WORK_HUB_EXPLORER_HREF,
+  workHubExplorerHref,
+} from '@/lib/cta-hrefs';

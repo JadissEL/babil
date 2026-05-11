@@ -43,6 +43,42 @@ export function businessHubExplorerHref(primaryObjectiveSlug: string | null | un
   return BUSINESS_HUB_EXPLORER_HREF;
 }
 
+/** Funnel Explorer pour parcours « travail / visa pro » (hors objectifs déjà filtre travail au registre). */
+export const WORK_HUB_EXPLORER_HREF = '/explorer?goal=work';
+
+function isWorkHubAlignedObjectiveSlug(slug: string | null | undefined): boolean {
+  return getObjectiveBySlug(slug)?.explorerGoalDefault === 'work';
+}
+
+/**
+ * Lien « Explorer » pour un hub ou CTA orienté travail : `?goal=work` par défaut,
+ * sauf si l’objectif principal a déjà `explorerGoalDefault === 'work'`.
+ */
+export function workHubExplorerHref(primaryObjectiveSlug: string | null | undefined): string {
+  if (isWorkHubAlignedObjectiveSlug(primaryObjectiveSlug)) {
+    return ctaExploreHref(primaryObjectiveSlug);
+  }
+  return WORK_HUB_EXPLORER_HREF;
+}
+
+/** Funnel Explorer pour parcours tourisme (hors objectif tourisme explicite au registre). */
+export const TOURISM_HUB_EXPLORER_HREF = '/explorer?goal=tourism';
+
+function isTourismHubAlignedObjectiveSlug(slug: string | null | undefined): boolean {
+  return getObjectiveBySlug(slug)?.explorerGoalDefault === 'tourism';
+}
+
+/**
+ * Lien « Explorer » pour un hub ou CTA orienté tourisme : `?goal=tourism` par défaut,
+ * sauf si l’objectif principal a déjà `explorerGoalDefault === 'tourism'`.
+ */
+export function tourismHubExplorerHref(primaryObjectiveSlug: string | null | undefined): string {
+  if (isTourismHubAlignedObjectiveSlug(primaryObjectiveSlug)) {
+    return ctaExploreHref(primaryObjectiveSlug);
+  }
+  return TOURISM_HUB_EXPLORER_HREF;
+}
+
 /** Explorer avec filtre `goal` aligné sur l’objectif principal (ou générique). */
 export function ctaExploreHref(primaryObjectiveSlug: string | null | undefined): string {
   const g = explorerFilterGoalFromObjectiveSlug(primaryObjectiveSlug);
