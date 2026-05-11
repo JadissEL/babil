@@ -34,12 +34,31 @@ Présenter **offre doctorale** et friction visa études avancée (`PhDStudiesSec
 ---
 
 ## 4. Layout Architecture
-Hero académique → corps section PhD → encadré visa doctorant → sources.
+**Implémentation (`app/(public)/countries/[id]/doctorat/page.tsx`) :** chargement `full_data` via `/api/countries/${id}` → `hasCountryPhdStoredData` / `buildPhdStudies` → rendu **`PhDStudiesSection`** ; possibles **`GoogleAd`** + liens objectif-aware vers l’explorateur ; retour hub `ChevronLeft`.
 
 ---
 
 ## 5. Full Section Breakdown
-Teasers `PhDStudiesCountryTeaser` patterns ; CTA explorer éducation.
+
+### 5.1 Pipeline données
+- **Materialize :** `materializeCountryApiRow` assure `full_data` exploitable.
+- **Garde `hasPhdData` :** si aucune donnée doctorale stockée → UI dédiée (message + CTA **PAGE 10** / hub).
+
+### 5.2 `PhDStudiesSection`
+- **Purpose :** programmes, friction visa études avancée, ton rigoureux mais accessible.
+- **Visuel :** cartes / listes — cohérent **PAGE 16** (typo, `surface`, bordures).
+
+### 5.3 Monétisation / discovery (`GoogleAd`)
+- **Purpose :** slot pub si activé — ne pas casser la hiérarchie “contenu d’abord”.
+
+### 5.4 Liens transverses
+- **`ObjectiveAwareExplorerLink` :** ramener vers l’explorateur avec objectif cohérent (études / recherche).
+
+### 5.5 Micro-feedback (**PAGE 37**)
+- **Placement :** après le bloc PhD principal ou par sous-bloc si le composant est instancié plusieurs fois — éviter entre titre et premier paragraphe critique.
+
+### 5.6 Edge SEO / confiance
+- **Sources :** renvoyer vers **PAGE 16** “sources officielles” / intelligence si utilisateur veut creuser visa vs université.
 
 ---
 

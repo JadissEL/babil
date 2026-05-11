@@ -38,22 +38,47 @@ Le moteur de probabilités **traduit le profil utilisateur** en **lecture probab
 ---
 
 ## 4. Layout Architecture
-Intro pédagogique → formulaire profil (sections) → CTA calcul → résultat (graph + narrative) → recommandations liées.
+**Implémentation actuelle (`app/(public)/probability/page.tsx`) :** en-tête “Moteur de probabilités visa” + bannières contexte → liste/résultats pays (expand, comparaison jusqu’à 3) → panneaux signaux / stratégie — **pas** de formulaire inline sur cette route (le profil vient de `/api/user/profile` ou du **profil démo lecture seule** si anonyme).
 
 ---
 
 ## 5. Full Section Breakdown
-### 5.1 Parameter form
-Groupes : démographie, objectif, historique voyage, contraintes financières (adapter au code réel).
 
-### 5.2 Results visualization
-`ScoreBreakdownChart` / radar — légende claire.
+### 5.1 Suspense & chargement
+- **Fallback :** `Suspense` avec squelette `DashboardPageSkeleton` et titre partiel (icône cerveau).
+- **But :** éviter flash vide si `useSearchParams` hydrate lentement.
 
-### 5.3 Narrative panel
-Texte `probability-profile-narrative` style — ton coach.
+### 5.2 Profil & API (`POST /api/probability`)
+- **Connecté :** `GET /api/user/profile` → corps POST `{ profile, focusCountryId? }`.
+- **Anonyme :** `PUBLIC_READ_ONLY_DEMO_PROFILE` + `anonymous_goal_type` si objectif explorateur (`ObjectivePreferenceProvider` / `getObjectiveBySlug`).
+- **Erreurs :** toasts (`appToast`) sur échec réseau ou payload non tableau.
 
-### 5.4 Auth gate
-Modal Clerk — message valeur “sauvegarder ce scénario”.
+### 5.3 Deep links `?countryId=` / `?countryName=`
+- **Purpose :** prioriser / auto-expand la ligne pays ciblée après chargement résultats (`useRef` anti double-expand).
+- **UX :** bannière “Contexte pays” (accent) quand `countryId` présent.
+
+### 5.4 Bannière mode découverte + Clerk
+- **Anonyme :** carte “Mode découverte” + `SignInButton mode="modal"` pour passer au profil réel.
+- **Alignement PAGE 33** : modal identité sans quitter la page.
+
+### 5.5 Liste résultats & niveaux (`englishScoreLevelToFr`, couleurs `getLevelColor`)
+- **Purpose :** rang, score global, chips niveau (Very High → Very Low) cohérents design system.
+- **A11y :** ne pas coder la couleur comme seule information — texte niveau visible.
+
+### 5.6 Expansion ligne pays
+- **Contenu :** signaux `describeTopCountrySignals`, breakdown `orderedProbabilityBreakdown`, libellés `PROBABILITY_DEFAULT_FIELD_LABELS_FR`, drivers `formatScoreDriversFrench`.
+- **Interaction :** chevrons expand/collapse ; contenu dense → scroll interne raisonnable.
+
+### 5.7 Comparaison multi-pays (max 3)
+- **CTA :** “Comparer (n)” désactivé si moins de 2 sélections ; toggle affichage panneau comparaison.
+- **Journey :** renforce le lien mental vers **PAGE 03** (compare) si deep link futur.
+
+### 5.8 Blocs “stratégie globale” / risques
+- **Purpose :** narration agrégée (top pays, backups, pays “high risk”) — ton **coach**, pas juridique.
+- **Edge :** résultats vides → CTA explorer / compare avec `ctaExploreHref` / `ctaCompareHref` objectif-aware.
+
+### 5.9 `ProfileContextBanner` (si présent sur la page)
+- **Purpose :** rappeler l’objectif ou incohérences profil sans bloquer le run.
 
 ---
 

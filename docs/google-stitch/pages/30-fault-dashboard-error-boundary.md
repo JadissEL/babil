@@ -39,7 +39,21 @@ Respecter largeur dashboard (pas full bleed marketing).
 ---
 
 ## 5. Full Section Breakdown
-Inclure mention “vos données sont sauvegardées” si applicable.
+
+### 5.1 Implémentation (`app/(dashboard)/error.tsx`)
+- **Même structure que PAGE 29** : `reset`, `Sentry.captureException`, `console.error`.
+- **Copy contextualisée :** `h1` “Erreur dans l’espace connecté” ; sous-texte orienté tableau de bord.
+
+### 5.2 Actions
+- **Réessayer :** bouton primaire identique PAGE 29.
+- **Tableau de bord :** `Link` vers **`/overview`** (sortie “sûre” espace connecté).
+- **Tertiaire :** lien texte “Accueil” vers `/` pour sortie marketing.
+
+### 5.3 Session expirée (produit)
+- **Note Stitch :** si détection session possible, CTA Clerk sign-in — non codé explicitement dans ce fichier ; rester aligné **PAGE 33**.
+
+### 5.4 Largeur & shell
+- **Purpose :** carte erreur `max-w-lg` centrée — cohabite avec **PAGE 35** (sidebar) sans casser la grille.
 
 ---
 

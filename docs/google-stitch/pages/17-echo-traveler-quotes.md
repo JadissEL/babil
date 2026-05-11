@@ -34,12 +34,31 @@ Humaniser la donnée via **citations contextualisées** (`TravelerQuotesSection`
 ---
 
 ## 4. Layout Architecture
-Intro courte → grille / carousel citations → bloc méthodologie collecte.
+**Implémentation (`app/(public)/countries/[id]/quotes/page.tsx`) :** `fetch('/api/countries/${id}')` → `materializeCountryApiRow` → contenu `buildCountryExperienceContent` + **`TravelerQuotesSection`** ; navigation retour hub via lien `ChevronLeft` + `Link` vers `/countries/[id]`.
 
 ---
 
 ## 5. Full Section Breakdown
-Citation card : texte, auteur pseudo, tag thème, pays.
+
+### 5.1 États chargement / erreur
+- **Loading :** spinner centré (pattern cohérent sous-pages pays).
+- **Erreur API / payload invalide :** message + pas de section citations.
+
+### 5.2 En-tête & retour hub
+- **Purpose :** ancrage pays + retour **PAGE 16** sans perdre le contexte `id`.
+
+### 5.3 `TravelerQuotesSection`
+- **Purpose :** citations contextualisées, sources / attribution selon données `full_data`.
+- **UX :** typographie “preuve humaine” — respiration, pas mur de texte.
+
+### 5.4 Contenu d’expérience (`buildCountryExperienceContent`)
+- **Purpose :** intro / méta autour de la section selon matérialisation pays.
+
+### 5.5 Micro-feedback transversal (**PAGE 37**)
+- **Purpose :** si `BlockFeedback` est branché sur blocs de cette route, respecter placement **sous** le bloc principal de citations, hors chemin critique retour hub.
+
+### 5.6 Empty / données template
+- **Purpose :** copy prudente + lien vers hub ou **PAGE 15** community si contribution externe un jour.
 
 ---
 

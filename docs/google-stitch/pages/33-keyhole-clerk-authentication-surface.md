@@ -40,7 +40,26 @@ Overlay full viewport blur → card auth centrée → footer légal.
 ---
 
 ## 5. Full Section Breakdown
-États : loading provider ; MFA (si activé) ; erreur credential.
+
+### 5.1 Surfaces dans le repo
+- **`SignInButton mode="modal"`** (ex. **PAGE 05**, **PAGE 06**) : ouverture Clerk sans route `/sign-in` locale.
+- **`useUser` / `useAuth` :** gates côté client pour charger profil API.
+- **Dashboard :** layouts `(dashboard)` protégés — redirection Clerk selon config middleware (voir `proxy.ts` / middleware projet).
+
+### 5.2 États modale
+- **Loading OAuth :** spinner provider Clerk natif.
+- **MFA / e-mail non vérifié :** flows Clerk standard — copy FR dans dashboard Clerk si configurable.
+- **Erreurs credential :** messages Clerk ; harmoniser ton **chaleureux** VisaFlow sur wrappers custom si ajoutés.
+
+### 5.3 Post-auth redirect
+- **Purpose :** retour page d’origine ou `/overview` selon politique produit ; documenter le comportement réel une fois figé.
+
+### 5.4 UserButton / compte hébergé
+- **Purpose :** gestion compte Clerk (avatar menu) — hors Stitch page unique si non custom ; mentionner dans maquettes **PAGE 24** (export RGPD vs Clerk).
+
+### 5.5 Sécurité UX
+- **Blur overlay :** réglage Clerk + fond page visible pour continuité (cf. §12).
+- **Focus trap / ESC :** comportements Clerk par défaut — ne pas les casser avec z-index maison.
 
 ---
 

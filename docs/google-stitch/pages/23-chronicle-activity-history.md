@@ -34,32 +34,55 @@ Matérialiser la **mémoire produit** (vues pays, runs moteur, commentaires — 
 ---
 
 ## 4. Layout Architecture
-Header + filtres → timeline verticale → pagination.
+**Implémentation (`app/(dashboard)/history/page.tsx`) :** titre + description (limite **200** entrées) → **`Card`** avec barre **recherche** + **filtre type** (`Select`) → **table** responsive (scroll horizontal) — pas de timeline verticale dans le code actuel.
 
 ---
 
 ## 5. Full Section Breakdown
-Chaque item : icône type, titre, timestamp relatif, lien action.
+
+### 5.1 Chargement parallèle
+- **`GET /api/user/history?limit=200`** + **`GET /api/countries?light=1`** pour résoudre les noms pays sur `VIEW_COUNTRY`.
+
+### 5.2 Filtre par type d’événement
+- **Purpose :** `Select` alimenté par l’ensemble des `type` observés ; libellés FR via `historyEventTypeLabelFr` (voir `lib/history-event-labels.ts`).
+
+### 5.3 Recherche full-text locale
+- **Champs matchés :** libellé FR, type brut, `JSON.stringify(payload)`, date locale FR, nom pays résolu, `countryId`.
+- **Placeholder :** “Pays, type, date, contenu du payload…”.
+
+### 5.4 Tableau colonnes
+- **Date :** `toLocaleString('fr-FR')` (affichage tabulaire, pas `<time datetime>` aujourd’hui — opportunité a11y).
+- **Type :** titre FR + `title` attribut type machine.
+- **Pays :** nom depuis map `countryId` ou `—`.
+- **Détails :** `payloadPreview` monospace tronqué + `title` complet.
+- **Action :** lien “Fiche pays” si `type === 'VIEW_COUNTRY'` et `countryId` résolu.
+
+### 5.5 Empty state filtré
+- **Copy :** explique que les visites pays apparaissent après navigation connectée.
+- **CTA :** `ObjectiveAwareExplorerLink` + lien `/profile`.
+
+### 5.6 Skeleton
+- **`DashboardPageSkeleton variant="table"`** pendant fetch.
 
 ---
 
 ## 6. UI Design Direction
-Timeline **fil continu** vertical avec nodes `primary`.
+Tableau sobre sur `surface` / `inset` ; en-tête uppercase tracking ; **compteur** d’événements filtrés à droite des filtres.
 
 ---
 
 ## 7. Interaction Design
-Hover item : slide léger révélant CTA “Rouvrir”.
+Hover ligne : fond léger ; lien “Fiche pays” souligné au survol ; recherche debounce implicite (filtre client `useMemo`).
 
 ---
 
 ## 8. Responsive UX
-Timeline : nodes alignés gauche ; texte droite full width.
+`overflow-x-auto` sur wrapper table ; `min-w-[720px]` pour garder colonnes lisibles sur petit écran (scroll horizontal).
 
 ---
 
 ## 9. Accessibility
-Timeline `ol` ordonné si séquentiel ; dates ISO `time`.
+Prévoir évolution `<time datetime>` ; annoncer le nombre de résultats après filtre (live region option) ; `label` associé au champ recherche (`htmlFor`).
 
 ---
 

@@ -39,7 +39,22 @@ HTML minimal centré ; message bref ; bouton reload.
 ---
 
 ## 5. Full Section Breakdown
-Pas de dépendance `AppNavbar` ; police système fallback.
+
+### 5.1 Implémentation (`app/global-error.tsx`)
+- **Contrainte App Router :** composant doit rendre **`<html lang="fr">` + `<body>`** complets (layout racine indisponible).
+- **Recovery :** `reset()` + lien Accueil — pas d’accès aux providers du layout principal.
+
+### 5.2 Observabilité
+- **`Sentry.captureException(error)`** dans `useEffect` (pas de `console.error` explicite dans le snippet actuel — acceptable si Sentry agrège).
+
+### 5.3 Styles
+- **`body` :** `flex min-h-screen flex-col items-center justify-center gap-6 bg-bg` — tokens globaux si CSS chargé ; sinon fallback navigateur.
+
+### 5.4 Copy
+- **`h1` :** “Une erreur critique est survenue” ; paragraphe court invitant réessayer ou accueil.
+
+### 5.5 Boutons
+- **Même pattern** primary/outline que PAGE 29 — hit area large mobile.
 
 ---
 

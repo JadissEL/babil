@@ -39,7 +39,24 @@ Card centrale message + actions + optional error id (support).
 ---
 
 ## 5. Full Section Breakdown
-Boutons primaire/secondaire ; lien support (futur).
+
+### 5.1 Implémentation (`app/error.tsx`)
+- **Client boundary :** `'use client'` ; `reset()` sur bouton “Réessayer”.
+- **Observabilité :** `console.error(error)` + **`Sentry.captureException(error)`** dans `useEffect`.
+
+### 5.2 Hiérarchie contenu
+- **`h1` :** “Une erreur est survenue”.
+- **Sous-texte :** “Vous pouvez réessayer ou retourner à l’accueil.”
+
+### 5.3 Actions
+- **Primaire :** `button` natif “Réessayer” (`bg-primary`).
+- **Secondaire :** `Link` “Accueil” vers `/` (`border-line bg-surface`).
+
+### 5.4 Digest / support (futur)
+- **Option :** afficher `error.digest` en monospace petit pour le support — aujourd’hui non exposé dans l’UI.
+
+### 5.5 Stack trace
+- **Règle produit :** ne jamais afficher stack utilisateur final en prod ; logs réservés console/Sentry.
 
 ---
 

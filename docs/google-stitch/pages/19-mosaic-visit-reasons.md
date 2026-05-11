@@ -34,12 +34,27 @@ Exposer **motifs de voyage** structurés (`VisitReasonsSection`) pour relier int
 ---
 
 ## 4. Layout Architecture
-Mosaïque tuiles raisons → détail sélectionné en panneau latéral / below fold.
+**Implémentation (`app/(public)/countries/[id]/reasons/page.tsx`) :** même chargeur que **PAGE 17** (`/api/countries/${id}` + `materializeCountryApiRow`) → `buildCountryExperienceContent` + **`VisitReasonsSection`** ; retour hub.
 
 ---
 
 ## 5. Full Section Breakdown
-Tuiles : icône + titre + score adéquation (si présent).
+
+### 5.1 `VisitReasonsSection`
+- **Purpose :** motifs de visite / scénarios alignés scoring tourisme & intention utilisateur.
+- **Structure :** tuiles ou listes selon composant — prévoir hiérarchie mobile (1 colonne).
+
+### 5.2 Données sparse
+- **Purpose :** raisons génériques + disclaimer si `full_data` incomplet (éviter sur-promesse).
+
+### 5.3 Parcours sortants
+- **Vers PAGE 17 :** preuves humaines ; **vers PAGE 05** : probabilités objectif tourisme si CTA existants côté hub.
+
+### 5.4 Micro-feedback (**PAGE 37**)
+- **Purpose :** pouces sur blocs “raisons” une fois le contenu stabilisé — pas sur le header seul.
+
+### 5.5 Cohérence avec **PAGE 16**
+- **Purpose :** mêmes tokens, même densité ; sous-page = **chapitre** du hub, pas mini-site isolé.
 
 ---
 

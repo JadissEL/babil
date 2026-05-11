@@ -36,19 +36,39 @@ Matérialiser les **résultats moteur** en **vue cartographique + liste** naviga
 ---
 
 ## 4. Layout Architecture
-Split view desktop : carte | liste. Mobile : tabs Map/Liste.
+**Implémentation actuelle (`app/(public)/recommendations/page.tsx`) :** titre “Intelligence de recommandation” → bannières profil / mode démo → **graphique** (`ScoreBreakdownChart` + pays actif) → **panneau** `RecommendationPanel` + barres métriques (`Progress`) — **pas** de carte géo sur cette route (la “boussole” est la **liste classée + chart**, pas une map).
 
 ---
 
 ## 5. Full Section Breakdown
-### 5.1 Map canvas
-Pins colorés par bucket score ; clustering zoom.
 
-### 5.2 List panel
-Cards alignées score + raison courte.
+### 5.1 Suspense & skeleton
+- Même pattern que probabilités : `Suspense` + fallback `DashboardPageSkeleton` sous le `h1`.
 
-### 5.3 Auth promo strip
-Si anonyme : bénéfices compte.
+### 5.2 Chargement reco & profil
+- **Connecté :** profil `GET /api/user/profile` puis reco (logique équivalente probabilités côté API reco — voir code).
+- **Anonyme :** profil démo + bannière `SignInButton` modal.
+- **Query `countryId` / `countryName` :** focus pays pour chart / highlight (aligné PAGE 05).
+
+### 5.3 Métriques synthèse (`RecoMetricBar`)
+- **Purpose :** barres label + valeur 0–100 pour lecteurs qui préfèrent chiffres aux courbes.
+
+### 5.4 `ScoreBreakdownChart` + sélection pays
+- **Purpose :** inspecter un pays du top-N sur les axes du breakdown.
+- **État :** `chartCountryId` ; loading chart cohérent avec liste.
+
+### 5.5 `RecommendationPanel` + mode compare
+- **Purpose :** lignes mappées via `mapApiRecommendationToPanelRow` ; toggle **compare** multi-sélection (voir implémentation `compareMode` / `compareSelectedIds`).
+- **Empty :** message + liens explorer / compare objectif-aware (`ctaExploreHref`, `ctaCompareHref`).
+
+### 5.6 Drivers & narrative
+- **Purpose :** `formatScoreDriversFrench` sur la ligne focus — expliquer “pourquoi” en français court.
+
+### 5.7 Toasts & erreurs réseau
+- **Purpose :** feedback non bloquant sur échec fetch / payload invalide.
+
+### 5.8 Écart vs maquette “carte”
+- **Note Stitch :** si le brief design impose une carte, traiter comme **variante future** ; la spec produit **PAGE 06** reste ancrée sur la liste + chart actuelles.
 
 ---
 

@@ -18,7 +18,7 @@ Logged-In (rôle modérateur / policy interne)
 ---
 
 ## 1. Page Purpose
-Fournir une **console de gouvernance sociale** (`CommentModerationPanel` patterns) pour protéger la confiance communauté. Résout *“Comment je traite les contenus risqués rapidement ?”*
+Fournir une **console de gouvernance sociale** (implémentée inline dans `app/(dashboard)/moderation/page.tsx` : `fetch('/api/comments')`, actions `PATCH` / `DELETE`) pour protéger la confiance communauté. Résout *“Comment je traite les contenus risqués rapidement ?”*
 
 ---
 
@@ -35,12 +35,33 @@ Fournir une **console de gouvernance sociale** (`CommentModerationPanel` pattern
 ---
 
 ## 4. Layout Architecture
-Liste file gauche → détail + actions droite ; barre stats haut.
+**Implémentation :** en-tête “Modération” + bouton **Actualiser** → section **En attente** (`status === 'PENDING'`) en **grille de cartes** pleine largeur → section **Historique récent** (`status !== 'PENDING'`) : **liste mobile** + **table desktop** (`md:block`).
 
 ---
 
 ## 5. Full Section Breakdown
-Chaque item : extrait, auteur, pays, timestamp, gravité.
+
+### 5.1 Garde accès
+- **403 / erreur :** écran centré `ShieldAlert` + message “Accès réservé aux administrateurs” ou erreur générique.
+- **Loading :** `DashboardPageSkeleton variant="table"`.
+
+### 5.2 Carte commentaire (file d’attente)
+- **Métadonnées :** avatar icône utilisateur, nom ou “Utilisateur anonyme”, email, pays (`Globe`).
+- **Corps :** citation entre guillemets dans encadré beige `#f8f2e8`.
+- **Actions :** **Approuver** (`APPROVED`, vert) / **Refuser** (`REJECTED`, rouge léger) — boutons pleine largeur mobile, flex row desktop.
+
+### 5.3 File vide
+- **Purpose :** zone dashed “Aucun commentaire en attente.”
+
+### 5.4 Historique récent (10 derniers non-pending)
+- **Mobile :** `ul` cartes avec extrait `line-clamp-4` + **Supprimer** (`DELETE`).
+- **Desktop :** table colonnes Utilisateur / Pays / Contenu / Statut / action icône poubelle.
+
+### 5.5 Optimistic & erreurs action
+- **Implémentation :** mise à jour liste locale sur `res.ok` ; `alert()` sur erreur réseau (opportunité produit : remplacer par toast).
+
+### 5.6 Journey
+- **Vers pays source :** futur deep link ; aujourd’hui pays affiché texte seul.
 
 ---
 
