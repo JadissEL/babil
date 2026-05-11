@@ -72,6 +72,7 @@ export function FilterBar({
           <SelectItem value="asia">Asie</SelectItem>
           <SelectItem value="africa">Afrique</SelectItem>
           <SelectItem value="americas">Amériques</SelectItem>
+          <SelectItem value="oceania">Océanie</SelectItem>
         </SelectContent>
       </Select>
     </div>

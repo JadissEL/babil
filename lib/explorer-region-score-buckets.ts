@@ -22,6 +22,7 @@ export function buildExplorerRegionScoreBuckets(rows: Row[]): RegionScoreBucket[
     { key: 'asia', label: 'Asie', test: (r) => matchesExplorerRegionFilter('Asia', r) },
     { key: 'africa', label: 'Afrique', test: (r) => matchesExplorerRegionFilter('Africa', r) },
     { key: 'americas', label: 'Amériques', test: (r) => matchesExplorerRegionFilter('Americas', r) },
+    { key: 'oceania', label: 'Océanie', test: (r) => matchesExplorerRegionFilter('Oceania', r) },
   ]
 
   return defs.map(({ key, label, test }) => {

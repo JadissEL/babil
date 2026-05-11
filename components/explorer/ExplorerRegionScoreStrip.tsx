@@ -1,4 +1,7 @@
 import type { RegionScoreBucket } from '@/lib/explorer-region-score-buckets'
+import { cn } from '@/lib/utils'
+
+const ATLAS_TILE_ORDER = ['europe', 'americas', 'asia', 'oceania'] as const
 
 function heatBarClass(avg: number): string {
   if (avg >= 70) return 'bg-emerald-500'
@@ -10,13 +13,58 @@ function heatBarClass(avg: number): string {
 type Props = {
   buckets: RegionScoreBucket[]
   className?: string
+  /** `atlas` : tuiles compactes type Stitch (4 zones) ; `default` : vue régionale historique. */
+  variant?: 'default' | 'atlas'
+  /** Clé bucket (`europe`, `asia`, …) pour bordure « sélection » en variante atlas. */
+  activeBucketKey?: string | null
 }
 
 /**
- * Vue régionale légère : moyenne des scores Babil par zone (pas une carte SVG).
+ * Vue régionale : moyenne des scores Babil par zone (pas une carte SVG).
+ * Variante **atlas** : quatre tuiles (Europe, Amériques, Asie, Océanie) alignées maquette Stitch PAGE 02.
  */
-export function ExplorerRegionScoreStrip({ buckets, className = '' }: Props) {
+export function ExplorerRegionScoreStrip({
+  buckets,
+  className = '',
+  variant = 'default',
+  activeBucketKey = null,
+}: Props) {
   const hasAny = buckets.some((b) => b.countryCount > 0)
+
+  if (variant === 'atlas') {
+    const display = ATLAS_TILE_ORDER.map((k) => buckets.find((b) => b.key === k)).filter(
+      (b): b is RegionScoreBucket => Boolean(b),
+    )
+    if (!display.length) return null
+
+    return (
+      <div
+        className={cn('grid grid-cols-2 gap-3 sm:grid-cols-4', className)}
+        aria-label="Scores moyens par grande zone"
+      >
+        {display.map((b) => {
+          const scoreDisplay = b.countryCount ? Math.round(b.avgScore) : '—'
+          const selected = activeBucketKey != null && activeBucketKey === b.key
+          return (
+            <div
+              key={b.key}
+              className={cn(
+                'rounded-2xl border-2 bg-white p-4 shadow-sm transition-colors',
+                selected ? 'border-[#0D1B3E]' : 'border-transparent',
+              )}
+              title={`${b.label} : moyenne ${b.avgScore}, ${b.countryCount} pays`}
+            >
+              <p className="text-xs font-bold text-muted">{b.label}</p>
+              <p className="mt-1 text-4xl font-black tabular-nums tracking-tight text-[#0D1B3E]">
+                {scoreDisplay}
+              </p>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
+
   if (!hasAny) return null
 
   return (
@@ -34,7 +82,7 @@ export function ExplorerRegionScoreStrip({ buckets, className = '' }: Props) {
           destination dans son bloc géographique.
         </p>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {buckets.map((b) => (
           <div
             key={b.key}

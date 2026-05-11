@@ -1,6 +1,6 @@
 'use client'
 
-import { Globe } from 'lucide-react'
+import { Clock, Globe } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { COUNTRY_HIGHLIGHTS } from '@/lib/country-highlights'
+import { ATLAS_NAVY } from '@/lib/explorer-atlas-ui'
 import { cn } from '@/lib/utils'
 
 export type MobilityTier = 'Strong' | 'Medium' | 'Weak'
@@ -28,6 +29,12 @@ export type CountryCardProps = {
   /** Fired when the user follows the link to `/countries/[id]` (analytics / onboarding). */
   onNavigate?: () => void
   onClick?: () => void
+  /** Variante maquette Stitch PAGE 02 (Atlas). */
+  variant?: 'default' | 'atlas'
+  /** Sous-titre zone (ex. Schengen, Asie) — variante atlas. */
+  atlasCategoryLabel?: string
+  /** Délai visa affiché en jours — variante atlas. */
+  atlasVisaDelayDays?: number
 }
 
 function frictionStripClass(friction: CountryCardProps['friction']) {
@@ -59,6 +66,9 @@ export function CountryCard({
   highlightImageUrl,
   onNavigate,
   onClick,
+  variant = 'default',
+  atlasCategoryLabel,
+  atlasVisaDelayDays,
 }: CountryCardProps) {
   const iso = code.toLowerCase().trim()
   const interactive = typeof onClick === 'function'
@@ -69,6 +79,102 @@ export function CountryCard({
   const guaranteedSrc = useMemo(() => guaranteedImageUrl(name), [name])
   const [imageSrc, setImageSrc] = useState(scenicImage)
   const [fallbackUsed, setFallbackUsed] = useState(false)
+
+  const baseCardClass = cn(
+    'group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-card transition-all duration-200',
+    interactive || focusableLink ? 'cursor-pointer' : undefined,
+    variant === 'default' && 'hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft',
+    variant === 'atlas' && 'border-[#0D1B3E]/10 bg-white shadow-md hover:border-[#0D1B3E]/25 hover:shadow-lg',
+  )
+
+  if (variant === 'atlas') {
+    const days = atlasVisaDelayDays ?? 21
+    const cat = atlasCategoryLabel ?? '—'
+    const barPct = Math.min(100, Math.max(4, score))
+
+    const atlasCard = (
+      <Card
+        role={interactive ? 'button' : undefined}
+        tabIndex={interactive ? 0 : undefined}
+        onClick={interactive ? onClick : undefined}
+        onKeyDown={
+          interactive
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onClick()
+                }
+              }
+            : undefined
+        }
+        className={baseCardClass}
+      >
+        <CardContent className="flex min-h-0 flex-1 flex-col space-y-0 p-0">
+          <div className="flex items-stretch gap-4 px-5 pb-2 pt-5">
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted">{cat}</p>
+              <h3 className="break-words text-2xl font-black tracking-tight text-[#0D1B3E] md:text-[1.65rem]">
+                {name}
+              </h3>
+              <p className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-muted">
+                <Clock className="size-3.5 shrink-0 opacity-80" aria-hidden />
+                <span>
+                  Délai visa: <span className="text-[#0D1B3E]">{days}j</span>
+                </span>
+              </p>
+              <p className="mt-auto pt-3 text-3xl font-black tabular-nums text-[#0D1B3E]">
+                {score}
+                <span className="text-base font-bold text-muted">/100</span>
+              </p>
+            </div>
+            <div className="relative size-[5.25rem] shrink-0 self-center overflow-hidden rounded-full border-2 border-[#0D1B3E]/15 bg-line/30 md:size-24">
+              <Image
+                src={imageSrc}
+                alt={`${scenicLabel}, ${name}`}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                sizes="96px"
+                loading="lazy"
+                onError={() => {
+                  if (imageSrc !== guaranteedSrc) {
+                    setImageSrc(guaranteedSrc)
+                    setFallbackUsed(true)
+                  }
+                }}
+              />
+              {fallbackUsed ? (
+                <div className="absolute bottom-1 right-1 rounded-full border border-amber-200/80 bg-amber-100/95 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider text-amber-800">
+                  Gén.
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div className="mt-auto h-2.5 w-full overflow-hidden bg-[#0D1B3E]/10">
+            <div
+              className="h-full rounded-none transition-all duration-500"
+              style={{ width: `${barPct}%`, backgroundColor: ATLAS_NAVY }}
+            />
+          </div>
+        </CardContent>
+      </Card>
+    )
+
+    if (interactive) return atlasCard
+
+    if (countryId != null) {
+      return (
+        <Link
+          href={`/countries/${countryId}`}
+          className="flex h-full min-h-0 min-w-0 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/40"
+          onClick={onNavigate}
+        >
+          {atlasCard}
+        </Link>
+      )
+    }
+
+    return atlasCard
+  }
 
   const card = (
     <Card
@@ -85,10 +191,7 @@ export function CountryCard({
             }
           : undefined
       }
-      className={cn(
-        'group flex h-full min-h-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-soft',
-        interactive || focusableLink ? 'cursor-pointer' : undefined,
-      )}
+      className={baseCardClass}
     >
       <CardContent className="flex min-h-0 flex-1 flex-col space-y-0 p-0">
         <div className="relative h-36 shrink-0 overflow-hidden rounded-t-2xl border-b border-line">

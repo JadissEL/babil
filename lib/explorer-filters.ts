@@ -12,7 +12,8 @@ export type ExplorerRegionFilter =
   | 'Asia'
   | 'Africa'
   | 'Americas'
-  /** e.g. Oceania / Other when deep-linked via `?region=` */
+  | 'Oceania'
+  /** e.g. Other when deep-linked via `?region=` */
   | (string & {})
 
 export function normalizeExplorerDatasetRegion(region: string): string {
@@ -68,6 +69,7 @@ const REGION_FROM_URL: Record<string, ExplorerRegionFilter> = {
   asia: 'Asia',
   africa: 'Africa',
   americas: 'Americas',
+  oceania: 'Oceania',
 }
 
 /** Parse `region` query param or FilterBar value into internal Explorer region state. */

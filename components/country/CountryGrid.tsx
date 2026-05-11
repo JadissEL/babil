@@ -14,9 +14,12 @@ export type CountryGridItem = {
 export default function CountryGrid({
   countries,
   onCountryNavigate,
+  cardVariant = 'default',
 }: {
   countries: CountryGridItem[]
   onCountryNavigate?: () => void
+  /** Propagé vers chaque `CountryCard` (ex. maquette Stitch Atlas sur `/explorer`). */
+  cardVariant?: 'default' | 'atlas'
 }) {
   return (
     <div className="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -32,6 +35,7 @@ export default function CountryGrid({
           <CountryCard
             key={id}
             {...rest}
+            variant={cardVariant}
             {...(routeTarget != null ? { countryId: routeTarget } : {})}
             {...(onCountryNavigate ? { onNavigate: onCountryNavigate } : {})}
           />

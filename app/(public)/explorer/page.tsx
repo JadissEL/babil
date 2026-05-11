@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, Globe, SlidersHorizontal, Target, Scale } from 'lucide-react'
+import { Search, SlidersHorizontal, Target, Scale } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
@@ -19,6 +19,7 @@ import {
   type CountryApiListRow,
 } from '@/lib/country-full-data-materialize'
 import { enrichCountryApiRecord, type EnrichedCountryApi } from '@/lib/enrich-country-api'
+import { atlasCategoryLabel, atlasVisaDelayDays, explorerRegionToAtlasScoreBucketKey } from '@/lib/explorer-atlas-ui'
 import {
   explorerRegionToFilterBarValue,
   explorerRegionToUrlParam,
@@ -220,6 +221,8 @@ function ExplorerPageInner() {
     [normalized],
   )
 
+  const atlasActiveBucketKey = useMemo(() => explorerRegionToAtlasScoreBucketKey(region), [region])
+
   const filtered = normalized
     .filter((c: EnrichedCountryApi) => {
       const nameStr = String(c.name ?? '')
@@ -263,220 +266,239 @@ function ExplorerPageInner() {
     business: scoreToMobilityTier(c._visa.business),
     highlightPlace: c._highlightPlace ?? undefined,
     highlightImageUrl: c._highlightImageUrl ?? undefined,
+    atlasCategoryLabel: atlasCategoryLabel(c.name, c.region),
+    atlasVisaDelayDays: atlasVisaDelayDays(c._full, c.id),
   }))
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 pb-12 sm:px-8">
-      <div className="mb-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-center gap-4">
-          <div className="rounded-2xl bg-primary p-4 text-white shadow-soft">
-            <Globe className="h-8 w-8" />
-          </div>
+    <div className="min-h-screen bg-[#FDFBF4]">
+      <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 pb-12 sm:px-8">
+        <header className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Explorer global</h1>
-            <p className="mt-1 text-sm font-medium text-muted">
-              Intelligence terrain et mobilité pour citoyens marocains — filtrez et comparez les destinations.
-              Partagez une vue précise avec{' '}
-              <code className="rounded-md border border-line bg-inset px-1.5 py-0.5 text-[11px] font-bold text-primary">
-                /explorer?q=nom-du-pays
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65">ATLAS GLOBAL</p>
+            <h1 className="mt-1 text-4xl font-black tracking-tight text-[#0D1B3E] md:text-5xl">Explorer</h1>
+            <p className="mt-2 max-w-xl text-sm font-medium text-[#0D1B3E]/70">
+              Intelligence terrain et mobilité — filtrez et ouvrez une fiche pays. Lien partageable :{' '}
+              <code className="rounded-md border border-[#0D1B3E]/15 bg-white px-1.5 py-0.5 text-[11px] font-bold text-[#0D1B3E]">
+                /explorer?q=nom
               </code>
               .
             </p>
           </div>
-        </div>
-      </div>
-
-      <div className="sticky top-16 z-30 rounded-2xl border border-line bg-surface/95 p-4 shadow-card backdrop-blur">
-        <FilterBar
-          className="mb-4 border-b border-line pb-4"
-          goalValue={explorerGoalToFilterValue(goal)}
-          regionValue={explorerRegionToFilterBarValue(region)}
-          onGoalChange={(v) => {
-            const g = filterGoalFromSelect(v)
-            setGoal(g)
-            commitExplorerUrl({ goal: g })
-          }}
-          onRegionChange={(v) => {
-            const nextR = parseExplorerRegionFilter(v)
-            setRegion(nextR)
-            commitExplorerUrl({ region: nextR })
-          }}
-        />
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="inline-flex rounded-2xl border border-line bg-inset p-1">
-            <button
-              type="button"
-              onClick={() => {
-                setMode('explorer')
-                commitExplorerUrl({ mode: 'explorer' })
-              }}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'explorer' ? 'bg-primary text-white shadow-soft' : 'text-muted hover:text-primary'}`}
-            >
-              <SlidersHorizontal className="h-4 w-4" /> Liste
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setMode('recommendation')
-                commitExplorerUrl({ mode: 'recommendation' })
-              }}
-              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'recommendation' ? 'bg-primary text-white shadow-soft' : 'text-muted hover:text-primary'}`}
-            >
-              <Target className="h-4 w-4" /> Recommandation
-            </button>
-          </div>
-
-          <Link
-            href={compareHrefForExplorerPageState({
-              goal,
-              budget,
-              region,
-              difficulty,
-              schengenOnly,
-            })}
-            onClick={() => markExplorerOnboardingEngaged()}
-            className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary-soft/50 px-3 py-2 text-xs font-black uppercase tracking-wider text-primary transition-colors hover:border-primary/50 hover:bg-primary-soft"
-          >
-            <Scale className="h-4 w-4 shrink-0" aria-hidden />
-            Comparer
-          </Link>
-
-          <div className="relative min-w-64 flex-1">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+          <div className="relative w-full shrink-0 lg:max-w-md">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#0D1B3E]/45" />
             <input
               type="search"
-              placeholder="Chercher un pays..."
-              className="w-full rounded-xl border border-line bg-surface py-2.5 pl-10 pr-3 text-sm font-medium text-text outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/40"
+              placeholder="Rechercher une destination…"
+              className="w-full rounded-2xl border border-[#0D1B3E]/12 bg-white py-3 pl-10 pr-4 text-sm font-medium text-[#0D1B3E] outline-none placeholder:text-[#0D1B3E]/40 focus:ring-2 focus:ring-[#0D1B3E]/25"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onBlur={() => commitExplorerUrl()}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') commitExplorerUrl()
               }}
+              aria-label="Rechercher une destination"
             />
           </div>
+        </header>
 
-          <select
-            className="rounded-xl border border-line bg-surface px-3 py-2.5 text-sm font-bold text-text outline-none"
-            value={difficulty}
-            onChange={(e) => {
-              const v = e.target.value
-              setDifficulty(v)
-              commitExplorerUrl({ difficulty: v })
-            }}
-          >
-            <option value="all">Difficulté : toutes</option>
-            <option value="Low">Facile</option>
-            <option value="Medium">Moyenne</option>
-            <option value="High">Difficile</option>
-            <option value="Extreme">Critique</option>
-          </select>
+        <div className="sticky top-16 z-30 space-y-4 rounded-2xl border border-[#0D1B3E]/10 bg-white/95 p-4 shadow-lg backdrop-blur-md">
+          <div className="flex flex-col gap-4 xl:flex-row xl:flex-wrap xl:items-center">
+            <FilterBar
+              className="mb-0 min-w-0 flex-1 border-0 bg-transparent p-0 shadow-none"
+              goalValue={explorerGoalToFilterValue(goal)}
+              regionValue={explorerRegionToFilterBarValue(region)}
+              onGoalChange={(v) => {
+                const g = filterGoalFromSelect(v)
+                setGoal(g)
+                commitExplorerUrl({ goal: g })
+              }}
+              onRegionChange={(v) => {
+                const nextR = parseExplorerRegionFilter(v)
+                setRegion(nextR)
+                commitExplorerUrl({ region: nextR })
+              }}
+            />
+            <label className="inline-flex cursor-pointer items-center gap-3 self-stretch rounded-2xl border border-[#0D1B3E]/12 bg-[#FDFBF4] px-4 py-3 xl:self-center">
+              <span className="text-[10px] font-black tracking-[0.18em] text-[#0D1B3E]">SCHENGEN ONLY</span>
+              <input
+                type="checkbox"
+                className="size-5 shrink-0 rounded border-[#0D1B3E]/30 text-[#0D1B3E] accent-[#0D1B3E]"
+                checked={schengenOnly}
+                onChange={(e) => {
+                  const checked = e.target.checked
+                  setSchengenOnly(checked)
+                  commitExplorerUrl({ schengenOnly: checked })
+                }}
+              />
+            </label>
+          </div>
 
-          <select
-            className="rounded-xl border border-line bg-surface px-3 py-2.5 text-sm font-bold text-text outline-none"
-            value={budget}
-            onChange={(e) => {
-              const v = e.target.value as Budget
-              setBudget(v)
-              commitExplorerUrl({ budget: v })
-            }}
-          >
-            <option value="all">Budget : tous</option>
-            <option value="low">Bas</option>
-            <option value="medium">Moyen</option>
-            <option value="high">Élevé</option>
-          </select>
+          <div className="flex flex-wrap items-center gap-3 border-t border-[#0D1B3E]/10 pt-4">
+            <div className="inline-flex rounded-2xl border border-[#0D1B3E]/10 bg-[#FDFBF4] p-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('explorer')
+                  commitExplorerUrl({ mode: 'explorer' })
+                }}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'explorer' ? 'bg-[#0D1B3E] text-white shadow-md' : 'text-[#0D1B3E]/70 hover:text-[#0D1B3E]'}`}
+              >
+                <SlidersHorizontal className="h-4 w-4" /> Liste
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('recommendation')
+                  commitExplorerUrl({ mode: 'recommendation' })
+                }}
+                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'recommendation' ? 'bg-[#0D1B3E] text-white shadow-md' : 'text-[#0D1B3E]/70 hover:text-[#0D1B3E]'}`}
+              >
+                <Target className="h-4 w-4" /> Recommandation
+              </button>
+            </div>
 
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-line bg-inset px-3 py-2.5 text-xs font-black uppercase tracking-wider text-muted">
-            <input
-              type="checkbox"
-              className="rounded border-white/30"
-              checked={schengenOnly}
+            <Link
+              href={compareHrefForExplorerPageState({
+                goal,
+                budget,
+                region,
+                difficulty,
+                schengenOnly,
+              })}
+              onClick={() => markExplorerOnboardingEngaged()}
+              className="inline-flex items-center gap-2 rounded-xl border border-[#0D1B3E]/20 bg-white px-3 py-2 text-xs font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]/35 hover:bg-[#FDFBF4]"
+            >
+              <Scale className="h-4 w-4 shrink-0" aria-hidden />
+              Comparer
+            </Link>
+
+            <select
+              className="rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2.5 text-sm font-bold text-[#0D1B3E] outline-none"
+              value={difficulty}
               onChange={(e) => {
-                const checked = e.target.checked
-                setSchengenOnly(checked)
-                commitExplorerUrl({ schengenOnly: checked })
+                const v = e.target.value
+                setDifficulty(v)
+                commitExplorerUrl({ difficulty: v })
               }}
+              aria-label="Difficulté"
+            >
+              <option value="all">Difficulté : toutes</option>
+              <option value="Low">Facile</option>
+              <option value="Medium">Moyenne</option>
+              <option value="High">Difficile</option>
+              <option value="Extreme">Critique</option>
+            </select>
+
+            <select
+              className="rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2.5 text-sm font-bold text-[#0D1B3E] outline-none"
+              value={budget}
+              onChange={(e) => {
+                const v = e.target.value as Budget
+                setBudget(v)
+                commitExplorerUrl({ budget: v })
+              }}
+              aria-label="Budget"
+            >
+              <option value="all">Budget : tous</option>
+              <option value="low">Bas</option>
+              <option value="medium">Moyen</option>
+              <option value="high">Élevé</option>
+            </select>
+
+            <div className="ml-auto flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  writeExplorerSavedFilters({
+                    q: search,
+                    region: region === 'all' ? '' : explorerRegionToUrlParam(region),
+                    goal,
+                    budget,
+                    difficulty,
+                    schengenOnly,
+                    mode,
+                  })
+                  setHasSavedView(true)
+                  appToast.success('Vue enregistrée — vous pourrez la rouvrir d’un clic.')
+                }}
+                className="rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]/25 hover:bg-[#FDFBF4]"
+              >
+                Mémoriser la vue
+              </button>
+              <button
+                type="button"
+                disabled={!hasSavedView}
+                onClick={() => {
+                  const s = readExplorerSavedFilters()
+                  if (!s) {
+                    appToast.info('Aucune vue enregistrée.')
+                    return
+                  }
+                  const qs = buildExplorerQueryStringFromSaved(s)
+                  const path = pathname ?? '/explorer'
+                  router.replace(qs ? `${path}?${qs}` : path)
+                  markExplorerOnboardingEngaged()
+                  appToast.success('Vue restaurée.')
+                }}
+                className="rounded-xl border border-[#0D1B3E]/20 bg-[#FDFBF4] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                Restaurer
+              </button>
+              <button
+                type="button"
+                disabled={!hasSavedView}
+                onClick={() => {
+                  clearExplorerSavedFilters()
+                  setHasSavedView(false)
+                  appToast.info('Mémorisation supprimée.')
+                }}
+                className="rounded-xl border border-[#0D1B3E]/10 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/60 transition-colors hover:text-[#0D1B3E] disabled:cursor-not-allowed disabled:opacity-45"
+              >
+                Oublier
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {!loading ? (
+          <p className="text-sm font-semibold text-[#0D1B3E]" aria-live="polite">
+            {filtered.length} pays correspondent à vos critères
+          </p>
+        ) : null}
+
+        {!loading ? (
+          <ExplorerRegionScoreStrip
+            variant="atlas"
+            buckets={regionBuckets}
+            activeBucketKey={atlasActiveBucketKey}
+          />
+        ) : null}
+
+        <GoogleAd slot="explorer_top" />
+
+        {loading ? (
+          <div className="flex justify-center p-20">
+            <div className="h-12 w-12 animate-spin rounded-full border-2 border-[#0D1B3E]/20 border-t-[#0D1B3E]" />
+          </div>
+        ) : gridCountries.length === 0 ? (
+          <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-12 text-center text-[#0D1B3E]/70">
+            <p className="text-sm font-medium">Aucun pays ne correspond à ces filtres.</p>
+          </div>
+        ) : (
+          <div className="space-y-12">
+            <CountryGrid
+              cardVariant="atlas"
+              countries={gridCountries}
+              onCountryNavigate={markExplorerOnboardingEngaged}
             />
-            Schengen uniquement
-          </label>
 
-          <div className="flex w-full flex-wrap items-center gap-2 border-t border-line pt-4 sm:w-auto sm:border-0 sm:pt-0">
-            <button
-              type="button"
-              onClick={() => {
-                writeExplorerSavedFilters({
-                  q: search,
-                  region: region === 'all' ? '' : explorerRegionToUrlParam(region),
-                  goal,
-                  budget,
-                  difficulty,
-                  schengenOnly,
-                  mode,
-                })
-                setHasSavedView(true)
-                appToast.success('Vue enregistrée — vous pourrez la rouvrir d’un clic.')
-              }}
-              className="rounded-xl border border-line bg-surface px-3 py-2 text-[10px] font-black uppercase tracking-wider text-text transition-colors hover:border-primary/40 hover:bg-primary-soft"
-            >
-              Mémoriser la vue
-            </button>
-            <button
-              type="button"
-              disabled={!hasSavedView}
-              onClick={() => {
-                const s = readExplorerSavedFilters()
-                if (!s) {
-                  appToast.info('Aucune vue enregistrée.')
-                  return
-                }
-                const qs = buildExplorerQueryStringFromSaved(s)
-                const path = pathname ?? '/explorer'
-                router.replace(qs ? `${path}?${qs}` : path)
-                markExplorerOnboardingEngaged()
-                appToast.success('Vue restaurée.')
-              }}
-              className="rounded-xl border border-primary/30 bg-primary-soft/40 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-primary transition-colors hover:bg-primary-soft disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              Restaurer
-            </button>
-            <button
-              type="button"
-              disabled={!hasSavedView}
-              onClick={() => {
-                clearExplorerSavedFilters()
-                setHasSavedView(false)
-                appToast.info('Mémorisation supprimée.')
-              }}
-              className="rounded-xl border border-line bg-inset px-3 py-2 text-[10px] font-black uppercase tracking-wider text-muted transition-colors hover:text-text disabled:cursor-not-allowed disabled:opacity-45"
-            >
-              Oublier
-            </button>
+            <div className="flex justify-center py-8">
+              <GoogleAd slot="explorer_bottom" />
+            </div>
           </div>
-        </div>
+        )}
       </div>
-
-      {!loading ? <ExplorerRegionScoreStrip buckets={regionBuckets} /> : null}
-
-      <GoogleAd slot="explorer_top" />
-
-      {loading ? (
-        <div className="flex justify-center p-20">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
-        </div>
-      ) : gridCountries.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-surface p-12 text-center text-muted">
-          <p className="text-sm font-medium">Aucun pays ne correspond à ces filtres.</p>
-        </div>
-      ) : (
-        <div className="space-y-12">
-          <CountryGrid countries={gridCountries} onCountryNavigate={markExplorerOnboardingEngaged} />
-
-          <div className="flex justify-center py-8">
-            <GoogleAd slot="explorer_bottom" />
-          </div>
-        </div>
-      )}
     </div>
   )
 }
