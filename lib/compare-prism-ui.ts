@@ -1,5 +1,5 @@
-import type { CompareKpiCell } from '@/lib/compare-rows'
 import type { CompareKpiColumnKey } from '@/lib/compare-objectives'
+import type { CompareKpiCell } from '@/lib/compare-rows'
 
 export const PRISM_NAVY = '#0D1B3E'
 export const PRISM_CREAM = '#FDFBF4'

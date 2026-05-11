@@ -1,7 +1,7 @@
 'use client'
 
 import type { CompareObjectiveDefinition } from '@/lib/compare-objectives'
-import { PRISM_NAVY } from '@/lib/compare-prism-ui'
+import { PRISM_CREAM, PRISM_NAVY } from '@/lib/compare-prism-ui'
 import { cn } from '@/lib/utils'
 
 type Step = 'category' | 'objective' | 'countries'

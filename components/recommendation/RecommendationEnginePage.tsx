@@ -520,8 +520,11 @@ function RecommendationEnginePageInner() {
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-[#0D1B3E]">Objectif principal</Label>
-                <Select value={goal} onValueChange={(v) => setGoal(v as (typeof GOALS)[number])} disabled={goalLockedFromAccount}>
-                  <SelectTrigger className="w-full max-w-md border-[#0D1B3E]/15">
+                <Select value={goal} onValueChange={(v) => setGoal(v as (typeof GOALS)[number])}>
+                  <SelectTrigger
+                    disabled={goalLockedFromAccount}
+                    className="w-full max-w-md border-[#0D1B3E]/15"
+                  >
                     <SelectValue placeholder="Objectif" />
                   </SelectTrigger>
                   <SelectContent>
