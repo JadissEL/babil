@@ -15,7 +15,7 @@ docs/google-stitch/
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
   pages/
-    01-….md … 45-….md       ← … + nav primaire rail (44) + recherche pays globale (45)
+    01-….md … 46-….md       ← … + recherche pays globale (45) + onboarding post-signup overview (46)
 ```
 
 ## Workflow
@@ -38,4 +38,5 @@ docs/google-stitch/
 - **PAGE 43** : **`SiteHeader`** + **`SiteFooter`** — marque, menu, `GlobalCountrySearch`, auth Clerk, PayPal don, padding dock footer.
 - **PAGE 44** : **`SitePrimaryNavColumn`** — rail `lg` + drawer mobile, liens objectif-aware, `useSitePrimaryNavState`.
 - **PAGE 45** : **`GlobalCountrySearch`** — palette pays, `⌘K` / `Ctrl+K`, `/api/countries?light=1`, navigation **PAGE 16**.
-- Add further surfaces only as **46+** (prefer append).
+- **PAGE 46** : **`PostSignupOnboarding`** — checklist sur **PAGE 22**, `vf_onboarding_v1`, liens **PAGE 24** / **06** / **02**.
+- Add further surfaces only as **47+** (prefer append).

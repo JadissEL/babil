@@ -12,6 +12,7 @@ Logged-In
 - Alimentation moteurs personnalisés
 
 ### Connected Pages
+- **Amont checklist :** **PAGE 46** (étape “Compléter votre profil” → `/profile`)
 - **Précédent :** `/overview`
 - **Suivant :** `/probability`, Clerk user management hosted
 

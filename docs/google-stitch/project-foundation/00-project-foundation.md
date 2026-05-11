@@ -78,7 +78,9 @@ VisaFlow behaves as a **single ecosystem**: the same visual language, navigation
 
 **Services:** `/services/delegated-applications` + `/apply`.
 
-**Cross-cutting shells (non-routes, à aligner dans Stitch sur toutes les captures) :** **PAGE 34** (`SiteChrome` / layout racine), **PAGE 35** (shell espace connecté), **PAGE 36** (suite légale & cookies — spéc anticipée), **PAGE 37** (micro-feedback `BlockFeedback` sur blocs de contenu), **PAGE 38** (layout segment pays : SEO + JSON-LD autour de **PAGE 16–19**), **PAGE 39** (Clerk Edge **`proxy.ts`** : routes protégées + request id + logs API), **PAGE 40** (toasts globaux **`AppToaster`** / **`appToast`**), **PAGE 41** (objectif mobilité global — **`AppObjectiveRoot`**, wizard, dock **`SiteObjectiveDock`**), **PAGE 42** (Sentry navigateur **`SentryClerkSync`** — G.90), **PAGE 43** (header & footer globaux **`SiteHeader`** / **`SiteFooter`**), **PAGE 44** (navigation primaire **`SitePrimaryNavColumn`** / drawer mobile), **PAGE 45** (recherche pays **`GlobalCountrySearch`**).
+**Cross-cutting shells (non-routes, à aligner dans Stitch sur toutes les captures) :** **PAGE 34** (`SiteChrome` / layout racine), **PAGE 35** (shell espace connecté), **PAGE 36** (suite légale & cookies — spéc anticipée), **PAGE 37** (micro-feedback `BlockFeedback` sur blocs de contenu), **PAGE 38** (layout segment pays : SEO + JSON-LD autour de **PAGE 16–19**), **PAGE 39** (Clerk Edge **`proxy.ts`** : routes protégées + request id + logs API), **PAGE 40** (toasts globaux **`AppToaster`** / **`appToast`**), **PAGE 41** (objectif mobilité global — **`AppObjectiveRoot`**, wizard, dock **`SiteObjectiveDock`**), **PAGE 42** (Sentry navigateur **`SentryClerkSync`** — G.90), **PAGE 43** (header & footer globaux **`SiteHeader`** / **`SiteFooter`**), **PAGE 44** (navigation primaire **`SitePrimaryNavColumn`** / drawer mobile), **PAGE 45** (recherche pays **`GlobalCountrySearch`**), **PAGE 46** (checklist **`PostSignupOnboarding`** sur overview).
+
+**Note :** **PAGE 46** n’est pas un “shell” plein écran mais un **bloc transversal** overview ; listé ici pour cohérence brief Stitch avec **PAGE 22**.
 
 ---
 

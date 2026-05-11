@@ -47,5 +47,6 @@
 | 43 | HARBOR | Header & footer globaux (`SiteHeader`, `SiteFooter` dans `SiteHeader.tsx`) | `pages/43-harbor-site-header-footer.md` |
 | 44 | QUAY | Navigation primaire rail + drawer (`SitePrimaryNav.tsx`) | `pages/44-quay-site-primary-navigation-rail.md` |
 | 45 | WAYPOINT | Recherche pays globale (`GlobalCountrySearch.tsx`) | `pages/45-waypoint-global-country-search.md` |
+| 46 | RUNWAY | Onboarding post-inscription (`PostSignupOnboarding` sur `/overview`) | `pages/46-runway-post-signup-onboarding.md` |
 
 Paths in the **Markdown file** column are relative to `docs/google-stitch/`.

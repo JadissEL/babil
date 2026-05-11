@@ -18,7 +18,7 @@ Logged-In (Clerk)
 ---
 
 ## 1. Page Purpose
-Donner **vision d’ensemble personnalisée** : file **Assist** (`MyDelegatedRequests`), préférences objectif (`ObjectivePreferencePanel`), onboarding post-signup (`PostSignupOnboarding`), pays récents (`RecentlyViewedCountries`), grille **stats** (placeholders produit), puis **grille modules** liés aux moteurs + colonne **“Flash OSINT”** (copy statique illustrative). Résout *“Où j’en suis dans mon projet mobilité ?”* — **`ProfileContextBanner` n’est pas monté sur cette vue** au moment de la spec (vérifier le code si réintroduit).
+Donner **vision d’ensemble personnalisée** : file **Assist** (`MyDelegatedRequests`), préférences objectif (`ObjectivePreferencePanel`), onboarding post-signup (**PAGE 46** `PostSignupOnboarding`), pays récents (`RecentlyViewedCountries`), grille **stats** (placeholders produit), puis **grille modules** liés aux moteurs + colonne **“Flash OSINT”** (copy statique illustrative). Résout *“Où j’en suis dans mon projet mobilité ?”* — **`ProfileContextBanner` n’est pas monté sur cette vue** au moment de la spec (vérifier le code si réintroduit).
 
 ---
 
@@ -35,7 +35,7 @@ Donner **vision d’ensemble personnalisée** : file **Assist** (`MyDelegatedReq
 ---
 
 ## 4. Layout Architecture
-**Implémentation (`OverviewPageClient.tsx`) :** `h1` “Bonjour, {firstName}” → **`MyDelegatedRequests`** (pleine largeur) → **`ObjectivePreferencePanel`** → **`PostSignupOnboarding`** → **`RecentlyViewedCountries`** → grille **4 stats** (valeurs aujourd’hui **statiques** dans le code — placeholder) → layout **2/3 + 1/3** : **Outils mobilité** (cartes `modules` avec badge statut Prêt/Bientôt/Nouveau) + **Flash OSINT** (encadré narratif + lien explorer).
+**Implémentation (`OverviewPageClient.tsx`) :** `h1` “Bonjour, {firstName}” → **`MyDelegatedRequests`** (pleine largeur) → **`ObjectivePreferencePanel`** → **`PostSignupOnboarding`** (**PAGE 46**) → **`RecentlyViewedCountries`** → grille **4 stats** (valeurs aujourd’hui **statiques** dans le code — placeholder) → layout **2/3 + 1/3** : **Outils mobilité** (cartes `modules` avec badge statut Prêt/Bientôt/Nouveau) + **Flash OSINT** (encadré narratif + lien explorer).
 
 ---
 
@@ -51,7 +51,7 @@ Donner **vision d’ensemble personnalisée** : file **Assist** (`MyDelegatedReq
 - **Purpose :** choix objectif primaire ; alimente `ctaExploreHref` / `ctaCompareHref` pour les liens modules dynamiques.
 
 ### 5.4 `PostSignupOnboarding`
-- **Purpose :** checklist post-inscription (voir composant) ; dismiss non culpabilisant.
+- **Spec détaillée :** **PAGE 46** — étapes profil / reco / explorateur, `vf_onboarding_v1`, masquage, compte récent 21 j.
 
 ### 5.5 `RecentlyViewedCountries`
 - **Purpose :** reprise rapide des fiches **PAGE 16** ; scroll horizontal si nombreux.
