@@ -5,7 +5,38 @@ import {
   APPLICATION_GUARANTEE_TITLE,
 } from '@/lib/delegated-application-catalog'
 
-export function DelegatedApplicationsHomePromo() {
+type DelegatedApplicationsHomePromoProps = {
+  /** `meridianBanner` : bandeau plein largeur bleu nuit (maquette PAGE 01). */
+  variant?: 'default' | 'meridianBanner'
+}
+
+export function DelegatedApplicationsHomePromo({ variant = 'default' }: DelegatedApplicationsHomePromoProps) {
+  if (variant === 'meridianBanner') {
+    return (
+      <section className="mt-10 overflow-hidden rounded-2xl bg-[#0a1f33] px-6 py-10 text-white shadow-[0_16px_40px_rgba(10,31,51,0.25)] sm:px-10 md:py-12">
+        <div className="mx-auto flex max-w-5xl flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-12">
+          <div className="min-w-0">
+            <h2 className="text-2xl font-black tracking-tight text-white md:text-3xl">
+              Besoin d&apos;un accompagnement sur mesure ?
+            </h2>
+            <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-white/85 md:text-base">
+              Nos experts gèrent votre demande de A à Z avec un suivi en temps réel. Un service confidentiel pour une
+              tranquillité d&apos;esprit absolue.
+            </p>
+          </div>
+          <div className="shrink-0">
+            <Link
+              href="/services/delegated-applications"
+              className="inline-flex items-center justify-center rounded-2xl bg-white px-8 py-3.5 text-xs font-black uppercase tracking-widest text-[#0a1f33] shadow-md transition-[filter] hover:brightness-95"
+            >
+              Découvrir nos services délégués
+            </Link>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-card md:p-8">
       <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">

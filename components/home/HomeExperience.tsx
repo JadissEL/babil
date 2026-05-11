@@ -21,8 +21,6 @@ import type { CountryGridItem } from '@/components/country/CountryGrid';
 import GoogleAd from '@/components/GoogleAd';
 import HeroWorldCarousel from '@/components/home/HeroWorldCarousel';
 import HomeQuickFilterEngine from '@/components/home/HomeQuickFilterEngine';
-import AppSidebar from '@/components/layout/AppSidebar';
-import PageContainer from '@/components/layout/PageContainer';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
@@ -164,45 +162,62 @@ export function HomeExperience({
   ];
 
   return (
-    <PageContainer className="py-12">
-      <section className="rounded-2xl border border-line bg-surface p-8 shadow-card md:p-10">
-        <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+    <div className="home-meridian -mx-4 -mt-5 min-w-0 bg-[#e8ecf2] px-4 pb-16 pt-8 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl space-y-8">
+      <section className="relative overflow-hidden rounded-[1.25rem] border border-slate-200/90 bg-white p-8 shadow-[0_20px_50px_rgba(10,31,51,0.07)] md:p-10 lg:p-12">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06]"
+          aria-hidden
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'%3E%3Cpath fill='%230a1f33' d='M120 180c40-30 90-50 150-45 80 5 140 50 200 95 50 40 100 70 170 75 60 5 110-15 160-45V400H0V160c35 20 75 35 120 20z'/%3E%3C/svg%3E")`,
+            backgroundPosition: '80% 60%',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'min(90%, 52rem)',
+          }}
+        />
+        <div className="relative grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-line bg-inset px-3 py-1 text-[10px] font-black uppercase tracking-widest text-muted">
-              <Sparkles className="h-3.5 w-3.5 text-primary" /> {heroCopy.badge}
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#0a1f33]/80">
+              <Sparkles className="h-3.5 w-3.5 text-[#3157d5]" aria-hidden /> {heroCopy.badge}
             </div>
-            <h1 className="mt-5 max-w-4xl text-4xl font-black tracking-tight text-text md:text-5xl">
+            <h1 className="mt-5 max-w-4xl text-3xl font-black tracking-tight text-[#0a1f33] md:text-4xl lg:text-[2.75rem] lg:leading-tight">
               {heroCopy.title}
             </h1>
-            <p className="mt-4 max-w-2xl text-sm font-medium text-muted md:text-base">{heroCopy.subtitle}</p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <p className="mt-4 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 md:text-base">
+              {heroCopy.subtitle}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/recommendations"
-                className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-primary-hover"
+                href="/probability"
+                className="inline-flex items-center gap-2 rounded-2xl bg-[#0a1f33] px-6 py-3.5 text-xs font-black uppercase tracking-widest text-white shadow-md transition-colors hover:bg-[#0f2d4a]"
               >
-                Lancer une analyse <ArrowRight className="h-4 w-4" />
+                Évaluer mes chances <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href={exploreCtaHref}
-                className="inline-flex items-center gap-2 rounded-xl border border-line bg-inset px-5 py-3 text-xs font-black uppercase tracking-widest text-text hover:bg-primary-soft"
+                className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-xs font-black uppercase tracking-widest text-[#0a1f33] shadow-sm transition-colors hover:bg-slate-50"
               >
                 Ouvrir l&apos;Explorer
               </Link>
             </div>
           </div>
-          <HeroWorldCarousel slides={heroSlides} />
+          <div className="relative min-h-[220px] lg:min-h-[280px]">
+            <div className="absolute inset-0 rounded-2xl opacity-90 ring-1 ring-slate-200/80 lg:opacity-100">
+              <HeroWorldCarousel slides={heroSlides} />
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="mt-6 rounded-2xl border border-primary/25 bg-primary-soft/35 p-5 shadow-soft md:p-6">
-        <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
+      <section className="rounded-2xl border border-slate-200/90 bg-white/90 p-5 shadow-sm md:p-6">
+        <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#0a1f33]">
           <Target className="h-4 w-4 shrink-0" aria-hidden />
           Priorités pour votre parcours
         </div>
-        <ul className="grid gap-2 text-sm font-medium text-text md:grid-cols-2">
+        <ul className="grid gap-2 text-sm font-medium text-[#0a1f33] md:grid-cols-2">
           {focusStrip.map((line) => (
-            <li key={line} className="flex gap-2 rounded-xl border border-line/80 bg-surface/80 px-3 py-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden />
+            <li key={line} className="flex gap-2 rounded-xl border border-slate-200/80 bg-slate-50/90 px-3 py-2">
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3157d5]" aria-hidden />
               <span>{line}</span>
             </li>
           ))}
@@ -211,14 +226,14 @@ export function HomeExperience({
 
       <HomeQuickFilterEngine initialExplorerGoal={quickGoal} />
 
-      <DelegatedApplicationsHomePromo />
+      <DelegatedApplicationsHomePromo variant="meridianBanner" />
 
-      <section className="mt-8">
+      <section className="mt-2">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-black text-text">Pays à la une</h2>
+          <h2 className="text-xl font-black text-[#0a1f33]">Pays à la une</h2>
           <Link
             href={exploreCtaHref}
-            className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-hover"
+            className="text-xs font-black uppercase tracking-widest text-[#3157d5] hover:text-[#2749bb]"
           >
             Tout voir
           </Link>
@@ -226,14 +241,13 @@ export function HomeExperience({
         <CountryGrid countries={topCountries} />
       </section>
 
-      <section className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
-        <AppSidebar />
-        <div className="space-y-4 rounded-2xl border border-line bg-surface p-5 shadow-soft">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted">Fonctionnalités</p>
-          <p className="text-xs font-medium text-muted">
+      <section className="mt-8">
+        <div className="space-y-4 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm sm:p-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Fonctionnalités</p>
+          <p className="text-xs font-medium text-slate-600">
             Ordre adapté à votre objectif — les moteurs restent les mêmes, seule la mise en avant change.
           </p>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
             {featureKeys.map((key) => {
               const f = FEATURE_MAP[key];
               const href = key === 'compare' ? compareCtaHref : f.href;
@@ -243,42 +257,42 @@ export function HomeExperience({
         </div>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-soft md:p-8">
+      <section className="mt-8 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm md:p-8">
         <div className="mb-5 flex items-end justify-between">
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-muted">Avis utilisateurs</p>
-            <h2 className="mt-2 text-2xl font-black text-text">Retours après utilisation</h2>
+            <h2 className="mt-2 text-2xl font-black text-[#0a1f33]">Retours après utilisation</h2>
           </div>
           <Link
             href="/community"
-            className="text-xs font-black uppercase tracking-widest text-primary hover:text-primary-hover"
+            className="text-xs font-black uppercase tracking-widest text-[#3157d5] hover:text-[#2749bb]"
           >
             Voir la communauté
           </Link>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {testimonials.map((t) => (
-            <div key={t.name} className="rounded-xl border border-line bg-inset p-4">
-              <p className="text-sm font-medium italic text-text">
+            <div key={t.name} className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-4">
+              <p className="text-sm font-medium italic text-[#0a1f33]">
                 <span className="not-italic">&ldquo;</span>
                 {t.quote}
                 <span className="not-italic">&rdquo;</span>
               </p>
-              <p className="mt-4 text-sm font-black text-text">{t.name}</p>
+              <p className="mt-4 text-sm font-black text-[#0a1f33]">{t.name}</p>
               <p className="text-xs font-semibold text-muted">{t.role}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-soft md:p-8">
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted">Bonnes pratiques</p>
-        <h2 className="mt-2 text-2xl font-black text-text">Enchaînez les étapes dans le bon ordre</h2>
+      <section className="mt-8 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm md:p-8">
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Bonnes pratiques</p>
+        <h2 className="mt-2 text-2xl font-black text-[#0a1f33]">Enchaînez les étapes dans le bon ordre</h2>
         <div className="mt-5 grid gap-4 md:grid-cols-2">
           {bestPractices.map((item, idx) => (
-            <div key={item.title} className="rounded-xl border border-line bg-inset p-4">
-              <p className="text-xs font-black uppercase tracking-widest text-primary">Étape {idx + 1}</p>
-              <h3 className="mt-2 text-base font-black text-text">{item.title}</h3>
+            <div key={item.title} className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-4">
+              <p className="text-xs font-black uppercase tracking-widest text-[#3157d5]">Étape {idx + 1}</p>
+              <h3 className="mt-2 text-base font-black text-[#0a1f33]">{item.title}</h3>
               <p className="mt-2 text-sm font-medium text-muted">{item.text}</p>
             </div>
           ))}
@@ -289,82 +303,97 @@ export function HomeExperience({
         <GoogleAd slot="home_top" />
       </div>
 
-      <footer className="mt-8 rounded-2xl border border-line bg-surface p-6 shadow-soft md:p-8">
+      <footer className="mt-10 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm md:p-8">
+        <nav
+          className="mb-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 border-b border-slate-200/80 pb-6 text-sm font-semibold text-slate-600"
+          aria-label="Liens pied de page"
+        >
+          <span className="cursor-default opacity-60" title="Bientôt disponible">
+            Mentions légales
+          </span>
+          <span className="cursor-default opacity-60" title="Bientôt disponible">
+            Confidentialité
+          </span>
+          <Link href="/community" className="text-[#0a1f33] underline-offset-4 hover:text-[#3157d5] hover:underline">
+            Contact
+          </Link>
+        </nav>
         <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted">VisaFlow</p>
-            <p className="mt-2 text-sm font-medium text-muted">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">VisaFlow</p>
+            <p className="mt-2 text-sm font-medium text-slate-600">
               Plateforme d&apos;aide à la décision pour la mobilité internationale : visas, études, business et
               installation.
             </p>
           </div>
           <div>
-            <p className="text-sm font-black text-text">Plateforme</p>
+            <p className="text-sm font-black text-[#0a1f33]">Plateforme</p>
             <div className="mt-3 space-y-2 text-sm">
-              <Link href={exploreCtaHref} className="block font-medium text-muted hover:text-primary">
+              <Link href={exploreCtaHref} className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Explorer
               </Link>
-              <Link href={compareCtaHref} className="block font-medium text-muted hover:text-primary">
+              <Link href={compareCtaHref} className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Comparer
               </Link>
-              <Link href="/schengen" className="block font-medium text-muted hover:text-primary">
+              <Link href="/schengen" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Schengen
               </Link>
-              <Link href="/probability" className="block font-medium text-muted hover:text-primary">
+              <Link href="/probability" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Moteur de probabilités
               </Link>
             </div>
           </div>
           <div>
-            <p className="text-sm font-black text-text">Parcours mobilité</p>
+            <p className="text-sm font-black text-[#0a1f33]">Parcours mobilité</p>
             <div className="mt-3 space-y-2 text-sm">
               <Link
                 href="/services/delegated-applications"
-                className="block font-medium text-muted hover:text-primary"
+                className="block font-medium text-slate-600 hover:text-[#3157d5]"
               >
                 Assist candidatures
               </Link>
-              <Link href="/education" className="block font-medium text-muted hover:text-primary">
+              <Link href="/education" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Éducation
               </Link>
-              <Link href="/business" className="block font-medium text-muted hover:text-primary">
+              <Link href="/business" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Business
               </Link>
-              <Link href="/investment" className="block font-medium text-muted hover:text-primary">
+              <Link href="/investment" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Investissement
               </Link>
-              <Link href="/permis" className="block font-medium text-muted hover:text-primary">
+              <Link href="/permis" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Permis de conduire
               </Link>
             </div>
           </div>
           <div>
-            <p className="text-sm font-black text-text">Compte & communauté</p>
+            <p className="text-sm font-black text-[#0a1f33]">Compte & communauté</p>
             <div className="mt-3 space-y-2 text-sm">
-              <Link href="/overview" className="block font-medium text-muted hover:text-primary">
+              <Link href="/overview" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Tableau de bord
               </Link>
-              <Link href="/recommendations" className="block font-medium text-muted hover:text-primary">
+              <Link href="/recommendations" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Recommandations
               </Link>
-              <Link href="/community" className="block font-medium text-muted hover:text-primary">
+              <Link href="/community" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Communauté
               </Link>
-              <Link href="/moderation" className="block font-medium text-muted hover:text-primary">
+              <Link href="/moderation" className="block font-medium text-slate-600 hover:text-[#3157d5]">
                 Modération
               </Link>
             </div>
           </div>
         </div>
-        <div className="mt-8 space-y-2 border-t border-line pt-4 text-xs font-semibold text-muted">
+        <div className="mt-8 space-y-2 border-t border-slate-200/80 pt-4 text-xs font-semibold text-slate-500">
           <p>Conçu pour des décisions de mobilité concrètes et comparables.</p>
           <p>
             © {new Date().getFullYear()} VisaFlow · Réalisé par{' '}
-            <span className="font-black text-text">JADISS EL ANTAKI</span>
+            <span className="font-black text-[#0a1f33]">JADISS EL ANTAKI</span>
           </p>
         </div>
       </footer>
-    </PageContainer>
+      </div>
+    </div>
   );
 }
 
@@ -380,12 +409,15 @@ function Feature({
   description: string;
 }) {
   return (
-    <Link href={href} className="rounded-xl border border-line bg-inset p-4 transition-colors hover:border-primary/30">
+    <Link
+      href={href}
+      className="rounded-xl border border-slate-200/90 bg-slate-50/90 p-4 transition-colors hover:border-[#3157d5]/35 hover:bg-white"
+    >
       <div className="mb-3 flex items-center gap-2">
         {icon}
-        <h3 className="text-sm font-black text-text">{title}</h3>
+        <h3 className="text-sm font-black text-[#0a1f33]">{title}</h3>
       </div>
-      <p className="text-sm font-medium text-muted">{description}</p>
+      <p className="text-sm font-medium text-slate-600">{description}</p>
     </Link>
   );
 }

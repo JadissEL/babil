@@ -51,8 +51,8 @@ export default function HomeQuickFilterEngine({
   }, [initialExplorerGoal])
 
   return (
-    <section className="mt-8 rounded-2xl border border-line bg-surface p-4 shadow-soft">
-      <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">Filtres rapides</p>
+    <section className="mt-8 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm sm:p-5">
+      <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-slate-500">Filtres rapides</p>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <GoalFilter value={goal} onChange={setGoal} />
@@ -63,14 +63,14 @@ export default function HomeQuickFilterEngine({
         <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row">
           <Link
             href={compareHref}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary-soft/60 px-5 py-2.5 text-xs font-black uppercase tracking-widest text-primary shadow-soft transition-colors hover:bg-primary-soft sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-50 px-5 py-2.5 text-xs font-black uppercase tracking-widest text-[#0a1f33] shadow-sm transition-colors hover:bg-white sm:w-auto"
           >
             <Scale className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Comparer
           </Link>
           <Link
             href={resultsHref}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-colors hover:bg-primary-hover sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0a1f33] px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-md transition-colors hover:bg-[#0f2d4a] sm:w-auto"
           >
             Voir les résultats
             <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />

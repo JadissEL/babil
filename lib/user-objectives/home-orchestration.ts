@@ -23,11 +23,12 @@ export type HomeHeroCopy = {
   badge: string;
 };
 
+/** Copy alignée maquette Stitch PAGE 01 (aucun objectif primaire encore choisi). */
 const DEFAULT_HERO: HomeHeroCopy = {
-  badge: 'Intelligence mobilité internationale',
-  title: 'Aide à la décision pour visas, études, business et mobilité.',
+  badge: 'INTELLIGENCE STRATÉGIQUE',
+  title: 'Explorez le monde avec certitude.',
   subtitle:
-    'Données et scores explicables pour profils marocains : comparez les pays, la friction et les risques, puis choisissez un parcours réaliste.',
+    'Intelligence mobilité pour profils marocains : études, travail, business. Scores de mobilité, probabilités de visa et accompagnement.',
 };
 
 export function homeHeroForObjective(slug: string | null | undefined): HomeHeroCopy {

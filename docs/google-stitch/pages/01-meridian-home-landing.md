@@ -49,12 +49,14 @@ L’accueil **ancre la promesse VisaFlow** : mobilité internationale pour profi
 **Maquette Stitch de référence :** capture **`../assets/page-01-meridian-stitch-reference.png`** — voir **§4bis** pour l’écart volontaire ou à converger.
 
 ### 4bis. Écart maquette ↔ implémentation (à trancher produit)
+**État code (2026-05) :** la home a été **rapprochée** du visuel (fond `#e8ecf2`, hero carte blanche + motif carte, CTA **Évaluer mes chances** → `/probability`, bandeau Assist **bleu nuit**, grille fonctionnalités sans `AppSidebar` dupliqué, rangée Mentions / Confidentialité / Contact en tête de footer local). Le **header global** (`SiteHeader`, **PAGE 43**) reste la source de vérité pour la marque + Espace perso.
+
 | Zone | Maquette (capture) | Code `HomeExperience` aujourd’hui |
 |------|--------------------|-------------------------------------|
-| Rail gauche | 4 entrées courtes (Explorer, Comparer, Schengen, …) style strip | **`AppSidebar`** : carte arrondie, **plus d’entrées** (dashboard, moteur visa, éducation, …), placée **sous** la grille pays, pas en colonne fixe pleine hauteur |
-| Hero | Carte blanche, carte monde fade, kicker *INTELLIGENCE STRATÉGIQUE*, titre *Explorez le monde avec certitude.* | Copy **objectif-aware** via `homeHeroForObjective` ; visuel **`HeroWorldCarousel`** à droite du texte en desktop |
-| CTA primaire | *Évaluer mes chances* | Premier bouton → **`/recommendations`** (“Lancer une analyse”) ; secondaire → **Explorer** (`ctaExploreHref`) |
-| Bloc conversion services | Bandeau **bleu nuit** plein largeur + CTA blanc | **`DelegatedApplicationsHomePromo`** (encart `primary-soft`, **au-dessus** de la grille pays) |
+| Rail gauche | 4 entrées courtes (Explorer, Comparer, Schengen, …) style strip | Rail global **`SitePrimaryNavColumn`** (**PAGE 44**) ; **plus de** `AppSidebar` dans le corps de l’accueil |
+| Hero | Carte blanche, carte monde fade, kicker *INTELLIGENCE STRATÉGIQUE*, titre *Explorez le monde avec certitude.* | **Défaut sans objectif** = copy **PAGE 01** (`DEFAULT_HERO`) ; avec objectif = `homeHeroForObjective` ; **`HeroWorldCarousel`** à droite |
+| CTA primaire | *Évaluer mes chances* | Implémenté → **`/probability`** ; secondaire → **Explorer** (`ctaExploreHref`) |
+| Bloc conversion services | Bandeau **bleu nuit** plein largeur + CTA blanc | **`DelegatedApplicationsHomePromo`** `variant="meridianBanner"` (**après** filtres, **avant** grille pays) |
 | Footer | Mentions / Confidentialité / Contact (maquette) | **Double pied de page** en prod : **`SiteFooter`** global (**PAGE 43**) + **footer riche** dans `HomeExperience` (liens Explorer, Assist, compte, etc.). Aligner maquette avec **PAGE 36** quand routes légales existent. |
 
 **Responsive :** hero stack ; filtres chips scroll horizontal ; grille pays 1 col mobile.
