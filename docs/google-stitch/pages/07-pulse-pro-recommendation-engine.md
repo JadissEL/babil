@@ -36,41 +36,38 @@ Offrir une **couche pro** : axes radar, pondérations, signaux détaillés (`Rec
 ---
 
 ## 4. Layout Architecture
-Header pro + toolbar → panneau contrôle pondérations → résultats split chart/table.
+**Implémentation (`components/recommendation/RecommendationEnginePage.tsx`) — Stitch PAGE 07 :** fond crème `#FDFBF4` + **grille** légère ; en-tête **Pulse** (serif) + badge **Pro** ; barre d’actions **Réinitialiser** (curseurs), **Exporter** (toast placeholder), **Comparer le top 3** → `/compare?objective=…&countries=…` ; bloc repliable **Paramètres d’exécution** (profil playground + **Lancer l’analyse**) ; grille **3 colonnes** : **Pondérations paramétriques** (5 sliders 0–100, défauts maquette), **Analyse dimensionnelle** (`PulseDualRadarChart` : série grise « profil idéal » synthétisée depuis les curseurs vs série marine pays sélectionné + `Select`), **Log de décision** (jusqu’à 3 items depuis `topDrivers` / raisons) ; rangée suivante : carte **Insight exclusif** (PDF placeholder) + **Résultats du calcul** (liste compacte, score composite **local** pondéré, badge confiance, horodatage relatif) ; puis mode comparaison + `RecommendationPanel` **`variant="compass"`**.
+
+### 4bis. Référence visuelle
+`docs/google-stitch/assets/page-07-pulse-stitch-reference.png`
 
 ---
 
 ## 5. Full Section Breakdown
 
 ### 5.1 Header “Pro” & contexte
-- **Purpose :** titre page + badge **Pro** + rappel objectif actif (lien modifier → profile ou preset).
-- **Toolbar :** boutons “Réinitialiser pondérations”, “Exporter” (futur), “Comparer le top 3” (deep link **PAGE 03** avec pays pré-remplis si dispo).
+- **Purpose :** titre **Pulse** serif + badge **Pro** (check) ; sous-titre serif aligné maquette.
+- **Toolbar :** **Réinitialiser** les pondérations aux défauts Stitch ; **Exporter** → toast « bientôt » ; **Comparer le top 3** → **PAGE 03** `/compare` avec `objective` mappé depuis l’objectif moteur (`TOURISM`→`tourism`, etc.) et IDs des trois premières lignes **après tri pondéré local**.
 
-### 5.2 Panneau pondérations (`recommendation-radar-axes` + sliders)
-- **Purpose :** chaque axe (mobilité travail, coût, risque, etc.) a un **slider 0–100** ou normalisé avec somme contrainte selon logique produit.
-- **Interactions :** debounce 300–500ms sur recalcul lourd ; indicateur “calcul…” non bloquant.
-- **Edge :** si somme ≠ 100% selon règle moteur : message + bouton “Normaliser”.
+### 5.2 Panneau pondérations (sliders)
+- **Purpose :** Mobilité travail, Coût de la vie, Risque consulaire, Qualité de vie, Éducation — **0–100**.
+- **Interactions :** recalcul **instantané côté client** : reclassement `rankedResults` via moyenne pondérée des quatre piliers API (`visa`, `friction`, `100-risk`, `goalMatch`) ; **pas** de re-POST automatique (le POST ne lit pas encore ces poids).
 
-### 5.3 Radar bi-couche
-- **Purpose :** couche A = profil utilisateur idéal (lecture seule ou éditable selon produit) ; couche B = pays sélectionné ou moyenne top-1.
-- **A11y :** paragraphe équivalent listant scores numériques + ordre des axes.
+### 5.3 Radar bi-couche (`PulseDualRadarChart`)
+- **Purpose :** série grise = **profil idéal** dérivé des curseurs (objet `idealBreakdown` projeté sur les mêmes axes que `breakdownToRadarData`) ; série marine = pays choisi dans le `Select` (libellé légende `Pays (TOP #n)`).
 
-### 5.4 Breakdown chart (`ScoreBreakdownChart` patterns)
-- **Purpose :** barres empilées ou grouped par pays pour top-N ; légende interactive (toggle série).
-- **Loading :** skeleton barres avec mêmes proportions approximatives.
+### 5.4 Breakdown chart (`ScoreBreakdownChart`)
+- **Purpose :** conservé pour le **mode comparaison** multi-pays (radars empilés sous les cartes principales).
 
 ### 5.5 `RecommendationPanel` — liste classée
-- **Purpose :** rang, drapeau, nom pays, **score composite**, chip confiance (haute / moyenne / données partielles).
-- **Interactions :** clic ligne → **PAGE 16** ; shift-clic futur pour ajout compare.
-- **Empty :** ajuster filtres / pondérations.
+- **Purpose :** détail des lignes avec `variant="compass"` (PAGE 06) ; cases à cocher si mode comparaison.
+- **Interactions :** lien pays via liste « Résultats du calcul » et panneau.
 
-### 5.6 Panneau “Pourquoi ce classement” (logs stylisés)
-- **Purpose :** 3 facteurs max en langage naturel (“Fort sur coût du logement”, “Faible sur friction visa travail”) — pas de stack trace.
-- **Source :** mapping depuis breakdown réel côté API.
+### 5.6 Log de décision
+- **Purpose :** jusqu’à 3 puces : titres courts + corps serif italique (drivers FR ou raisons / explications API).
 
 ### 5.7 Slot premium / upgrade (placeholder produit)
-- **Purpose :** carte discrète “Rapport approfondi” ou “Historique illimité” sans bloquer l’outil gratuit.
-- **Conversion :** CTA secondaire outline.
+- **Purpose :** carte **Insight exclusif** ton crème chaud ; CTA **Générer le PDF** → toast placeholder.
 
 ### 5.8 Erreurs & timeouts
 - **Purpose :** bannière partielle si un pays échoue au fetch ; liste des pays concernés + retry unitaire.
@@ -115,4 +112,4 @@ Introduire **badge “Pro”** métallique discret. Radar **double couche** (pro
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 07]
+![PAGE 07 Pulse — référence Stitch](../assets/page-07-pulse-stitch-reference.png)
