@@ -111,8 +111,8 @@ La fiche pays est le **récipient maximal d’intelligence** : scores, sections 
 ### 5.16 Micro-feedback — **PAGE 37**
 - **Instances codées :** `country-reality`, `country-appointment-audit`, `country-darija-tip` — ne pas en ajouter arbitrairement au-delà sans revue produit.
 
-### 5.17 SEO & JSON-LD (layout)
-- **`app/(public)/countries/[id]/layout.tsx` :** `generateMetadata` / `resolveCountryLayoutMeta`, canonical, OpenGraph ; **`buildCountryPageJsonLd`** pour structured data (détail dans code).
+### 5.17 SEO & JSON-LD (layout segment)
+- **Détail Stitch / produit :** **PAGE 38** (`app/(public)/countries/[id]/layout.tsx`) — `generateMetadata`, canonical, Open Graph, script **JSON-LD** (`buildCountryPageJsonLd`).
 
 ---
 

@@ -39,5 +39,6 @@
 | 35 | NEXUS | Shell espace connecté (sidebars + `DashboardLayoutClient`) | `pages/35-nexus-authenticated-shell.md` |
 | 36 | ANCHOR | Suite légale & confiance (mentions, confidentialité, cookies — **routes futures**) | `pages/36-anchor-trust-legal-suite.md` |
 | 37 | RELAY | Micro-feedback `BlockFeedback` (pouces utile / pas utile — transversal) | `pages/37-relay-block-feedback-micro-ui.md` |
+| 38 | LENS | Layout segment pays SEO + JSON-LD (`app/(public)/countries/[id]/layout.tsx`) | `pages/38-lens-country-segment-layout.md` |
 
 Paths in the **Markdown file** column are relative to `docs/google-stitch/`.

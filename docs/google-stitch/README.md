@@ -15,7 +15,7 @@ docs/google-stitch/
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
   pages/
-    01-….md … 37-….md       ← routes + shells + légale (36) + micro-feedback (37)
+    01-….md … 38-….md       ← routes + shells + légale (36) + micro-feedback (37) + layout SEO pays (38)
 ```
 
 ## Workflow
@@ -30,4 +30,5 @@ docs/google-stitch/
 - **PAGE 34–35** documentent le **chrome global** et le **shell dashboard** (pas des URLs publiques) — utiles pour maquettes Stitch cohérentes.
 - **PAGE 36** anticipe **mentions / confidentialité / cookies** (non routé encore) — lier depuis `SiteFooter` quand les pages existent.
 - **PAGE 37** : pattern **`BlockFeedback`** (pouces) — cohérence sur fiches pays et DS.
-- Add further surfaces only as **38+** (prefer append).
+- **PAGE 38** : layout segment **`/countries/[id]`** — `generateMetadata`, canonical, Open Graph, **JSON-LD** (complète **PAGE 16** côté SEO).
+- Add further surfaces only as **39+** (prefer append).
