@@ -5,6 +5,7 @@ import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
 import { dedupeSchengenMembersByCanonicalName } from '@/lib/schengen-duplicate-merge'
 import {
   isSchengenMember,
+  listSchengenCanonicalEnglish,
   listSchengenNormalizedLookupKeys,
   schengenCanonicalEnglishName,
 } from '@/lib/schengen-members'
@@ -47,6 +48,13 @@ describe('iso2ForCountryNameOrEmpty', () => {
     assert.equal(iso2ForCountryNameOrEmpty('Pays-Bas'), 'nl')
     assert.equal(iso2ForCountryNameOrEmpty('République tchèque'), 'cz')
     assert.equal(iso2ForCountryNameOrEmpty('Unknownland'), '')
+  })
+
+  it('maps every canonical Schengen English name to a two-letter ISO2 code', () => {
+    for (const name of listSchengenCanonicalEnglish()) {
+      const iso = iso2ForCountryNameOrEmpty(name)
+      assert.equal(iso.length, 2, `missing ISO for Schengen canonical: ${name}`)
+    }
   })
 })
 
