@@ -12,7 +12,7 @@ System / Transversal (enveloppe toutes les routes)
 - Objectif de mobilité persistant (`AppObjectiveRoot` — **PAGE 41**)
 
 ### Connected Pages
-- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard) ; **PAGE 42** (`SentryClerkSync` — pas d’UI) ; **PAGE 43** (header + footer marketing) ; **PAGE 44** (nav primaire rail + drawer).
+- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard) ; **PAGE 42** (`SentryClerkSync` — pas d’UI) ; **PAGE 43** (header + footer marketing) ; **PAGE 44** (nav primaire rail + drawer) ; **PAGE 45** (recherche pays dans le header).
 - **Technique :** `app/layout.tsx` → `ClerkProvider` → `SiteChrome` → children
 
 ---

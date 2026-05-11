@@ -15,7 +15,7 @@ docs/google-stitch/
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
   pages/
-    01-….md … 44-….md       ← … + header/footer global (43) + nav primaire rail (44)
+    01-….md … 45-….md       ← … + nav primaire rail (44) + recherche pays globale (45)
 ```
 
 ## Workflow
@@ -37,4 +37,5 @@ docs/google-stitch/
 - **PAGE 42** : **`SentryClerkSync`** — contexte Sentry pseudonyme (`sentryAnonymizedUserKey`), tags `auth`, noop si pas de DSN.
 - **PAGE 43** : **`SiteHeader`** + **`SiteFooter`** — marque, menu, `GlobalCountrySearch`, auth Clerk, PayPal don, padding dock footer.
 - **PAGE 44** : **`SitePrimaryNavColumn`** — rail `lg` + drawer mobile, liens objectif-aware, `useSitePrimaryNavState`.
-- Add further surfaces only as **45+** (prefer append).
+- **PAGE 45** : **`GlobalCountrySearch`** — palette pays, `⌘K` / `Ctrl+K`, `/api/countries?light=1`, navigation **PAGE 16**.
+- Add further surfaces only as **46+** (prefer append).

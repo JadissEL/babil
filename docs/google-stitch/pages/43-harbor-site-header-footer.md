@@ -47,7 +47,7 @@ Détailler le **bandeau sticky supérieur** et le **pied de page** partagés par
 - **Droite :** `GlobalCountrySearch` puis bloc auth — `SignedOut` : deux boutons custom wrappant Clerk modal ; `SignedIn` : lien **`/overview`** (`LayoutDashboard` + libellé masqué visuellement en `<380px` via `sr-only`) + **`UserButton`** (`afterSignOutUrl="/"`).
 
 ### 4.2 `GlobalCountrySearch` (dans le header)
-- **Rôle :** palette type command (`⌘K` / `Ctrl+K` selon plateforme), fetch liste pays, navigation vers fiche — implémentation **`components/nav/GlobalCountrySearch.tsx`** (détail interaction : combobox + raccourci clavier).
+- **Spec détaillée :** **PAGE 45** — raccourci, dialogue mobile/desktop, API `light=1`, clavier flèches/Entrée.
 - **Stitch :** prévoir largeur flexible dans la rangée header ; ne pas écraser les boutons auth sur **sm** étroit.
 
 ### 4.3 `SiteFooter`

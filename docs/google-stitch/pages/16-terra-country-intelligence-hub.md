@@ -12,6 +12,7 @@ Public (template dynamique — une instance par pays)
 - Partage lien SEO pays
 
 ### Connected Pages
+- **Amont :** **PAGE 45** (`GlobalCountrySearch` → `/countries/{id}`)
 - **Précédent :** **PAGE 02** (explorer), home, compare (sans lien direct codé sur la fiche)
 - **Suivant :** **PAGE 17** / **PAGE 19** / **PAGE 18** (sous-routes), **PAGE 04** (Schengen), **PAGE 20** (Assist — parcours externes / promos)
 
