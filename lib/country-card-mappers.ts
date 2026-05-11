@@ -1,5 +1,5 @@
 import type { CountryCardProps, MobilityTier } from '@/components/country/CountryCard'
-import { schengenCanonicalEnglishName } from '@/lib/schengen-members'
+import { schengenCanonicalEnglishName, schengenNormalizedNameKey } from '@/lib/schengen-members'
 
 /** Typical ISO mappings for French-facing country names — extend as needed */
 export const countryNameToIso: Record<string, string> = {
@@ -13,6 +13,7 @@ export const countryNameToIso: Record<string, string> = {
   Portugal: 'pt',
   Netherlands: 'nl',
   'The Netherlands': 'nl',
+  'Pays-Bas': 'nl',
   Belgique: 'be',
   Belgium: 'be',
   Switzerland: 'ch',
@@ -63,7 +64,9 @@ export const countryNameToIso: Record<string, string> = {
   Lithuania: 'lt',
   Lituanie: 'lt',
   Romania: 'ro',
+  Roumanie: 'ro',
   Bulgaria: 'bg',
+  Bulgarie: 'bg',
   Iceland: 'is',
   Islande: 'is',
   Norway: 'no',
@@ -73,14 +76,30 @@ export const countryNameToIso: Record<string, string> = {
   Ireland: 'ie',
 }
 
+function buildIso2ByNormalizedLabel(): Map<string, string> {
+  const m = new Map<string, string>()
+  for (const [label, iso] of Object.entries(countryNameToIso)) {
+    m.set(schengenNormalizedNameKey(label), iso.toLowerCase())
+  }
+  return m
+}
+
+const ISO2_BY_NORMALIZED_LABEL = buildIso2ByNormalizedLabel()
+
 /** ISO 3166-1 alpha-2 for flag-icons (`fi fi-xx`), with Schengen canonical EN fallback. */
 export function iso2ForCountryNameOrEmpty(name: string): string {
-  const direct = countryNameToIso[name]
+  const trimmed = name.normalize('NFC').trim().replace(/\s+/g, ' ')
+  if (!trimmed) return ''
+  const direct = countryNameToIso[trimmed]
   if (direct) return direct.toLowerCase()
-  const canon = schengenCanonicalEnglishName(name)
+  const byNorm = ISO2_BY_NORMALIZED_LABEL.get(schengenNormalizedNameKey(trimmed))
+  if (byNorm) return byNorm
+  const canon = schengenCanonicalEnglishName(trimmed)
   if (canon) {
     const fromCanon = countryNameToIso[canon]
     if (fromCanon) return fromCanon.toLowerCase()
+    const fromCanonNorm = ISO2_BY_NORMALIZED_LABEL.get(schengenNormalizedNameKey(canon))
+    if (fromCanonNorm) return fromCanonNorm
   }
   return ''
 }

@@ -1,8 +1,13 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import type { LegacyCountryRecord } from '@/lib/countries-fallback'
+import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
 import { dedupeSchengenMembersByCanonicalName } from '@/lib/schengen-duplicate-merge'
-import { listSchengenNormalizedLookupKeys, schengenCanonicalEnglishName } from '@/lib/schengen-members'
+import {
+  isSchengenMember,
+  listSchengenNormalizedLookupKeys,
+  schengenCanonicalEnglishName,
+} from '@/lib/schengen-members'
 
 function row(partial: Partial<LegacyCountryRecord> & { id: number; name: string }): LegacyCountryRecord {
   return {
@@ -24,6 +29,24 @@ describe('schengenCanonicalEnglishName', () => {
     assert.equal(schengenCanonicalEnglishName('Allemagne'), 'Germany')
     assert.equal(schengenCanonicalEnglishName('Germany'), 'Germany')
     assert.equal(schengenCanonicalEnglishName('Islande'), 'Iceland')
+  })
+
+  it('resolves English Schengen names case-insensitively', () => {
+    assert.equal(schengenCanonicalEnglishName('france'), 'France')
+    assert.equal(schengenCanonicalEnglishName('GERMANY'), 'Germany')
+    assert.ok(isSchengenMember('norway'))
+  })
+})
+
+describe('iso2ForCountryNameOrEmpty', () => {
+  it('returns ISO2 for FR, EN, case variants, and Schengen-only aliases', () => {
+    assert.equal(iso2ForCountryNameOrEmpty('Allemagne'), 'de')
+    assert.equal(iso2ForCountryNameOrEmpty('germany'), 'de')
+    assert.equal(iso2ForCountryNameOrEmpty('Islande'), 'is')
+    assert.equal(iso2ForCountryNameOrEmpty('Liechtenstein'), 'li')
+    assert.equal(iso2ForCountryNameOrEmpty('Pays-Bas'), 'nl')
+    assert.equal(iso2ForCountryNameOrEmpty('République tchèque'), 'cz')
+    assert.equal(iso2ForCountryNameOrEmpty('Unknownland'), '')
   })
 })
 

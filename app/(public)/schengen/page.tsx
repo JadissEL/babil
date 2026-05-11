@@ -415,16 +415,10 @@ export default function SchengenPage() {
                               href={`/countries/${c.id}`}
                               className="flex items-center gap-3 font-bold text-[#0D1B3E] transition-colors group-hover:underline"
                             >
-                              {(() => {
-                                const iso = iso2ForCountryNameOrEmpty(c.name)
-                                return iso ? (
-                                  <CountryFlag iso2={iso} className="rounded-sm !shadow-none" />
-                                ) : (
-                                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0D1B3E]/5 text-[#0D1B3E]/40 transition-colors group-hover:bg-[#0D1B3E]/10">
-                                    <CountryFlag iso2="" className="!h-4 !w-4 !shadow-none" />
-                                  </div>
-                                )
-                              })()}
+                              <CountryFlag
+                                iso2={iso2ForCountryNameOrEmpty(c.name)}
+                                className="rounded-sm !shadow-none"
+                              />
                               {c.name}
                             </Link>
                           </td>

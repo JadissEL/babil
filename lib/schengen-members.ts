@@ -40,6 +40,11 @@ function normalizedNameLookupKey(name: string): string {
   return name.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase()
 }
 
+/** Même normalisation que le merge Prisma / JSON — drapeaux, ISO, dédup Schengen. */
+export function schengenNormalizedNameKey(name: string): string {
+  return normalizedNameLookupKey(name)
+}
+
 /**
  * Alias fréquent (FR ou variantes JSON) vers le nom canonique EN présent dans SCHENGEN_COUNTRIES_ENGLISH.
  */
@@ -118,6 +123,10 @@ export function schengenCanonicalEnglishName(countryName: string): string | null
   const k = normalizedNameLookupKey(trimmed)
   const canonicalViaAlias = MERGE_KEY_TO_CANONICAL_EN[k]
   if (canonicalViaAlias && SCHENGEN_COUNTRIES_ENGLISH.has(canonicalViaAlias)) return canonicalViaAlias
+
+  for (const en of SCHENGEN_COUNTRIES_ENGLISH) {
+    if (normalizedNameLookupKey(en) === k) return en
+  }
 
   return null
 }
