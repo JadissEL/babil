@@ -78,6 +78,8 @@ VisaFlow behaves as a **single ecosystem**: the same visual language, navigation
 
 **Services:** `/services/delegated-applications` + `/apply`.
 
+**Cross-cutting shells (non-routes, à aligner dans Stitch sur toutes les captures) :** voir **PAGE 34** (`SiteChrome` / layout racine) et **PAGE 35** (shell espace connecté : sidebars + `DashboardLayoutClient`).
+
 ---
 
 ## 8. Ecosystem Architecture (Information + Action)

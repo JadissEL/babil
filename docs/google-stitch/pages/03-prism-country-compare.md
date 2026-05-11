@@ -53,10 +53,25 @@ La comparaison transforme la **complexité multidimensionnelle** en **tableau li
 ### 5.2 Compare table
 - Colonnes pays ; lignes signaux ; icônes différenciation (↑↓ neutre).
 - **Loading :** skeleton colonnes dynamiques.
+- **Groupes de lignes :** en-têtes intercalaires (Visa & séjour, Coût & vie, Risque & sûreté, Business / études selon objectif) pour scanner vertical sans perdre le fil.
+- **Cellules partielles :** état “—” + tooltip “donnée en cours d’enrichissement” pour éviter faux sentiment de parité.
 
-### 5.3 Sticky decision strip
+### 5.3 Objective context banner
+- **Purpose :** rappeler l’objectif de comparaison actif (tourisme, études, etc.) aligné sur `compare-objectives` / deep links.
+- **Interaction :** lien “Changer d’objectif” renvoie vers explorer ou ouvre sélecteur inline sans casser la sélection pays.
+
+### 5.4 Pickers + table coherence
+- **Purpose :** si un pays est retiré, la colonne disparaît avec transition width (éviter flash) ; réordonner colonnes optionnel (drag header futur).
+- **Keyboard :** navigation Tab sort du picker vers la table dans l’ordre logique.
+
+### 5.5 Partage & persistance
+- **Purpose :** URL reflétant pays + objectif (deep links) ; bouton “Copier le lien de comparaison” (futur) avec toast succès.
+- **Edge :** pays invalide dans query → message + reset pickers.
+
+### 5.6 Sticky decision strip
 - Résumé textuel “meilleur pour X si…” neutre.
 - **Edge :** égalité → expliquer tie-break transparent.
+- **CTA secondaire :** service délégué si indécision prolongée (micro-copy rassurante).
 
 ---
 

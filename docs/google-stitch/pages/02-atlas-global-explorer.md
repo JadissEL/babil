@@ -61,6 +61,21 @@ L’explorer est le **cœur de découverte transactionnelle** : l’utilisateur 
 - **Purpose :** vue macro régionale pour orientation géographique.
 - **Responsive :** horizontal scroll snap sur mobile.
 
+### 5.4 Récap filtres actifs (chips)
+- **Purpose :** au-dessus de la grille, lister objectif, budget, région, risque sous forme de **pills dismissibles** pour renforcer la mental model “tu as demandé ça”.
+- **Interaction :** clic `×` retire le critère et relance le fetch ; état “reset tout” visible si >1 chip.
+
+### 5.5 Recherche pays globale (si `GlobalCountrySearch`)
+- **Purpose :** raccourci vers un pays précis sans quitter les filtres ; résultats en liste typeahead avec drapeau.
+- **Accessibility :** `combobox` + `listbox` ; flèches haut/bas.
+
+### 5.6 Pont vers comparer
+- **Purpose :** lorsque l’utilisateur sélectionne plusieurs pays (futur multi-select) ou via CTA fixe : “Comparer la sélection” avec compteur.
+- **Empty :** désactivé si <2 pays sélectionnés ; tooltip explicatif.
+
+### 5.7 Résilience données
+- **Purpose :** bandeau non bloquant si source secondaire indisponible ; lien vers glossaire intelligence (PAGE 32) pour power users.
+
 ---
 
 ## 6. UI Design Direction

@@ -61,6 +61,36 @@ Hero pays (drapeau + nom + score global) → barre actions → sections modulair
 ### 5.6 Teasers sous-pages
 Cartes vers quotes / doctorat / reasons.
 
+### 5.7 PhD & doctorat (aperçu in-page)
+- **Purpose :** `PhDStudiesCountryTeaser` / section doctorat condensée pour orienter sans dupliquer la route `/doctorat`.
+- **Interaction :** “Voir tout le parcours doctoral” → PAGE 18.
+- **Empty :** masquer le bloc si données absentes du contrat pays.
+
+### 5.8 Raisons de visite (aperçu)
+- **Purpose :** extraits `VisitReasonsSection` ou teaser mosaïque limitée à 3 tuiles + lien “Voir toutes les raisons”.
+- **Conversion :** renforcer objectif tourisme avant CTA compare.
+
+### 5.9 Conduite & permis (`DrivingRightsIntelSection`)
+- **Purpose :** bloc pragmatique distinct (icône véhicule) pour ne pas mélanger avec visa tourisme.
+- **Disclaimer :** rappel indicatif non-juridique ; lien PAGE 14 pour contexte global permis.
+
+### 5.10 Complétude & fraîcheur (`country-completeness` patterns)
+- **Purpose :** badge ou ligne “Couverture données X%” si exposé — renforce confiance honnête.
+- **Edge :** score bas dû à manque de données ≠ “mauvais pays” ; copy explicite.
+
+### 5.11 Promotions services délégués
+- **Purpose :** `DelegatedApplicationsHomePromo` ou bandeau contextuel “Besoin d’aide pour ce pays ?”
+- **Placement :** après scores clés, avant commentaires pour ne pas interrompre lecture factuelle.
+
+### 5.12 Commentaires & confiance sociale
+- **Purpose :** `CommentBox` + `CommentList` ; modération visible (états pending / refusé).
+- **Auth :** utilisateur non connecté voit preview + CTA sign-in (KEYHOLE).
+- **Anti-spam UX :** message rate limit humain si erreur API.
+
+### 5.13 SEO & partage (hors Stitch visuel mais brief)
+- **JSON-LD / meta :** titre = pays + VisaFlow ; image OG drapeau ou hero pays.
+- **Open graph :** description courte score + disclaimer une ligne.
+
 ---
 
 ## 6. UI Design Direction

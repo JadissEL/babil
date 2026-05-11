@@ -40,7 +40,36 @@ Top : bannière contextuelle → grille widgets (raccourcis, pays récents, CTA 
 ---
 
 ## 5. Full Section Breakdown
-Skeleton `DashboardPageSkeleton` pour loading.
+
+### 5.1 Skeleton premier paint
+- **Purpose :** `DashboardPageSkeleton` reflète la grille de widgets finale (pas spinners centrés anonymes).
+- **Timing :** crossfade court vers contenu réel.
+
+### 5.2 Onboarding post-inscription (`PostSignupOnboarding`)
+- **Purpose :** checklist courte (objectif, pays d’intérêt, notification email opt-in futur).
+- **Dismiss :** possibilité “Plus tard” sans culpabiliser ; reprise depuis bannière discrète.
+
+### 5.3 Bannière contextuelle profil (`ProfileContextBanner`)
+- **Purpose :** signaler profil incomplet ou incohérence avec dernier run probability.
+- **CTA :** lien direct `/profile` avec pré-remplissage d’intention (fragment URL futur).
+
+### 5.4 Grille raccourcis moteurs
+- **Purpose :** cartes vers `/probability`, `/recommendation-engine`, `/recommendations` avec **icône + 1 ligne valeur** (“Dernière run : …” si data).
+- **Empty :** copy invitant premier run avec illustration légère.
+
+### 5.5 Pays récemment consultés (`RecentlyViewedCountries`)
+- **Purpose :** friction zéro pour reprendre fil ; horizontal scroll avec snap.
+- **Auth :** si anonyme impossible, masquer ou montrer session locale (policy produit).
+
+### 5.6 Accès explorer / compare
+- **Purpose :** rappel que l’espace perso **ne remplace pas** la navigation publique ; doubles CTA alignés sur `explorerNav`.
+
+### 5.7 Carte “Mes demandes déléguées” (extrait)
+- **Purpose :** aperçu `MyDelegatedRequests` : 2–3 dernières lignes statut + lien catalogue.
+- **Empty :** CTA vers PAGE 20.
+
+### 5.8 Slot admin / modération (conditionnel)
+- **Purpose :** tuiles visibles seulement si rôle ; éviter vide gênant pour utilisateur standard.
 
 ---
 

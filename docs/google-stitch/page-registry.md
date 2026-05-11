@@ -35,5 +35,7 @@
 | 31 | FAULT·GLOBAL | `app/global-error.tsx` | `pages/31-fault-global-error-shell.md` |
 | 32 | BEACON | `/intelligence-fieldpaths` | `pages/32-beacon-intelligence-fieldpaths.md` |
 | 33 | KEYHOLE | Clerk (modal + hosted) | `pages/33-keyhole-clerk-authentication-surface.md` |
+| 34 | GLIMPSE | Chrome global (`SiteChrome`, `app/layout`) | `pages/34-glimpse-site-chrome-shell.md` |
+| 35 | NEXUS | Shell espace connecté (sidebars + `DashboardLayoutClient`) | `pages/35-nexus-authenticated-shell.md` |
 
 Paths in the **Markdown file** column are relative to `docs/google-stitch/`.

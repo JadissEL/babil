@@ -40,7 +40,38 @@ Stepper horizontal (si multi-étapes) → corps formulaire → récapitulatif �
 ---
 
 ## 5. Full Section Breakdown
-Champs groupés : identité voyage, destination, urgence, pièces. Bloc légal consentement.
+
+### 5.1 En-tête de parcours
+- **Purpose :** rappeler le **SKU service** choisi (titre + sous-titre + durée indicative de traitement).
+- **Interaction :** lien retour catalogue sans perdre les champs déjà saisis (confirm dialog si dirty).
+
+### 5.2 Stepper / progression
+- **Purpose :** si flux multi-étapes : “Informations → Détails voyage → Documents → Confirmation”.
+- **States :** étape courante surlignée ; étapes futures désactivées jusqu’à validation Zod de l’étape N.
+
+### 5.3 Bloc identité & contact
+- **Purpose :** nom, email, téléphone, nationalité, résidence ; pré-remplissage depuis Clerk quand disponible.
+- **Privacy :** micro-copy RGPD-friendly sous le bloc.
+
+### 5.4 Détails mobilité
+- **Purpose :** destination(s), dates prévues, type de demande, urgence, budget indicatif (champs dynamiques selon `delegated-application-catalog`).
+- **Validation :** messages inline par champ ; focus premier erreur au submit.
+
+### 5.5 Pièces & médias (futur upload)
+- **Purpose :** liste check-list documents attendus ; drag-drop zone avec états virus-scan / taille max (copy).
+- **Empty :** si pas d’upload : textarea “Décrivez les documents dont vous disposez”.
+
+### 5.6 Récapitulatif avant envoi
+- **Purpose :** liste récap claire + case à cocher “Je confirme l’exactitude des informations”.
+- **Destructive guard :** bouton submit désactivé tant que case non cochée.
+
+### 5.7 Confirmation & post-submit
+- **Purpose :** page ou modal “Demande reçue” avec **numéro de dossier** + prochaines étapes email.
+- **Error :** si 409 / duplicate : message + lien vers “Mes demandes” (`MyDelegatedRequests`).
+
+### 5.8 Bloc légal & consentement
+- **Purpose :** CGU services, limitation de responsabilité, durée de conservation des données.
+- **Accessibility :** liens externes ouvrent nouvel onglet avec `rel` approprié.
 
 ---
 
