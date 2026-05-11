@@ -12,7 +12,7 @@ System / Transversal (enveloppe toutes les routes)
 - Objectif de mobilité persistant (`AppObjectiveRoot` — **PAGE 41**)
 
 ### Connected Pages
-- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard) ; **PAGE 42** (`SentryClerkSync` — pas d’UI).
+- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard) ; **PAGE 42** (`SentryClerkSync` — pas d’UI) ; **PAGE 43** (header + footer marketing).
 - **Technique :** `app/layout.tsx` → `ClerkProvider` → `SiteChrome` → children
 
 ---
@@ -50,8 +50,7 @@ Documenter ce que l’utilisateur perçoit **autour** du contenu page : police I
 - **Stitch :** ne jamais proposer une autre police display sur une seule page marketing sans valider impact global.
 
 ### 5.2 `SiteHeader` (public)
-- **Purpose :** barre supérieure avec marque, actions, bouton **ouverture navigation primaire** mobile (`onPrimaryNavOpen`).
-- **Stitch :** aligner visuellement avec `AppNavbar` density pour continuité (même hauteur cible ~64px).
+- **Spec détaillée :** **PAGE 43** — marque, `GlobalCountrySearch`, auth Clerk, `SiteHeaderMenuButton` → **§5.3**.
 
 ### 5.3 `SitePrimaryNavColumn`
 - **Purpose :** rail navigation global (desktop) + **drawer / overlay** mobile (`mobileOpen`, `onMobileClose`).
@@ -67,8 +66,7 @@ Documenter ce que l’utilisateur perçoit **autour** du contenu page : police I
 - **Rappel :** dock fixe bas — affecte deep links Explorer/Compare ; padding `main` §5.4.
 
 ### 5.6 `SiteFooter`
-- **Purpose :** liens secondaires, copyright, futurs liens **PAGE 36** (mentions / confidentialité / cookies).
-- **Visual :** plus calme que header ; séparation `border-t border-line`.
+- **Spec détaillée :** **PAGE 43** — copyright, PayPal don, padding dock ; futurs liens **PAGE 36**.
 
 ### 5.7 Toasts & feedback global
 - **Spec détaillée :** **PAGE 40** (`AppToaster`, variants, durée, `aria-live`).

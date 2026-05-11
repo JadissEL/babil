@@ -15,7 +15,7 @@ docs/google-stitch/
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
   pages/
-    01-….md … 42-….md       ← … + objectif mobilité global (41) + Sentry↔Clerk client (42)
+    01-….md … 43-….md       ← … + Sentry↔Clerk client (42) + header/footer global (43)
 ```
 
 ## Workflow
@@ -35,4 +35,5 @@ docs/google-stitch/
 - **PAGE 40** : **`AppToaster`** + **`appToast`** — pile fixe bas-droite, variants, durée auto, intégration dock (**PAGE 34**).
 - **PAGE 41** : **`AppObjectiveRoot`** — provider objectif, **`FirstVisitObjectiveWizard`**, **`SiteObjectiveDock`** / **`DockObjectivePicker`**, variable **`--vf-objective-dock-height`**.
 - **PAGE 42** : **`SentryClerkSync`** — contexte Sentry pseudonyme (`sentryAnonymizedUserKey`), tags `auth`, noop si pas de DSN.
-- Add further surfaces only as **43+** (prefer append).
+- **PAGE 43** : **`SiteHeader`** + **`SiteFooter`** — marque, menu, `GlobalCountrySearch`, auth Clerk, PayPal don, padding dock footer.
+- Add further surfaces only as **44+** (prefer append).

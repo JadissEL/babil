@@ -12,7 +12,7 @@ Public (spec **anticipée** — pas encore de routes dédiées dans `app/` au mo
 - Réduction friction “est-ce sérieux ?” avant conversion services
 
 ### Connected Pages
-- **Liens depuis :** `SiteFooter` (PAGE 34), formulaire délégué (PAGE 21), emails transactionnels futurs
+- **Liens depuis :** `SiteFooter` (**PAGE 43** / parent **PAGE 34**), formulaire délégué (PAGE 21), emails transactionnels futurs
 - **Liées :** PAGE 32 (transparence données techniques)
 
 ---
