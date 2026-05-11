@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Investissement & résidence',
+  title: 'Investissement & nationalité',
   description:
-    'Vue d’ensemble par pays : barrières, capitaux et contexte pour les porteurs de projet marocains (données indicatives, à croiser avec des conseils juridiques).',
+    'Programmes CBI et résidence par investissement — filtres, prudence réglementaire et liens vers les fiches pays (données indicatives).',
 }
 
 export default function InvestmentLayout({ children }: { children: ReactNode }) {
