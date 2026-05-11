@@ -13,6 +13,7 @@ System / Transversal (une pile de notifications pour **toutes** les routes sous 
 
 ### Connected Pages
 - **Montage :** **`SiteChrome`** (**PAGE 34**) — `<AppToaster />` juste après `SiteHeader` (même instance pour public **et** routes `(dashboard)` car `app/layout.tsx` enveloppe tout le site).
+- **Dock :** offset vertical basé sur **`VF_OBJECTIVE_DOCK_HEIGHT_VAR`** — mesure dynamique **PAGE 41** (`SiteObjectiveDock`).
 - **Consommateurs typiques :** **PAGE 02** (explorer filtres), **PAGE 03** (compare copie/partage), **PAGE 05–06** (erreurs chargement), **PAGE 16** (favoris + commentaire), **PAGE 21** (erreurs formulaire), **PAGE 24** (profil + export)
 
 ---

@@ -9,10 +9,10 @@ System / Transversal (enveloppe toutes les routes)
 
 ### Related User Journeys
 - Première impression cohérence marque sur **chaque** page
-- Objectif de mobilité persistant (`AppObjectiveRoot`)
+- Objectif de mobilité persistant (`AppObjectiveRoot` — **PAGE 41**)
 
 ### Connected Pages
-- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster` — spec visuelle & comportement).
+- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard).
 - **Technique :** `app/layout.tsx` → `ClerkProvider` → `SiteChrome` → children
 
 ---
@@ -37,7 +37,7 @@ Documenter ce que l’utilisateur perçoit **autour** du contenu page : police I
 
 ## 4. Layout Architecture
 - **Couche 0 :** `html lang="fr"` + `body` flex column.
-- **Couche 1 :** `AppObjectiveRoot` (état objectif).
+- **Couche 1 :** `AppObjectiveRoot` (état objectif — détail **PAGE 41**).
 - **Couche 2 :** `SiteChrome` — injecte header/footer / dock selon implémentation actuelle.
 - **Couche 3 :** contenu route (`children`).
 
@@ -63,16 +63,15 @@ Documenter ce que l’utilisateur perçoit **autour** du contenu page : police I
 - **Stitch :** toujours laisser cette marge basse visible dans les captures “full page”.
 
 ### 5.5 `SiteObjectiveDock`
-- **Purpose :** dock fixe bas lié à l’**objectif de mobilité** (sélection persistée) — affecte deep links Explorer/Compare.
-- **Responsive :** hauteur CSS variable `--vf-objective-dock-height` ; safe-area iOS.
+- **Spec détaillée :** **PAGE 41** (`SiteObjectiveDock`, `DockObjectivePicker`, wizard, variable `--vf-objective-dock-height`, z-index).
+- **Rappel :** dock fixe bas — affecte deep links Explorer/Compare ; padding `main` §5.4.
 
 ### 5.6 `SiteFooter`
 - **Purpose :** liens secondaires, copyright, futurs liens **PAGE 36** (mentions / confidentialité / cookies).
 - **Visual :** plus calme que header ; séparation `border-t border-line`.
 
 ### 5.7 Toasts & feedback global
-- **Purpose :** confirmations API, erreurs réseau, copie lien.
-- **A11y :** `aria-live` politeness appropriate ; durée lecture suffisante.
+- **Spec détaillée :** **PAGE 40** (`AppToaster`, variants, durée, `aria-live`).
 
 ### 5.8 Clerk provider wrap
 - **Purpose :** session disponible pour composants client ; pas d’UI directe ici sauf `SignedIn`/`SignedOut` descendants.

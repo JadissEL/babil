@@ -15,7 +15,7 @@ docs/google-stitch/
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
   pages/
-    01-….md … 40-….md       ← … + middleware Clerk Edge (39) + toasts globaux (40)
+    01-….md … 41-….md       ← … + toasts (40) + objectif mobilité global (41)
 ```
 
 ## Workflow
@@ -33,4 +33,5 @@ docs/google-stitch/
 - **PAGE 38** : layout segment **`/countries/[id]`** — `generateMetadata`, canonical, Open Graph, **JSON-LD** (complète **PAGE 16** côté SEO).
 - **PAGE 39** : **`proxy.ts`** — `clerkMiddleware`, liste routes protégées, request id, logs API JSON (complète **PAGE 33** côté politique d’accès).
 - **PAGE 40** : **`AppToaster`** + **`appToast`** — pile fixe bas-droite, variants, durée auto, intégration dock (**PAGE 34**).
-- Add further surfaces only as **41+** (prefer append).
+- **PAGE 41** : **`AppObjectiveRoot`** — provider objectif, **`FirstVisitObjectiveWizard`**, **`SiteObjectiveDock`** / **`DockObjectivePicker`**, variable **`--vf-objective-dock-height`**.
+- Add further surfaces only as **42+** (prefer append).
