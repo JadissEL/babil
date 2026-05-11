@@ -1,17 +1,15 @@
 'use client';
 
 import { SignInButton, useUser } from '@clerk/nextjs';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, useMemo, useCallback, Suspense } from 'react';
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton';
-import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner';
 import RecommendationPanel from '@/components/engine/RecommendationPanel';
 import { ScoreBreakdownChart } from '@/components/engine/ScoreBreakdownChart';
 import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -21,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import { writeOnboarding } from '@/lib/onboarding-storage';
+import { formatGoalTypeLabelFr } from '@/lib/probability-profile-narrative';
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile';
 import type { ApiRecommendation } from '@/lib/recommendation-ui';
 import { mapApiRecommendationToPanelRow } from '@/lib/recommendation-ui';
@@ -28,14 +27,29 @@ import { formatScoreDriversFrench } from '@/lib/score-driver-explain';
 import { appToast } from '@/lib/toast-store';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 
-function RecoMetricBar({ label, value }: { label: string; value: number }) {
+function globalProjectionBadgeLabel(): string {
+  const d = new Date();
+  const q = Math.floor(d.getMonth() / 3) + 1;
+  return `GLOBAL PROJECTION — Q${q} ${d.getFullYear()}`;
+}
+
+function CompassAxisBar({ label, value }: { label: string; value: number }) {
+  const v = Math.round(Math.min(100, Math.max(0, value)));
   return (
     <div>
-      <div className="mb-1 flex justify-between text-[10px] font-black uppercase tracking-widest text-muted">
+      <div className="mb-1.5 flex justify-between text-[10px] font-black uppercase tracking-[0.12em] text-[#0D1B3E]/55">
         <span>{label}</span>
-        <span className="font-bold text-text">{Math.round(value)}</span>
+        <span className="tabular-nums text-[#0D1B3E]">{v}</span>
       </div>
-      <Progress value={Math.min(100, Math.max(0, value))} />
+      <div
+        className="h-2.5 w-full overflow-hidden rounded-full bg-[#0D1B3E]/10"
+        role="progressbar"
+        aria-valuenow={v}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <div className="h-full rounded-full bg-[#0D1B3E] transition-[width] duration-300" style={{ width: `${v}%` }} />
+      </div>
     </div>
   );
 }
@@ -50,13 +64,18 @@ export default function RecommendationsPage() {
 
 function RecommendationsPageFallback() {
   return (
-    <div>
-      <div className="mb-8 sm:mb-10">
-        <h1 className="mb-2 text-2xl font-black tracking-tight text-text sm:text-3xl lg:text-4xl">
+    <div className="min-h-screen bg-[#FDFBF4]">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+        <h1 className="text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl lg:text-4xl">
           Intelligence de recommandation
         </h1>
+        <p className="mt-2 max-w-2xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/80 sm:text-base">
+          Analyse multi-critères pour prioriser les destinations alignées avec votre profil de mobilité.
+        </p>
+        <div className="mt-8">
+          <DashboardPageSkeleton />
+        </div>
       </div>
-      <DashboardPageSkeleton />
     </div>
   );
 }
@@ -203,6 +222,17 @@ function RecommendationsPageInner() {
     return recommendations.find((r) => Number(r.id) === chartCountryId) ?? recommendations[0];
   }, [recommendations, chartCountryId]);
 
+  const chartRank = useMemo(() => {
+    if (!chartReco) return 1;
+    const idx = recommendations.findIndex((r) => Number(r.id) === Number(chartReco.id));
+    return idx >= 0 ? idx + 1 : 1;
+  }, [chartReco, recommendations]);
+
+  const intelligenceSerifBlurb = useMemo(() => {
+    const g = formatGoalTypeLabelFr(profileUsed?.goal_type);
+    return `Analyse générée pour un profil ${g}, orientée vers les destinations présentant le meilleur équilibre entre accès visa, fluidité des démarches et adéquation avec votre objectif principal.`;
+  }, [profileUsed?.goal_type]);
+
   const toggleCompare = useCallback((countryId: number) => {
     setCompareSelectedIds((prev) => {
       const next = new Set(prev);
@@ -224,63 +254,42 @@ function RecommendationsPageInner() {
 
   if (!isLoaded || loading) {
     return (
-      <div>
-        <div className="mb-8 sm:mb-10">
-          <h1 className="mb-2 text-2xl font-black tracking-tight text-text sm:text-3xl lg:text-4xl">
+      <div className="min-h-screen bg-[#FDFBF4]">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+          <h1 className="text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl lg:text-4xl">
             Intelligence de recommandation
           </h1>
+          <p className="mt-2 max-w-2xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/80 sm:text-base">
+            Analyse multi-critères pour prioriser les destinations alignées avec votre profil de mobilité.
+          </p>
+          <div className="mt-8">
+            <DashboardPageSkeleton />
+          </div>
         </div>
-        <DashboardPageSkeleton />
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="mb-8 sm:mb-10">
-        <h1 className="mb-2 text-2xl font-black tracking-tight text-text sm:text-3xl lg:text-4xl">
-          Intelligence de recommandation
-        </h1>
-        <p className="text-sm font-medium text-muted sm:text-base">
-          Analyses basées sur votre profil et les données terrain — scoring déterministe et
-          explicable.
-        </p>
-      </div>
-
-      {readOnlyDemo ? (
-        <div className="mb-6 rounded-2xl border border-primary/35 bg-primary-soft/50 p-4 text-sm font-medium text-text shadow-card sm:p-5">
-          <span className="font-black text-primary">Mode découverte.</span> Résultats calculés avec
-          un profil de démonstration fixe (non personnalisable).{' '}
-          <SignInButton mode="modal">
-            <button
-              type="button"
-              className="font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
-            >
-              Connectez-vous
-            </button>
-          </SignInButton>{' '}
-          puis complétez votre profil pour des recommandations sur mesure.
-        </div>
-      ) : null}
-
+    <div className="min-h-screen bg-[#FDFBF4]">
       {focusCountryId != null ? (
         <div
-          className="mb-6 rounded-2xl border border-accent/35 bg-accent-soft/45 p-4 text-sm font-medium text-text shadow-card sm:p-5"
+          className="border-b border-[#0D1B3E]/10 bg-white/80 px-4 py-4 text-sm font-medium text-[#0D1B3E]/90 sm:px-6"
           role="status"
         >
-          <span className="font-black text-accent">Contexte pays.</span> Classement priorisé pour{' '}
+          <span className="font-black text-[#0D1B3E]">Contexte pays.</span> Classement priorisé pour{' '}
           <strong>{focusCountryName ?? `le pays #${focusCountryId}`}</strong>
           {focusCountryName ? ` (#${focusCountryId})` : null}.{' '}
           <Link
             href={`/countries/${focusCountryId}`}
-            className="font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+            className="font-black text-[#0D1B3E] underline decoration-[#0D1B3E]/35 underline-offset-2 hover:decoration-[#0D1B3E]"
           >
             Revoir la fiche
           </Link>
           {' · '}
           <Link
             href="/recommendations"
-            className="font-black text-muted underline decoration-muted/50 underline-offset-2 hover:text-primary hover:decoration-primary"
+            className="font-black text-[#0D1B3E]/55 underline decoration-[#0D1B3E]/25 underline-offset-2 hover:text-[#0D1B3E]"
           >
             Effacer le contexte
           </Link>
@@ -288,72 +297,97 @@ function RecommendationsPageInner() {
       ) : null}
 
       {recommendations.length === 0 ? (
-        <div className="mx-auto max-w-2xl rounded-2xl border border-line bg-surface px-6 py-10 text-center shadow-card sm:rounded-[2rem] sm:p-12">
-          <AlertCircle className="mx-auto mb-6 h-16 w-16 text-primary" />
-          <h2 className="mb-4 text-2xl font-black text-text">Besoin de plus d&apos;infos</h2>
-          <p className="mb-8 font-medium leading-relaxed text-muted">
-            Complétez votre profil pour obtenir des recommandations personnalisées basées sur votre
-            budget et vos objectifs.
+        <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
+          <h1 className="mb-2 text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">Intelligence de recommandation</h1>
+          <p className="mb-8 max-w-xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/78 sm:text-base">
+            Analyse multi-critères pour prioriser les destinations alignées avec votre profil de mobilité.
           </p>
-          <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
-            <Link
-              href="/profile"
-              className="inline-flex justify-center rounded-2xl bg-primary px-8 py-4 font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
-            >
-              Configurer mon profil
-            </Link>
-            <Link
-              href={emptyCtaExploreHref}
-              className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
-            >
-              Explorer les pays
-            </Link>
-            <Link
-              href={emptyCtaCompareHref}
-              className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
-            >
-              Tester le comparateur
-            </Link>
+          <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white px-6 py-10 text-center shadow-sm sm:rounded-3xl sm:p-12">
+            <AlertCircle className="mx-auto mb-6 h-16 w-16 text-[#0D1B3E]/35" />
+            <h2 className="mb-4 text-2xl font-black text-[#0D1B3E]">Besoin de plus d&apos;infos</h2>
+            <p className="mb-8 font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/75 sm:text-base">
+              Complétez votre profil pour obtenir des recommandations personnalisées basées sur votre budget et vos
+              objectifs.
+            </p>
+            <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/profile"
+                className="inline-flex justify-center rounded-xl bg-[#0D1B3E] px-8 py-4 text-xs font-black uppercase tracking-wider text-white shadow-md transition-colors hover:bg-[#0D1B3E]/90"
+              >
+                Configurer mon profil
+              </Link>
+              <Link
+                href={emptyCtaExploreHref}
+                className="inline-flex justify-center rounded-xl border-2 border-[#0D1B3E]/20 bg-white px-8 py-4 text-xs font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]/40"
+              >
+                Explorer les pays
+              </Link>
+              <Link
+                href={emptyCtaCompareHref}
+                className="inline-flex justify-center rounded-xl border-2 border-[#0D1B3E]/20 bg-white px-8 py-4 text-xs font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]/40"
+              >
+                Tester le comparateur
+              </Link>
+            </div>
           </div>
         </div>
       ) : (
         <>
-          {profileUsed ? (
-            <ProfileContextBanner profile={profileUsed} variant="recommendation" />
-          ) : null}
+          <div className="flex min-h-[min(100vh,520px)] flex-1 flex-col lg:min-h-[calc(100vh-0px)] lg:flex-row">
+            <aside className="w-full shrink-0 border-b border-[#0D1B3E]/10 bg-[#FDFBF4] px-5 py-8 sm:px-8 lg:w-[min(100%,420px)] lg:border-b-0 lg:border-r lg:py-10 xl:w-[440px]">
+              {readOnlyDemo ? (
+                <div className="mb-8 rounded-2xl border border-[#0D1B3E]/12 bg-white p-5 shadow-sm">
+                  <div className="flex gap-4">
+                    <UserCircle className="h-11 w-11 shrink-0 text-[#0D1B3E]" aria-hidden />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#0D1B3E]">
+                        Session invité
+                      </p>
+                      <p className="mt-2 text-sm font-medium leading-relaxed text-[#0D1B3E]/75">
+                        Vos recommandations sont temporaires. Connectez-vous pour sauvegarder ce profil de mobilité et
+                        accéder aux analyses comparatives détaillées.
+                      </p>
+                      <SignInButton mode="modal">
+                        <button
+                          type="button"
+                          className="mt-4 w-full rounded-xl border-2 border-[#0D1B3E] bg-transparent px-4 py-3 text-center text-[11px] font-black uppercase tracking-[0.2em] text-[#0D1B3E] transition-colors hover:bg-[#0D1B3E]/5 sm:w-auto sm:min-w-[200px]"
+                        >
+                          S&apos;authentifier
+                        </button>
+                      </SignInButton>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
 
-          <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-text">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-line text-primary focus:ring-primary"
-                checked={compareMode}
-                onChange={(ev) => {
-                  setCompareMode(ev.target.checked);
-                  if (!ev.target.checked) setCompareSelectedIds([]);
-                }}
-              />
-              Mode comparaison radar (2 à 3 pays)
-            </label>
-            {compareMode ? (
-              <p className="text-xs font-medium text-muted sm:max-w-md sm:text-right">
-                Activez les cases dans le classement ci-dessous ; la zone de comparaison apparaît
-                sous le radar principal.
+              <h1 className="text-2xl font-black leading-tight tracking-tight text-[#0D1B3E] sm:text-3xl lg:text-[1.65rem] xl:text-3xl">
+                Intelligence de recommandation
+              </h1>
+              <p className="mt-4 font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/82 sm:text-[15px]">
+                {intelligenceSerifBlurb}
               </p>
-            ) : null}
-          </div>
 
-          {chartReco?.breakdown ? (
-            <div className="mb-10 grid min-w-0 gap-6 lg:grid-cols-2">
-              <Card className="min-w-0 border-line bg-surface shadow-card">
-                <CardContent className="space-y-4 p-4 sm:p-6">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <h2 className="text-lg font-black text-text">Radar — {chartReco.name}</h2>
+              {chartReco ? (
+                <div className="mt-8 space-y-6">
+                  <div>
+                    <span className="inline-flex bg-[#0D1B3E] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white">
+                      Rank #{chartRank}
+                    </span>
+                    <p className="mt-3 text-3xl font-black tracking-tight text-[#0D1B3E] sm:text-4xl">{chartReco.name}</p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="compass-country-select" className="sr-only">
+                      Pays affiché sur la projection
+                    </label>
                     <Select
                       value={String(chartReco.id)}
                       onValueChange={(v) => setChartCountryId(Number(v))}
                     >
-                      <SelectTrigger className="w-full border-line bg-inset sm:w-[220px]">
+                      <SelectTrigger
+                        id="compass-country-select"
+                        className="h-11 w-full max-w-full border-[#0D1B3E]/20 bg-white text-[#0D1B3E] sm:max-w-xs"
+                      >
                         <SelectValue placeholder="Pays" />
                       </SelectTrigger>
                       <SelectContent>
@@ -365,98 +399,136 @@ function RecommendationsPageInner() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <ScoreBreakdownChart breakdown={chartReco.breakdown} />
-                  <Link
-                    href={`/countries/${chartReco.id}`}
-                    className="inline-block text-xs font-bold text-primary underline-offset-2 hover:underline"
-                  >
-                    Ouvrir la fiche pays →
-                  </Link>
-                </CardContent>
-              </Card>
 
-              <Card className="min-w-0 border-line bg-surface shadow-card">
-                <CardContent className="space-y-4 p-4 sm:p-6">
-                  <h2 className="text-lg font-black text-text">Détail des piliers</h2>
-                  <div className="grid gap-3">
-                    <RecoMetricBar label="Visa" value={chartReco.breakdown.visa} />
-                    <RecoMetricBar
-                      label="Friction (facilité)"
-                      value={chartReco.breakdown.friction}
-                    />
-                    <RecoMetricBar
-                      label="Adéquation objectif"
-                      value={chartReco.breakdown.goalMatch}
-                    />
-                    <RecoMetricBar
-                      label="Risque refus (inv.)"
-                      value={100 - chartReco.breakdown.risk}
-                    />
-                  </div>
-                  <p className="text-xs font-medium text-muted">
-                    Même décomposition que le moteur d&apos;analyse manuelle : visa, friction,
-                    objectif et risque perçu.
-                  </p>
-                  {chartReco.topDrivers && chartReco.topDrivers.length > 0 ? (
-                    <div className="rounded-lg border border-line bg-inset p-3">
-                      <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted">
-                        Facteurs les plus influents (vs neutre)
+                  {chartReco.breakdown ? (
+                    <div className="space-y-5 pt-2">
+                      <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/50">
+                        Axes de mobilité
                       </p>
-                      <ul className="list-disc space-y-1.5 pl-4 text-xs font-medium text-muted">
+                      <CompassAxisBar label="Économie & objectif" value={chartReco.breakdown.goalMatch} />
+                      <CompassAxisBar label="Visa & immig." value={chartReco.breakdown.visa} />
+                      <CompassAxisBar label="Qualité de parcours" value={chartReco.breakdown.friction} />
+                    </div>
+                  ) : null}
+
+                  {chartReco.topDrivers && chartReco.topDrivers.length > 0 ? (
+                    <div className="rounded-xl border border-[#0D1B3E]/10 bg-white/90 p-4">
+                      <p className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#0D1B3E]/45">
+                        Facteurs clés
+                      </p>
+                      <ul className="list-disc space-y-1.5 pl-4 text-xs font-medium leading-relaxed text-[#0D1B3E]/78">
                         {formatScoreDriversFrench(chartReco.topDrivers).map((line, i) => (
-                          <li key={`${chartReco.id}-driver-${i}`}>{line}</li>
+                          <li key={`${chartReco.id}-drv-${i}`}>{line}</li>
                         ))}
                       </ul>
                     </div>
                   ) : null}
-                </CardContent>
-              </Card>
-            </div>
-          ) : null}
 
-          {compareRecos.length >= 2 ? (
-            <Card className="mb-10 min-w-0 border-line bg-surface shadow-card">
-              <CardContent className="space-y-4 p-4 sm:p-6">
-                <h2 className="text-lg font-black text-text">Comparaison radar (2–3 pays)</h2>
-                <p className="text-xs font-medium text-muted">
-                  Même échelle que le radar principal — survolez un axe pour la définition alignée
-                  sur le moteur.
-                </p>
-                <div className="grid min-w-0 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                  {compareRecos.map((r) => (
-                    <div
-                      key={String(r.id)}
-                      className="min-w-0 rounded-xl border border-line bg-inset p-4"
-                    >
-                      <p className="mb-2 text-sm font-black text-text">{r.name}</p>
-                      <ScoreBreakdownChart
-                        breakdown={r.breakdown!}
-                        chartHeight={200}
-                        withAxisLegend={false}
-                      />
-                      <Link
-                        href={`/countries/${r.id}`}
-                        className="mt-2 inline-block text-xs font-bold text-primary underline-offset-2 hover:underline"
-                      >
-                        Ouvrir la fiche pays →
-                      </Link>
-                    </div>
-                  ))}
+                  <Link
+                    href={`/countries/${chartReco.id}`}
+                    className="inline-block text-xs font-black uppercase tracking-wider text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+                  >
+                    Ouvrir la fiche pays →
+                  </Link>
                 </div>
-              </CardContent>
-            </Card>
-          ) : null}
+              ) : null}
+            </aside>
 
-          <div className="mb-4">
-            <h2 className="text-lg font-black text-text">Classement</h2>
+            <main className="relative flex min-h-[320px] flex-1 flex-col bg-[#e8e8e8] lg:min-h-0">
+              <div className="absolute right-4 top-4 z-[1] max-w-[calc(100%-2rem)] sm:right-6 sm:top-6">
+                <span className="inline-block border border-[#0D1B3E]/10 bg-white px-3 py-1.5 text-[9px] font-black uppercase leading-tight tracking-[0.14em] text-[#0D1B3E] shadow-sm sm:text-[10px]">
+                  {globalProjectionBadgeLabel()}
+                </span>
+              </div>
+              {chartReco?.breakdown ? (
+                <div className="flex flex-1 flex-col items-center justify-center px-4 pb-12 pt-16 sm:px-8 sm:pb-16 sm:pt-20">
+                  <div className="relative w-full max-w-[min(100%,420px)]">
+                    <div
+                      className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 select-none text-center font-sans text-[11px] font-light tracking-[0.3em] text-[#0D1B3E]/15"
+                      aria-hidden
+                    >
+                      300×300
+                    </div>
+                    <div className="relative z-[1] mx-auto w-full min-w-0">
+                      <ScoreBreakdownChart breakdown={chartReco.breakdown} chartHeight={300} withAxisLegend={false} />
+                    </div>
+                  </div>
+                  <div className="relative z-[1] mt-6 flex justify-center gap-8 opacity-40" aria-hidden>
+                    <span className="h-3 w-3 rounded-full border-2 border-[#0D1B3E] bg-white shadow-inner" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#0D1B3E]/35" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#0D1B3E]/25" />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-1 items-center justify-center p-8 text-sm font-medium text-[#0D1B3E]/50">
+                  Projection indisponible pour ce résultat.
+                </div>
+              )}
+            </main>
           </div>
 
-          <RecommendationPanel
-            results={panelRows}
-            compareMode={compareMode}
-            compareSelectedIds={compareSelectedIds}
-            onCompareToggle={toggleCompare}
-          />
+          <div className="mx-auto max-w-6xl space-y-10 px-4 py-12 sm:px-6 sm:py-14">
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+              <label className="flex cursor-pointer items-center gap-2 text-sm font-bold text-[#0D1B3E]">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-[#0D1B3E]/25 text-[#0D1B3E] focus:ring-[#0D1B3E]/30"
+                  checked={compareMode}
+                  onChange={(ev) => {
+                    setCompareMode(ev.target.checked);
+                    if (!ev.target.checked) setCompareSelectedIds([]);
+                  }}
+                />
+                Mode comparaison radar (2 à 3 pays)
+              </label>
+              {compareMode ? (
+                <p className="text-xs font-medium text-[#0D1B3E]/60 sm:max-w-md sm:text-right">
+                  Activez les cases dans le classement ci-dessous ; la zone de comparaison apparaît sous le radar
+                  principal.
+                </p>
+              ) : null}
+            </div>
+
+            {compareRecos.length >= 2 ? (
+              <Card className="min-w-0 border-[#0D1B3E]/10 bg-white shadow-sm">
+                <CardContent className="space-y-4 p-4 sm:p-6">
+                  <h2 className="text-lg font-black text-[#0D1B3E]">Comparaison radar (2–3 pays)</h2>
+                  <p className="text-xs font-medium text-[#0D1B3E]/65">
+                    Même échelle que le radar principal — survolez un axe pour la définition alignée sur le moteur.
+                  </p>
+                  <div className="grid min-w-0 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                    {compareRecos.map((r) => (
+                      <div key={String(r.id)} className="min-w-0 rounded-xl border border-[#0D1B3E]/10 bg-[#FDFBF4] p-4">
+                        <p className="mb-2 text-sm font-black text-[#0D1B3E]">{r.name}</p>
+                        <ScoreBreakdownChart
+                          breakdown={r.breakdown!}
+                          chartHeight={200}
+                          withAxisLegend={false}
+                        />
+                        <Link
+                          href={`/countries/${r.id}`}
+                          className="mt-2 inline-block text-xs font-bold text-[#0D1B3E] underline-offset-2 hover:underline"
+                        >
+                          Ouvrir la fiche pays →
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            <div>
+              <h2 className="mb-6 text-lg font-black tracking-tight text-[#0D1B3E]">Classement</h2>
+              <RecommendationPanel
+                results={panelRows}
+                compareMode={compareMode}
+                compareSelectedIds={compareSelectedIds}
+                onCompareToggle={toggleCompare}
+                variant="compass"
+              />
+            </div>
+          </div>
         </>
       )}
     </div>

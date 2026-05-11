@@ -25,7 +25,7 @@ Matérialiser les **résultats moteur** en **vue cartographique + liste** naviga
 ## 2. Primary User Actions
 - **Primaires :** sélectionner point carte ; ouvrir pays.
 - **Secondaires :** filtrer par score / région ; trier.
-- **Conversion :** sign-in pour persistance API favorites/history.
+- **Conversion :** `SignInButton` modal (libellé **S'authentifier**) pour persistance profil / analyses détaillées.
 
 ---
 
@@ -36,29 +36,32 @@ Matérialiser les **résultats moteur** en **vue cartographique + liste** naviga
 ---
 
 ## 4. Layout Architecture
-**Implémentation actuelle (`app/(public)/recommendations/page.tsx`) :** titre “Intelligence de recommandation” → bannières profil / mode démo → **graphique** (`ScoreBreakdownChart` + pays actif) → **panneau** `RecommendationPanel` + barres métriques (`Progress`) — **pas** de carte géo sur cette route (la “boussole” est la **liste classée + chart**, pas une map).
+**Implémentation actuelle (`app/(public)/recommendations/page.tsx`) — PAGE 06 Stitch :** coque crème `#FDFBF4` ; **colonne gauche (~1/3)** : carte **Session invité** (icône utilisateur, texte temporaire, bouton outline **S’authentifier** / `SignInButton`) si anonyme ; titre **Intelligence de recommandation** ; paragraphe **serif** dérivé du `goal_type` (`formatGoalTypeLabelFr`) ; puce **Rank #n** + nom pays + `Select` de focus ; bloc **Axes de mobilité** (trois barres horizontales marine sur piste grise : objectif, visa, friction / « qualité de parcours ») ; facteurs clés (`formatScoreDriversFrench`) ; lien fiche pays. **Colonne droite (~2/3)** fond gris `#e8e8e8` : pastille **GLOBAL PROJECTION — Qn YYYY** ; **radar** `ScoreBreakdownChart` (légende axes masquée sur cette vue) avec filigrane décoratif « 300×300 » + points (rappel maquette carte). Sous le split : mode comparaison, grille radars optionnelle, **Classement** avec `RecommendationPanel` **`variant="compass"`** (cartes blanches, barres marine, chip `Rank #k`). **Pas** de carte géo réelle sur cette route.
+
+### 4bis. Référence visuelle
+`docs/google-stitch/assets/page-06-compass-stitch-reference.png`
 
 ---
 
 ## 5. Full Section Breakdown
 
 ### 5.1 Suspense & skeleton
-- Même pattern que probabilités : `Suspense` + fallback `DashboardPageSkeleton` sous le `h1`.
+- `Suspense` + fallback `DashboardPageSkeleton` sous titre / sous-titre serif (coque crème, marine).
 
 ### 5.2 Chargement reco & profil
 - **Connecté :** profil `GET /api/user/profile` puis reco (logique équivalente probabilités côté API reco — voir code).
-- **Anonyme :** profil démo + bannière `SignInButton` modal.
+- **Anonyme :** profil démo + carte **Session invité** + `SignInButton` (sans bannière « mode découverte » texte seul héritée).
 - **Query `countryId` / `countryName` :** focus pays pour chart / highlight (aligné PAGE 05).
 
-### 5.3 Métriques synthèse (`RecoMetricBar`)
-- **Purpose :** barres label + valeur 0–100 pour lecteurs qui préfèrent chiffres aux courbes.
+### 5.3 Axes de mobilité (sidebar)
+- **Purpose :** trois barres 0–100 (styles Compass, pas `Progress` dégradé) alignées sur `breakdown.goalMatch`, `breakdown.visa`, `breakdown.friction`.
 
 ### 5.4 `ScoreBreakdownChart` + sélection pays
-- **Purpose :** inspecter un pays du top-N sur les axes du breakdown.
-- **État :** `chartCountryId` ; loading chart cohérent avec liste.
+- **Purpose :** radar du pays sélectionné dans la **zone grise** droite ; `Select` dans la sidebar synchronise `chartCountryId` / rang affiché.
+- **État :** `chartCountryId` ; chargement cohérent avec liste.
 
 ### 5.5 `RecommendationPanel` + mode compare
-- **Purpose :** lignes mappées via `mapApiRecommendationToPanelRow` ; toggle **compare** multi-sélection (voir implémentation `compareMode` / `compareSelectedIds`).
+- **Purpose :** lignes mappées via `mapApiRecommendationToPanelRow` ; variante **`compass`** pour PAGE 06 ; toggle **compare** multi-sélection (`compareMode` / `compareSelectedIds`).
 - **Empty :** message + liens explorer / compare objectif-aware (`ctaExploreHref`, `ctaCompareHref`).
 
 ### 5.6 Drivers & narrative
@@ -68,7 +71,7 @@ Matérialiser les **résultats moteur** en **vue cartographique + liste** naviga
 - **Purpose :** feedback non bloquant sur échec fetch / payload invalide.
 
 ### 5.8 Écart vs maquette “carte”
-- **Note Stitch :** si le brief design impose une carte, traiter comme **variante future** ; la spec produit **PAGE 06** reste ancrée sur la liste + chart actuelles.
+- **Note Stitch :** la colonne droite reprend l’**espace carte** (gris + badge projection) mais affiche le **radar** réel ; filigrane « 300×300 » = rappel visuel maquette, pas une carte géographique.
 
 ---
 
@@ -110,4 +113,4 @@ Carte style **editorial travel print** (peu de labels UI sur la carte). Liste av
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 06]
+![PAGE 06 Compass — référence Stitch](../assets/page-06-compass-stitch-reference.png)
