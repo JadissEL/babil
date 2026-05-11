@@ -124,7 +124,7 @@ export function schengenCanonicalEnglishName(countryName: string): string | null
   const canonicalViaAlias = MERGE_KEY_TO_CANONICAL_EN[k]
   if (canonicalViaAlias && SCHENGEN_COUNTRIES_ENGLISH.has(canonicalViaAlias)) return canonicalViaAlias
 
-  for (const en of SCHENGEN_COUNTRIES_ENGLISH) {
+  for (const en of Array.from(SCHENGEN_COUNTRIES_ENGLISH)) {
     if (normalizedNameLookupKey(en) === k) return en
   }
 
