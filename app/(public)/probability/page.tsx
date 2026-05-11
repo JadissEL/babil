@@ -1,16 +1,17 @@
 'use client';
 
-import { SignInButton, useUser } from '@clerk/nextjs';
+import { SignUpButton, useUser } from '@clerk/nextjs';
 import {
-  Brain,
   ChevronDown,
   ChevronUp,
   CheckCircle2,
   AlertCircle,
+  AlertTriangle,
   Lightbulb,
+  Lock,
+  PencilLine,
   TrendingUp,
   Scale,
-  Star,
   ShieldAlert,
   Info,
 } from 'lucide-react';
@@ -18,9 +19,9 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton';
-import { ProfileContextBanner } from '@/components/dashboard/ProfileContextBanner';
 import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
+import { formatGoalTypeLabelFr } from '@/lib/probability-profile-narrative';
 import {
   describeTopCountrySignals,
   orderedProbabilityBreakdown,
@@ -35,6 +36,37 @@ import { appToast } from '@/lib/toast-store';
 import type { ProbabilityApiRow } from '@/lib/types';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 
+const ORBIT_NAVY = '#0D1B3E'
+
+function ProbabilityScoreRing({ score }: { score: number }) {
+  const pct = Math.min(100, Math.max(0, Math.round(score)))
+  const r = 56
+  const c = 2 * Math.PI * r
+  const dash = (pct / 100) * c
+  return (
+    <div className="relative mx-auto flex h-[220px] w-[220px] flex-col items-center justify-center sm:h-[240px] sm:w-[240px]">
+      <svg className="absolute inset-0 h-full w-full" viewBox="0 0 140 140" aria-hidden>
+        <circle cx="70" cy="70" r={r} fill="none" stroke="rgba(13,27,62,0.12)" strokeWidth="12" />
+        <circle
+          cx="70"
+          cy="70"
+          r={r}
+          fill="none"
+          stroke={ORBIT_NAVY}
+          strokeWidth="12"
+          strokeLinecap="round"
+          strokeDasharray={`${dash} ${c}`}
+          transform="rotate(-90 70 70)"
+        />
+      </svg>
+      <div className="relative z-[1] flex flex-col items-center justify-center">
+        <span className="font-serif text-4xl font-bold tabular-nums text-[#0D1B3E] sm:text-[2.75rem]">{pct}%</span>
+        <span className="mt-1 text-center text-xs font-semibold text-[#0D1B3E]/60">Probabilité estimée</span>
+      </div>
+    </div>
+  )
+}
+
 export default function ProbabilityPage() {
   return (
     <Suspense fallback={<ProbabilityPageFallback />}>
@@ -45,16 +77,17 @@ export default function ProbabilityPage() {
 
 function ProbabilityPageFallback() {
   return (
-    <div className="mx-auto max-w-6xl pb-12 sm:pb-16">
-      <div className="mb-8 flex min-w-0 items-center gap-3 sm:mb-10 sm:gap-4">
-        <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
-          <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
+    <div className="min-h-screen bg-[#FDFBF4]">
+      <div className="mx-auto max-w-6xl px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-10">
+        <h1 className="text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">Moteur de probabilités visa</h1>
+        <p className="mt-2 max-w-2xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/80 sm:text-base">
+          Analyse prédictive basée sur les historiques consulaires récents et les signaux socio-économiques de votre
+          profil.
+        </p>
+        <div className="mt-8">
+          <DashboardPageSkeleton />
         </div>
-        <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl">
-          Moteur de probabilités visa
-        </h1>
       </div>
-      <DashboardPageSkeleton />
     </div>
   );
 }
@@ -218,78 +251,81 @@ function ProbabilityPageInner() {
     }
   };
 
-  // Calculate Global Strategy based on results
   const topCountry = results[0];
-  const backupCountries = results.slice(1, 4);
-  const highRiskCountries = results.filter((r) => r.globalScore < 40).slice(0, 3);
 
   if (!isLoaded || loading) {
     return (
-      <div className="mx-auto max-w-6xl pb-12 sm:pb-16">
-        <div className="mb-8 flex min-w-0 items-center gap-3 sm:mb-10 sm:gap-4">
-          <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
-            <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
-          </div>
-          <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl">
+      <div className="min-h-screen bg-[#FDFBF4]">
+        <div className="mx-auto max-w-6xl px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-10">
+          <h1 className="text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl lg:text-4xl">
             Moteur de probabilités visa
           </h1>
+          <p className="mt-2 max-w-2xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/80 sm:text-base">
+            Analyse prédictive basée sur les historiques consulaires récents et les signaux socio-économiques de votre
+            profil.
+          </p>
+          <div className="mt-8">
+            <DashboardPageSkeleton />
+          </div>
         </div>
-        <DashboardPageSkeleton />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-6xl pb-12 sm:pb-16">
-      <div className="mb-8 flex flex-col justify-between gap-4 sm:mb-10 sm:gap-6 md:flex-row md:items-center">
-        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-          <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
-            <Brain className="h-7 w-7 sm:h-8 sm:w-8" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl lg:text-4xl">
+    <div className="min-h-screen bg-[#FDFBF4]">
+      <div className="mx-auto max-w-6xl px-4 pb-12 pt-8 sm:px-6 sm:pb-16 sm:pt-10">
+        <div className="mb-8 flex flex-col justify-between gap-6 border-b border-[#0D1B3E]/10 pb-8 sm:mb-10 md:flex-row md:items-start">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl lg:text-4xl">
               Moteur de probabilités visa
             </h1>
-            <p className="text-sm font-medium text-muted sm:text-base">
-              Analyse multi-facteurs basée sur votre profil.
+            <p className="mt-3 max-w-2xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/80 sm:text-[15px]">
+              Analyse prédictive basée sur les historiques consulaires récents et les signaux socio-économiques de votre
+              profil.
             </p>
+          </div>
+          <div className="flex w-full shrink-0 md:w-auto">
+            <button
+              type="button"
+              onClick={() => setShowComparison(!showComparison)}
+              disabled={comparisonList.length < 2}
+              className={`flex w-full items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-xs font-black uppercase tracking-wider transition-all sm:w-auto sm:px-5 ${
+                comparisonList.length >= 2
+                  ? 'border-[#0D1B3E] bg-[#0D1B3E] text-white shadow-md hover:bg-[#0D1B3E]/90'
+                  : 'cursor-not-allowed border-[#0D1B3E]/15 bg-white text-[#0D1B3E]/40'
+              }`}
+            >
+              <Scale className="h-5 w-5 shrink-0" />
+              <span className="truncate">
+                {showComparison ? 'Masquer la comparaison' : `Comparer (${comparisonList.length})`}
+              </span>
+            </button>
           </div>
         </div>
 
-        <div className="flex w-full md:w-auto">
-          <button
-            type="button"
-            onClick={() => setShowComparison(!showComparison)}
-            disabled={comparisonList.length < 2}
-            className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition-all sm:w-auto sm:px-6 ${
-              comparisonList.length >= 2
-                ? 'bg-primary text-white shadow-soft hover:bg-primary-hover'
-                : 'cursor-not-allowed bg-inset text-muted'
-            }`}
-          >
-            <Scale className="h-5 w-5 shrink-0" />
-            <span className="truncate">
-              {showComparison ? 'Masquer la comparaison' : `Comparer (${comparisonList.length})`}
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {readOnlyDemo ? (
-        <div className="mb-6 rounded-2xl border border-primary/35 bg-primary-soft/50 p-4 text-sm font-medium text-text shadow-card sm:p-5">
-          <span className="font-black text-primary">Mode découverte.</span> Scores calculés avec un
-          profil de démonstration fixe.{' '}
-          <SignInButton mode="modal">
-            <button
-              type="button"
-              className="font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
-            >
-              Connectez-vous
-            </button>
-          </SignInButton>{' '}
-          et renseignez votre profil pour une lecture personnalisée.
-        </div>
-      ) : null}
+        {readOnlyDemo ? (
+          <div className="mb-8 flex flex-col gap-5 rounded-2xl border border-[#0D1B3E]/12 bg-white p-5 shadow-md sm:flex-row sm:items-center sm:justify-between sm:rounded-3xl sm:p-6">
+            <div className="flex min-w-0 gap-4">
+              <Lock className="h-10 w-10 shrink-0 text-[#0D1B3E]" aria-hidden />
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-[#0D1B3E]">Mode Découverte</p>
+                <p className="mt-2 text-sm font-medium leading-relaxed text-[#0D1B3E]/75">
+                  Vos résultats ne sont pas sauvegardés. Créez un compte pour conserver l&apos;historique et débloquer
+                  les analyses détaillées.
+                </p>
+              </div>
+            </div>
+            <SignUpButton mode="modal">
+              <button
+                type="button"
+                className="w-full shrink-0 rounded-xl bg-[#0D1B3E] px-6 py-3.5 text-center text-xs font-black uppercase tracking-[0.2em] text-white shadow-md transition-colors hover:bg-[#0D1B3E]/90 sm:w-auto"
+              >
+                Créer un compte
+              </button>
+            </SignUpButton>
+          </div>
+        ) : null}
 
       {focusCountryId != null ? (
         <div
@@ -346,69 +382,78 @@ function ProbabilityPageInner() {
         </div>
       ) : (
         <div className="space-y-12">
-          {profileUsed ? (
-            <ProfileContextBanner profile={profileUsed} variant="probability" />
-          ) : null}
+          <div className="flex flex-wrap items-end justify-between gap-3 border-b border-[#0D1B3E]/10 pb-5">
+            <p className="min-w-0 text-[11px] font-black uppercase leading-snug tracking-[0.2em] text-[#0D1B3E]/55">
+              Profil actif{' '}
+              <span className="mt-1 block font-sans text-sm font-black normal-case tracking-normal text-[#0D1B3E] sm:inline sm:mt-0">
+                {formatGoalTypeLabelFr(profileUsed?.goal_type)} — {topCountry?.country ?? '—'}
+              </span>
+            </p>
+            {readOnlyDemo ? (
+              <SignUpButton mode="modal">
+                <button
+                  type="button"
+                  className="inline-flex shrink-0 items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+                >
+                  <PencilLine className="h-4 w-4" aria-hidden />
+                  Modifier
+                </button>
+              </SignUpButton>
+            ) : (
+              <Link
+                href="/profile"
+                className="inline-flex shrink-0 items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+              >
+                <PencilLine className="h-4 w-4" aria-hidden />
+                Modifier
+              </Link>
+            )}
+          </div>
 
-          {/* Global Output Section */}
-          <section className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="min-w-0 bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-3xl text-white shadow-xl shadow-green-100">
-              <div className="flex items-center gap-2 mb-4">
-                <Star className="w-5 h-5" />
-                <span className="text-xs font-black uppercase tracking-widest opacity-80">
-                  Meilleur choix
-                </span>
+          <section className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-2 lg:items-stretch">
+            <div className="flex min-h-0 flex-col rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm sm:rounded-3xl sm:p-8">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#0D1B3E]/45">Score global</p>
+              <div className="mt-4 flex flex-1 flex-col items-center justify-center py-2">
+                <ProbabilityScoreRing score={topCountry?.globalScore ?? 0} />
               </div>
-              <h3 className="text-3xl font-black mb-1">{topCountry?.country}</h3>
-              <p className="text-green-100 text-sm font-bold mb-6">
-                Score de succès estimé: {topCountry?.globalScore}%
-              </p>
-              <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
-                <p className="text-xs font-bold leading-relaxed">
+              {topCountry?.country ? (
+                <p className="mt-2 text-center text-sm font-bold text-[#0D1B3E]/80">{topCountry.country}</p>
+              ) : null}
+            </div>
+
+            <div className="flex min-h-0 flex-col gap-6">
+              <div className="flex flex-1 flex-col rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm sm:rounded-3xl sm:p-8">
+                <div className="mb-4 flex items-center gap-2 text-[#0D1B3E]">
+                  <Lightbulb className="h-5 w-5 shrink-0" aria-hidden />
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em]">Brief conseiller</span>
+                </div>
+                <p className="font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/85 sm:text-[15px]">
                   {describeTopCountrySignals(
                     topCountry?.countrySignals as ProbabilityCountrySignals | undefined,
                   )}
                 </p>
+                <div className="mt-5 inline-flex w-fit items-center gap-2 rounded-full border border-sky-200/80 bg-sky-50 px-3 py-1.5 text-xs font-bold text-[#0D1B3E]">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#0D1B3E]" aria-hidden />
+                  {topCountry?.level === 'Very High' || topCountry?.level === 'High'
+                    ? 'Favorable'
+                    : topCountry?.level === 'Medium'
+                      ? 'Modéré'
+                      : topCountry?.level === 'Low' || topCountry?.level === 'Very Low'
+                        ? 'Sous réserve'
+                        : (englishScoreLevelToFr(topCountry?.level) ?? 'À confirmer')}
+                </div>
               </div>
-            </div>
 
-            <div className="min-w-0 rounded-3xl border border-line bg-surface p-6 shadow-soft">
-              <div className="mb-4 flex items-center gap-2">
-                <ShieldAlert className="h-5 w-5 text-warning" />
-                <span className="text-xs font-black uppercase tracking-widest text-muted">
-                  Pays de secours
-                </span>
-              </div>
-              <div className="space-y-3">
-                {backupCountries.map((c) => (
-                  <div
-                    key={c.country}
-                    className="flex items-center justify-between rounded-xl border border-line bg-inset p-3"
-                  >
-                    <span className="font-bold text-text">{c.country}</span>
-                    <span className="text-xs font-black text-primary">{c.globalScore}%</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="min-w-0 rounded-3xl border border-line bg-surface p-6 shadow-soft">
-              <div className="mb-4 flex items-center gap-2 text-danger">
-                <AlertCircle className="h-5 w-5" />
-                <span className="text-xs font-black uppercase tracking-widest text-muted">
-                  Risques élevés
-                </span>
-              </div>
-              <div className="space-y-3">
-                {highRiskCountries.map((c) => (
-                  <div
-                    key={c.country}
-                    className="flex items-center justify-between rounded-xl border border-red-500/25 bg-red-500/10 p-3"
-                  >
-                    <span className="font-bold text-text">{c.country}</span>
-                    <span className="text-xs font-black text-danger">{c.globalScore}%</span>
-                  </div>
-                ))}
+              <div className="flex flex-1 flex-col rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm sm:rounded-3xl sm:p-8">
+                <div className="mb-4 flex items-center gap-2 text-[#0D1B3E]">
+                  <AlertTriangle className="h-5 w-5 shrink-0 text-amber-600" aria-hidden />
+                  <span className="text-[11px] font-black uppercase tracking-[0.2em]">Points de vigilance</span>
+                </div>
+                <p className="font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/85 sm:text-[15px]">
+                  {topCountry?.reasons?.length
+                    ? topCountry.reasons[0]
+                    : 'Les estimations restent indicatives : vérifiez les exigences officielles du consulat et la cohérence de votre dossier (garanties, liens au pays, pièces à jour).'}
+                </p>
               </div>
             </div>
           </section>
@@ -652,6 +697,7 @@ function ProbabilityPageInner() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
