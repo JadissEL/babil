@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Espace Schengen',
+  title: 'Schengen Intelligence | VisaFlow',
   description:
-    'Vue Schengen pour profils marocains : pays membres, filtres et indicateurs visa / friction agrégés dans VisaFlow.',
+    'Terminal Schengen pour profils marocains : membres, comparaison 2–4 pays, acceptation, friction et délais — indicateurs indicatifs.',
 }
 
 export default function SchengenLayout({ children }: { children: ReactNode }) {

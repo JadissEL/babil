@@ -37,11 +37,22 @@ Centraliser la **lecture zone Schengen** : membres, signaux, éventuelles ambigu
 ---
 
 ## 4. Layout Architecture
-**Implémentation (`app/(public)/schengen/page.tsx`, client) :** titre + recherche → **barre comparer (2–4 pays)** → **tableau comparatif côte à côte** (si ≥ 2 sélectionnés) → **`GoogleAd`** → chargement spinner ou **liste mobile** / **table desktop** des membres Schengen avec colonnes friction / acceptation / ambassade + toggle **Comparer** par ligne.
+**Implémentation (`app/(public)/schengen/page.tsx`, client) :** coque **fond crème** `#FDFBF4` → **carte héro** blanche (filigrane Europe SVG léger, kicker *VisaFlow Intelligence*, titre serif **Schengen • Intelligence**, recherche soulignée *Filtrer les juridictions…*) → **barre « Comparaison active (n/4) »** (pilules pays + **Réinitialiser**) → **tableau métrique** (si ≥ 2 pays) : *Acceptation (Maroc)* avec flèches tendance vs médiane (`prismTrendForValue`), *Friction score* (pastilles + libellés FR), *Délai R-V. (est.)* (`friction_analysis.real_delay`) + colonne **+ Ajouter** → lien **`/compare`** → **`GoogleAd`** → **liste mobile** / **table desktop** membres (style marine/crème aligné Shield).
+
+**Maquette Stitch :** capture **`../assets/page-04-shield-stitch-reference.png`** — voir **§4bis**.
 
 **Source liste :** `GET /api/countries` → `normalizeCountriesApiListResponse` → filtre **`isSchengenMember(name)`** (canonical nom, pas seul `schengen_flag`).
 
+### 4bis. Écart maquette ↔ implémentation (2026-05)
+| Zone | Maquette | Code |
+|------|-----------|------|
+| Header global (logo, Destinations, Espace perso) | Oui | **`SiteHeader`** global — non recréé dans la page |
+| Rail gauche Analyses / Frontières | Oui | Non — navigation produit existante |
+| Filigrane carte | Europe outline | **SVG simplifié** (blob), pas carte géographique fidèle |
+| Footer légal centré | © 2024… | **`SiteFooter`** global si présent sur layout public |
+
 ---
+
 
 ## 5. Full Section Breakdown
 
@@ -109,7 +120,10 @@ Carte stylisée **Europe outline** ultra-light en filigrane. Grille **badges pay
 
 ---
 
-## 13. Screenshot Placeholder
+## 13. Screenshot reference (Stitch)
 
-### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 04]
+### Stitch Screenshot Reference — PAGE 04 (SHIELD)
+
+![Maquette Schengen VisaFlow — référence Stitch PAGE 04](../assets/page-04-shield-stitch-reference.png)
+
+*Capture intégrée au dépôt ; écarts → **§4bis**.*
