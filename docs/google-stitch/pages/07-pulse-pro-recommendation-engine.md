@@ -41,14 +41,39 @@ Header pro + toolbar → panneau contrôle pondérations → résultats split ch
 ---
 
 ## 5. Full Section Breakdown
-### 5.1 Radar axes
-`recommendation-radar-axes` — labels concis.
 
-### 5.2 Breakdown chart
-Barres empilées / stacked explanation.
+### 5.1 Header “Pro” & contexte
+- **Purpose :** titre page + badge **Pro** + rappel objectif actif (lien modifier → profile ou preset).
+- **Toolbar :** boutons “Réinitialiser pondérations”, “Exporter” (futur), “Comparer le top 3” (deep link **PAGE 03** avec pays pré-remplis si dispo).
 
-### 5.3 Recommendation panel
-Liste triée avec confiance.
+### 5.2 Panneau pondérations (`recommendation-radar-axes` + sliders)
+- **Purpose :** chaque axe (mobilité travail, coût, risque, etc.) a un **slider 0–100** ou normalisé avec somme contrainte selon logique produit.
+- **Interactions :** debounce 300–500ms sur recalcul lourd ; indicateur “calcul…” non bloquant.
+- **Edge :** si somme ≠ 100% selon règle moteur : message + bouton “Normaliser”.
+
+### 5.3 Radar bi-couche
+- **Purpose :** couche A = profil utilisateur idéal (lecture seule ou éditable selon produit) ; couche B = pays sélectionné ou moyenne top-1.
+- **A11y :** paragraphe équivalent listant scores numériques + ordre des axes.
+
+### 5.4 Breakdown chart (`ScoreBreakdownChart` patterns)
+- **Purpose :** barres empilées ou grouped par pays pour top-N ; légende interactive (toggle série).
+- **Loading :** skeleton barres avec mêmes proportions approximatives.
+
+### 5.5 `RecommendationPanel` — liste classée
+- **Purpose :** rang, drapeau, nom pays, **score composite**, chip confiance (haute / moyenne / données partielles).
+- **Interactions :** clic ligne → **PAGE 16** ; shift-clic futur pour ajout compare.
+- **Empty :** ajuster filtres / pondérations.
+
+### 5.6 Panneau “Pourquoi ce classement” (logs stylisés)
+- **Purpose :** 3 facteurs max en langage naturel (“Fort sur coût du logement”, “Faible sur friction visa travail”) — pas de stack trace.
+- **Source :** mapping depuis breakdown réel côté API.
+
+### 5.7 Slot premium / upgrade (placeholder produit)
+- **Purpose :** carte discrète “Rapport approfondi” ou “Historique illimité” sans bloquer l’outil gratuit.
+- **Conversion :** CTA secondaire outline.
+
+### 5.8 Erreurs & timeouts
+- **Purpose :** bannière partielle si un pays échoue au fetch ; liste des pays concernés + retry unitaire.
 
 ---
 

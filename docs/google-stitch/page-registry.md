@@ -38,5 +38,6 @@
 | 34 | GLIMPSE | Chrome global (`SiteChrome`, `app/layout`) | `pages/34-glimpse-site-chrome-shell.md` |
 | 35 | NEXUS | Shell espace connecté (sidebars + `DashboardLayoutClient`) | `pages/35-nexus-authenticated-shell.md` |
 | 36 | ANCHOR | Suite légale & confiance (mentions, confidentialité, cookies — **routes futures**) | `pages/36-anchor-trust-legal-suite.md` |
+| 37 | RELAY | Micro-feedback `BlockFeedback` (pouces utile / pas utile — transversal) | `pages/37-relay-block-feedback-micro-ui.md` |
 
 Paths in the **Markdown file** column are relative to `docs/google-stitch/`.

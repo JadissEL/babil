@@ -39,7 +39,34 @@ Intro + table scroll horizontal (`min-w` pattern) + lien retour explorer.
 ---
 
 ## 5. Full Section Breakdown
-Colonnes : fieldPath, description humaine, exemple valeur, source pipeline.
+
+### 5.1 Intro & lexique
+- **Purpose :** définir en 2 phrases `fieldPath`, `CountryObservation`, `full_data` (cache lecture) — public technique mais lisible.
+- **Lien :** retour explorer + ancre “Lire la provenance sur une fiche pays”.
+
+### 5.2 Barre de recherche inline (futur)
+- **Purpose :** filtre client-side sur colonne `fieldPath` + description ; highlight matches.
+- **Empty search :** message “Aucun champ — élargir la recherche”.
+
+### 5.3 Tableau principal
+- **Colonnes suggérées :** `fieldPath` (mono), **Description** (FR), **Exemple**, **Source** (agent / World Bank / …), **Dernière mise à jour** (si exposée).
+- **Zebra + hover :** ligne surlignée ; copier fieldPath au clic icône avec toast (PAGE 34).
+
+### 5.4 Icônes source (scan visuel)
+- **Purpose :** pictogramme cohérent par famille de pipeline (`lib/intelligence-pipeline` mental model).
+- **Légende :** ligne sous header table.
+
+### 5.5 Encart “Relation avec la provenance UI”
+- **Purpose :** capture d’écran ou wireframe du collapsible provenance sur **PAGE 16** pour relier jargon ↔ UI.
+
+### 5.6 Bloc glossaire étendu (optional)
+- **Purpose :** termes transverses (matérialisation, observation, merge) — glossaire secondaire repliable.
+
+### 5.7 Performance & volumétrie
+- **Purpose :** pagination ou virtualisation si >200 lignes ; note perf pour mobile.
+
+### 5.8 Télémétrie / feedback (futur)
+- **Purpose :** lien “Cette description est-elle claire ?” → **PAGE 37** micro-feedback.
 
 ---
 

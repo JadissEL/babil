@@ -91,6 +91,10 @@ Cartes vers quotes / doctorat / reasons.
 - **JSON-LD / meta :** titre = pays + VisaFlow ; image OG drapeau ou hero pays.
 - **Open graph :** description courte score + disclaimer une ligne.
 
+### 5.14 Micro-feedback blocs (`BlockFeedback` — PAGE 37)
+- **Purpose :** après sections lourdes (insights, provenance), proposer **“Utile ?”** avec pouces — `blockId` stable par section.
+- **Règle :** au plus **2–3** instances par page pour éviter fatigue.
+
 ---
 
 ## 6. UI Design Direction
