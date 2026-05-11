@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Business & entrepreneuriat',
+  title: 'Business & investissement',
   description:
-    'Comparez l’accessibilité business par destination : scores, street food, investissement et notes de friction issues du jeu de données VisaFlow.',
+    'Hub mobilité économique : juridictions, indices affaires, micro-activité et CBI — données VisaFlow et liens vers l’explorateur.',
 }
 
 export default function BusinessLayout({ children }: { children: ReactNode }) {

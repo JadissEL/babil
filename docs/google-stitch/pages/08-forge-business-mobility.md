@@ -34,22 +34,23 @@ Agréger **storytelling + liens moteurs** pour l’utilisateur business. Résout
 ---
 
 ## 4. Layout Architecture
-**Implémentation (`app/(public)/business/page.tsx`, client ; `metadata` dans `app/(public)/business/layout.tsx`) :** hero “Business & investissement” + **recherche** pays → **carte lien explorateur** `businessHubExplorerHref(preference.primarySlug)` (`ObjectivePreferenceProvider`) → **`GoogleAd slot="business_top"`** → grille **2 colonnes** (`lg:grid-cols-2`) : une **carte par pays** (`filtered` sur nom) avec données **`enrichCountryApiRecord`**, `full_data.visa_system.business`, `street_food`, encart optionnel **`cbi_program`**.
+**Implémentation (`app/(public)/business/page.tsx`, client ; `metadata` dans `app/(public)/business/layout.tsx`) — PAGE 08 Stitch :** coque crème `#FDFBF4` + **grille** légère ; **hero** avec photo architecturale (`/images/forge-business-hero.png`, `next/image`), pastille **VisaFlow Intelligence Hub**, titre **Business & investissement**, sous-titre **serif**, barre **recherche** + bouton **Explorer** (`businessHubExplorerHref`) ; section **Le Parcours Entrepreneur** (3 cartes blanches 01–03) ; bannière marine pleine largeur **Business Hub Explorer** (outil exclusif, CTA **Ouvrir l’explorateur**) ; **`GoogleAd slot="business_top"`** ; **Juridictions privilégiées** + lien **Voir tout** ; grille **2 colonnes** pays filtrés : tag beige **Mobilité économique**, **Business index /100**, blocs création d’entreprise / micro-activité, CBI ton **beige** si présent, **`Link` « Voir la fiche juridiction »** → `/countries/[id]`. Données inchangées : `enrichCountryApiRecord`, `visa_system.business`, `street_food`, `cbi_program`.
 
-**Pas de** sections “piliers” CMS ni timeline entrepreneur dans le code actuel — le contenu est **data-driven par pays**.
+### 4bis. Référence visuelle
+`docs/google-stitch/assets/page-08-forge-stitch-reference.png`
 
 ---
 
 ## 5. Full Section Breakdown
 
 ### 5.1 Chargement
-- **`GET /api/countries`** → `normalizeCountriesApiListResponse` ; spinner vert (`border-success`) si loading.
+- **`GET /api/countries`** → `normalizeCountriesApiListResponse` ; spinner **marine** si loading.
 
 ### 5.2 Carte pays (header)
-- **Titre pays** + badge “Mobilité économique” + **indice affaires** `/100` (`enriched._visa.business`).
+- **Titre pays** + pastille beige « Mobilité économique » + **Business index** `/100` (`enriched._visa.business`).
 
 ### 5.3 Colonnes “Création d’entreprise”
-- **Encarts :** `rights` (droit d’investir), `setup` (mise en place) depuis `visa_system.business`.
+- **Liste :** libellés « Droits d’établissement » / « Mise en place » mappés sur `rights` et `setup` depuis `visa_system.business`.
 
 ### 5.4 Colonnes “Micro-activité & food”
 - **`street_food` :** opportunité, invest. min, citation `barriers`.
@@ -58,15 +59,15 @@ Agréger **storytelling + liens moteurs** pour l’utilisateur business. Résout
 - **Si `full_data.cbi_program` :** carte verte “Nationalité par investissement”, champs `cost_min`, `time`, `type`.
 
 ### 5.6 CTA vers fiche pays
-- **Implémentation actuelle :** pas de `Link` explicite vers **`/countries/{id}`** en bas de carte — le nom pays est titre texte seul ; **Stitch** peut proposer CTA “Voir la fiche” aligné **PAGE 16** sans inventer de route.
+- **Implémentation :** bouton pleine largeur **« Voir la fiche juridiction »** → `/countries/{id}`.
 
-### 5.7 Écart maquette “piliers / logos”
-- **Note Stitch :** matérialiser piliers **au-dessus** de la grille si le brief l’exige — la spec produit **PAGE 08** décrit l’UI réelle comme **catalogue pays business**.
+### 5.7 Parcours entrepreneur (storytelling)
+- **Trois cartes** fixes (Évaluation, Structure, Capital & mobilité) — contenu éditorial, hors CMS.
 
 ---
 
 ## 6. UI Design Direction
-Noir & sable chaud ; accents **graphite** ; pictos Lucide `Briefcase`.
+Stitch **crème / marine** ; pastilles **beige** ; hero **photo architecture** (private-banking mood) ; pictos Lucide discrets.
 
 ---
 
@@ -103,4 +104,4 @@ Mood **private banking mobility** : photographies abstraites architecture + rés
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 08]
+![PAGE 08 Forge — référence Stitch](../assets/page-08-forge-stitch-reference.png)

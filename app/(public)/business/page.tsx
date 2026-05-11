@@ -1,220 +1,325 @@
-'use client'
+'use client';
 
 import {
+  ArrowRight,
   Briefcase,
-  TrendingUp,
   Building2,
   Coins,
-  ArrowUpRight,
-  ArrowRight,
-  ShieldCheck,
   Search,
+  ShieldCheck,
   Store,
-  Globe,
-} from 'lucide-react'
-import Link from 'next/link'
-import { useState, useEffect, useMemo } from 'react'
-import GoogleAd from '@/components/GoogleAd'
-import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
+  TrendingUp,
+  ArrowUpRight,
+} from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import GoogleAd from '@/components/GoogleAd';
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import {
   normalizeCountriesApiListResponse,
   type CountryApiListRow,
-} from '@/lib/country-full-data-materialize'
-import { businessHubExplorerHref } from '@/lib/cta-hrefs'
-import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
+} from '@/lib/country-full-data-materialize';
+import { businessHubExplorerHref } from '@/lib/cta-hrefs';
+import { enrichCountryApiRecord } from '@/lib/enrich-country-api';
+
+const shellClass =
+  'min-h-screen bg-[#FDFBF4] bg-[linear-gradient(rgba(13,27,62,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(13,27,62,0.035)_1px,transparent_1px)] bg-[length:22px_22px]';
+
+const PARCOURS = [
+  {
+    step: '01',
+    title: 'Évaluation',
+    body: "Analyse comparative des indices d'affaires, climat fiscal et stabilité réglementaire.",
+  },
+  {
+    step: '02',
+    title: 'Structure',
+    body: 'Définition du véhicule légal optimal, protection des actifs et structuration du capital.',
+  },
+  {
+    step: '03',
+    title: 'Capital & mobilité',
+    body: "Déploiement du capital, visa affaires ou investisseur et mise en conformité des flux transfrontaliers.",
+  },
+] as const;
 
 export default function BusinessPage() {
-  const { preference } = useObjectivePreference()
+  const { preference } = useObjectivePreference();
   const hubExplorerHref = useMemo(
     () => businessHubExplorerHref(preference.primarySlug),
     [preference.primarySlug],
-  )
-  const [countries, setCountries] = useState<CountryApiListRow[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
+  );
+  const [countries, setCountries] = useState<CountryApiListRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     fetch('/api/countries')
       .then((res) => res.json())
       .then((data) => setCountries(normalizeCountriesApiListResponse(data)))
       .catch(() => setCountries([]))
-      .finally(() => setLoading(false))
-  }, [])
+      .finally(() => setLoading(false));
+  }, []);
 
-  const filtered = countries.filter(c => 
-    c.name.toLowerCase().includes(search.toLowerCase())
-  )
+  const filtered = useMemo(
+    () => countries.filter((c) => c.name.toLowerCase().includes(search.toLowerCase())),
+    [countries, search],
+  );
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-10 pb-12 sm:px-8">
-      <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-        <div className="flex items-center gap-4">
-          <div className="rounded-[2rem] bg-success p-4 text-white shadow-soft">
-            <Briefcase className="h-8 w-8" />
+    <div className={shellClass}>
+      <div className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+        <section className="relative mb-14 overflow-hidden rounded-3xl border border-[#0D1B3E]/8 bg-[#FDFBF4] shadow-sm sm:mb-16 sm:rounded-[2rem]">
+          <div className="absolute inset-0">
+            <Image
+              src="/images/forge-business-hero.png"
+              alt=""
+              fill
+              className="object-cover object-center opacity-[0.22]"
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#FDFBF4]/88 via-[#FDFBF4]/80 to-[#FDFBF4]" />
           </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight text-text md:text-4xl">Business & investissement</h1>
-            <p className="mt-1 font-medium text-muted">
-              Entrepreneuriat et opportunités pour citoyens marocains.
+          <div className="relative z-[1] px-6 py-14 text-center sm:px-10 sm:py-16 md:py-20">
+            <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#0D1B3E]/70">
+              VisaFlow Intelligence Hub
             </p>
-          </div>
-        </div>
-
-        <div className="relative w-full md:w-96">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-          <input
-            type="search"
-            placeholder="Chercher un pays..."
-            className="w-full rounded-2xl border border-line bg-surface py-4 pl-12 pr-4 font-medium text-text outline-none placeholder:text-muted transition-all focus:ring-2 focus:ring-success/40"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-      </div>
-
-      <Link
-        href={hubExplorerHref}
-        className="group mb-10 flex flex-col gap-4 rounded-[2rem] border border-success/25 bg-surface p-6 shadow-card transition-all hover:border-success/40 hover:shadow-soft sm:flex-row sm:items-center sm:justify-between"
-      >
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-success/15 text-success ring-1 ring-success/30">
-            <Globe className="h-6 w-6" />
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Explorer</p>
-            <p className="mt-1 text-lg font-black text-text">Filtrer les pays pour visa affaires et investissement</p>
-            <p className="mt-2 text-sm font-medium text-muted">
-              Ouvrez l&apos;explorateur avec le filtre mobilité économique (visa affaires, scores, CBI quand disponible). Le lien
-              s&apos;aligne sur votre objectif principal lorsqu&apos;il est déjà orienté business dans le registre.
+            <h1 className="mt-4 text-3xl font-black tracking-tight text-[#0D1B3E] sm:text-4xl md:text-5xl">
+              Business & investissement
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl font-serif text-base font-medium leading-relaxed text-[#0D1B3E]/82 sm:text-lg">
+              Stratégies de structuration, analyse de juridictions et opportunités de mobilité économique pour
+              entrepreneurs et investisseurs exigeants.
             </p>
-          </div>
-        </div>
-        <ArrowRight
-          className="h-6 w-6 shrink-0 text-success transition-transform group-hover:translate-x-1 sm:ml-4"
-          aria-hidden
-        />
-      </Link>
-
-      <GoogleAd slot="business_top" />
-
-      {loading ? (
-        <div className="flex justify-center p-20">
-          <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-success" />
-        </div>
-      ) : (
-        <div className="grid auto-rows-fr grid-cols-1 gap-8 lg:grid-cols-2">
-          {filtered.map((c) => {
-            const enriched = enrichCountryApiRecord(c)
-            const full = c.full_data as Record<string, unknown>
-            const visaSystem = full.visa_system as Record<string, unknown> | undefined
-            const biz = (visaSystem?.business as Record<string, unknown> | undefined) ?? {}
-            const street = (full.street_food as Record<string, unknown> | undefined) ?? {}
-            const cbi = full.cbi_program as Record<string, unknown> | undefined
-
-            return (
-              <div
-                key={String(c.id)}
-                className="flex h-full min-h-0 flex-col overflow-hidden rounded-[2rem] border border-line bg-surface shadow-card transition-all duration-500 hover:border-success/30"
-              >
-                <div className="flex min-w-0 items-start justify-between gap-4 border-b border-line bg-inset p-8">
-                  <div className="min-w-0">
-                    <h3 className="mb-1 break-words text-3xl font-black text-text">{c.name}</h3>
-                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-success">
-                      <TrendingUp className="h-4 w-4" /> Mobilité économique
-                    </div>
-                  </div>
-                  <div className="shrink-0 rounded-2xl border border-line bg-surface px-4 py-2 text-center">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-muted">Indice affaires</div>
-                    <div className="text-xl font-black text-text" title="0–100 — même modèle que l’Explorer / Comparer">
-                      {Number.isInteger(enriched._visa.business)
-                        ? enriched._visa.business
-                        : enriched._visa.business.toFixed(1)}
-                    </div>
-                    <div className="text-[9px] font-bold text-muted">/ 100</div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-8 p-8 md:grid-cols-2">
-                  <div className="space-y-6">
-                    <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
-                      <Building2 className="h-4 w-4 text-primary" /> Création d&apos;entreprise
-                    </h4>
-                    <div className="space-y-4">
-                      <div className="rounded-2xl border border-line bg-inset p-4">
-                        <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">
-                          Droit d&apos;investir
-                        </div>
-                        <p className="break-words text-sm font-bold text-text">
-                          {String(biz.rights ?? 'Information non disponible')}
-                        </p>
-                      </div>
-                      <div className="rounded-2xl border border-line bg-inset p-4">
-                        <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Mise en place</div>
-                        <p className="break-words text-sm font-bold text-text">
-                          {String(biz.setup ?? 'Information non disponible')}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted">
-                      <Store className="h-4 w-4 text-accent" /> Micro-activité & food
-                    </h4>
-                    <div className="space-y-4">
-                      <div className="rounded-2xl border border-accent/25 bg-accent-soft p-4">
-                        <div className="mb-2 flex items-center justify-between">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-accent">
-                            Opportunité
-                          </span>
-                          <span className="text-xs font-black text-text">{String(street.opportunity ?? 'N/D')}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs font-bold text-muted">
-                          <Coins className="h-3 w-3" /> Invest. min : {String(street.investment_min ?? 'Variable')}
-                        </div>
-                      </div>
-                      <p className="break-words text-xs font-medium italic leading-relaxed text-muted">
-                        &quot;{String(street.barriers ?? 'Conditions locales standard.')}&quot;
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* CBI Program if exists */}
-                {cbi && (
-                  <div className="px-8 pb-8">
-                    <div className="group relative overflow-hidden rounded-3xl border border-success/25 bg-[#e9f9f1] p-6 text-text">
-                      <div className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-success blur-3xl opacity-15 transition-opacity group-hover:opacity-25"></div>
-                      <div className="relative">
-                        <div className="flex justify-between items-center mb-4">
-                          <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-success">
-                            <ShieldCheck className="w-4 h-4" /> Nationalité par investissement (CBI)
-                          </h4>
-                          <span className="rounded-lg bg-success px-2 py-1 text-[10px] font-black text-white">ACTIF</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Investissement Min.</div>
-                            <div className="text-sm font-black text-text">{String(cbi.cost_min ?? '—')}</div>
-                          </div>
-                          <div>
-                            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Délai Nationalité</div>
-                            <div className="text-sm font-black text-text">{String(cbi.time ?? '—')}</div>
-                          </div>
-                        </div>
-                        <div className="mt-4 flex items-center justify-between border-t border-line pt-4">
-                          <span className="text-[10px] font-bold text-muted">{String(cbi.type ?? '')}</span>
-                          <ArrowUpRight className="h-4 w-4 text-success" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+            <div className="mx-auto mt-10 flex max-w-2xl flex-col gap-3 rounded-2xl border border-[#0D1B3E]/12 bg-white/90 p-2 shadow-sm sm:flex-row sm:items-stretch sm:rounded-full sm:p-2">
+              <div className="relative flex min-h-[52px] flex-1 items-center">
+                <Search className="pointer-events-none absolute left-4 h-5 w-5 text-[#0D1B3E]/40" aria-hidden />
+                <input
+                  type="search"
+                  placeholder="Rechercher une juridiction ou un pays…"
+                  className="h-full w-full rounded-xl border-0 bg-transparent py-3 pl-12 pr-4 text-sm font-medium text-[#0D1B3E] outline-none placeholder:text-[#0D1B3E]/45 sm:rounded-full sm:py-0"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Filtrer les juridictions"
+                />
               </div>
-            )
-          })}
-        </div>
-      )}
+              <Link
+                href={hubExplorerHref}
+                className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#0D1B3E] px-8 py-3.5 text-center text-[11px] font-black uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#0D1B3E]/90 sm:rounded-full"
+              >
+                Explorer
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-14 sm:mb-16">
+          <h2 className="text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">Le Parcours Entrepreneur</h2>
+          <p className="mt-2 max-w-2xl font-serif text-sm font-medium text-[#0D1B3E]/75 sm:text-[15px]">
+            Méthodologie structurée d&apos;expansion internationale.
+          </p>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {PARCOURS.map((p) => (
+              <div
+                key={p.step}
+                className="flex flex-col rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm sm:p-7"
+              >
+                <span className="font-mono text-xs font-bold text-[#0D1B3E]/35">{p.step}</span>
+                <h3 className="mt-2 text-lg font-black text-[#0D1B3E]">{p.title}</h3>
+                <p className="mt-3 font-serif text-sm leading-relaxed text-[#0D1B3E]/78">{p.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-10">
+          <Link
+            href={hubExplorerHref}
+            className="group flex flex-col gap-6 rounded-3xl bg-[#0D1B3E] px-6 py-8 text-white shadow-lg transition-opacity hover:opacity-[0.97] sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-10"
+          >
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-sky-200/90">Outil exclusif</p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">Business Hub Explorer</h2>
+              <p className="mt-3 max-w-xl text-sm font-medium leading-relaxed text-white/85">
+                Accédez à notre base consolidée comparant les environnements d&apos;affaires, les régimes d&apos;imposition
+                et les cadres réglementaires — filtrée selon votre objectif lorsque le parcours est déjà orienté
+                business.
+              </p>
+            </div>
+            <span className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-[11px] font-black uppercase tracking-[0.2em] text-white transition-colors group-hover:bg-white/20 sm:self-center">
+              Ouvrir l&apos;explorateur
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+            </span>
+          </Link>
+        </section>
+
+        <GoogleAd slot="business_top" />
+
+        <section className="mt-12">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">Juridictions privilégiées</h2>
+              <p className="mt-2 max-w-xl font-serif text-sm font-medium text-[#0D1B3E]/75 sm:text-[15px]">
+                Analyses détaillées par territoire de mobilité économique.
+              </p>
+            </div>
+            <Link
+              href={hubExplorerHref}
+              className="shrink-0 text-[11px] font-black uppercase tracking-[0.2em] text-[#0D1B3E] underline decoration-[#0D1B3E]/25 underline-offset-4 hover:decoration-[#0D1B3E]"
+            >
+              Voir tout →
+            </Link>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center py-20">
+              <div
+                className="h-12 w-12 animate-spin rounded-full border-2 border-[#0D1B3E]/15 border-t-[#0D1B3E]"
+                aria-hidden
+              />
+            </div>
+          ) : filtered.length === 0 ? (
+            <p className="rounded-2xl border border-[#0D1B3E]/10 bg-white px-6 py-10 text-center font-medium text-[#0D1B3E]/70">
+              Aucune juridiction ne correspond à votre recherche.
+            </p>
+          ) : (
+            <div className="grid auto-rows-fr grid-cols-1 gap-8 lg:grid-cols-2">
+              {filtered.map((c) => {
+                const enriched = enrichCountryApiRecord(c);
+                const full = c.full_data as Record<string, unknown>;
+                const visaSystem = full.visa_system as Record<string, unknown> | undefined;
+                const biz = (visaSystem?.business as Record<string, unknown> | undefined) ?? {};
+                const street = (full.street_food as Record<string, unknown> | undefined) ?? {};
+                const cbi = full.cbi_program as Record<string, unknown> | undefined;
+
+                return (
+                  <article
+                    key={String(c.id)}
+                    className="flex min-h-0 flex-col overflow-hidden rounded-2xl border border-[#0D1B3E]/10 bg-white shadow-sm transition-shadow hover:shadow-md"
+                  >
+                    <div className="flex min-w-0 items-start justify-between gap-4 border-b border-[#0D1B3E]/08 p-6 sm:p-8">
+                      <div className="min-w-0">
+                        <span className="inline-block rounded-md border border-[#dcd3c4] bg-[#ece6dc] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.14em] text-[#0D1B3E]/75">
+                          Mobilité économique
+                        </span>
+                        <h3 className="mt-4 break-words text-3xl font-black tracking-tight text-[#0D1B3E]">{c.name}</h3>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <div className="text-[9px] font-black uppercase tracking-[0.16em] text-[#0D1B3E]/45">
+                          Business index
+                        </div>
+                        <div className="mt-1 font-mono text-2xl font-black tabular-nums text-[#0D1B3E]">
+                          {Number.isInteger(enriched._visa.business)
+                            ? enriched._visa.business
+                            : enriched._visa.business.toFixed(1)}
+                          <span className="text-base font-black text-[#0D1B3E]/50"> / 100</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid flex-1 grid-cols-1 gap-8 p-6 sm:p-8 md:grid-cols-2">
+                      <div className="space-y-5">
+                        <h4 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E]/50">
+                          <Building2 className="h-4 w-4 text-[#0D1B3E]" aria-hidden />
+                          Création d&apos;entreprise
+                        </h4>
+                        <dl className="space-y-3 text-sm">
+                          <div>
+                            <dt className="text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/45">
+                              Droits d&apos;établissement
+                            </dt>
+                            <dd className="mt-1 font-bold text-[#0D1B3E]">{String(biz.rights ?? '—')}</dd>
+                          </div>
+                          <div>
+                            <dt className="text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/45">
+                              Mise en place
+                            </dt>
+                            <dd className="mt-1 font-bold text-[#0D1B3E]">{String(biz.setup ?? '—')}</dd>
+                          </div>
+                        </dl>
+                      </div>
+
+                      <div className="space-y-5">
+                        <h4 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E]/50">
+                          <Store className="h-4 w-4 text-[#0D1B3E]" aria-hidden />
+                          Micro-activité & food
+                        </h4>
+                        <div className="rounded-xl border border-[#0D1B3E]/08 bg-[#faf8f5] p-4">
+                          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/55">
+                              Opportunité
+                            </span>
+                            <span className="text-xs font-black text-[#0D1B3E]">{String(street.opportunity ?? 'N/D')}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs font-bold text-[#0D1B3E]/65">
+                            <Coins className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                            Invest. min. : {String(street.investment_min ?? 'Variable')}
+                          </div>
+                        </div>
+                        <p className="break-words font-serif text-xs italic leading-relaxed text-[#0D1B3E]/72">
+                          {String(street.barriers ?? 'Conditions locales variables selon le statut et la ville.')}
+                        </p>
+                      </div>
+                    </div>
+
+                    {cbi ? (
+                      <div className="border-t border-[#0D1B3E]/08 px-6 pb-6 pt-2 sm:px-8">
+                        <div className="rounded-xl border border-[#dcd3c4] bg-[#f5f0e8] p-5">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-[#0D1B3E]">
+                              <ShieldCheck className="h-4 w-4 shrink-0" aria-hidden />
+                              Nationalité par investissement (CBI)
+                            </h4>
+                            <span className="rounded-md bg-[#0D1B3E] px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white">
+                              Actif
+                            </span>
+                          </div>
+                          <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <div className="text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/50">
+                                Investissement min.
+                              </div>
+                              <div className="mt-1 font-black text-[#0D1B3E]">{String(cbi.cost_min ?? '—')}</div>
+                            </div>
+                            <div>
+                              <div className="text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/50">
+                                Délai
+                              </div>
+                              <div className="mt-1 font-black text-[#0D1B3E]">{String(cbi.time ?? '—')}</div>
+                            </div>
+                          </div>
+                          <p className="mt-3 text-xs font-medium leading-relaxed text-[#0D1B3E]/75">{String(cbi.type ?? '')}</p>
+                          <div className="mt-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]">
+                            <TrendingUp className="h-3.5 w-3.5" aria-hidden />
+                            Résidence / statut — vérifier la fiche pays
+                          </div>
+                          <ArrowUpRight className="mt-2 h-4 w-4 text-[#0D1B3E]/50" aria-hidden />
+                        </div>
+                      </div>
+                    ) : null}
+
+                    <div className="mt-auto border-t border-[#0D1B3E]/08 p-6 sm:px-8 sm:pb-8">
+                      <Link
+                        href={`/countries/${c.id}`}
+                        className="flex w-full items-center justify-center rounded-xl border border-[#0D1B3E]/12 bg-[#f0eeeb] py-3.5 text-center text-[11px] font-black uppercase tracking-[0.2em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]/25 hover:bg-[#e8e4df]"
+                      >
+                        Voir la fiche juridiction
+                      </Link>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        <p className="mt-12 flex items-center justify-center gap-2 text-center text-xs font-medium text-[#0D1B3E]/45">
+          <Briefcase className="h-4 w-4 shrink-0" aria-hidden />
+          Données issues du jeu VisaFlow — vérifier les sources officielles avant toute décision.
+        </p>
+      </div>
     </div>
-  )
+  );
 }
