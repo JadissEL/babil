@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Études & formations',
+  title: 'Hub éducation & formation',
   description:
-    'Hub éducation VisaFlow : langues, formations courtes et techniques — critères bac, coûts et accès par pays.',
+    'Campus VisaFlow : langues, parcours techniques, programmes courts et repères par pays (prérequis, coûts, visa).',
 }
 
 export default function EducationHubLayout({ children }: { children: ReactNode }) {

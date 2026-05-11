@@ -34,9 +34,9 @@ Public
 ---
 
 ## 4. Layout Architecture
-**Implémentation (`app/(public)/education/page.tsx`, client ; `metadata` dans `app/(public)/education/layout.tsx`) :** hero “Hub éducation & formation” + recherche → **carte lien Doctorat / PhD** (copy + `educationHubExplorerHref`) → **3 liens “Page dédiée”** (`/education/language-study`, `technical-training`, `short-courses`) → **onglets** internes (`languages` | `technical` | `short`) stylés → **`GoogleAd slot="education_top"`** → grille pays **filtrée par recherche** ; par pays : badges accès, lignes Bac / Coût / Visa, **insight** scrollable, liens **fiche pays** et **optionnel** `/countries/{id}/doctorat` si `hasCountryPhdStoredData`.
+**Implémentation (`app/(public)/education/page.tsx`, client ; `metadata` dans `app/(public)/education/layout.tsx`) :** fond **crème + grille** (`#FDFBF4`, lignes `#0D1B3E` faible opacité) ; label **Campus** ; hero “Hub éducation & formation” + recherche → **carte mise en avant Doctorat / PhD** (navy `#0D1B3E`, `educationHubExplorerHref`) → **3 cartes piliers** (langue / technique / courtes, icône **Timer** pour courtes) vers `/education/language-study`, `technical-training`, `short-courses` → bloc **ligné** (motif cahier) avec onglets **uppercase** (“Destinations académiques” | “Parcours techniques” | “Programmes courts”) mappés à `languages` | `technical` | `short` → **`GoogleAd slot="education_top"`** dans ce bloc → grille pays filtrée ; par pays : bandeau image gris, **pilule d’accès**, titre pays, **résumé** (`summary` ou extrait insight), grille **Prérequis / Coût / Visa**, **citation** italique, CTA **Voir la fiche pays** + lien **Parcours doctoral** si `hasCountryPhdStoredData`.
 
-**Données :** `full_data.education_mobility` avec clés `language_study` | `technical_training` | `short_courses` selon onglet actif ; fallback texte “Données en cours de collecte…”.
+**Données :** `full_data.education_mobility` (`language_study` | `technical_training` | `short_courses`) ; `getEducationData` expose `summary` et `insight` avec fallbacks.
 
 ---
 
@@ -46,10 +46,10 @@ Public
 - **`GET /api/countries`** → `normalizeCountriesApiListResponse` ; spinner pendant fetch.
 
 ### 5.2 Onglets (`tabs` constant)
-- **Trois boutons :** “Apprendre une langue”, “Formation technique”, “Formations courtes” — états visuels `tab.active` (bleu / émeraude / violet).
+- **Trois onglets** (style Stitch : soulignement actif, texte caps) : “Destinations académiques”, “Parcours techniques”, “Programmes courts” — chacun charge le bloc mobility correspondant.
 
 ### 5.3 `getEducationData`
-- **Purpose :** lit le bloc `education_mobility[EDUCATION_MOBILITY_TAB_KEY[activeTab]]` ; sinon valeurs par défaut (`access`, `bac_required`, `cost`, `visa`, `insight`).
+- **Purpose :** lit `education_mobility[EDUCATION_MOBILITY_TAB_KEY[activeTab]]` ; fusionne avec `insight` (texte) et `summary` (champ ou extrait insight) ; sinon valeurs par défaut (`access`, `bac_required`, `cost`, `visa`, `insight`, `summary` vide).
 
 ### 5.4 Carte pays
 - **Badge accès :** `Facile` / `Moyen` / `Difficile` (couleurs distinctes).
@@ -65,7 +65,7 @@ Public
 ---
 
 ## 6. UI Design Direction
-Couleurs **vert sauge** secondaires pour différenciation douce du reste produit.
+Palette **Stitch** : crème `#FDFBF4`, texte / accents **navy** `#0D1B3E` ; cartes blanches ; pilules d’accès (facile / moyen / sélectif) en tons doux (émeraude / ciel / ambre).
 
 ---
 
@@ -102,4 +102,4 @@ Créer **3 portes curriculum** visuellement distinctes (couleur accent différen
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 10]
+Fichier repo : `docs/google-stitch/assets/page-10-campus-stitch-reference.png`
