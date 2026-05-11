@@ -48,7 +48,10 @@ function CompassAxisBar({ label, value }: { label: string; value: number }) {
         aria-valuemin={0}
         aria-valuemax={100}
       >
-        <div className="h-full rounded-full bg-[#0D1B3E] transition-[width] duration-300" style={{ width: `${v}%` }} />
+        <div
+          className="h-full rounded-full bg-[#0D1B3E] transition-[width] duration-300"
+          style={{ width: `${v}%` }}
+        />
       </div>
     </div>
   );
@@ -70,7 +73,8 @@ function RecommendationsPageFallback() {
           Intelligence de recommandation
         </h1>
         <p className="mt-2 max-w-2xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/80 sm:text-base">
-          Analyse multi-critères pour prioriser les destinations alignées avec votre profil de mobilité.
+          Analyse multi-critères pour prioriser les destinations alignées avec votre profil de
+          mobilité.
         </p>
         <div className="mt-8">
           <DashboardPageSkeleton />
@@ -135,9 +139,7 @@ function RecommendationsPageInner() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(
-              withFocus(
-                anonymousEngineGoal ? { anonymous_goal_type: anonymousEngineGoal } : {},
-              ),
+              withFocus(anonymousEngineGoal ? { anonymous_goal_type: anonymousEngineGoal } : {}),
             ),
           });
           const data = await recoRes.json();
@@ -260,7 +262,8 @@ function RecommendationsPageInner() {
             Intelligence de recommandation
           </h1>
           <p className="mt-2 max-w-2xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/80 sm:text-base">
-            Analyse multi-critères pour prioriser les destinations alignées avec votre profil de mobilité.
+            Analyse multi-critères pour prioriser les destinations alignées avec votre profil de
+            mobilité.
           </p>
           <div className="mt-8">
             <DashboardPageSkeleton />
@@ -298,16 +301,19 @@ function RecommendationsPageInner() {
 
       {recommendations.length === 0 ? (
         <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6 sm:py-16">
-          <h1 className="mb-2 text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">Intelligence de recommandation</h1>
+          <h1 className="mb-2 text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">
+            Intelligence de recommandation
+          </h1>
           <p className="mb-8 max-w-xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/78 sm:text-base">
-            Analyse multi-critères pour prioriser les destinations alignées avec votre profil de mobilité.
+            Analyse multi-critères pour prioriser les destinations alignées avec votre profil de
+            mobilité.
           </p>
           <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white px-6 py-10 text-center shadow-sm sm:rounded-3xl sm:p-12">
             <AlertCircle className="mx-auto mb-6 h-16 w-16 text-[#0D1B3E]/35" />
             <h2 className="mb-4 text-2xl font-black text-[#0D1B3E]">Besoin de plus d&apos;infos</h2>
             <p className="mb-8 font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/75 sm:text-base">
-              Complétez votre profil pour obtenir des recommandations personnalisées basées sur votre budget et vos
-              objectifs.
+              Complétez votre profil pour obtenir des recommandations personnalisées basées sur
+              votre budget et vos objectifs.
             </p>
             <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
               <Link
@@ -344,8 +350,8 @@ function RecommendationsPageInner() {
                         Session invité
                       </p>
                       <p className="mt-2 text-sm font-medium leading-relaxed text-[#0D1B3E]/75">
-                        Vos recommandations sont temporaires. Connectez-vous pour sauvegarder ce profil de mobilité et
-                        accéder aux analyses comparatives détaillées.
+                        Vos recommandations sont temporaires. Connectez-vous pour sauvegarder ce
+                        profil de mobilité et accéder aux analyses comparatives détaillées.
                       </p>
                       <SignInButton mode="modal">
                         <button
@@ -373,7 +379,9 @@ function RecommendationsPageInner() {
                     <span className="inline-flex bg-[#0D1B3E] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white">
                       Rank #{chartRank}
                     </span>
-                    <p className="mt-3 text-3xl font-black tracking-tight text-[#0D1B3E] sm:text-4xl">{chartReco.name}</p>
+                    <p className="mt-3 text-3xl font-black tracking-tight text-[#0D1B3E] sm:text-4xl">
+                      {chartReco.name}
+                    </p>
                   </div>
 
                   <div>
@@ -405,9 +413,15 @@ function RecommendationsPageInner() {
                       <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/50">
                         Axes de mobilité
                       </p>
-                      <CompassAxisBar label="Économie & objectif" value={chartReco.breakdown.goalMatch} />
+                      <CompassAxisBar
+                        label="Économie & objectif"
+                        value={chartReco.breakdown.goalMatch}
+                      />
                       <CompassAxisBar label="Visa & immig." value={chartReco.breakdown.visa} />
-                      <CompassAxisBar label="Qualité de parcours" value={chartReco.breakdown.friction} />
+                      <CompassAxisBar
+                        label="Qualité de parcours"
+                        value={chartReco.breakdown.friction}
+                      />
                     </div>
                   ) : null}
 
@@ -450,10 +464,17 @@ function RecommendationsPageInner() {
                       300×300
                     </div>
                     <div className="relative z-[1] mx-auto w-full min-w-0">
-                      <ScoreBreakdownChart breakdown={chartReco.breakdown} chartHeight={300} withAxisLegend={false} />
+                      <ScoreBreakdownChart
+                        breakdown={chartReco.breakdown}
+                        chartHeight={300}
+                        withAxisLegend={false}
+                      />
                     </div>
                   </div>
-                  <div className="relative z-[1] mt-6 flex justify-center gap-8 opacity-40" aria-hidden>
+                  <div
+                    className="relative z-[1] mt-6 flex justify-center gap-8 opacity-40"
+                    aria-hidden
+                  >
                     <span className="h-3 w-3 rounded-full border-2 border-[#0D1B3E] bg-white shadow-inner" />
                     <span className="h-2.5 w-2.5 rounded-full bg-[#0D1B3E]/35" />
                     <span className="h-2.5 w-2.5 rounded-full bg-[#0D1B3E]/25" />
@@ -483,8 +504,8 @@ function RecommendationsPageInner() {
               </label>
               {compareMode ? (
                 <p className="text-xs font-medium text-[#0D1B3E]/60 sm:max-w-md sm:text-right">
-                  Activez les cases dans le classement ci-dessous ; la zone de comparaison apparaît sous le radar
-                  principal.
+                  Activez les cases dans le classement ci-dessous ; la zone de comparaison apparaît
+                  sous le radar principal.
                 </p>
               ) : null}
             </div>
@@ -492,13 +513,19 @@ function RecommendationsPageInner() {
             {compareRecos.length >= 2 ? (
               <Card className="min-w-0 border-[#0D1B3E]/10 bg-white shadow-sm">
                 <CardContent className="space-y-4 p-4 sm:p-6">
-                  <h2 className="text-lg font-black text-[#0D1B3E]">Comparaison radar (2–3 pays)</h2>
+                  <h2 className="text-lg font-black text-[#0D1B3E]">
+                    Comparaison radar (2–3 pays)
+                  </h2>
                   <p className="text-xs font-medium text-[#0D1B3E]/65">
-                    Même échelle que le radar principal — survolez un axe pour la définition alignée sur le moteur.
+                    Même échelle que le radar principal — survolez un axe pour la définition alignée
+                    sur le moteur.
                   </p>
                   <div className="grid min-w-0 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                     {compareRecos.map((r) => (
-                      <div key={String(r.id)} className="min-w-0 rounded-xl border border-[#0D1B3E]/10 bg-[#FDFBF4] p-4">
+                      <div
+                        key={String(r.id)}
+                        className="min-w-0 rounded-xl border border-[#0D1B3E]/10 bg-[#FDFBF4] p-4"
+                      >
                         <p className="mb-2 text-sm font-black text-[#0D1B3E]">{r.name}</p>
                         <ScoreBreakdownChart
                           breakdown={r.breakdown!}

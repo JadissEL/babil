@@ -73,11 +73,12 @@ function weightedComposite(r: ApiRecommendation, w: PulseWeights): number {
   const den = w.workMobility + w.costOfLiving + w.consularRisk + w.qualityOfLife + w.education;
   if (den <= 0) return Number(r.score) || 0;
   return (
-    w.workMobility * b.visa +
-    w.costOfLiving * b.friction +
-    w.consularRisk * (100 - b.risk) +
-    (w.qualityOfLife + w.education) * b.goalMatch
-  ) / den;
+    (w.workMobility * b.visa +
+      w.costOfLiving * b.friction +
+      w.consularRisk * (100 - b.risk) +
+      (w.qualityOfLife + w.education) * b.goalMatch) /
+    den
+  );
 }
 
 function confidenceBadge(level: string | undefined): { text: string; className: string } {
@@ -190,7 +191,9 @@ function RecommendationEnginePageInner() {
 
   const rankedResults = useMemo(() => {
     if (!results.length) return [];
-    return [...results].sort((a, b) => weightedComposite(b, weights) - weightedComposite(a, weights));
+    return [...results].sort(
+      (a, b) => weightedComposite(b, weights) - weightedComposite(a, weights),
+    );
   }, [results, weights]);
 
   const loadProfile = useCallback(async () => {
@@ -351,7 +354,9 @@ function RecommendationEnginePageInner() {
       return drivers.map((text, i) => {
         const cut = text.indexOf('·');
         const title =
-          cut > 0 ? text.slice(0, cut).trim() : text.slice(0, 48).trim() + (text.length > 48 ? '…' : '');
+          cut > 0
+            ? text.slice(0, cut).trim()
+            : text.slice(0, 48).trim() + (text.length > 48 ? '…' : '');
         const body = cut > 0 ? text.slice(cut + 1).trim() : text;
         return { title: title || `Lecture ${i + 1}`, body };
       });
@@ -384,15 +389,18 @@ function RecommendationEnginePageInner() {
         <div className="mb-8 flex flex-col gap-6 border-b border-[#0D1B3E]/10 pb-8 lg:flex-row lg:items-start lg:justify-between">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-baseline gap-3">
-              <h1 className="font-serif text-4xl font-bold tracking-tight text-[#0D1B3E] sm:text-5xl">Pulse</h1>
+              <h1 className="font-serif text-4xl font-bold tracking-tight text-[#0D1B3E] sm:text-5xl">
+                Pulse
+              </h1>
               <span className="inline-flex items-center gap-1 rounded-full border border-[#0D1B3E]/20 bg-white px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#0D1B3E] shadow-sm">
                 <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
                 Pro
               </span>
             </div>
             <p className="mt-4 max-w-2xl font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/85 sm:text-[15px]">
-              Recommandations avancées : ajustez les pondérations pour affiner l&apos;analyse de destination optimale
-              basée sur des flux de données cohérents avec le moteur Babil (scoring déterministe et explicable).
+              Recommandations avancées : ajustez les pondérations pour affiner l&apos;analyse de
+              destination optimale basée sur des flux de données cohérents avec le moteur Babil
+              (scoring déterministe et explicable).
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
@@ -450,8 +458,8 @@ function RecommendationEnginePageInner() {
             className="mb-6 rounded-xl border border-amber-200/80 bg-amber-50/90 px-4 py-3 text-sm font-medium text-[#0D1B3E]"
             role="status"
           >
-            <span className="font-black text-amber-800">Contexte pays.</span> Le classement priorisera{' '}
-            <strong>{focusCountryName ?? `le pays #${focusCountryId}`}</strong>
+            <span className="font-black text-amber-800">Contexte pays.</span> Le classement
+            priorisera <strong>{focusCountryName ?? `le pays #${focusCountryId}`}</strong>
             {focusCountryName ? ` (#${focusCountryId})` : null} après chaque exécution.{' '}
             <Link
               href={`/countries/${focusCountryId}`}
@@ -469,12 +477,17 @@ function RecommendationEnginePageInner() {
           </p>
         ) : null}
 
-        <details className="group mb-10 rounded-2xl border border-[#0D1B3E]/10 bg-white shadow-sm open:shadow-md" open>
+        <details
+          className="group mb-10 rounded-2xl border border-[#0D1B3E]/10 bg-white shadow-sm open:shadow-md"
+          open
+        >
           <summary className="cursor-pointer list-none rounded-2xl px-5 py-4 font-black text-[#0D1B3E] marker:content-none [&::-webkit-details-marker]:hidden">
             <span className="inline-flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-amber-500" aria-hidden />
               Paramètres d&apos;exécution du modèle
-              <span className="ml-2 text-xs font-medium text-[#0D1B3E]/50">(profil synthétique · playground)</span>
+              <span className="ml-2 text-xs font-medium text-[#0D1B3E]/50">
+                (profil synthétique · playground)
+              </span>
             </span>
           </summary>
           <div className="border-t border-[#0D1B3E]/10 px-5 pb-6 pt-2">
@@ -618,8 +631,8 @@ function RecommendationEnginePageInner() {
                     onChange={(n) => setWeights((w) => ({ ...w, education: n }))}
                   />
                   <p className="text-[11px] font-medium leading-relaxed text-[#0D1B3E]/55">
-                    Les curseurs réordonnent le classement localement (pondération des quatre piliers du radar) sans
-                    rappel serveur.
+                    Les curseurs réordonnent le classement localement (pondération des quatre
+                    piliers du radar) sans rappel serveur.
                   </p>
                 </CardContent>
               </Card>
@@ -665,9 +678,14 @@ function RecommendationEnginePageInner() {
                   </h2>
                   <ul className="space-y-5">
                     {decisionLogItems.map((item, i) => (
-                      <li key={`log-${i}`} className="border-b border-[#0D1B3E]/6 pb-5 last:border-0 last:pb-0">
+                      <li
+                        key={`log-${i}`}
+                        className="border-b border-[#0D1B3E]/6 pb-5 last:border-0 last:pb-0"
+                      >
                         <p className="text-sm font-black text-[#0D1B3E]">{item.title}</p>
-                        <p className="mt-1.5 font-serif text-sm italic leading-relaxed text-[#0D1B3E]/78">{item.body}</p>
+                        <p className="mt-1.5 font-serif text-sm italic leading-relaxed text-[#0D1B3E]/78">
+                          {item.body}
+                        </p>
                       </li>
                     ))}
                   </ul>
@@ -684,12 +702,14 @@ function RecommendationEnginePageInner() {
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0D1B3E]/50">
                         Insight exclusif
                       </p>
-                      <h3 className="mt-1 font-serif text-lg font-bold text-[#0D1B3E]">Rapport approfondi</h3>
+                      <h3 className="mt-1 font-serif text-lg font-bold text-[#0D1B3E]">
+                        Rapport approfondi
+                      </h3>
                     </div>
                   </div>
                   <p className="font-serif text-sm leading-relaxed text-[#0D1B3E]/80">
-                    Générez un export structuré (projections, jalons consulaires et synthèse des signaux pays) dès que
-                    l&apos;offre PDF sera activée côté produit.
+                    Générez un export structuré (projections, jalons consulaires et synthèse des
+                    signaux pays) dès que l&apos;offre PDF sera activée côté produit.
                   </p>
                   <button
                     type="button"
@@ -728,7 +748,9 @@ function RecommendationEnginePageInner() {
                             <div className="min-w-0 flex-1">
                               <p className="font-black text-[#0D1B3E]">{r.name}</p>
                               {r.reason ? (
-                                <p className="mt-0.5 line-clamp-1 text-xs font-medium text-[#0D1B3E]/55">{r.reason}</p>
+                                <p className="mt-0.5 line-clamp-1 text-xs font-medium text-[#0D1B3E]/55">
+                                  {r.reason}
+                                </p>
                               ) : null}
                             </div>
                             <span
@@ -774,7 +796,9 @@ function RecommendationEnginePageInner() {
             {compareRecos.length >= 2 ? (
               <Card className="mb-10 min-w-0 border-[#0D1B3E]/10 bg-white shadow-sm">
                 <CardContent className="space-y-4 p-4 sm:p-6">
-                  <h2 className="text-lg font-black text-[#0D1B3E]">Comparaison radar (2–3 pays)</h2>
+                  <h2 className="text-lg font-black text-[#0D1B3E]">
+                    Comparaison radar (2–3 pays)
+                  </h2>
                   <p className="text-xs font-medium text-[#0D1B3E]/65">
                     Même échelle que le radar principal — survolez un axe pour le détail.
                   </p>
@@ -804,7 +828,9 @@ function RecommendationEnginePageInner() {
             ) : null}
 
             <div className="space-y-4">
-              <h2 className="text-lg font-black tracking-tight text-[#0D1B3E]">Classement détaillé</h2>
+              <h2 className="text-lg font-black tracking-tight text-[#0D1B3E]">
+                Classement détaillé
+              </h2>
               <RecommendationPanel
                 results={panelRows}
                 compareMode={compareMode}
