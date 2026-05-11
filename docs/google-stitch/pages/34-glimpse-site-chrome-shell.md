@@ -12,7 +12,7 @@ System / Transversal (enveloppe toutes les routes)
 - Objectif de mobilité persistant (`AppObjectiveRoot`)
 
 ### Connected Pages
-- **Enveloppe :** toutes les PAGE 01–33
+- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** s’intègre au `SiteFooter` lorsque les routes légales existeront.
 - **Technique :** `app/layout.tsx` → `ClerkProvider` → `SiteChrome` → children
 
 ---
@@ -49,19 +49,36 @@ Documenter ce que l’utilisateur perçoit **autour** du contenu page : police I
 - **Purpose :** `Inter` + `antialiased` + tokens `text-text` / `bg-bg`.
 - **Stitch :** ne jamais proposer une autre police display sur une seule page marketing sans valider impact global.
 
-### 5.2 SiteChrome — header / dock
-- **Purpose :** zone sticky ou dock inférieur (si `SiteChrome` inclut bottom chrome) pour actions persistantes.
-- **Responsive :** safe-area iOS sur dock ; padding bottom pages (`pb-12` patterns) pour éviter masquage contenu.
+### 5.2 `SiteHeader` (public)
+- **Purpose :** barre supérieure avec marque, actions, bouton **ouverture navigation primaire** mobile (`onPrimaryNavOpen`).
+- **Stitch :** aligner visuellement avec `AppNavbar` density pour continuité (même hauteur cible ~64px).
 
-### 5.3 Toasts & feedback global
+### 5.3 `SitePrimaryNavColumn`
+- **Purpose :** rail navigation global (desktop) + **drawer / overlay** mobile (`mobileOpen`, `onMobileClose`).
+- **Interactions :** fermeture au clic lien ou backdrop ; focus trap dans drawer.
+- **Note :** cohabite avec `main` en flex `min-w-0 flex-1` pour éviter overflow horizontal.
+
+### 5.4 Zone `main` (slot contenu public)
+- **Purpose :** padding `px-4 py-5 sm:px-6 lg:px-8 lg:py-6` et **padding bas dynamique** `pb-[calc(var(--vf-objective-dock-height,5.5rem)+1rem)]` pour ne pas masquer le contenu derrière le **dock objectif**.
+- **Stitch :** toujours laisser cette marge basse visible dans les captures “full page”.
+
+### 5.5 `SiteObjectiveDock`
+- **Purpose :** dock fixe bas lié à l’**objectif de mobilité** (sélection persistée) — affecte deep links Explorer/Compare.
+- **Responsive :** hauteur CSS variable `--vf-objective-dock-height` ; safe-area iOS.
+
+### 5.6 `SiteFooter`
+- **Purpose :** liens secondaires, copyright, futurs liens **PAGE 36** (mentions / confidentialité / cookies).
+- **Visual :** plus calme que header ; séparation `border-t border-line`.
+
+### 5.7 Toasts & feedback global
 - **Purpose :** confirmations API, erreurs réseau, copie lien.
 - **A11y :** `aria-live` politeness appropriate ; durée lecture suffisante.
 
-### 5.4 Clerk provider wrap
+### 5.8 Clerk provider wrap
 - **Purpose :** session disponible pour composants client ; pas d’UI directe ici sauf `SignedIn`/`SignedOut` descendants.
 - **Edge :** Clerk indisponible → message global minimal (coordination avec PAGE 31 si crash total).
 
-### 5.5 Sentry / observabilité
+### 5.9 Sentry / observabilité
 - **Purpose :** pas d’UI ; mais pas d’élément Stitch qui casse `SentryClerkSync` (hydration).
 
 ---

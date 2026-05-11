@@ -15,7 +15,7 @@ docs/google-stitch/
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
   pages/
-    01-….md … 35-….md       ← routes + 2 shells transversaux (34–35), numérotation stable
+    01-….md … 36-….md       ← routes + shells (34–35) + suite légale anticipée (36)
 ```
 
 ## Workflow
@@ -28,4 +28,5 @@ docs/google-stitch/
 
 - **Do not renumber** existing pages once screenshots reference them.
 - **PAGE 34–35** documentent le **chrome global** et le **shell dashboard** (pas des URLs publiques) — utiles pour maquettes Stitch cohérentes.
-- Add further surfaces only as **36+** (prefer append).
+- **PAGE 36** anticipe **mentions / confidentialité / cookies** (non routé encore) — lier depuis `SiteFooter` quand les pages existent.
+- Add further surfaces only as **37+** (prefer append).

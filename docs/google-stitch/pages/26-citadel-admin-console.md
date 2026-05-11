@@ -41,7 +41,37 @@ Sidebar admin nested → content area tables / forms.
 ---
 
 ## 5. Full Section Breakdown
-`CountryEditor` : sections JSON/schema guided ; toggles sources.
+
+### 5.1 Gate & état 403
+- **Purpose :** si non admin : page **403** dédiée ou redirect `/overview` avec toast “Accès refusé” — éviter flash contenu sensible.
+- **Copy :** neutre, sans détail technique fuite.
+
+### 5.2 Shell admin (layout)
+- **Purpose :** sidebar sections : **Pays**, **Agents / santé**, **Requêtes déléguées**, **Intelligence** (résumé), **Outils** (futur).
+- **Header :** environnement `PROD`/`Preview` badge couleur ; user menu Clerk minimal.
+
+### 5.3 `CountryEditor` — édition pays
+- **Purpose :** formulaires guidés par sections du contrat pays (scores affichés, champs texte, JSON avancé repliable).
+- **Interactions :** sauvegarde avec **diff** local (unsaved banner) ; raccourci clavier sauvegarde `Ctrl+S`.
+- **Destructive :** “Réinitialiser section” avec modale confirm + saisie du nom du pays.
+
+### 5.4 Santé agents & pipelines
+- **Purpose :** vue **agents/health** : statut dernier run, latence, erreurs récentes, lien logs (futur).
+- **Visual :** pastilles vert / ambre / rouge ; graph sparkline optionnel.
+
+### 5.5 File requêtes délégation (admin API)
+- **Purpose :** table triable : id, utilisateur, service, statut, date ; actions “Voir détail”, “Changer statut”.
+- **Row expand :** payload JSON pretty-print dans drawer (attention PII — masquage champs sensibles).
+
+### 5.6 Intelligence summary (aperçu)
+- **Purpose :** lien ou embed vers `/api/admin/intelligence/summary` UI future — carte “couverture contrat”, “observations récentes”.
+- **Empty :** placeholder “Pipeline non configuré”.
+
+### 5.7 Journal d’audit (futur)
+- **Purpose :** liste des actions admin avec actor, timestamp, entity — conformité interne.
+
+### 5.8 Responsive & mobile
+- **Purpose :** **lecture seule** sur mobile avec bandeau “Utilisez un écran large pour éditer” — évite erreurs de saisie.
 
 ---
 

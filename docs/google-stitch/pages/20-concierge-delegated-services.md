@@ -40,7 +40,36 @@ Hero service premium → grille offres → tableau comparatif features → FAQ t
 ---
 
 ## 5. Full Section Breakdown
-Carte service : nom, description courte, CTA, badge “populaire”.
+
+### 5.1 Hero “Sérénité & clarté”
+- **Purpose :** rassurer avant catalogue : processus en 3 étapes (Choisir → Décrire → Suivre), délai de réponse humain, mention sécurité des données.
+- **Trust row :** icônes monoline (cadenas, horloge, personne) + courte légende.
+
+### 5.2 `DelegatedServiceCatalog` — grille SKUs
+- **Carte service :** titre, **prix indicatif** ou “Sur devis”, durée estimée, **niveau d’effort utilisateur** (faible/moyen), CTA “Démarrer”.
+- **Badge “Populaire”** : au plus une carte pour ne pas diluer l’effet.
+- **Hover :** overlay “Inclus : …” (3 bullets max : revue documents, checklist, suivi email).
+- **Empty catalogue :** message + email contact / lien overview si connecté.
+
+### 5.3 Tableau comparatif features
+- **Purpose :** lignes = livrables (sessions appel, relances, nombre de revisions incluses) ; colonnes = offres.
+- **Responsive :** scroll horizontal + gradient masque droite pour indiquer suite.
+- **A11y :** première colonne `scope="row"` textuelle.
+
+### 5.4 Bloc “Mes demandes” (`MyDelegatedRequests`)
+- **Purpose :** si **SignedIn** : tableau compact ou cards 3 dernières demandes avec **statut** (`delegated-application-status` patterns : brouillon, envoyé, en cours, clos).
+- **SignedOut :** teaser “Créez un compte pour suivre vos dossiers” + pas de données vides bruyantes.
+
+### 5.5 FAQ & objections
+- **Purpose :** répondre à “Pourquoi payer ?”, “Délai”, “Remboursement”, “Données personnelles” en accordéons.
+- **Ton :** factuel, non agressif commercial.
+
+### 5.6 Promo contextuelle (optionnel)
+- **Purpose :** `DelegatedApplicationsHomePromo` si réutilisé ici : lien depuis hub pays — cohérence visuelle avec **PAGE 16** bandeau.
+
+### 5.7 CTA final & secondaire
+- **Primary :** vers **PAGE 21** avec **serviceId** pré-sélectionné si clic depuis une carte.
+- **Secondary :** contact humain (mailto ou chat futur).
 
 ---
 

@@ -39,7 +39,29 @@ Hero campus → 3 grandes cartes → bande “pourquoi VisaFlow” → CTA explo
 ---
 
 ## 5. Full Section Breakdown
-Chaque carte : icône `GraduationCap` variantes, métriques indicatives (durée, coût relatif).
+
+### 5.1 Hero éducation
+- **Purpose :** segmenter en une phrase les **trois piliers** (langue, court, technique) + public cible (étudiant, pro, reconversion).
+- **CTA dual :** “Explorer pays pour études” (deep link objectif) + “Comparer destinations”.
+
+### 5.2 Grille des trois piliers (`EducationCard` / tabs)
+- **Carte pilier :** icône distincte (langue / horloge courte / outil technique), titre, **2 lignes max** bénéfice, **chips** durée & coût relatif (échelle qualitative L/M/H si pas de chiffre).
+- **Interactions :** carte entière cliquable vers sous-route ; hover élévation + flèche “Découvrir”.
+- **Equal height :** forcer hauteur minimale identique pour alignement visuel Stitch.
+
+### 5.3 Bandeau “Pourquoi VisaFlow pour l’éducation”
+- **Purpose :** relier scores **study mobility** et contenus pays (PhD, langue) sans liste technique.
+- **Proof :** 3 bullets max (scores, sources, comparateur).
+
+### 5.4 Pont vers pays phares (optionnel SSR)
+- **Purpose :** strip horizontal 4–6 `CountryCard` mini “souvent consultés pour études” si données.
+- **Empty :** masquer le strip.
+
+### 5.5 Rappel navigation globale
+- **Purpose :** lien discret vers `/education` dans fil d’Ariane mental (breadcrumb visuel léger) si utilisateur arrive d’un sous-pilier.
+
+### 5.6 Accessibilité pédagogique
+- **Purpose :** glossaire tooltip sur acronymes (CBI n’applique pas ici mais Erasmus+, TCF, etc. si mentionnés).
 
 ---
 

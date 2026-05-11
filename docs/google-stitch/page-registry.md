@@ -37,5 +37,6 @@
 | 33 | KEYHOLE | Clerk (modal + hosted) | `pages/33-keyhole-clerk-authentication-surface.md` |
 | 34 | GLIMPSE | Chrome global (`SiteChrome`, `app/layout`) | `pages/34-glimpse-site-chrome-shell.md` |
 | 35 | NEXUS | Shell espace connecté (sidebars + `DashboardLayoutClient`) | `pages/35-nexus-authenticated-shell.md` |
+| 36 | ANCHOR | Suite légale & confiance (mentions, confidentialité, cookies — **routes futures**) | `pages/36-anchor-trust-legal-suite.md` |
 
 Paths in the **Markdown file** column are relative to `docs/google-stitch/`.
