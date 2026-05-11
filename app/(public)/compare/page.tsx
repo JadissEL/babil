@@ -11,12 +11,12 @@ export const metadata = {
 
 export default function ComparePage() {
   return (
-    <PageContainer className="py-8 sm:py-10 lg:py-12">
-      <Suspense
-        fallback={<CompareExperienceSkeleton />}
-      >
-        <CompareExperience />
-      </Suspense>
-    </PageContainer>
+    <div className="min-h-screen bg-[#FDFBF4]">
+      <PageContainer className="py-8 sm:py-10 lg:py-12">
+        <Suspense fallback={<CompareExperienceSkeleton />}>
+          <CompareExperience />
+        </Suspense>
+      </PageContainer>
+    </div>
   )
 }

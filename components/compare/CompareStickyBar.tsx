@@ -10,31 +10,56 @@ export type CompareStickyBarProps = {
   objectiveShortLabel?: string
   onClear: () => void
   onScrollToTable: () => void
+  /** Style maquette PAGE 03 (marine / crème). */
+  variant?: 'default' | 'prism'
 }
 
-export function CompareStickyBar({ names, max, objectiveShortLabel, onClear, onScrollToTable }: CompareStickyBarProps) {
+export function CompareStickyBar({
+  names,
+  max,
+  objectiveShortLabel,
+  onClear,
+  onScrollToTable,
+  variant = 'default',
+}: CompareStickyBarProps) {
   if (names.length === 0) return null
+
+  const isPrism = variant === 'prism'
 
   return (
     <div
       className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2 sm:px-4 sm:pb-4 lg:left-56"
       style={{ bottom: `var(${VF_OBJECTIVE_DOCK_HEIGHT_VAR}, 5.5rem)` }}
     >
-      <div className="pointer-events-auto flex w-full max-w-4xl flex-col gap-3 rounded-2xl border border-line bg-surface/95 px-3 py-3 shadow-card backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-4">
+      <div
+        className={
+          isPrism
+            ? 'pointer-events-auto flex w-full max-w-4xl flex-col gap-3 rounded-2xl border border-[#0D1B3E]/15 bg-white/95 px-3 py-3 shadow-[0_8px_28px_rgba(13,27,62,0.12)] backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-4'
+            : 'pointer-events-auto flex w-full max-w-4xl flex-col gap-3 rounded-2xl border border-line bg-surface/95 px-3 py-3 shadow-card backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-4'
+        }
+      >
         <div className="min-w-0 sm:flex sm:flex-1 sm:items-center">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted sm:text-sm">
-            <Scale className="h-5 w-5 shrink-0 text-primary" aria-hidden />
-            <span className="font-black text-text">
+          <div
+            className={
+              isPrism
+                ? 'flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-[#0D1B3E]/70 sm:text-sm'
+                : 'flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted sm:text-sm'
+            }
+          >
+            <Scale className={isPrism ? 'h-5 w-5 shrink-0 text-[#0D1B3E]' : 'h-5 w-5 shrink-0 text-primary'} aria-hidden />
+            <span className={isPrism ? 'font-black text-[#0D1B3E]' : 'font-black text-text'}>
               {names.length}/{max}
             </span>
-            <span className="hidden text-muted sm:inline" aria-hidden>
+            <span className={isPrism ? 'hidden text-[#0D1B3E]/40 sm:inline' : 'hidden text-muted sm:inline'} aria-hidden>
               —
             </span>
-            <span className="w-full min-w-0 line-clamp-2 break-words font-medium leading-snug text-text sm:w-auto sm:max-w-[min(100%,28rem)]">
+            <span className="w-full min-w-0 line-clamp-2 break-words font-medium leading-snug text-[#0D1B3E] sm:w-auto sm:max-w-[min(100%,28rem)]">
               {objectiveShortLabel ? (
                 <>
-                  <span className="font-black text-primary">{objectiveShortLabel}</span>
-                  <span className="text-muted"> · </span>
+                  <span className={isPrism ? 'font-black text-[#0D1B3E]' : 'font-black text-primary'}>
+                    {objectiveShortLabel}
+                  </span>
+                  <span className={isPrism ? 'text-[#0D1B3E]/50' : 'text-muted'}> · </span>
                 </>
               ) : null}
               {names.join(' · ')}
@@ -45,7 +70,11 @@ export function CompareStickyBar({ names, max, objectiveShortLabel, onClear, onS
           <Button
             type="button"
             variant="secondary"
-            className="text-[10px] font-black uppercase tracking-wider sm:text-xs"
+            className={
+              isPrism
+                ? 'border-[#0D1B3E]/20 bg-[#FDFBF4] text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] hover:bg-white sm:text-xs'
+                : 'text-[10px] font-black uppercase tracking-wider sm:text-xs'
+            }
             onClick={onScrollToTable}
           >
             <span className="sm:hidden">Tableau</span>
@@ -54,7 +83,11 @@ export function CompareStickyBar({ names, max, objectiveShortLabel, onClear, onS
           <Button
             type="button"
             variant="outline"
-            className="gap-1 text-[10px] font-black uppercase tracking-wider sm:text-xs"
+            className={
+              isPrism
+                ? 'gap-1 border-[#0D1B3E]/25 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] hover:bg-[#FDFBF4] sm:text-xs'
+                : 'gap-1 text-[10px] font-black uppercase tracking-wider sm:text-xs'
+            }
             onClick={onClear}
           >
             <X className="h-4 w-4 shrink-0" aria-hidden /> Effacer

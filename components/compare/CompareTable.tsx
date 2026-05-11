@@ -1,18 +1,26 @@
 import Link from 'next/link'
+import { ComparePrismTable } from '@/components/compare/ComparePrismTable'
 import type { CompareRow } from '@/lib/compare-rows'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
+import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 import { cn } from '@/lib/utils'
 
 export type CompareTableProps = {
   rows: CompareRow[]
   winnerId: number | null
   objectiveLabel: string
+  /** Libellé court objectif (ex. Master) — maquette Prism. */
+  objectiveShortLabel?: string
   scoringRationale: string
   /** e.g. 2+ countries and a winner */
   recommendation: string | null
   /** Empty-state CTA (defaults: generic explorer / tourism compare). */
   emptyExploreHref?: string
   emptyCompareHref?: string
+  /** Maquette PAGE 03 (Prism) : tableau par sections + bandeau recommandation. */
+  variant?: 'default' | 'prism'
+  /** Requis pour `variant="prism"` : même ordre et mêmes `id` que `rows`. */
+  enrichedCountries?: EnrichedCountryApi[]
 }
 
 function CompareMobileCards({ rows, winnerId }: Pick<CompareTableProps, 'rows' | 'winnerId'>) {
@@ -68,34 +76,65 @@ function CompareMobileCards({ rows, winnerId }: Pick<CompareTableProps, 'rows' |
   )
 }
 
+function prismDataOk(rows: CompareRow[], enriched: EnrichedCountryApi[] | undefined): enriched is EnrichedCountryApi[] {
+  if (!enriched || enriched.length !== rows.length) return false
+  return rows.every((r, i) => enriched[i]?.id === r.id)
+}
+
 export function CompareTable({
   rows,
   winnerId,
   objectiveLabel,
+  objectiveShortLabel = '',
   scoringRationale,
   recommendation,
   emptyExploreHref = CTA_EXPLORE_HREF,
   emptyCompareHref = CTA_COMPARE_TOURISM_HREF,
+  variant = 'default',
+  enrichedCountries,
 }: CompareTableProps) {
+  const emptyShell =
+    variant === 'prism'
+      ? 'rounded-2xl border border-dashed border-[#0D1B3E]/25 bg-white/60 p-8 text-center text-[#0D1B3E]/75 sm:p-12'
+      : 'rounded-2xl border border-dashed border-line bg-inset p-8 text-center text-muted sm:p-12'
+
+  const emptyPrimaryBtn =
+    variant === 'prism'
+      ? 'inline-flex justify-center rounded-xl bg-[#0D1B3E] px-6 py-3 text-sm font-black text-white shadow-md transition-colors hover:bg-[#0D1B3E]/90'
+      : 'inline-flex justify-center rounded-xl bg-primary px-6 py-3 text-sm font-black text-white shadow-soft transition-colors hover:bg-primary-hover'
+
+  const emptySecondaryBtn =
+    variant === 'prism'
+      ? 'inline-flex justify-center rounded-xl border-2 border-[#0D1B3E] bg-white px-6 py-3 text-sm font-black text-[#0D1B3E] transition-colors hover:bg-[#FDFBF4]'
+      : 'inline-flex justify-center rounded-xl border border-line bg-surface px-6 py-3 text-sm font-black text-text transition-colors hover:bg-primary-soft'
+
   if (rows.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-line bg-inset p-8 text-center text-muted sm:p-12">
+      <div className={emptyShell}>
         <p className="mb-6 font-medium">Sélectionnez au moins un pays pour afficher le tableau.</p>
         <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
-          <Link
-            href={emptyExploreHref}
-            className="inline-flex justify-center rounded-xl bg-primary px-6 py-3 text-sm font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
-          >
+          <Link href={emptyExploreHref} className={emptyPrimaryBtn}>
             Choisir dans l&apos;explorateur
           </Link>
-          <Link
-            href={emptyCompareHref}
-            className="inline-flex justify-center rounded-xl border border-line bg-surface px-6 py-3 text-sm font-black text-text transition-colors hover:bg-primary-soft"
-          >
+          <Link href={emptyCompareHref} className={emptySecondaryBtn}>
             Exemple : ouvrir le comparateur
           </Link>
         </div>
       </div>
+    )
+  }
+
+  if (variant === 'prism' && prismDataOk(rows, enrichedCountries)) {
+    return (
+      <ComparePrismTable
+        rows={rows}
+        enriched={enrichedCountries}
+        winnerId={winnerId}
+        objectiveShortLabel={objectiveShortLabel || objectiveLabel}
+        objectiveLabel={objectiveLabel}
+        scoringRationale={scoringRationale}
+        recommendation={recommendation}
+      />
     )
   }
 

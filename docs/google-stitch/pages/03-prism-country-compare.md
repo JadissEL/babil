@@ -37,11 +37,22 @@ La comparaison transforme la **complexité multidimensionnelle** en **tableau li
 ---
 
 ## 4. Layout Architecture
-**Route :** `app/(public)/compare/page.tsx` — `PageContainer` + **`Suspense`** (`CompareExperienceSkeleton`) → **`CompareExperience`** (`components/compare/CompareExperience.tsx`, client).
+**Route :** `app/(public)/compare/page.tsx` — enveloppe **fond crème** `#FDFBF4` → `PageContainer` + **`Suspense`** (`CompareExperienceSkeleton`) → **`CompareExperience`** (`components/compare/CompareExperience.tsx`, client).
 
-**Flux UX code :** assistant en **étapes** `category` → `objective` → `countries` ; jusqu’à **`MAX = 4`** pays (`selectedIds`) ; table `CompareTable` + **`CompareStickyBar`** + pickers **`CountryComparePicker`** ; lib **`compare-objectives`** (`COMPARE_CATEGORIES`, `COMPARE_OBJECTIVES`, `getObjectiveDefinition`, `enrichedToCompareRow`, etc.).
+**Maquette Stitch de référence :** capture **`../assets/page-03-prism-stitch-reference.png`** — voir **§4bis**.
+
+**Flux UX code :** assistant en **étapes** `category` → `objective` → `countries` ; jusqu’à **`MAX = 4`** pays (`selectedIds`) ; **`ComparePrismHeader`** (fil d’Ariane *Comparatif › Prism*, titre serif, fond topographique léger) ; table **`CompareTable`** `variant="prism"` → **`ComparePrismTable`** (sections Visa & immigration, Coût de la vie, Mobility score, bandeau recommandation) + vue **`default`** si données enrichies absentes ; **`CompareStickyBar`** `variant="prism"` sur l’étape pays ; pickers **`CountryComparePicker`** ; lib **`compare-objectives`**, **`compare-prism-ui`**, **`explorer-atlas-ui`** (délai visa).
+
+### 4bis. Écart maquette ↔ implémentation (2026-05)
+**État code :** page compare en **coque Prism** (crème, typographie marine, cartes blanches étapes 1–2). Tableau principal : **grille** avec vignettes pays, flèches de tendance vs **médiane** de la sélection (délai, score visa principal, loyer indicatif), score composite **0–10** (`composite` / 10). **Rail gauche « VF »** de la capture : non dupliqué dans le corps (**`SitePrimaryNavColumn`** global). **Données** : loyer = **placeholder** stable par `id` (pas de série loyer réelle) ; taux = **score visa** modèle 0–100 du KPI prioritaire (études > travail > affaires > tourisme).
+
+| Zone | Maquette | Code |
+|------|-----------|------|
+| Tableau classique KPI | — | Toujours disponible si `enrichedCountries` ne suit pas `rows` (repli `variant="default"`) |
+| CTA bandeau | *Obtenir de l’aide* + *Voir le pays* | Liens **`/services/delegated-applications`** et **`/countries/[id]`** |
 
 ---
+
 
 ## 5. Full Section Breakdown
 
@@ -111,7 +122,10 @@ Designer une **table premium** avec header pays sticky + avatar drapeau circulai
 
 ---
 
-## 13. Screenshot Placeholder
+## 13. Screenshot reference (Stitch)
 
-### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 03]
+### Stitch Screenshot Reference — PAGE 03 (PRISM)
+
+![Maquette comparateur VisaFlow — référence Stitch PAGE 03](../assets/page-03-prism-stitch-reference.png)
+
+*Capture intégrée au dépôt ; écarts → **§4bis**.*

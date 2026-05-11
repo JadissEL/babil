@@ -31,6 +31,11 @@ export const COUNTRY_HIGHLIGHTS: Record<string, { place: string; imageUrl: strin
     imageUrl:
       'https://images.unsplash.com/photo-1496588152823-e9b3f88a2f0b?auto=format&fit=crop&w=1600&q=80',
   },
+  es: {
+    place: 'Sagrada Família',
+    imageUrl:
+      'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=1600&q=80',
+  },
 }
 
 export function hasCuratedHighlightByIso(iso: string) {

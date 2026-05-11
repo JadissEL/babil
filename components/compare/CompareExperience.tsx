@@ -1,9 +1,10 @@
 'use client'
 
-import { ArrowLeft, ChevronRight, Scale, Share2 } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Share2 } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { CompareExperienceSkeleton } from '@/components/compare/CompareExperienceSkeleton'
+import { ComparePrismHeader } from '@/components/compare/ComparePrismHeader'
 import { CompareStickyBar } from '@/components/compare/CompareStickyBar'
 import { CompareTable } from '@/components/compare/CompareTable'
 import { CountryComparePicker, type CountryOption } from '@/components/compare/CountryComparePicker'
@@ -250,12 +251,13 @@ export function CompareExperience() {
     setSelectedIds(next)
   }, [suggestionIds])
 
+  const selectedEnriched = useMemo(() => {
+    return selectedIds.map((id) => byId.get(id)).filter(Boolean) as EnrichedCountryApi[]
+  }, [selectedIds, byId])
+
   const rows = useMemo(() => {
-    return selectedIds
-      .map((id) => byId.get(id))
-      .filter(Boolean)
-      .map((c) => enrichedToCompareRow(c as EnrichedCountryApi, objective))
-  }, [selectedIds, byId, objective])
+    return selectedEnriched.map((c) => enrichedToCompareRow(c, objective))
+  }, [selectedEnriched, objective])
 
   const winnerId = useMemo(() => {
     if (rows.length === 0) return null
@@ -332,36 +334,34 @@ export function CompareExperience() {
     return <CompareExperienceSkeleton />
   }
 
+  const prismChrome = step === 'countries'
+
   return (
     <div className="min-w-0 space-y-8 pb-[max(9rem,calc(7.5rem+var(--vf-objective-dock-height,5.5rem)+env(safe-area-inset-bottom,0px)))] sm:space-y-10">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
-          <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">
-            <Scale className="h-7 w-7 sm:h-8 sm:w-8" />
-          </div>
-          <div className="min-w-0">
-            <h1 className="text-2xl font-black tracking-tight text-text sm:text-3xl md:text-4xl">
-              Comparer les pays
-            </h1>
-            <p className="mt-1 text-sm leading-relaxed text-muted sm:text-[15px]">
-              Choisissez d&apos;abord votre objectif : le score et les colonnes s&apos;adaptent. Puis jusqu&apos;à{' '}
-              {MAX} pays.
-            </p>
-          </div>
-        </div>
-      </div>
+      <ComparePrismHeader step={step} objective={objective} />
 
       <nav
         aria-label="Étapes"
-        className="flex flex-wrap items-center gap-2 text-xs font-black uppercase tracking-widest text-muted sm:gap-3"
+        className={cn(
+          'flex flex-wrap items-center gap-2 text-xs font-black uppercase tracking-widest sm:gap-3',
+          prismChrome ? 'text-[#0D1B3E]/55' : 'text-muted',
+        )}
       >
         {(['category', 'objective', 'countries'] as const).map((s, i) => (
           <span key={s} className="flex items-center gap-2">
-            {i > 0 ? <ChevronRight className="h-3 w-3 opacity-50" aria-hidden /> : null}
+            {i > 0 ? (
+              <ChevronRight className={cn('h-3 w-3', prismChrome ? 'text-[#0D1B3E]/35' : 'opacity-50')} aria-hidden />
+            ) : null}
             <span
               className={cn(
                 'rounded-full px-3 py-1',
-                stepIndex(step) >= i ? 'bg-primary text-white' : 'bg-inset text-muted',
+                stepIndex(step) >= i
+                  ? prismChrome
+                    ? 'bg-[#0D1B3E] text-white'
+                    : 'bg-primary text-white'
+                  : prismChrome
+                    ? 'border border-[#0D1B3E]/15 bg-white text-[#0D1B3E]/75'
+                    : 'bg-inset text-muted',
               )}
             >
               {i + 1}. {s === 'category' ? 'Domaine' : s === 'objective' ? 'Objectif' : 'Pays & résultats'}
@@ -372,7 +372,7 @@ export function CompareExperience() {
 
       {step === 'category' && (
         <div className="space-y-4">
-          <h2 className="text-lg font-black text-text sm:text-xl">1. Quel est votre domaine ?</h2>
+          <h2 className="text-lg font-black text-[#0D1B3E] sm:text-xl">1. Quel est votre domaine ?</h2>
           <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {COMPARE_CATEGORIES.map((cat) => (
               <button
@@ -382,11 +382,11 @@ export function CompareExperience() {
                   setCategoryId(cat.id)
                   setStep('objective')
                 }}
-                className="rounded-2xl border border-line bg-surface p-4 text-left shadow-soft transition-all hover:border-primary/40 hover:bg-primary-soft/30 sm:p-5"
+                className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-4 text-left shadow-md transition-all hover:border-[#0D1B3E]/25 hover:bg-[#FDFBF4] sm:p-5"
               >
-                <span className="text-base font-black text-text sm:text-lg">{cat.label}</span>
-                <p className="mt-2 text-sm font-medium text-muted">{cat.description}</p>
-                <span className="mt-3 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                <span className="text-base font-black text-[#0D1B3E] sm:text-lg">{cat.label}</span>
+                <p className="mt-2 text-sm font-medium text-[#0D1B3E]/65">{cat.description}</p>
+                <span className="mt-3 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]">
                   Continuer <ChevronRight className="h-3 w-3" />
                 </span>
               </button>
@@ -401,7 +401,7 @@ export function CompareExperience() {
             <Button type="button" variant="outline" className="gap-1 text-sm" onClick={goToCategoryStep}>
               <ArrowLeft className="h-4 w-4" /> Domaine
             </Button>
-            <h2 className="text-lg font-black text-text sm:text-xl">2. Précisez votre objectif</h2>
+            <h2 className="text-lg font-black text-[#0D1B3E] sm:text-xl">2. Précisez votre objectif</h2>
           </div>
           <div className="grid min-w-0 gap-3 sm:grid-cols-2">
             {objectivesInCategory.map((o) => (
@@ -410,12 +410,12 @@ export function CompareExperience() {
                 type="button"
                 onClick={() => commitObjective(o.id)}
                 className={cn(
-                  'rounded-2xl border border-line bg-surface p-4 text-left shadow-soft transition-all hover:border-primary/40 sm:p-5',
-                  objective.id === o.id && 'ring-2 ring-primary',
+                  'rounded-2xl border border-[#0D1B3E]/10 bg-white p-4 text-left shadow-md transition-all hover:border-[#0D1B3E]/25 sm:p-5',
+                  objective.id === o.id && 'ring-2 ring-[#0D1B3E]',
                 )}
               >
-                <span className="text-base font-black text-text">{o.label}</span>
-                <p className="mt-2 text-sm font-medium text-muted">{o.description}</p>
+                <span className="text-base font-black text-[#0D1B3E]">{o.label}</span>
+                <p className="mt-2 text-sm font-medium text-[#0D1B3E]/65">{o.description}</p>
               </button>
             ))}
           </div>
@@ -438,7 +438,7 @@ export function CompareExperience() {
                 >
                   <ArrowLeft className="h-4 w-4" /> Objectif
                 </Button>
-                <span className="rounded-full bg-primary-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
+                <span className="rounded-full border border-[#0D1B3E]/15 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]">
                   {objective.shortLabel}
                 </span>
                 <Button
@@ -451,8 +451,8 @@ export function CompareExperience() {
                   <Share2 className="h-4 w-4" /> Partager le lien
                 </Button>
               </div>
-              <h2 className="text-lg font-black text-text sm:text-xl">3. Choisissez les pays</h2>
-              <p className="max-w-2xl text-sm font-medium text-muted">{objective.description}</p>
+              <h2 className="text-lg font-black text-[#0D1B3E] sm:text-xl">3. Choisissez les pays</h2>
+              <p className="max-w-2xl text-sm font-medium text-[#0D1B3E]/70">{objective.description}</p>
             </div>
           </div>
 
@@ -469,11 +469,14 @@ export function CompareExperience() {
               onAddSuggestions={applySuggestions}
             />
             <div className="min-w-0 space-y-3 sm:space-y-4">
-              <h3 className="text-base font-bold text-text sm:text-lg">Tableau comparatif</h3>
+              <h3 className="text-base font-bold text-[#0D1B3E] sm:text-lg">Tableau comparatif</h3>
               <CompareTable
+                variant="prism"
+                enrichedCountries={selectedEnriched}
                 rows={rows}
                 winnerId={winnerId}
                 objectiveLabel={objective.label}
+                objectiveShortLabel={objective.shortLabel}
                 scoringRationale={objective.scoringRationale}
                 recommendation={recommendation}
                 emptyExploreHref={emptyTableExploreHref}
@@ -488,6 +491,7 @@ export function CompareExperience() {
         names={names}
         max={MAX}
         objectiveShortLabel={step === 'countries' ? objective.shortLabel : undefined}
+        variant={step === 'countries' ? 'prism' : 'default'}
         onClear={() => setSelectedIds([])}
         onScrollToTable={scrollToTable}
       />
