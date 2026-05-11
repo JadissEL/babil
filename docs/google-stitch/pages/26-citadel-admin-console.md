@@ -36,7 +36,7 @@ Concentrer les **outils de super-utilisateur** : données pays, pipelines, monit
 ---
 
 ## 4. Layout Architecture
-Sidebar admin nested → content area tables / forms.
+**Implémentation (`app/(dashboard)/admin/page.tsx`) :** page client unique — **`layout.tsx`** admin ne fait qu’envelopper `children` (pas de sidebar dédiée). **Navigation par onglets horizontaux** : `comments` | `countries` | `assist` | `intelligence` (`useState<Tab>`).
 
 ---
 
@@ -46,26 +46,26 @@ Sidebar admin nested → content area tables / forms.
 - **Purpose :** si non admin : page **403** dédiée ou redirect `/overview` avec toast “Accès refusé” — éviter flash contenu sensible.
 - **Copy :** neutre, sans détail technique fuite.
 
-### 5.2 Shell admin (layout)
-- **Purpose :** sidebar sections : **Pays**, **Agents / santé**, **Requêtes déléguées**, **Intelligence** (résumé), **Outils** (futur).
-- **Header :** environnement `PROD`/`Preview` badge couleur ; user menu Clerk minimal.
+### 5.2 Onglets principaux (code actuel)
+- **Commentaires (`comments`) :** file modération / pending (types `PendingComment`, actions API comments).
+- **Pays (`countries`) :** **`CountryEditor`** + modèle `CountryEditorModel` — édition scores / métadonnées.
+- **Assist (`assist`) :** file demandes déléguées (`AssistQueueRow`, statuts `DELEGATED_REQUEST_STATUSES`, prix `formatPriceMad`).
+- **Intelligence (`intelligence`) :** résumé pipeline (`IntelligenceSummary` : sources, observations, runs, alertes `runAlerts`, queue jobs).
 
 ### 5.3 `CountryEditor` — édition pays
 - **Purpose :** formulaires guidés par sections du contrat pays (scores affichés, champs texte, JSON avancé repliable).
 - **Interactions :** sauvegarde avec **diff** local (unsaved banner) ; raccourci clavier sauvegarde `Ctrl+S`.
 - **Destructive :** “Réinitialiser section” avec modale confirm + saisie du nom du pays.
 
-### 5.4 Santé agents & pipelines
-- **Purpose :** vue **agents/health** : statut dernier run, latence, erreurs récentes, lien logs (futur).
-- **Visual :** pastilles vert / ambre / rouge ; graph sparkline optionnel.
+### 5.4 Santé agents & pipelines (hors onglet dédié)
+- **Purpose :** l’UI **health** agents peut vivre sous l’onglet intelligence ou route API séparée — vérifier évolutions ; pastilles vert / ambre / rouge si exposées.
 
-### 5.5 File requêtes délégation (admin API)
-- **Purpose :** table triable : id, utilisateur, service, statut, date ; actions “Voir détail”, “Changer statut”.
-- **Row expand :** payload JSON pretty-print dans drawer (attention PII — masquage champs sensibles).
+### 5.5 File requêtes délégation (onglet assist)
+- **Purpose :** lignes queue + statuts ; cohérence avec **PAGE 20–21** côté utilisateur.
 
-### 5.6 Intelligence summary (aperçu)
-- **Purpose :** lien ou embed vers `/api/admin/intelligence/summary` UI future — carte “couverture contrat”, “observations récentes”.
-- **Empty :** placeholder “Pipeline non configuré”.
+### 5.6 Intelligence summary (onglet intelligence)
+- **Purpose :** données `IntelligenceSummary` (sources, observations, runs, alertes stale/failed, stats queue).
+- **Empty :** états chargement / erreur fetch dans le composant.
 
 ### 5.7 Journal d’audit (futur)
 - **Purpose :** liste des actions admin avec actor, timestamp, entity — conformité interne.

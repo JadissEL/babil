@@ -35,11 +35,15 @@ Collecter **informations structurées** pour traitement opérationnel (`Delegate
 ---
 
 ## 4. Layout Architecture
-Stepper horizontal (si multi-étapes) → corps formulaire → récapitulatif → submit.
+**Implémentation :** `app/(public)/services/delegated-applications/apply/page.tsx` enveloppe **`DelegatedApplicationApplyClient`** dans **`Suspense`** avec fallback spinner (`ApplyFallback`). Le détail des champs / étapes vit dans le client (voir `DelegatedApplicationApplyClient.tsx`).
 
 ---
 
 ## 5. Full Section Breakdown
+
+### 5.0 Entrée query depuis **PAGE 20**
+- **Params typiques :** `category`, `package`, et optionnellement `countryId` / `countryName` (suffixe généré par `PackageCard`).
+- **Purpose :** pré-sélection forfait + pays cibles dans le formulaire.
 
 ### 5.1 En-tête de parcours
 - **Purpose :** rappeler le **SKU service** choisi (titre + sous-titre + durée indicative de traitement).

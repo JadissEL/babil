@@ -64,6 +64,15 @@ Préparer **l’architecture UX légale minimale viable** pour VisaFlow : pages 
 ### 5.6 États localisés
 - **FR uniquement** au départ ; structure prête pour `en` (toggle futur en footer).
 
+### 5.7 Alignement exports & compte (**PAGE 24**)
+- **Purpose :** la politique de confidentialité doit **référencer** l’export JSON RGPD (`/api/user/data-export`) et le **périmètre Clerk** (données hors export Babil) — même langage que la section “Vos données” du profil.
+
+### 5.8 Assist & données dossiers (**PAGE 20–21**)
+- **Purpose :** finalités traitement des champs formulaire délégué, durée conservation dossiers, destinataires internes — cohérent `delegated-application-*` libs.
+
+### 5.9 Intelligence & provenance (**PAGE 32** / **PAGE 16**)
+- **Purpose :** mentionner observations / sources agrégées ; lien vers glossaire ou doc technique pour utilisateurs avancés.
+
 ---
 
 ## 6. UI Design Direction

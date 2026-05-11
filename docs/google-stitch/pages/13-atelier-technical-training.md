@@ -34,12 +34,24 @@ Présenter **métiers techniques** et passerelles visa travail / permis (informa
 ---
 
 ## 4. Layout Architecture
-Hero atelier → matrice filières × régions (simplifiée) → histoires cas (futur) → CTA compare.
+**Implémentation (`app/(public)/education/technical-training/page.tsx`, client) :** retour hub → filtres (**recherche**, accès bac / sans bac, **domaine** `types`, droits au travail bucket, coût) sur `full_data.education_mobility.technical_training` → résultats → **`GoogleAd`** → lien explorateur.
 
 ---
 
 ## 5. Full Section Breakdown
-Grille cartes filière ; badges “demande forte / modérée” si données.
+
+### 5.1 Pipeline `technical_training`
+- **Champs :** `types[]` (domaines), `access_bac` / `access_no_bac` booléens, `work_rights` → bucket (`autorisé` / `limité` / `interdit`), `visa`, `cost`, `access`, `insight`.
+
+### 5.2 Filtres spécifiques
+- **`bacAccess` / `noBacAccess` :** oui/non/all.
+- **`work` :** droits travail agrégés pour réduire la liste.
+
+### 5.3 Badges visuels
+- **Purpose :** `BadgeCheck` / `BadgeX` (voir TSX) pour accès bac / sans bac — renforcer scannabilité.
+
+### 5.4 Empty & journeys
+- **Vers PAGE 08** business ou **PAGE 16** pays à fort score emploi (copy CTA dans maquette).
 
 ---
 

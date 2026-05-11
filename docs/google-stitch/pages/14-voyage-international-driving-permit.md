@@ -34,12 +34,31 @@ Expliquer **IDP / droits de conduie** avec liens intelligence pays. Résout *“
 ---
 
 ## 4. Layout Architecture
-Hero route → sections FAQ → carte liens pays populaires → bloc sources.
+**Implémentation (`app/(public)/permis/page.tsx`) :** `Suspense` + inner avec **`useSearchParams`** : hero permis marocain → **encadré disclaimer** (ambre) → filtres **recherche** + **profil résidence** (`RESIDENCY_OPTIONS` : tourist, student, worker, …) → **comparaison deep-link** `?compare=id,id` (jusqu’à 4) → liste pays matérialisée avec **`DrivingRightsIntelSection`** + helpers `materializeDrivingRightsIntel`, `deriveDrivingRightsVisual`, `visualLabelFr` → **`GoogleAd`**.
+
+**Données :** `GET /api/countries` + `normalizeCountriesApiListResponse` ; filtre par nom + règles résidence.
 
 ---
 
 ## 5. Full Section Breakdown
-Intégrer patterns `DrivingRightsIntelSection` au niveau pays ; ici vue macro.
+
+### 5.1 Wrapper `Suspense`
+- **Purpose :** éviter erreurs static render sur `useSearchParams` ; fallback spinner centré.
+
+### 5.2 Disclaimer légal / méthodo
+- **Purpose :** bannière ambre : contenu structuré schéma v1, sources officielles à brancher — **non avis juridique**.
+
+### 5.3 Filtre résidence
+- **Purpose :** `residencyCategoryMatchesFilter` sur `intel.residencyRules` — masque pays sans règle applicable au profil choisi.
+
+### 5.4 Mode comparer (`compare` query)
+- **Purpose :** lignes `compareRows` résolues par id ; affichage parallèle des fiches intel (voir layout TSX).
+
+### 5.5 `DrivingRightsIntelSection` (macro liste)
+- **Purpose :** même composant que sous **PAGE 16** mais en **catalogue** pays filtrable.
+
+### 5.6 Cohérence **PAGE 37**
+- **Option :** micro-feedback sur blocs intel longs — placement bas de section.
 
 ---
 

@@ -37,22 +37,40 @@ Centraliser la **lecture zone Schengen** : membres, signaux, éventuelles ambigu
 ---
 
 ## 4. Layout Architecture
-Hero Schengen → bloc explicatif → grille / table membres → bloc sources / mise à jour.
+**Implémentation (`app/(public)/schengen/page.tsx`, client) :** titre + recherche → **barre comparer (2–4 pays)** → **tableau comparatif côte à côte** (si ≥ 2 sélectionnés) → **`GoogleAd`** → chargement spinner ou **liste mobile** / **table desktop** des membres Schengen avec colonnes friction / acceptation / ambassade + toggle **Comparer** par ligne.
+
+**Source liste :** `GET /api/countries` → `normalizeCountriesApiListResponse` → filtre **`isSchengenMember(name)`** (canonical nom, pas seul `schengen_flag`).
 
 ---
 
 ## 5. Full Section Breakdown
-### 5.1 Hero
-Kicker + titre fort + sous-texte pédagogique.
 
-### 5.2 Members grid
-Carte uniforme : drapeau + nom + statut (membre / associé si applicable).
+### 5.1 Hero & recherche
+- **`h1` + `ShieldCheck` :** “Schengen · Intelligence”.
+- **Champ search :** filtre client sur nom pays (`filtered`).
 
-### 5.3 Data integrity note (si dédup)
-Encart `muted` expliquant harmonisation clés — évite méfiance utilisateur.
+### 5.2 Sélection comparer (2–4)
+- **Barre chips :** pays sélectionnés avec `X` pour retirer ; hint si vide.
+- **`toggleCompare` :** max **4** ids ; idempotence clic.
 
-### 5.4 Footer links
-Vers compare Schengen subset (futur) ou explorer filtré.
+### 5.3 Table “Comparaison côte à côte”
+- **Si `compareCountries.length >= 2` :** lignes `CompareRow` — Acceptation (Maroc), Score friction, Niveau de risque, Délai rendez-vous (`friction_analysis`).
+- **Scroll horizontal** sur petit écran.
+
+### 5.4 `GoogleAd slot="schengen_top"`
+- **Purpose :** monétisation sous la zone décisionnelle primaire.
+
+### 5.5 Liste mobile (`md:hidden`)
+- **Carte pays :** lien `/countries/[id]` + drapeau ; barre acceptation % ; badge friction coloré (`scoreClass`) ; citation `embassy_behavior` tronquée.
+
+### 5.6 Table desktop (`hidden md:block`)
+- **Colonnes :** Pays, Acceptation, Friction RDV, Risque, Comportement ambassade, colonne **Comparer** (bouton état sélectionné).
+
+### 5.7 Intégrité données (produit)
+- **Copy possible :** rappeler que l’appartenance Schengen est **dérivée du nom canonique** (commentaire code) — encart discret si la méfiance utilisateur remonte.
+
+### 5.8 Journeys sortants
+- **Fiche pays PAGE 16 ;** **PAGE 03** compare multi (pré-remplissage futur depuis sélection).
 
 ---
 

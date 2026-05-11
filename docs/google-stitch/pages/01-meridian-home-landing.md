@@ -40,16 +40,18 @@ L’accueil **ancre la promesse VisaFlow** : mobilité internationale pour profi
 ---
 
 ## 4. Layout Architecture
-- **Z0** Sticky `AppNavbar` (identité, liens long-cours, CTA espace perso).
-- **Z1** Hero plein largeur : carrousel ou séquence slides (`HeroWorldCarousel` mental model) + CTA primaire.
-- **Z2** Bande filtres rapides / moteur léger (`HomeQuickFilterEngine` pattern).
-- **Z3** Grille pays vitrines (`CountryGrid` / cards) avec respiration verticale large.
-- **Z4** Footer marketing (si global layout l’inclut) ou rappel discret vers documentation intelligence.
-- **Responsive :** hero stack vertical sur mobile ; filtres en scroll horizontal chip rail.
+**Racine (`app/page.tsx`) :** RSC `force-dynamic` ; `Promise.all` → `resolveHomeShowcaseCountries()` + `buildHomeHeroSlides()` passés au client **`HomeExperience`** (`components/home/HomeExperience.tsx`).
+
+**Dans `HomeExperience` (ordre macro) :** `PageContainer` + **`AppSidebar`** (navigation contextuelle) + colonne principale : **`HeroWorldCarousel`** (slides depuis données) → **`HomeQuickFilterEngine`** → **`CountryGrid`** ( `topCountries` ) → rubrique **features** réordonnées par objectif (`homeFeatureOrderForObjective`, `FEATURE_MAP`) → **`DelegatedApplicationsHomePromo`** → **`GoogleAd`** selon slots.
+
+**Responsive :** hero stack ; filtres chips scroll horizontal ; grille pays 1 col mobile.
 
 ---
 
 ## 5. Full Section Breakdown
+
+### 5.0 Métadonnées & SEO (`metadata` dans `page.tsx`)
+- **Title / description** : promesse mobilité + filtres (aligné produit).
 
 ### 5.1 Navbar
 - **Purpose :** orientation constante + sortie vers espace connecté.
@@ -72,6 +74,22 @@ L’accueil **ancre la promesse VisaFlow** : mobilité internationale pour profi
 - **Purpose :** preuve sociale de données (cartes pays).
 - **Skeletons :** shimmer cards alignées grille finale.
 - **Pagination :** scroll infini déconseillé pour SEO — préférer “Voir plus” vers explorer.
+
+### 5.5 Rubrique “features” objectif-aware
+- **Purpose :** liens rapides (probabilité, Schengen, Assist, éducation, communauté, business, investissement, etc.) via `FEATURE_MAP` + ordre `homeFeatureOrderForObjective`.
+- **CTA :** `href` fixes ou dérivés (`/probability`, `/schengen`, …).
+
+### 5.6 Bandeau focus objectif (`focusStripForObjective` / `homeHeroForObjective`)
+- **Purpose :** renforcer la cohérence avec `ObjectivePreferenceProvider` (slug primaire).
+
+### 5.7 `DelegatedApplicationsHomePromo`
+- **Purpose :** pont conversion vers **PAGE 20** sans alourdir le hero.
+
+### 5.8 `GoogleAd`
+- **Purpose :** slot régie — ne pas intercaler entre CTA critique et grille pays.
+
+### 5.9 `AppSidebar` + `PageContainer`
+- **Purpose :** même enveloppe que autres pages publiques longues ; vérif z-index avec dock/footer (**PAGE 34**).
 
 ---
 

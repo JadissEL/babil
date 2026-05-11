@@ -18,7 +18,7 @@ Logged-In (Clerk)
 ---
 
 ## 1. Page Purpose
-Donner **vision d’ensemble personnalisée** : onboarding post-signup (`PostSignupOnboarding`), bannière contextuelle profil (`ProfileContextBanner`), accès rapide moteurs & pays récents (`RecentlyViewedCountries`). Résout *“Où j’en suis dans mon projet mobilité ?”*
+Donner **vision d’ensemble personnalisée** : file **Assist** (`MyDelegatedRequests`), préférences objectif (`ObjectivePreferencePanel`), onboarding post-signup (`PostSignupOnboarding`), pays récents (`RecentlyViewedCountries`), grille **stats** (placeholders produit), puis **grille modules** liés aux moteurs + colonne **“Flash OSINT”** (copy statique illustrative). Résout *“Où j’en suis dans mon projet mobilité ?”* — **`ProfileContextBanner` n’est pas monté sur cette vue** au moment de la spec (vérifier le code si réintroduit).
 
 ---
 
@@ -35,41 +35,39 @@ Donner **vision d’ensemble personnalisée** : onboarding post-signup (`PostSig
 ---
 
 ## 4. Layout Architecture
-Top : bannière contextuelle → grille widgets (raccourcis, pays récents, CTA reco) → second row analytics légers (futur).
+**Implémentation (`OverviewPageClient.tsx`) :** `h1` “Bonjour, {firstName}” → **`MyDelegatedRequests`** (pleine largeur) → **`ObjectivePreferencePanel`** → **`PostSignupOnboarding`** → **`RecentlyViewedCountries`** → grille **4 stats** (valeurs aujourd’hui **statiques** dans le code — placeholder) → layout **2/3 + 1/3** : **Outils mobilité** (cartes `modules` avec badge statut Prêt/Bientôt/Nouveau) + **Flash OSINT** (encadré narratif + lien explorer).
 
 ---
 
 ## 5. Full Section Breakdown
 
 ### 5.1 Skeleton premier paint
-- **Purpose :** `DashboardPageSkeleton` reflète la grille de widgets finale (pas spinners centrés anonymes).
-- **Timing :** crossfade court vers contenu réel.
+- **Note :** pas de `DashboardPageSkeleton` explicite dans `OverviewPageClient` ; chargement Clerk peut laisser prénom vide (“Voyageur”) — prévoir skeleton global **PAGE 35** si besoin.
 
-### 5.2 Onboarding post-inscription (`PostSignupOnboarding`)
-- **Purpose :** checklist courte (objectif, pays d’intérêt, notification email opt-in futur).
-- **Dismiss :** possibilité “Plus tard” sans culpabiliser ; reprise depuis bannière discrète.
+### 5.2 `MyDelegatedRequests`
+- **Purpose :** premier bloc sous le titre — priorité conversion **PAGE 20–21** ; liste / empty state géré dans le composant.
 
-### 5.3 Bannière contextuelle profil (`ProfileContextBanner`)
-- **Purpose :** signaler profil incomplet ou incohérence avec dernier run probability.
-- **CTA :** lien direct `/profile` avec pré-remplissage d’intention (fragment URL futur).
+### 5.3 `ObjectivePreferencePanel`
+- **Purpose :** choix objectif primaire ; alimente `ctaExploreHref` / `ctaCompareHref` pour les liens modules dynamiques.
 
-### 5.4 Grille raccourcis moteurs
-- **Purpose :** cartes vers `/probability`, `/recommendation-engine`, `/recommendations` avec **icône + 1 ligne valeur** (“Dernière run : …” si data).
-- **Empty :** copy invitant premier run avec illustration légère.
+### 5.4 `PostSignupOnboarding`
+- **Purpose :** checklist post-inscription (voir composant) ; dismiss non culpabilisant.
 
-### 5.5 Pays récemment consultés (`RecentlyViewedCountries`)
-- **Purpose :** friction zéro pour reprendre fil ; horizontal scroll avec snap.
-- **Auth :** si anonyme impossible, masquer ou montrer session locale (policy produit).
+### 5.5 `RecentlyViewedCountries`
+- **Purpose :** reprise rapide des fiches **PAGE 16** ; scroll horizontal si nombreux.
 
-### 5.6 Accès explorer / compare
-- **Purpose :** rappel que l’espace perso **ne remplace pas** la navigation publique ; doubles CTA alignés sur `explorerNav`.
+### 5.6 Grille stats (placeholder)
+- **Purpose :** 4 cartes (score moyen, pays analysés, alertes, avis) — **chiffres figés** dans l’implémentation actuelle ; Stitch peut proposer état “live” futur sans casser la grille.
 
-### 5.7 Carte “Mes demandes déléguées” (extrait)
-- **Purpose :** aperçu `MyDelegatedRequests` : 2–3 dernières lignes statut + lien catalogue.
-- **Empty :** CTA vers PAGE 20.
+### 5.7 Modules “Outils mobilité”
+- **Purpose :** `useMemo` liste : probabilités, reco pro, compare (href `compareHref`), recommendations, explorer (`explorerHref`), permis, Assist, éducation, business…
+- **Badge état :** couleur selon `Prêt` / `Bientôt` / `Nouveau`.
 
-### 5.8 Slot admin / modération (conditionnel)
-- **Purpose :** tuiles visibles seulement si rôle ; éviter vide gênant pour utilisateur standard.
+### 5.8 Flash OSINT
+- **Purpose :** colonne droite — **contenu démo** (Espagne / France / Italie) + CTA “Ouvrir l’Explorer” ; préciser en maquette si placeholder editorial.
+
+### 5.9 Admin / modération
+- **Purpose :** non exposés ici ; accès via nav dashboard (**PAGE 35**) vers `/admin` ou `/moderation`.
 
 ---
 
