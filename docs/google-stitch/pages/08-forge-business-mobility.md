@@ -34,37 +34,34 @@ Agréger **storytelling + liens moteurs** pour l’utilisateur business. Résout
 ---
 
 ## 4. Layout Architecture
-Hero métier → piliers (3–4) → preuves / logos (futur) → CTA double (explorer, compare).
+**Implémentation (`app/(public)/business/page.tsx`, client ; `metadata` dans `app/(public)/business/layout.tsx`) :** hero “Business & investissement” + **recherche** pays → **carte lien explorateur** `businessHubExplorerHref(preference.primarySlug)` (`ObjectivePreferenceProvider`) → **`GoogleAd slot="business_top"`** → grille **2 colonnes** (`lg:grid-cols-2`) : une **carte par pays** (`filtered` sur nom) avec données **`enrichCountryApiRecord`**, `full_data.visa_system.business`, `street_food`, encart optionnel **`cbi_program`**.
+
+**Pas de** sections “piliers” CMS ni timeline entrepreneur dans le code actuel — le contenu est **data-driven par pays**.
 
 ---
 
 ## 5. Full Section Breakdown
 
-### 5.1 Hero business
-- **Purpose :** ancrer la promesse “mobilité pour l’activité” (déplacements, implantation, partenaires).
-- **Content :** titre fort, sous-texte orienté résultats (temps, coût, risque), CTA primaire vers `/explorer` avec objectif business pré-sélectionné si le provider d’objectif le permet.
-- **Empty state :** si aucun contenu CMS : copy statique + illustration abstraite réseau.
+### 5.1 Chargement
+- **`GET /api/countries`** → `normalizeCountriesApiListResponse` ; spinner vert (`border-success`) si loading.
 
-### 5.2 Piliers (3–4 blocs)
-- **Purpose :** segmenter les cas d’usage (vols fréquents, installation longue durée, événements, fiscalité indicative **non conseil**).
-- **Interactions :** chaque bloc lien “Voir pays recommandés” vers explorer filtré ou compare pré-rempli.
-- **Responsive :** grille 2×2 desktop → une colonne mobile.
+### 5.2 Carte pays (header)
+- **Titre pays** + badge “Mobilité économique” + **indice affaires** `/100` (`enriched._visa.business`).
 
-### 5.3 Encart données (SSR optionnel)
-- **Purpose :** montrer que VisaFlow **mesure** (scores business mobility) sans noyer.
-- **Micro-chart :** sparkline ou top-3 pays pour l’objectif business (données réelles si disponibles).
-- **Loading :** skeleton encart 16:9.
+### 5.3 Colonnes “Création d’entreprise”
+- **Encarts :** `rights` (droit d’investir), `setup` (mise en place) depuis `visa_system.business`.
 
-### 5.4 Bande logos / preuves (futur)
-- **Purpose :** crédibilité B2B ; placeholders gris neutres si vides.
-- **Accessibility :** logos avec `alt` entreprise.
+### 5.4 Colonnes “Micro-activité & food”
+- **`street_food` :** opportunité, invest. min, citation `barriers`.
 
-### 5.5 Double CTA footer
-- **Primary :** Explorer.
-- **Secondary :** Comparer (deep link `cta-hrefs` mental model).
+### 5.5 Bloc CBI conditionnel
+- **Si `full_data.cbi_program` :** carte verte “Nationalité par investissement”, champs `cost_min`, `time`, `type`.
 
-### 5.6 Navigation shell
-- **AppNavbar** sticky ; cohérence titre page avec entrée sidebar “Business & investissement”.
+### 5.6 CTA vers fiche pays
+- **Implémentation actuelle :** pas de `Link` explicite vers **`/countries/{id}`** en bas de carte — le nom pays est titre texte seul ; **Stitch** peut proposer CTA “Voir la fiche” aligné **PAGE 16** sans inventer de route.
+
+### 5.7 Écart maquette “piliers / logos”
+- **Note Stitch :** matérialiser piliers **au-dessus** de la grille si le brief l’exige — la spec produit **PAGE 08** décrit l’UI réelle comme **catalogue pays business**.
 
 ---
 

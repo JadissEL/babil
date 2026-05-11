@@ -18,14 +18,14 @@ Public
 ---
 
 ## 1. Page Purpose
-Créer un **espace narratif** (témoignages, discussions) complétant la donnée froide. Résout *“Qu’est-ce que vivent les autres ?”*
+**Implémentation actuelle (`app/(public)/community/page.tsx`) :** page **RSC** minimaliste dans `PageContainer` — explique que les **commentaires** vivent sur les **fiches pays** (utilisateur connecté) et que la **modération** admin passe par `/moderation`. Résout *“Où discuter ?”* en **routant** vers l’explorer et les pays, pas via un fil social global dans l’app.
 
 ---
 
 ## 2. Primary User Actions
-- **Primaires :** lire threads / témoignages.
-- **Secondaires :** poster commentaire (patterns `CommentBox` sur autres pages — ici agrégation).
-- **Conversion :** inscription pour participer.
+- **Primaires :** ouvrir l’**Explorer** ou **Recommandations** ; lire les instructions ; aller sur une **fiche pays** pour commenter une fois connecté.
+- **Secondaires :** ouvrir **`/moderation`** (admins).
+- **Conversion :** connexion Clerk (**PAGE 33**) pour déposer un commentaire sur **PAGE 16**.
 
 ---
 
@@ -35,37 +35,33 @@ Créer un **espace narratif** (témoignages, discussions) complétant la donnée
 ---
 
 ## 4. Layout Architecture
-Hero communauté → feed cartes → CTA pays liés → règles.
+**Une section** `rounded-2xl` : pastille “Communauté” + **`h1`** + paragraphe (strong sur commentaires modérés) + **`ul`** deux items (Explorer objectif-aware via **`ObjectiveAwareExplorerLink`**, lien **`/moderation`**) + flex **CTA** “Parcourir les pays” + “Recommandations personnalisées” (`/recommendations`).
+
+**Pas de** feed, composer, ni fil de témoignages sur cette route.
 
 ---
 
 ## 5. Full Section Breakdown
 
-### 5.1 Hero communauté
-- **Purpose :** poser les règles de respect et la valeur du témoignage authentique.
-- **Content :** titre + paragraphe “comment contribuer” + lien vers guidelines / modération.
-- **Banner optionnel :** campagne mise en avant (ex. “Partagez votre retour Schengen 2026”).
+### 5.1 Métadonnées
+- **`metadata`** : titre “Communauté | VisaFlow” + description SEO.
 
-### 5.2 Feed principal
-- **Card structure :** avatar initiales ou photo ; nom affiché ; badge pays (`CountryBadge` pattern) ; extrait 2–3 lignes ; méta (relatif + pays).
-- **Interactions :** clic carte → détail thread (futur) ou ancre vers pays ; hover élévation légère.
-- **Pagination :** “Charger plus” préféré à l’infini aveugle pour performance perception.
+### 5.2 Hiérarchie & ton
+- **Kicker** uppercase + icône `MessageSquare`.
+- **Corps :** expliquer agrégation signaux officiels + complément vécu via commentaires **par pays**.
 
-### 5.3 Filtres & tri (futur)
-- **Purpose :** réduire bruit (pays, thème, langue).
-- **Responsive :** bottom sheet filtres.
+### 5.3 Liste instructions
+- **Item 1 :** `ObjectiveAwareExplorerLink` “Explorer” — même pattern objectif que **PAGE 02**.
+- **Item 2 :** `Link` `/moderation` — préciser accès admin après connexion (**PAGE 25**).
 
-### 5.4 CTA pays liés
-- **Purpose :** renvoyer vers intelligence froide après émotion chaude.
-- **Layout :** strip horizontal de `CountryCard` miniatures.
+### 5.4 CTA primaires
+- **Explorer pays** ; **Recommandations** (**PAGE 06**).
 
-### 5.5 Règles & modération
-- **Purpose :** transparence (“signalement”, “délais de revue”).
-- **Lien :** `/moderation` visible seulement pour rôles autorisés ; sinon copy générique.
+### 5.5 Évolution produit (Stitch / backlog)
+- **Futur :** fil global, `CommentBox` inline, guidelines — **PAGE 15** reste le slot maquette pour cette vision ; documenter l’écart avec l’implémentation actuelle.
 
-### 5.6 Composer (utilisateur connecté)
-- **Purpose :** friction basse pour première contribution.
-- **States :** disabled si non auth avec CTA sign-in ; compteur caractères ; preview markdown léger si supporté.
+### 5.6 Citations pays (**PAGE 17**)
+- **Purpose :** contenu “preuve humaine” structuré autrement que commentaires — lien depuis copy ou CTA secondaire futur.
 
 ---
 
@@ -90,12 +86,12 @@ Posts time-relative avec `datetime` ISO.
 ---
 
 ## 10. Edge Cases & States
-Feed vide : invite à quotes pays ; modération pending states.
+Pas de feed : pas d’empty state “liste vide” ; utilisateur non admin sur `/moderation` → **PAGE 25** message 403.
 
 ---
 
 ## 11. User Journey Connections
-Vers quotes pays ; vers sign-in.
+Vers **PAGE 02** / **PAGE 06** ; vers **PAGE 16** + **PAGE 33** ; **PAGE 17** (citations) ; **PAGE 25** (modération).
 
 ---
 

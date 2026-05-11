@@ -34,34 +34,33 @@ Public
 ---
 
 ## 4. Layout Architecture
-Hero campus → 3 grandes cartes → bande “pourquoi VisaFlow” → CTA explorer filtré études.
+**Implémentation (`app/(public)/education/page.tsx`, client ; `metadata` dans `app/(public)/education/layout.tsx`) :** hero “Hub éducation & formation” + recherche → **carte lien Doctorat / PhD** (copy + `educationHubExplorerHref`) → **3 liens “Page dédiée”** (`/education/language-study`, `technical-training`, `short-courses`) → **onglets** internes (`languages` | `technical` | `short`) stylés → **`GoogleAd slot="education_top"`** → grille pays **filtrée par recherche** ; par pays : badges accès, lignes Bac / Coût / Visa, **insight** scrollable, liens **fiche pays** et **optionnel** `/countries/{id}/doctorat` si `hasCountryPhdStoredData`.
+
+**Données :** `full_data.education_mobility` avec clés `language_study` | `technical_training` | `short_courses` selon onglet actif ; fallback texte “Données en cours de collecte…”.
 
 ---
 
 ## 5. Full Section Breakdown
 
-### 5.1 Hero éducation
-- **Purpose :** segmenter en une phrase les **trois piliers** (langue, court, technique) + public cible (étudiant, pro, reconversion).
-- **CTA dual :** “Explorer pays pour études” (deep link objectif) + “Comparer destinations”.
+### 5.1 Chargement & liste
+- **`GET /api/countries`** → `normalizeCountriesApiListResponse` ; spinner pendant fetch.
 
-### 5.2 Grille des trois piliers (`EducationCard` / tabs)
-- **Carte pilier :** icône distincte (langue / horloge courte / outil technique), titre, **2 lignes max** bénéfice, **chips** durée & coût relatif (échelle qualitative L/M/H si pas de chiffre).
-- **Interactions :** carte entière cliquable vers sous-route ; hover élévation + flèche “Découvrir”.
-- **Equal height :** forcer hauteur minimale identique pour alignement visuel Stitch.
+### 5.2 Onglets (`tabs` constant)
+- **Trois boutons :** “Apprendre une langue”, “Formation technique”, “Formations courtes” — états visuels `tab.active` (bleu / émeraude / violet).
 
-### 5.3 Bandeau “Pourquoi VisaFlow pour l’éducation”
-- **Purpose :** relier scores **study mobility** et contenus pays (PhD, langue) sans liste technique.
-- **Proof :** 3 bullets max (scores, sources, comparateur).
+### 5.3 `getEducationData`
+- **Purpose :** lit le bloc `education_mobility[EDUCATION_MOBILITY_TAB_KEY[activeTab]]` ; sinon valeurs par défaut (`access`, `bac_required`, `cost`, `visa`, `insight`).
 
-### 5.4 Pont vers pays phares (optionnel SSR)
-- **Purpose :** strip horizontal 4–6 `CountryCard` mini “souvent consultés pour études” si données.
-- **Empty :** masquer le strip.
+### 5.4 Carte pays
+- **Badge accès :** `Facile` / `Moyen` / `Difficile` (couleurs distinctes).
+- **Insight :** zone max-h scroll avec citation.
+- **CTA :** lien hub **PAGE 16** ; second lien **PAGE 18** si données PhD.
 
-### 5.5 Rappel navigation globale
-- **Purpose :** lien discret vers `/education` dans fil d’Ariane mental (breadcrumb visuel léger) si utilisateur arrive d’un sous-pilier.
+### 5.5 Liens vers **PAGE 11–13**
+- **Purpose :** les trois cartes “Page dédiée” remplacent un composant unique `EducationTabs` / `EducationCard` nommé en spec historique.
 
-### 5.6 Accessibilité pédagogique
-- **Purpose :** glossaire tooltip sur acronymes (CBI n’applique pas ici mais Erasmus+, TCF, etc. si mentionnés).
+### 5.6 Bande “Pourquoi VisaFlow” (Stitch)
+- **Note :** non présent comme section dédiée dans le TSX — **option** maquette au-dessus des onglets.
 
 ---
 

@@ -39,42 +39,43 @@ L’explorer est le **cœur de découverte transactionnelle** : l’utilisateur 
 ---
 
 ## 4. Layout Architecture
-- **Top :** titre page + résumé filtres actifs (chips).
-- **Corps :** `FilterBar` sticky (budget, goal, region, risk) + zone résultats.
-- **Bas :** pagination ou CTA “Comparer la sélection” si multi-sélection active.
+**Fichier :** `app/(public)/explorer/page.tsx` — **`Suspense`** (spinner) → **`ExplorerPageInner`** (`useSearchParams`, `useRouter` ; **URL = source de vérité** après navigation).
+
+**Bandeau sticky** (`top-16`, blur) : **`FilterBar`** (objectif + région) + toggle **Liste / Recommandation** (`mode` → `?mode=recommendation`) + lien **`Comparer`** (`compareHrefForExplorerPageState` → **PAGE 03**) + champ **recherche** (sync query `q` / `search`) + selects **difficulté** + **budget** + case **Schengen uniquement** + **Mémoriser / Restaurer / Oublier** la vue (`lib/explorer-saved-filters`, toasts).
+
+**Corps :** `ExplorerRegionScoreStrip` (buckets région) → **`GoogleAd`** `explorer_top` → **`CountryGrid`** → `explorer_bottom`.
 
 ---
 
 ## 5. Full Section Breakdown
 
-### 5.1 Filter bar
-- **Purpose :** paramétrage moteur scoring.
-- **Interactions :** sliders / selects ; debounce sur recherche textuelle si présente.
-- **Empty :** aucun pays → empty state pédagogique.
+### 5.1 Hydratation query → état
+- **Params :** `q`/`search`, `region` (`parseExplorerRegionFilter`), `goal`, `budget`, `difficulty`, `schengen`, `mode`.
+- **Goal par défaut :** si absent en URL, `explorerFilterGoalFromObjectiveSlug` + **`ObjectivePreferenceProvider`**.
 
-### 5.2 Results grid
-- **Purpose :** consommation rapide pays (`CountryCard`).
-- **Animations :** layout shift minimisé lors refresh filtres (morph IDs).
-- **Loading :** skeleton cards = nombre de colonnes responsive.
+### 5.2 `commitExplorerUrl` / `router.replace`
+- **Purpose :** persister filtres dans l’URL (`scroll: false`) ; `markExplorerOnboardingEngaged` sur engagement.
 
-### 5.3 Region score strip (si `ExplorerRegionScoreStrip`)
-- **Purpose :** vue macro régionale pour orientation géographique.
-- **Responsive :** horizontal scroll snap sur mobile.
+### 5.3 `FilterBar` (partiel)
+- **Branché :** objectif + région uniquement ; budget / difficulté / Schengen = **contrôles séparés** dans le même sticky.
 
-### 5.4 Récap filtres actifs (chips)
-- **Purpose :** au-dessus de la grille, lister objectif, budget, région, risque sous forme de **pills dismissibles** pour renforcer la mental model “tu as demandé ça”.
-- **Interaction :** clic `×` retire le critère et relance le fetch ; état “reset tout” visible si >1 chip.
+### 5.4 Modes & tri
+- **Liste :** tri alphabétique ; **Recommandation :** tri `_finalScore` décroissant (`enrichCountryApiRecord`).
 
-### 5.5 Recherche pays globale (si `GlobalCountrySearch`)
-- **Purpose :** raccourci vers un pays précis sans quitter les filtres ; résultats en liste typeahead avec drapeau.
-- **Accessibility :** `combobox` + `listbox` ; flèches haut/bas.
+### 5.5 Filtrage client
+- **Règles :** nom, `matchesExplorerRegionFilter`, `_difficultyLabel`, goal (visa scores + `short_courses` si objectif `short_course`), `_budgetLevel`, `matchesExplorerSchengenOnlyToggle`.
 
-### 5.6 Pont vers comparer
-- **Purpose :** lorsque l’utilisateur sélectionne plusieurs pays (futur multi-select) ou via CTA fixe : “Comparer la sélection” avec compteur.
-- **Empty :** désactivé si <2 pays sélectionnés ; tooltip explicatif.
+### 5.6 `CountryGrid`
+- **Props :** `gridCountries` (score, friction, study, business, highlights…) ; `onCountryNavigate` onboarding.
 
-### 5.7 Résilience données
-- **Purpose :** bandeau non bloquant si source secondaire indisponible ; lien vers glossaire intelligence (PAGE 32) pour power users.
+### 5.7 Mémoire locale
+- **`writeExplorerSavedFilters` / `readExplorerSavedFilters` / `clearExplorerSavedFilters`** ; listener `storage` pour multi-onglets.
+
+### 5.8 Recherche inline
+- **Implémentation :** input texte (pas `GlobalCountrySearch` typeahead dans ce fichier) ; Enter / blur → `commitExplorerUrl`.
+
+### 5.9 Empty & résilience
+- **0 résultats :** message carte ; **API KO :** liste vide. Réf **PAGE 32** optionnelle hors UI.
 
 ---
 
@@ -89,7 +90,7 @@ Drag slider avec snap points ; hover carte : élévation + affichage 2e ligne in
 ---
 
 ## 8. Responsive UX
-Filtres : drawer plein écran sur mobile avec bouton “Appliquer”. Grille : 1 colonne mobile, 2 tablette, 3 desktop.
+**Implémentation :** filtres dans le **sticky** (wrap + `border-t` mobile sur le groupe des boutons mémoire) — pas de drawer dédié. **`CountryGrid`** : colonnes gérées par le composant (voir code).
 
 ---
 

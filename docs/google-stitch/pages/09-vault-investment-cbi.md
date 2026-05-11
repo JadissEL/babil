@@ -35,39 +35,36 @@ Présenter **CBI / golden visa** avec prudence réglementaire + liens données p
 ---
 
 ## 4. Layout Architecture
-Hero premium → grille programmes → comparatif simplifié → disclaimers légaux → CTA.
+**Implémentation (`app/(public)/investment/page.tsx`, client) :** hero “Investissement & nationalité” + recherche → **`GoogleAd slot="investment_top"`** → soit **empty state** (“Données en cours”) avec **`ObjectiveAwareExplorerLink`** + lien `/overview`, soit **grille 1/2/3 colonnes** de cartes pays issues de `full_data.cbi_program` (champs `cost` / `investment_min`, `processing_time`, etc.) + CTA **Voir détails pays** → **`GoogleAd slot="investment_bottom"`**.
+
+**Pas de** tableau comparatif séparé ni FAQ accordéon dans ce fichier — enrichissement futur possible.
 
 ---
 
 ## 5. Full Section Breakdown
 
-### 5.1 Hero “patrimoine & mobilité”
-- **Purpose :** poser le cadre **non-promotionnel** : citoyenneté / résidence par investissement = décision à risques, pas produit financier.
-- **Content :** titre, sous-texte disclaimers (indicatif, non conseil juridique/fiscal), CTA secondaire “Parler à un conseiller” (PAGE 20–21).
+### 5.1 Construction `programs`
+- **`useMemo` :** parcourt `countries`, garde entrées où `full_data.cbi_program` est un objet ; normalise `cost`, `processing`, `benefits`, `requirements`.
 
-### 5.2 Grille programmes CBI / golden visa
-- **Carte programme :** drapeau pays, nom officiel du programme, **seuil d’investissement indicatif** (fourchette + devise), délai indicatif d’instruction, lien vers **PAGE 16** hub pays.
-- **Badges :** “Visa Schengen associé”, “Accès USA E-2” (si données) — toujours sourcés ou qualifiés “selon sources VisaFlow”.
-- **Empty :** carte grisée “Données en consolidation” + lien explorer.
+### 5.2 Filtre recherche
+- **Client :** sous-chaîne insensible à la casse sur nom pays.
 
-### 5.3 Comparatif simplifié (table courte)
-- **Purpose :** 4–6 critères max (coût entrée, délai, exigence séjour, visa famille, revente immo, langue) pour décision rapide.
-- **Interactions :** tooltips définitions ; pas de 20 colonnes — renvoyer vers **PAGE 03** pour analyse profonde.
+### 5.3 Carte programme (grille)
+- **Header :** nom pays, région, badge **CBI**.
+- **Corps :** lignes **Coût** / **Délai** (icônes `ShieldCheck`, `Clock`).
+- **Footer :** `Link` vers **`/countries/{id}`** (**PAGE 16**).
 
-### 5.4 Bloc risques & limites
-- **Purpose :** liste à puces **ce que le produit ne garantit pas** (approbation, changement loi, due diligence personnelle).
-- **Visual :** encart `inset` ou bordure `amber` soft — visible sans anxiété.
+### 5.4 Empty state
+- **Icône** `Sparkles` + copy dataset incomplet + CTA explorer + tableau de bord.
 
-### 5.5 Parcours services délégués
-- **Purpose :** bandeau “Accompagnement dossier & vérification documents” avec CTA unique vers **PAGE 20**.
-- **Conversion :** micro-copy sur délai de première réponse humaine (SLA marketing aligné ops).
+### 5.5 Disclaimers & risques (produit / Stitch)
+- **Purpose :** même exigence narrative que spec précédente — **à ajouter** au-dessus ou sous le hero si juridique l’exige (non présent comme bloc dédié dans le TSX actuel).
 
-### 5.6 FAQ trust (accordéons)
-- **Questions types :** différences CBI vs golden visa ; fiscalité (renvoi expert) ; double nationalité (disclaimer).
-- **A11y :** `button` + `aria-expanded` par item.
+### 5.6 Parcours **PAGE 20–21**
+- **Purpose :** CTA “Assist” peut compléter le footer maquette ; pas codé en dur sur cette route aujourd’hui.
 
-### 5.7 SEO & partage
-- **OG :** image sobre géométrique or ; description sans promesse de rendement.
+### 5.7 SEO
+- **`metadata` :** défini dans `app/(public)/investment/layout.tsx` (titre + description indicative) ; la **page** est `'use client'` sans export metadata.
 
 ---
 
