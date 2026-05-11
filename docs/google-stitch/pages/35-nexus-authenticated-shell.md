@@ -14,6 +14,7 @@ Logged-In / Transversal (enveloppe routes `(dashboard)`)
 ### Connected Pages
 - **Enveloppe :** PAGE 22–27 (dashboard group)
 - **Composants :** `DashboardSidebar`, `DashboardLayoutClient`, `AppSidebar`, `dashboard-nav-config`
+- **Accès réseau :** routes `(dashboard)` couvertes par **`auth.protect()`** Edge — **PAGE 39** (`proxy.ts`)
 
 ---
 

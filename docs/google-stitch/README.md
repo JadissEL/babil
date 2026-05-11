@@ -15,7 +15,7 @@ docs/google-stitch/
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
   pages/
-    01-….md … 38-….md       ← routes + shells + légale (36) + micro-feedback (37) + layout SEO pays (38)
+    01-….md … 39-….md       ← … + layout SEO pays (38) + middleware Clerk Edge (39)
 ```
 
 ## Workflow
@@ -31,4 +31,5 @@ docs/google-stitch/
 - **PAGE 36** anticipe **mentions / confidentialité / cookies** (non routé encore) — lier depuis `SiteFooter` quand les pages existent.
 - **PAGE 37** : pattern **`BlockFeedback`** (pouces) — cohérence sur fiches pays et DS.
 - **PAGE 38** : layout segment **`/countries/[id]`** — `generateMetadata`, canonical, Open Graph, **JSON-LD** (complète **PAGE 16** côté SEO).
-- Add further surfaces only as **39+** (prefer append).
+- **PAGE 39** : **`proxy.ts`** — `clerkMiddleware`, liste routes protégées, request id, logs API JSON (complète **PAGE 33** côté politique d’accès).
+- Add further surfaces only as **40+** (prefer append).
