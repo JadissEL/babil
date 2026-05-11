@@ -1,7 +1,7 @@
 'use client';
 
 import { Sparkles, X } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import {
   listObjectivesGrouped,
@@ -15,6 +15,20 @@ export function FirstVisitObjectiveWizard() {
   const grouped = useMemo(() => listObjectivesGrouped(), []);
 
   const visible = ready && !preference.wizardCompletedAt;
+
+  useEffect(() => {
+    if (!visible || typeof document === 'undefined') return;
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.overflow;
+    const prevBody = body.style.overflow;
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    return () => {
+      html.style.overflow = prevHtml;
+      body.style.overflow = prevBody;
+    };
+  }, [visible]);
 
   const onPick = useCallback(
     async (slug: UserObjectiveSlug) => {
@@ -41,14 +55,14 @@ export function FirstVisitObjectiveWizard() {
 
   return (
     <div
-      className="fixed inset-0 z-[200] overflow-y-auto overflow-x-hidden bg-[#1a1510]/55 backdrop-blur-sm"
+      className="fixed inset-0 z-[200] overflow-y-auto overflow-x-hidden bg-[#1a1510]/55 backdrop-blur-sm pt-[max(0.5rem,env(safe-area-inset-top,0px))] pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
       role="dialog"
       aria-modal="true"
       aria-labelledby="objective-wizard-title"
     >
-      {/* min-h-full évite le piège flex/items-center : le panneau haut peut défiler hors viewport à zoom 100 %. */}
-      <div className="flex min-h-full items-center justify-center p-4 py-6 sm:p-6 sm:py-10">
-        <div className="relative flex w-full max-w-4xl max-h-[min(92dvh,calc(100vh-2rem))] flex-col overflow-hidden rounded-3xl border border-line bg-[#fdf8ef] shadow-2xl sm:max-h-[min(90dvh,calc(100vh-2.5rem))]">
+      {/* min-h-full évite le piège flex/items-center ; items-start sur XS limite le contenu rogné en haut au zoom fort. */}
+      <div className="flex min-h-full items-start justify-center p-3 py-4 sm:items-center sm:p-6 sm:py-10">
+        <div className="relative flex w-full max-w-4xl max-h-[min(92dvh,calc(100dvh_-_1rem_-_env(safe-area-inset-top,0px)_-_env(safe-area-inset-bottom,0px)))] flex-col overflow-hidden rounded-3xl border border-line bg-[#fdf8ef] shadow-2xl sm:max-h-[min(90dvh,calc(100dvh_-_2rem_-_env(safe-area-inset-top,0px)_-_env(safe-area-inset-bottom,0px)))]">
           <button
             type="button"
             onClick={() => void onSkip()}
