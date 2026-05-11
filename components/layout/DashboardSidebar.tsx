@@ -171,7 +171,7 @@ export function DashboardSidebar({ mobileOpen = false, onMobileClose }: Dashboar
       <aside
         id="dashboard-mobile-nav"
         className={cn(
-          'fixed inset-y-0 left-0 z-[100] flex w-[min(22rem,92vw)] flex-col gap-8 overflow-y-auto overscroll-contain border-r border-line bg-surface p-6 pb-8 shadow-2xl transition-transform duration-300 ease-out lg:hidden',
+          'fixed inset-y-0 left-0 z-[100] flex w-[min(22rem,92vw)] flex-col gap-8 overflow-y-auto overscroll-contain border-r border-line bg-surface pl-[max(1.5rem,calc(1.25rem+env(safe-area-inset-left,0px)))] pr-6 pb-[max(2rem,calc(1.25rem+env(safe-area-inset-bottom,0px)))] pt-[max(1.5rem,calc(1rem+env(safe-area-inset-top,0px)))] shadow-2xl transition-transform duration-300 ease-out lg:hidden',
           mobileOpen ? 'translate-x-0' : 'pointer-events-none -translate-x-full',
         )}
         aria-hidden={!mobileOpen}

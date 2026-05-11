@@ -22,11 +22,15 @@ export default function DashboardLayoutClient({ children }: { children: ReactNod
       if (e.key === 'Escape') setMobileOpen(false)
     }
     window.addEventListener('keydown', onKey)
-    const prev = document.body.style.overflow
+    const html = document.documentElement
+    const prevHtml = html.style.overflow
+    const prevBody = document.body.style.overflow
+    html.style.overflow = 'hidden'
     document.body.style.overflow = 'hidden'
     return () => {
       window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prev
+      html.style.overflow = prevHtml
+      document.body.style.overflow = prevBody
     }
   }, [mobileOpen])
 
