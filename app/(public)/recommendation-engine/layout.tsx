@@ -1,5 +1,6 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from 'react';
 
+/** Pulse (PAGE 07) manages its own max-width and padding inside `RecommendationEnginePage`. */
 export default function RecommendationEngineLayout({ children }: { children: ReactNode }) {
-  return <div className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10 lg:px-8">{children}</div>
+  return <div className="min-w-0">{children}</div>;
 }
