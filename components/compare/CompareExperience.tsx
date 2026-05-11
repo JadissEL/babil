@@ -333,7 +333,7 @@ export function CompareExperience() {
   }
 
   return (
-    <div className="min-w-0 space-y-8 pb-[max(9rem,calc(7.5rem+env(safe-area-inset-bottom,0px)))] sm:space-y-10">
+    <div className="min-w-0 space-y-8 pb-[max(9rem,calc(7.5rem+var(--vf-objective-dock-height,5.5rem)+env(safe-area-inset-bottom,0px)))] sm:space-y-10">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
           <div className="rounded-2xl bg-primary p-2.5 text-white shadow-soft sm:p-3">

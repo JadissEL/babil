@@ -68,7 +68,7 @@ export function SiteHeader({ onPrimaryNavOpen }: { onPrimaryNavOpen?: () => void
 export function SiteFooter() {
   return (
     <footer className="border-t border-line bg-[#fdf8ef]/90 text-text">
-      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-6 pb-[calc(var(--vf-objective-dock-height,5.5rem)+1.5rem)] sm:px-6 sm:py-6 lg:px-8">
         <p className="text-center text-xs font-medium text-muted">
           <span>© {new Date().getFullYear()} VisaFlow.</span>{' '}
           <span>

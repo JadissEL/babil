@@ -84,7 +84,7 @@ export function DockObjectivePicker() {
       {open ? (
         <div
           role="listbox"
-          className="absolute bottom-full left-0 right-0 z-50 mb-2 max-h-[min(60dvh,22rem)] overflow-y-auto overscroll-y-contain rounded-2xl border border-line bg-[#fdf8ef] p-3 shadow-card"
+          className="absolute bottom-full left-0 right-0 z-[80] mb-2 max-h-[min(60dvh,22rem)] overflow-y-auto overscroll-y-contain rounded-2xl border border-line bg-[#fdf8ef] p-3 shadow-card"
         >
           <p className="mb-2 px-1 text-[11px] font-medium text-muted">
             L’accueil, l’explorateur et les raccourcis s’alignent sur votre choix.

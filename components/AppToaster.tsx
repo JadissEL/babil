@@ -12,7 +12,8 @@ export function AppToaster() {
 
   return (
     <div
-      className="pointer-events-none fixed bottom-0 right-0 z-[100] flex max-h-[min(50dvh,calc(100dvh_-_8rem_-_env(safe-area-inset-bottom,0px)))] w-full flex-col-reverse gap-2 overflow-y-auto px-4 pb-[max(1rem,calc(0.75rem+env(safe-area-inset-bottom,0px)))] pt-4 pl-[max(1rem,env(safe-area-inset-left,0px))] sm:bottom-4 sm:right-4 sm:max-h-[min(50dvh,45vh)] sm:max-w-md sm:p-0"
+      className="pointer-events-none fixed right-0 z-[100] flex max-h-[min(50dvh,calc(100dvh_-_8rem_-_env(safe-area-inset-bottom,0px)))] w-full flex-col-reverse gap-2 overflow-y-auto px-4 pb-[max(1rem,calc(0.75rem+env(safe-area-inset-bottom,0px)))] pt-4 pl-[max(1rem,env(safe-area-inset-left,0px))] sm:right-4 sm:max-h-[min(50dvh,45vh)] sm:max-w-md sm:p-0"
+      style={{ bottom: 'calc(var(--vf-objective-dock-height, 5.5rem) + 0.35rem)' }}
       aria-live="polite"
       aria-relevant="additions"
     >

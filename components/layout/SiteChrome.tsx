@@ -15,7 +15,9 @@ export function SiteChrome({ children }: { children: ReactNode }) {
       <AppToaster />
       <div className="flex min-h-0 min-w-0 flex-1">
         <SitePrimaryNavColumn mobileOpen={mobileOpen} onMobileClose={closeMobile} />
-        <main className="min-w-0 flex-1 px-4 py-5 sm:px-6 lg:px-8 lg:py-6">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-5 pb-[calc(var(--vf-objective-dock-height,5.5rem)+1rem)] sm:px-6 lg:px-8 lg:py-6">
+          {children}
+        </main>
       </div>
       <SiteObjectiveDock />
       <SiteFooter />
