@@ -15,7 +15,7 @@ System / Transversal (collé à **PAGE 34** `SiteChrome` — pas des routes déd
 ### Connected Pages
 - **Parent :** **PAGE 34** (`SiteChrome` — ordre header → toaster → contenu → dock → footer).
 - **Auth UI :** **PAGE 33** (`SignInButton` / `SignUpButton` modaux, `UserButton`).
-- **Rail navigation :** **PAGE 34** §5.3 `SitePrimaryNavColumn` — le **menu burger** du header appelle `onPrimaryNavOpen` pour l’ouvrir.
+- **Rail navigation :** **PAGE 44** — le **menu burger** du header appelle `onPrimaryNavOpen` pour ouvrir **`SitePrimaryNavColumn`** (parent **PAGE 34**).
 - **Dock objectif :** **PAGE 41** — le footer applique un **padding bas** pour ne pas être masqué par le dock.
 - **Légal futur :** **PAGE 36** — emplacement naturel pour mentions / confidentialité une fois routées.
 

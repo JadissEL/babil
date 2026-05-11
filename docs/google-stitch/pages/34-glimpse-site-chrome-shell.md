@@ -12,7 +12,7 @@ System / Transversal (enveloppe toutes les routes)
 - Objectif de mobilité persistant (`AppObjectiveRoot` — **PAGE 41**)
 
 ### Connected Pages
-- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard) ; **PAGE 42** (`SentryClerkSync` — pas d’UI) ; **PAGE 43** (header + footer marketing).
+- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster`) ; **PAGE 41** (objectif global + dock + wizard) ; **PAGE 42** (`SentryClerkSync` — pas d’UI) ; **PAGE 43** (header + footer marketing) ; **PAGE 44** (nav primaire rail + drawer).
 - **Technique :** `app/layout.tsx` → `ClerkProvider` → `SiteChrome` → children
 
 ---
@@ -53,8 +53,7 @@ Documenter ce que l’utilisateur perçoit **autour** du contenu page : police I
 - **Spec détaillée :** **PAGE 43** — marque, `GlobalCountrySearch`, auth Clerk, `SiteHeaderMenuButton` → **§5.3**.
 
 ### 5.3 `SitePrimaryNavColumn`
-- **Purpose :** rail navigation global (desktop) + **drawer / overlay** mobile (`mobileOpen`, `onMobileClose`).
-- **Interactions :** fermeture au clic lien ou backdrop ; focus trap dans drawer.
+- **Spec détaillée :** **PAGE 44** — liste liens, objectif-aware Explorer/Comparer, drawer, `useSitePrimaryNavState`.
 - **Note :** cohabite avec `main` en flex `min-w-0 flex-1` pour éviter overflow horizontal.
 
 ### 5.4 Zone `main` (slot contenu public)

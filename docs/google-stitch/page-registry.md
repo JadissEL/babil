@@ -45,5 +45,6 @@
 | 41 | AZIMUTH | Objectif mobilité global (`AppObjectiveRoot`, wizard, `SiteObjectiveDock`) | `pages/41-azimuth-global-mobility-objective.md` |
 | 42 | RADAR | Sentry + Clerk sync client (`SentryClerkSync`, id pseudonyme G.90) | `pages/42-radar-sentry-clerk-sync.md` |
 | 43 | HARBOR | Header & footer globaux (`SiteHeader`, `SiteFooter` dans `SiteHeader.tsx`) | `pages/43-harbor-site-header-footer.md` |
+| 44 | QUAY | Navigation primaire rail + drawer (`SitePrimaryNav.tsx`) | `pages/44-quay-site-primary-navigation-rail.md` |
 
 Paths in the **Markdown file** column are relative to `docs/google-stitch/`.
