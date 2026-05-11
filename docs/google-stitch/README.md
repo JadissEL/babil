@@ -14,6 +14,7 @@ docs/google-stitch/
   page-registry.md          ← route → PAGE XX → filename
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
+  assets/                   ← captures Stitch référencées par les PAGE (ex. `page-01-meridian-stitch-reference.png`)
   pages/
     01-….md … 46-….md       ← … + recherche pays globale (45) + onboarding post-signup overview (46)
 ```
