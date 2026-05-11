@@ -1,0 +1,113 @@
+# PAGE 40 — “FLARE”
+## Toasts globaux — `AppToaster` + `lib/toast-store` (`appToast`)
+
+### File Name
+`40-flare-global-app-toaster.md`
+
+### Page Type
+System / Transversal (une pile de notifications pour **toutes** les routes sous `RootLayout`)
+
+### Related User Journeys
+- Confirmation action courte (favoris, filtre enregistré, profil sauvé)
+- Erreur réseau ou payload sans quitter la page
+
+### Connected Pages
+- **Montage :** **`SiteChrome`** (**PAGE 34**) — `<AppToaster />` juste après `SiteHeader` (même instance pour public **et** routes `(dashboard)` car `app/layout.tsx` enveloppe tout le site).
+- **Consommateurs typiques :** **PAGE 02** (explorer filtres), **PAGE 03** (compare copie/partage), **PAGE 05–06** (erreurs chargement), **PAGE 16** (favoris + commentaire), **PAGE 21** (erreurs formulaire), **PAGE 24** (profil + export)
+
+---
+
+## 1. Page Purpose
+Unifier la **forme**, la **position** et le **cycle de vie** des notifications non bloquantes : éviter que Stitch dessine des snackbars différentes par écran alors que le produit utilise **un seul** renderer client + store module.
+
+---
+
+## 2. Primary User Actions
+- **Lire** le message (1 ligne, `text-sm font-bold`).
+- **Fermer** avec le bouton ✕ (`aria-label="Fermer la notification"`).
+- **Attendre** la disparition auto (~**4,8 s** par défaut après push).
+
+---
+
+## 3. UX Goals
+- **Non bloquant** : `pointer-events-none` sur le conteneur fixe, `pointer-events-auto` sur chaque carte.
+- **Au-dessus du contenu** : `z-[100]` — coordonner avec modales Clerk (**PAGE 33**) pour que les overlays auth restent au-dessus si z-index maison diverge.
+- **Au-dessus du dock objectif** : `bottom` calculé avec `var(--vf-objective-dock-height, 5.5rem) + 0.35rem` pour ne pas masquer les toasts derrière **`SiteObjectiveDock`**.
+- **Safe area** : `env(safe-area-inset-*)` sur marges bas / gauche.
+
+---
+
+## 4. Layout Architecture
+**Renderer :** `components/AppToaster.tsx` — `useSyncExternalStore(subscribeToasts, getToastSnapshot, getServerToastSnapshot)` ; snapshot serveur **toujours vide** (`[]`) pour hydratation stable.
+
+**Position :** `fixed right-0` (desktop `sm:right-4`), pile **`flex-col-reverse`** + `gap-2`, `max-h` ~ moitié viewport avec scroll interne si beaucoup de toasts.
+
+**Store :** `lib/toast-store.ts` — tableau module `toasts`, `pushToast(variant, message, durationMs?)`, `dismissToast(id)`, API **`appToast.success|error|info(message)`**. `pushToast` no-op côté serveur (`typeof window === 'undefined'`).
+
+---
+
+## 5. Full Section Breakdown
+
+### 5.1 Variants visuels
+| Variant | Icône | Rôle |
+|--------|--------|------|
+| `success` | `CheckCircle2` | confirmation |
+| `error` | `XCircle` | échec / refus |
+| `info` | `Info` | neutre / rappel |
+
+Cartes : `rounded-2xl`, `border`, `backdrop-blur-sm`, `shadow-card` — couleurs distinctes par variant (voir classes dans le composant).
+
+### 5.2 Accessibilité
+- Conteneur : **`aria-live="polite"`**, **`aria-relevant="additions"`** (annonces lecteur d’écran à l’ajout).
+- Icônes décoratives : `aria-hidden` sur les Lucide.
+
+### 5.3 Durée & concurrence
+- Défaut **4800 ms** puis `dismissToast` ; plusieurs toasts = pile simultanée (pas de file FIFO global au-delà du filtre visuel max-height).
+
+### 5.4 Règles produit pour nouveaux écrans
+- Préférer **`appToast`** pour erreurs réseau plutôt que `alert()` (**PAGE 25** note opportunité).
+- **PAGE 37** (`BlockFeedback`) : rester **silencieux** sauf décision produit contraire — ne pas saturer la pile.
+
+---
+
+## 6. UI Design Direction
+Ton **court et affirmatif** (une phrase) ; pas de titre secondaire dans la carte ; fermeture discrète mais zone tactile ≥ 44px si possible sur mobile.
+
+---
+
+## 7. Interaction Design
+Apparition : rendu synchrone au prochain paint après `emit()` ; pas d’animation d’entrée codée aujourd’hui — Stitch peut proposer slide-in léger **sans** changer le store.
+
+---
+
+## 8. Responsive UX
+- Mobile : `w-full` avec `px-4` ; `sm:max-w-md` sur large écrans.
+- `max-h` + `overflow-y-auto` si rafales de messages (rare).
+
+---
+
+## 9. Accessibility
+Polite live region évite de couper une lecture en cours ; bouton fermer toujours focusable.
+
+---
+
+## 10. Edge Cases & States
+- **SSR / RSC :** aucun toast serveur — pas de flash liste non vide à l’hydratation.
+- **Message long :** `min-w-0` + `leading-snug` ; éviter paroles > 2 lignes en copy produit.
+
+---
+
+## 11. User Journey Connections
+Renforce confiance perçue sur actions **PAGE 16** (cœur, commentaire) et persistance **PAGE 02** / **PAGE 24** sans modale.
+
+---
+
+## 12. AI DESIGN INSTRUCTIONS FOR STITCH
+Planche **“FLARE — 3 états”** : success / error / info côte à côte sur fond `bg-bg` avec **dock factice** en bas pour valider le **clearance** vertical.
+
+---
+
+## 13. Screenshot Placeholder
+
+### Stitch Screenshot Reference
+[PASTE SCREENSHOT HERE — PAGE 40]

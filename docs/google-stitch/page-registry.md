@@ -41,5 +41,6 @@
 | 37 | RELAY | Micro-feedback `BlockFeedback` (pouces utile / pas utile — transversal) | `pages/37-relay-block-feedback-micro-ui.md` |
 | 38 | LENS | Layout segment pays SEO + JSON-LD (`app/(public)/countries/[id]/layout.tsx`) | `pages/38-lens-country-segment-layout.md` |
 | 39 | RAMPART | Clerk middleware Edge (`proxy.ts` — `clerkMiddleware`, routes protégées) | `pages/39-rampart-clerk-edge-middleware.md` |
+| 40 | FLARE | Toasts globaux (`AppToaster`, `lib/toast-store` — `appToast`) | `pages/40-flare-global-app-toaster.md` |
 
 Paths in the **Markdown file** column are relative to `docs/google-stitch/`.

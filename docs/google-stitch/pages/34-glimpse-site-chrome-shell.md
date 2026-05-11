@@ -12,13 +12,13 @@ System / Transversal (enveloppe toutes les routes)
 - Objectif de mobilité persistant (`AppObjectiveRoot`)
 
 ### Connected Pages
-- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine).
+- **Enveloppe :** toutes les PAGE 01–35 ; **PAGE 36** (footer légal futur) ; **PAGE 37** (fragments `BlockFeedback` dans `main`) ; **PAGE 38** (SEO segment pays, sous le layout racine) ; **PAGE 40** (toasts `AppToaster` — spec visuelle & comportement).
 - **Technique :** `app/layout.tsx` → `ClerkProvider` → `SiteChrome` → children
 
 ---
 
 ## 1. Page Purpose
-Documenter ce que l’utilisateur perçoit **autour** du contenu page : police Inter, fond `bg-bg`, structure colonne `min-h-screen`, intégration **toasts** (`AppToaster`), **sync Sentry/Clerk**, et tout **dock / footer** issu de `SiteChrome`. Sans ce brief, Stitch produit des pages isolées incohérentes.
+Documenter ce que l’utilisateur perçoit **autour** du contenu page : police Inter, fond `bg-bg`, structure colonne `min-h-screen`, intégration **toasts** (`AppToaster` — détail **PAGE 40**), **sync Sentry/Clerk**, et tout **dock / footer** issu de `SiteChrome`. Sans ce brief, Stitch produit des pages isolées incohérentes.
 
 ---
 
@@ -31,7 +31,7 @@ Documenter ce que l’utilisateur perçoit **autour** du contenu page : police I
 ## 3. UX Goals
 - **Une seule identité** VisaFlow sur marketing et produit.
 - **Hauteur viewport remplie** sans double scroll parasite.
-- **Toasts** lisibles mais non intrusifs (coin cohérent, z-index au-dessus du contenu mais sous modales).
+- **Toasts** lisibles mais non intrusifs — règles pile / dock / z-index : **PAGE 40**.
 
 ---
 

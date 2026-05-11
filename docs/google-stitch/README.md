@@ -15,7 +15,7 @@ docs/google-stitch/
   project-foundation/
     00-project-foundation.md   ← master reference, checklists, design system
   pages/
-    01-….md … 39-….md       ← … + layout SEO pays (38) + middleware Clerk Edge (39)
+    01-….md … 40-….md       ← … + middleware Clerk Edge (39) + toasts globaux (40)
 ```
 
 ## Workflow
@@ -32,4 +32,5 @@ docs/google-stitch/
 - **PAGE 37** : pattern **`BlockFeedback`** (pouces) — cohérence sur fiches pays et DS.
 - **PAGE 38** : layout segment **`/countries/[id]`** — `generateMetadata`, canonical, Open Graph, **JSON-LD** (complète **PAGE 16** côté SEO).
 - **PAGE 39** : **`proxy.ts`** — `clerkMiddleware`, liste routes protégées, request id, logs API JSON (complète **PAGE 33** côté politique d’accès).
-- Add further surfaces only as **40+** (prefer append).
+- **PAGE 40** : **`AppToaster`** + **`appToast`** — pile fixe bas-droite, variants, durée auto, intégration dock (**PAGE 34**).
+- Add further surfaces only as **41+** (prefer append).

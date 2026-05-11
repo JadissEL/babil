@@ -78,7 +78,7 @@ VisaFlow behaves as a **single ecosystem**: the same visual language, navigation
 
 **Services:** `/services/delegated-applications` + `/apply`.
 
-**Cross-cutting shells (non-routes, à aligner dans Stitch sur toutes les captures) :** **PAGE 34** (`SiteChrome` / layout racine), **PAGE 35** (shell espace connecté), **PAGE 36** (suite légale & cookies — spéc anticipée), **PAGE 37** (micro-feedback `BlockFeedback` sur blocs de contenu), **PAGE 38** (layout segment pays : SEO + JSON-LD autour de **PAGE 16–19**), **PAGE 39** (Clerk Edge **`proxy.ts`** : routes protégées + request id + logs API).
+**Cross-cutting shells (non-routes, à aligner dans Stitch sur toutes les captures) :** **PAGE 34** (`SiteChrome` / layout racine), **PAGE 35** (shell espace connecté), **PAGE 36** (suite légale & cookies — spéc anticipée), **PAGE 37** (micro-feedback `BlockFeedback` sur blocs de contenu), **PAGE 38** (layout segment pays : SEO + JSON-LD autour de **PAGE 16–19**), **PAGE 39** (Clerk Edge **`proxy.ts`** : routes protégées + request id + logs API), **PAGE 40** (toasts globaux **`AppToaster`** / **`appToast`**).
 
 ---
 

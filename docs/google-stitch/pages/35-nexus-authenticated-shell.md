@@ -15,6 +15,7 @@ Logged-In / Transversal (enveloppe routes `(dashboard)`)
 - **Enveloppe :** PAGE 22–27 (dashboard group)
 - **Composants :** `DashboardSidebar`, `DashboardLayoutClient`, `AppSidebar`, `dashboard-nav-config`
 - **Accès réseau :** routes `(dashboard)` couvertes par **`auth.protect()`** Edge — **PAGE 39** (`proxy.ts`)
+- **Toasts :** même **`AppToaster`** global que le site public — **PAGE 40** (`app/layout.tsx` → `SiteChrome`)
 
 ---
 
