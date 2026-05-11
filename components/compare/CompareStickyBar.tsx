@@ -2,6 +2,7 @@
 
 import { Scale, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { VF_OBJECTIVE_DOCK_HEIGHT_VAR } from '@/lib/vf-layout-css'
 
 export type CompareStickyBarProps = {
   names: string[]
@@ -17,7 +18,7 @@ export function CompareStickyBar({ names, max, objectiveShortLabel, onClear, onS
   return (
     <div
       className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2 sm:px-4 sm:pb-4 lg:left-56"
-      style={{ bottom: 'var(--vf-objective-dock-height, 5.5rem)' }}
+      style={{ bottom: `var(${VF_OBJECTIVE_DOCK_HEIGHT_VAR}, 5.5rem)` }}
     >
       <div className="pointer-events-auto flex w-full max-w-4xl flex-col gap-3 rounded-2xl border border-line bg-surface/95 px-3 py-3 shadow-card backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-4">
         <div className="min-w-0 sm:flex sm:flex-1 sm:items-center">

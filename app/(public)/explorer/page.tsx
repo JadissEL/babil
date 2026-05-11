@@ -266,7 +266,7 @@ function ExplorerPageInner() {
   }))
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 pb-20 sm:px-8">
+    <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 pb-12 sm:px-8">
       <div className="mb-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-4">
           <div className="rounded-2xl bg-primary p-4 text-white shadow-soft">

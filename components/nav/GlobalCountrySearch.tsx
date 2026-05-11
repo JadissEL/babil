@@ -154,7 +154,7 @@ export function GlobalCountrySearch() {
             aria-label="Recherche de pays"
             aria-modal="true"
             className={cn(
-              'fixed left-3 right-3 top-[max(5rem,calc(4.25rem+env(safe-area-inset-top,0px)))] z-[70] max-h-[min(28rem,calc(100dvh_-_7rem_-_env(safe-area-inset-top,0px)_-_env(safe-area-inset-bottom,0px)))] overflow-hidden rounded-2xl border border-line bg-surface shadow-card sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-[min(70dvh,24rem)] sm:w-[min(100vw-2rem,22rem)]',
+              'fixed left-3 right-3 top-[max(5rem,calc(4.25rem+env(safe-area-inset-top,0px)))] z-[70] max-h-[min(28rem,calc(100dvh_-_7.5rem_-_var(--vf-objective-dock-height,5.5rem)_-_env(safe-area-inset-top,0px)_-_env(safe-area-inset-bottom,0px)))] overflow-hidden rounded-2xl border border-line bg-surface shadow-card sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:max-h-[min(70dvh,24rem)] sm:w-[min(100vw-2rem,22rem)]',
             )}
           >
             <div className="border-b border-line p-3">
@@ -193,7 +193,7 @@ export function GlobalCountrySearch() {
                 Liste fusionnée légère — flèches et Entrée pour ouvrir.
               </p>
             </div>
-            <ul className="max-h-[min(45dvh,calc(100dvh_-_14rem_-_env(safe-area-inset-top,0px)_-_env(safe-area-inset-bottom,0px)),18rem)] overflow-y-auto p-2 sm:max-h-[min(55dvh,16rem)]">
+            <ul className="max-h-[min(45dvh,calc(100dvh_-_14rem_-_var(--vf-objective-dock-height,5.5rem)_-_env(safe-area-inset-top,0px)_-_env(safe-area-inset-bottom,0px)),18rem)] overflow-y-auto p-2 sm:max-h-[min(55dvh,16rem)]">
               {!loaded ? (
                 <li className="px-3 py-4 text-center text-sm font-medium text-muted">Chargement…</li>
               ) : filtered.length === 0 ? (

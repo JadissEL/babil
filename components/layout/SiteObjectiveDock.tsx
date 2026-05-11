@@ -2,10 +2,11 @@
 
 import { useLayoutEffect, useRef } from 'react';
 import { DockObjectivePicker } from '@/components/objectives/DockObjectivePicker';
+import { VF_OBJECTIVE_DOCK_HEIGHT_VAR } from '@/lib/vf-layout-css';
 
-const CSS_VAR = '--vf-objective-dock-height';
+const CSS_VAR = VF_OBJECTIVE_DOCK_HEIGHT_VAR;
 
-/** Bandeau objectif fixe en bas d’écran ; la hauteur est publiée en `{@link CSS_VAR}` pour le padding du `main` et la barre comparateur. */
+/** Bandeau objectif fixe en bas d’écran ; la hauteur est publiée en `{@link VF_OBJECTIVE_DOCK_HEIGHT_VAR}` pour le padding du `main` et la barre comparateur. */
 export function SiteObjectiveDock() {
   const ref = useRef<HTMLElement>(null);
 
