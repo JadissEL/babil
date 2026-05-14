@@ -117,4 +117,30 @@ Deux frames **desktop + mobile** : (1) **header** SignedOut et SignedIn côte à
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 43]
+![Harbor — Master Reference (SiteHeader & SiteFooter)](../assets/page-43-harbor-stitch-reference.png)
+
+---
+
+## 14. Implementation Notes (PAGE 43)
+
+> **Statut implémenté :** PAGE 43 — Harbor matérialisée en **specimen sheet** sous `/admin/harbor`, suivant le pattern des planches `/admin/azimuth` (41), `/admin/radar` (42), `/admin/rampart` (39) et `/admin/flare` (40). Le chrome runtime (`SiteHeader` + `SiteFooter` dans `components/layout/SiteHeader.tsx`) reste **inchangé** — Harbor documente leurs deux états visuels canoniques sans dupliquer la logique.
+
+### 14.1 Specimen `/admin/harbor`
+- **`app/(dashboard)/admin/harbor/layout.tsx`** — `getAdminUser()` + `redirect('/')`, `robots: { index: false, follow: false }`.
+- **`app/(dashboard)/admin/harbor/page.tsx`** — Server Component (`dynamic = 'force-dynamic'`). Header serif `Harbor Master Reference` + sous-titre *Shared Components Architecture & Identity Tokens*.
+- **Section §1 — SiteHeader** : eyebrow rond `Ship` + serif `SiteHeader – Global Navigation & Auth`. Deux specimens empilés avec étiquette d'état pivotée 90° (`State : Signed Out`, `State : Signed In`) :
+  - **Signed Out** : menu burger, brand `VisaFlow` + pastille navy `Globe`, recherche ghost-bar, CTAs `Connexion` (filled navy) + `S'inscrire` (outline).
+  - **Signed In** : menu burger, brand, recherche ghost-bar, chip `LayoutDashboard · Tableau de bord` + avatar circulaire ring blanc — mirroring `Link href="/overview"` + `UserButton`.
+  - Sous chaque header, bande "page" cream `#FBF6E9` avec barres skeleton pour situer le sticky `z-50`.
+  - Footnote citant `sticky top-0 z-50`, `max-w-[1600px]`, `#fdf8ef/90` + `backdrop-blur`, et la règle conditionnelle `onPrimaryNavOpen ? <SiteHeaderMenuButton /> : null` (héritée de SiteChrome, PAGE 34).
+- **Section §2 — SiteFooter** : eyebrow rond `Anchor` + serif `SiteFooter – Trust & Logistics`. Carte specimen :
+  - Bloc cream centré : brand `VisaFlow`, mini-nav `PayPal Donation · Mentions Légales · Contact`, pill `Heart · Soutenir le projet` + chip mono `EXT` (rappel ouverture nouvel onglet), copyright `© VisaFlow Research Terminal. Tous droits réservés.`
+  - Bande rose `SITEOBJECTIVEDOCK CLEARANCE (5.5REM)` matérialisant le padding bas dynamique `pb-[calc(var(--vf-objective-dock-height,5.5rem)+1.5rem)]` (lien avec PAGE 41).
+  - Footnote citant les attributs PayPal `target="_blank"` + `rel="noopener noreferrer"`.
+- **Footer page** : sources runtime (`components/layout/SiteHeader.tsx` + montage `SiteChrome.tsx`) + lien retour `← Citadel Admin Console`.
+
+### 14.2 Navigation
+- `app/(dashboard)/admin/page.tsx` — ajout du lien `Harbor · Chrome → /admin/harbor` dans l'en-tête Citadel (ordre éditorial : `Azimuth → Radar → Rampart → Harbor → Flare`).
+
+### 14.3 Runtime non modifié
+- Aucune modification de `components/layout/SiteHeader.tsx` ou des composants qu'il importe (`SiteHeaderMenuButton`, `GlobalCountrySearch`, Clerk `SignInButton/SignUpButton/UserButton`, `CookieConsentBanner.openCookiePreferences`, `PAYPAL_DONATE_URL`). Toute évolution produit (nouveau lien légal, nouveau CTA, refonte de l'auth strip) doit donc être faite dans `SiteHeader.tsx` puis re-photographiée dans `/admin/harbor` pour conserver une seule source de vérité visuelle.
