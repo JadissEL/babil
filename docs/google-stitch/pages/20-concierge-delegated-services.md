@@ -115,4 +115,16 @@ Créer **ribbon “Sérénité”** au-dessus hero. Offres comme **fiches menu g
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 20]
+Fichier repo : `docs/google-stitch/assets/page-20-concierge-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Dark Concierge)** : shell **deep navy `#0F1117`** avec accent or pâle `#D4A857`. Le composant `DelegatedServiceCatalog` est intégralement restylé :
+- **Ribbon or** centré `✦ SERVICE CONCIERGE EXCLUSIF` (eyebrow tracking `0.32em`).
+- **Hero centré** : titre serif blanc `Déléguez vos candidatures :` + italique or `Sérénité & Clarté` ; sous-titre gris ; **trust row** mono (`Clock` / `ShieldCheck`).
+- **Bloc garantie (`#assist-garantie`)** : carte sombre élevée `#16181F` à 2 colonnes, eyebrow or `Engagement d'excellence` + titre serif blanc, copy `APPLICATION_GUARANTEE_SUMMARY`, microtexte ; à droite **médaillon circulaire or 96px** `50% / Remboursement garanti`.
+- **Catégorie A : Emploi** : H2 serif blanc, sous-eyebrow or `Délégation de candidatures professionnelles`, grille `md:grid-cols-3` de **`PackageCard`** dark (cf. dessous).
+- **Catégorie B : Universités** : même pattern (3 cards depuis `UNIVERSITY_PACKAGES`).
+- **PackageCard dark** : background `#16181F`, eyebrow tier en or pâle, badge or `Point Fort` sur `recommended`, titre serif blanc, tagline `text-white/55`, prix or `À PARTIR DE` + montant `formatPriceMad`, deliverables `Check` icône or, CTA bouton **or rempli** pour `recommended` sinon outline or transparent.
+- **CTA final** : `Prêt à déléguer ?` (centré, serif) + bouton or **« Sélectionner un Forfait »** (scroll vers garantie) + lien texte secondaire **« Contacter un conseiller expert »** (mailto).
+- **Bannière contexte pays** (depuis `page.tsx`) restylée en bandeau or sombre `#1A1D26` au-dessus du catalogue, intacte côté logique (`searchParams.countryId`/`countryName` + `applyQuerySuffix`).
+
+Aucune modification logique : `applyQuerySuffix`, deep-link `/apply?category=…&package=…`, ancres `#assist-garantie`, et liens vers `/overview` préservés. Pricing affiché reste `formatPriceMad(pkg.priceMad)`. Tableau comparatif retiré au profit de l'épure concierge.

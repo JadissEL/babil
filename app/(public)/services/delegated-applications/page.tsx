@@ -30,20 +30,22 @@ export default function DelegatedApplicationsServicePage({ searchParams }: PageP
   const contextLabel = countryName || (countryId ? `Pays #${countryId}` : null);
 
   return (
-    <>
+    <div className="min-h-screen" style={{ backgroundColor: '#0F1117' }}>
       {contextLabel ? (
-        <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-5 pt-8 sm:px-6 lg:px-8">
           <div
-            className="rounded-2xl border border-primary/30 bg-primary-soft/40 p-4 text-sm font-medium text-text shadow-soft sm:rounded-[2rem] sm:p-5"
+            className="rounded-xl border border-[#D4A857]/25 bg-[#1B1E27] p-4 text-[13px] font-medium text-white/75 sm:p-5"
             role="status"
           >
-            <span className="font-black text-primary">Contexte pays.</span> Vous arrivez depuis la
-            fiche <strong>{contextLabel}</strong> — le champ « pays cibles » du formulaire peut être
-            pré-rempli à l’étape suivante.{' '}
+            <span className="font-black uppercase tracking-[0.18em] text-[#D4A857]">
+              Contexte pays.
+            </span>{' '}
+            Vous arrivez depuis la fiche <strong className="text-white">{contextLabel}</strong> — le
+            champ « pays cibles » du formulaire peut être pré-rempli à l&apos;étape suivante.{' '}
             {countryId ? (
               <Link
                 href={`/countries/${encodeURIComponent(countryId)}`}
-                className="font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+                className="font-black text-[#D4A857] underline decoration-[#D4A857]/40 underline-offset-2 hover:decoration-[#D4A857]"
               >
                 Revoir la fiche
               </Link>
@@ -51,7 +53,7 @@ export default function DelegatedApplicationsServicePage({ searchParams }: PageP
             {countryId ? ' · ' : null}
             <Link
               href="/services/delegated-applications"
-              className="font-black text-muted underline decoration-muted/50 underline-offset-2 hover:text-primary hover:decoration-primary"
+              className="font-black text-white/55 underline decoration-white/30 underline-offset-2 hover:text-[#D4A857] hover:decoration-[#D4A857]"
             >
               Effacer le contexte
             </Link>
@@ -59,6 +61,6 @@ export default function DelegatedApplicationsServicePage({ searchParams }: PageP
         </div>
       ) : null}
       <DelegatedServiceCatalog applyQuerySuffix={applyQuerySuffix} />
-    </>
+    </div>
   );
 }
