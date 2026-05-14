@@ -1,26 +1,28 @@
 'use client'
 
 import { useUser } from '@clerk/nextjs'
-import { 
-  Globe, 
-  MapPin, 
-  MessageSquare, 
-  Send, 
-  ShieldCheck, 
-  TrendingUp, 
+import {
   AlertTriangle,
-  Clock,
+  ArrowLeft,
+  BadgeCheck,
+  Car,
   CheckCircle2,
-  XCircle,
-  ChevronLeft,
+  Clock,
+  GraduationCap,
   Heart,
+  Map as MapIcon,
+  MapPin,
+  MessageSquare,
   Printer,
-  GraduationCap
+  Send,
+  ShieldCheck,
+  XCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 import { CountryDbInsightsCollapsible } from '@/components/country/CountryDbInsightsCollapsible'
+import CountryFlag from '@/components/country/CountryFlag'
 import { IntelligenceProvenanceCollapsible } from '@/components/country/IntelligenceProvenanceCollapsible'
 import { OfficialSourcesCard } from '@/components/country/OfficialSourcesCard'
 import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryTeaser'
@@ -41,6 +43,7 @@ import {
 } from '@/lib/country-observation-confidence-aggregate'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
+import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
 import { parseDataQualityAnomaliesPayload } from '@/lib/intelligence-data-anomalies'
@@ -155,6 +158,42 @@ function scoreTone(score: number) {
   if (score >= 55) return 'border-[#f2c27a] bg-[#fff5e7] text-warning'
   if (score >= 35) return 'border-[#f3afaf] bg-[#fff0f0] text-danger'
   return 'border-line bg-inset text-text'
+}
+
+function scoreToneStitch(score: number): string {
+  if (score >= 75) return 'text-emerald-700'
+  if (score >= 55) return 'text-amber-700'
+  if (score >= 35) return 'text-rose-700'
+  return 'text-[#0D1B3E]'
+}
+
+function orientationStrapline(studyScore: number, tourismScore: number, workScore: number): string {
+  if (studyScore >= 70) return 'Excellence Études & Mobilité'
+  if (workScore >= 70) return 'Talents & Carrière Internationale'
+  if (tourismScore >= 70) return 'Découverte & Tourisme'
+  return 'Mobilité Internationale'
+}
+
+function clampPercent(v: unknown): number {
+  const n = Number(v)
+  if (!Number.isFinite(n)) return 0
+  return Math.max(0, Math.min(100, Math.round(n)))
+}
+
+function brutalRealityToPercent(v: unknown): number {
+  const n = Number(v)
+  if (!Number.isFinite(n)) return 0
+  if (n <= 10) return Math.max(0, Math.min(100, Math.round(n * 10)))
+  return clampPercent(n)
+}
+
+function acceptanceToPercent(v: unknown): number {
+  if (typeof v === 'number' && Number.isFinite(v)) return clampPercent(v)
+  if (typeof v === 'string') {
+    const m = v.match(/(\d+(?:\.\d+)?)/)
+    if (m) return clampPercent(Number(m[1]))
+  }
+  return 0
 }
 
 function scoreLabel(score: number) {
@@ -344,243 +383,208 @@ export default function CountryDetailPage() {
     country.observationConfidenceAggregate,
   )
 
+  const iso2 = iso2ForCountryNameOrEmpty(country.name)
+  const isSchengen = isSchengenMember(String(country.name ?? ''))
+  const strapline = orientationStrapline(studyScore, tourismScore, workScore)
+  const accessPct = brutalRealityToPercent(full.brutal_reality_score)
+  const acceptancePct = acceptanceToPercent(full.acceptance_rate_morocco)
+  const frictionPct = clampPercent(full.friction_score)
+  const confidencePct = clampPercent(full.confidence_score)
+  const tourismDifficulty =
+    (typeof visaTourism?.difficulty === 'string' && (visaTourism.difficulty as string).trim()) || '—'
+  const workAvailability =
+    (typeof visaWork?.availability === 'string' && (visaWork.availability as string).trim()) || 'Limitée'
+  const isStrictTourism = /(strict|élev|high|difficile|difficult)/i.test(tourismDifficulty)
+  const isStructuredWork = /(structur|limit|moder|modér|moy)/i.test(workAvailability)
+
   return (
     <>
-    <div className="mx-auto max-w-6xl px-4 pb-12 pt-2 sm:px-6 lg:px-8 print:hidden">
-      <ObjectiveAwareExplorerLink
-        className="mb-6 flex items-center gap-2 font-bold text-muted transition-colors hover:text-primary"
-      >
-        <ChevronLeft className="h-4 w-4" /> Retour à l&apos;explorateur
-      </ObjectiveAwareExplorerLink>
-
-      <div className="mb-8 flex min-w-0 flex-col gap-4 rounded-[2rem] border border-line bg-surface p-5 shadow-card lg:flex-row lg:items-center lg:justify-between">
-        <div className="min-w-0">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted">Décision rapide</p>
-          <p className="mt-1 text-sm font-bold text-text">
-            {country.name} {'→'} potentiel{' '}
-            {studyScore >= 70 ? 'études' : tourismScore >= 70 ? 'tourisme' : 'mixte'}, friction{' '}
-            {(scoreLabel(frictionScore)).toLowerCase()}.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          {economyIntelFresh && intelLatest ? (
-            <span
-              className="inline-flex items-center gap-1.5 rounded-xl border border-[#94dfbd]/70 bg-[#e9f9f1] px-3 py-2 text-[10px] font-black uppercase tracking-widest text-success"
-              title={`Dernière matérialisation intelligence : ${formatIntelDateShortFr(intelLatest)}`}
-            >
-              <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
-              Données fraîches
-            </span>
-          ) : null}
-          <span className={`rounded-xl border px-4 py-2 text-xs font-black uppercase tracking-widest ${scoreTone(finalScore)}`}>
-            Score final {finalScore}/100
-          </span>
-          <Link
-            href="/schengen"
-            className="rounded-xl border border-line bg-inset px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/40 hover:bg-primary-soft"
-          >
-            Vue Schengen
-          </Link>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="inline-flex items-center gap-2 rounded-xl border border-line bg-inset px-4 py-2 text-xs font-black uppercase tracking-widest text-text transition-colors hover:border-primary/40 hover:bg-primary-soft"
-          >
-            <Printer className="h-4 w-4" />
-            Imprimer / PDF
-          </button>
-        </div>
-      </div>
-
-      {officialLinks.length ? (
-        <OfficialSourcesCard countryName={country.name} links={officialLinks} className="mb-8" />
-      ) : null}
-
-      {dataQualityAnomalies.length > 0 ? (
-        <div
-          className="mb-8 rounded-[2rem] border border-amber-200/90 bg-amber-50/90 p-5 shadow-card sm:p-6"
-          role="status"
+    <div className="min-h-screen bg-[#FDFBF4] print:hidden">
+      <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
+        <ObjectiveAwareExplorerLink
+          className="mb-5 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-[#0D1B3E]/65 transition-colors hover:text-[#0D1B3E]"
         >
-          <h2 className="mb-2 flex items-center gap-2 text-sm font-black uppercase tracking-widest text-amber-900">
-            <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
-            Signaux qualité données
-          </h2>
-          <p className="mb-3 text-xs font-medium leading-relaxed text-amber-950/80">
-            Indicateurs automatiques (cohérence des séries affichées et dernières observations pipeline). À
-            interpréter comme alerte de contrôle, pas comme refus de dossier.
-          </p>
-          <ul className="list-inside list-disc space-y-1.5 text-sm font-medium text-amber-950">
-            {dataQualityAnomalies.map((a) => (
-              <li key={a.code}>{a.messageFr}</li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+          <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Back to Explorer
+        </ObjectiveAwareExplorerLink>
 
-      {showPhdTeaser && phdModel ? (
-        <div className="mb-8 flex flex-col gap-4 rounded-[2rem] border border-line bg-surface p-5 shadow-card sm:flex-row sm:items-center sm:justify-between sm:p-6">
-          <div className="flex min-w-0 items-start gap-4">
-            <div className="rounded-2xl bg-primary/15 p-3 text-primary ring-1 ring-primary/25">
-              <GraduationCap className="h-7 w-7" aria-hidden />
-            </div>
+        <section
+          aria-label="Intelligence Hub"
+          className="relative mb-6 overflow-hidden rounded-2xl border border-[#0D1B3E]/10 bg-white pl-1.5 pr-5 py-5 shadow-sm sm:py-6"
+        >
+          <span aria-hidden className="absolute inset-y-3 left-0 w-1 rounded-r-full bg-[#0D1B3E]" />
+          <div className="flex flex-col gap-4 pl-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary">Parcours doctorat</p>
-              <p className="mt-1 text-base font-black text-text sm:text-lg">
-                Données structurées pour préparer un PhD à {country.name}
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#0D1B3E]/55">
+                Intelligence Hub
               </p>
-              <p className="mt-1 text-sm font-medium text-muted">
-                Financements, organismes, démarches et signaux utiles — contenu dédié hors de cette fiche synthèse.
-              </p>
-            </div>
-          </div>
-          <Link
-            href={`/countries/${countryPageId}/doctorat`}
-            className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-primary px-6 py-3.5 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-colors hover:bg-primary-hover"
-          >
-            Voir le parcours PhD
-          </Link>
-        </div>
-      ) : null}
-
-      <div className="grid min-w-0 grid-cols-1 gap-12 lg:grid-cols-3">
-        {/* Left Column: Main Info */}
-        <div className="min-w-0 space-y-12 lg:col-span-2">
-          <section>
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="flex min-w-0 flex-1 items-center gap-4">
-                <div className="rounded-[2rem] bg-primary p-4 text-white shadow-soft">
-                  <Globe className="h-8 w-8" />
-                </div>
-                <div className="min-w-0">
-                  <h1 className="text-3xl font-black tracking-tight text-text sm:text-4xl md:text-5xl">{country.name}</h1>
-                  <p className="mt-1 flex items-center gap-2 font-medium text-muted">
-                    <MapPin className="h-4 w-4" /> {String(country.region ?? '')}{' '}
-                    {isSchengenMember(String(country.name ?? '')) && '• Schengen'}
-                  </p>
-                </div>
-              </div>
-              {user && (
-                <button
-                  type="button"
-                  onClick={toggleFavorite}
-                  disabled={favLoading}
-                  className={`flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl border px-5 py-3 text-sm font-black transition-all sm:ml-auto sm:w-auto ${
-                    favorited
-                      ? 'border-red-500/35 bg-red-500/15 text-red-300 hover:bg-red-500/25'
-                      : 'border-line bg-inset text-text hover:bg-primary-soft'
-                  } ${favLoading ? 'opacity-60' : ''}`}
-                >
-                  <Heart className={`h-4 w-4 ${favorited ? 'fill-current' : ''}`} />
-                  {favorited ? 'Favori' : 'Ajouter aux favoris'}
-                </button>
-              )}
-            </div>
-
-            <div className="rounded-[2.5rem] border border-line bg-surface p-8 shadow-card">
-              <h2 className="mb-6 flex items-center gap-2 text-xl font-black text-text">
-                <TrendingUp className="h-5 w-5 text-primary" /> Réalité terrain
+              <h2 className="mt-1 font-serif text-xl font-black leading-tight tracking-tight text-[#0D1B3E] sm:text-2xl">
+                {country.name} — {strapline}
               </h2>
-              <div className="max-w-none">
-                <p className="text-lg font-medium italic leading-relaxed text-muted">
-                  &quot;{moroccoRealityText(full as Record<string, unknown>)}&quot;
+            </div>
+            <div className="flex flex-wrap items-start gap-5 sm:items-center">
+              <div className="text-right">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                  VisaFlow Score
+                </p>
+                <p className={`mt-0.5 font-serif text-2xl font-black leading-none ${scoreToneStitch(finalScore)}`}>
+                  {finalScore}
+                  <span className="text-base font-medium text-[#0D1B3E]/55">/100</span>
                 </p>
               </div>
+              <div className="text-right">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">Status</p>
+                <p className="mt-0.5 font-serif text-sm font-black text-[#0D1B3E]">
+                  {isSchengen ? 'Schengen' : 'Non-Schengen'}
+                </p>
+              </div>
+              {economyIntelFresh && intelLatest ? (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700"
+                  title={`Dernière matérialisation : ${formatIntelDateShortFr(intelLatest)}`}
+                >
+                  <Clock className="h-3 w-3 shrink-0" aria-hidden /> Fresh
+                </span>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => window.print()}
+                aria-label="Imprimer / PDF"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[#0D1B3E]/15 bg-white text-[#0D1B3E] transition-colors hover:bg-[#FDFBF4]"
+              >
+                <Printer className="h-4 w-4" aria-hidden />
+              </button>
+            </div>
+          </div>
+        </section>
 
-              <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-                <div className="rounded-2xl border border-line bg-inset p-4 text-center">
-                  <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Score réalité</div>
-                  <div className="text-2xl font-black text-text">{fmtBrutalReality(full.brutal_reality_score)}</div>
-                </div>
-                <div className="rounded-2xl border border-line bg-inset p-4 text-center">
-                  <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Acceptation</div>
-                  <div className="text-2xl font-black text-text">{fmtAcceptanceRate(full.acceptance_rate_morocco)}</div>
-                </div>
-                <div className="rounded-2xl border border-line bg-inset p-4 text-center">
-                  <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Friction RDV</div>
-                  <div className="text-2xl font-black text-text">{fmtFrictionBlock(full.friction_score)}</div>
-                </div>
-                <div className="rounded-2xl border border-line bg-inset p-4 text-center">
-                  <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted">Confiance</div>
-                  <div className="text-2xl font-black text-text">{fmtConfidencePct(full.confidence_score)}</div>
-                  {observationConfidenceAggregate ? (
-                    <p
-                      className="mt-2 text-[9px] font-bold leading-snug text-muted"
-                      title={SCORE_SCALE_LEGEND_FR.pipelineObservationConfidence}
-                    >
-                      {formatObservationConfidenceSidebarFr(observationConfidenceAggregate)}
-                    </p>
-                  ) : null}
+        <section className="mb-8 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            {iso2 ? (
+              <CountryFlag iso2={iso2} className="h-8 w-12 shrink-0 rounded-sm border border-[#0D1B3E]/10" />
+            ) : null}
+            <h1 className="min-w-0 font-serif text-3xl font-black leading-tight tracking-tight text-[#0D1B3E] sm:text-4xl">
+              {country.name}
+            </h1>
+            <span className="inline-flex items-center gap-1 text-[#0D1B3E]/55">
+              <MapPin className="h-4 w-4" aria-hidden />
+              <span className="font-serif text-sm">{String(country.region ?? '')}</span>
+            </span>
+          </div>
+          {user && (
+            <button
+              type="button"
+              onClick={toggleFavorite}
+              disabled={favLoading}
+              aria-label={favorited ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
+                favorited
+                  ? 'border-rose-300 bg-rose-50 text-rose-600'
+                  : 'border-[#0D1B3E]/15 bg-white text-[#0D1B3E]/55 hover:text-[#0D1B3E]'
+              } ${favLoading ? 'opacity-60' : ''}`}
+            >
+              <Heart className={`h-4 w-4 ${favorited ? 'fill-current' : ''}`} aria-hidden />
+            </button>
+          )}
+        </section>
+
+        {officialLinks.length ? (
+          <OfficialSourcesCard countryName={country.name} links={officialLinks} className="mb-8" />
+        ) : null}
+
+        {showPhdTeaser && phdModel ? (
+          <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-[#0D1B3E]/10 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]">
+                <GraduationCap className="h-5 w-5" aria-hidden />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                  Parcours doctorat
+                </p>
+                <p className="mt-1 font-serif text-base font-black text-[#0D1B3E] sm:text-lg">
+                  Données structurées pour préparer un PhD à {country.name}
+                </p>
+                <p className="mt-1 font-serif text-sm font-medium text-[#0D1B3E]/65">
+                  Financements, organismes, démarches et signaux utiles — contenu dédié hors de cette fiche synthèse.
+                </p>
+              </div>
+            </div>
+            <Link
+              href={`/countries/${countryPageId}/doctorat`}
+              className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#0D1B3E] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:shadow-md"
+            >
+              Voir le parcours PhD
+            </Link>
+          </div>
+        ) : null}
+
+        <div className="grid min-w-0 grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="min-w-0 space-y-8 lg:col-span-2">
+            <section className="relative overflow-hidden rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm sm:p-8">
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                Réalité terrain
+              </p>
+              <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+                <p className="max-w-2xl font-serif text-base italic leading-relaxed text-[#0D1B3E]/85 sm:text-lg">
+                  &laquo;&nbsp;{moroccoRealityText(full as Record<string, unknown>)}&nbsp;&raquo;
+                </p>
+                <div
+                  aria-label="Source vérifiée"
+                  className="flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full border-2 border-emerald-500/40 text-emerald-700"
+                >
+                  <BadgeCheck className="h-6 w-6" aria-hidden />
+                  <span className="mt-1 text-[8px] font-black uppercase tracking-[0.22em]">Verified</span>
                 </div>
               </div>
-              <p className="mt-4 text-[10px] font-medium leading-relaxed text-muted">
-                {SCORE_SCALE_LEGEND_FR.terrainTilesCaption}
-              </p>
+
+              <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-4">
+                <TerrainBar label="Access" value={accessPct} accent="emerald" />
+                <TerrainBar label="Acceptance" value={acceptancePct} accent="emerald" />
+                <TerrainBar label="Friction" value={frictionPct} accent="rose" />
+                <TerrainBar label="Confidence" value={confidencePct} accent="emerald" />
+              </div>
+              {observationConfidenceAggregate ? (
+                <p
+                  className="mt-3 text-[10px] font-medium leading-relaxed text-[#0D1B3E]/55"
+                  title={SCORE_SCALE_LEGEND_FR.pipelineObservationConfidence}
+                >
+                  {formatObservationConfidenceSidebarFr(observationConfidenceAggregate)}
+                </p>
+              ) : null}
 
               {hasWbIndicators ? (
-                <div className="mt-8 rounded-2xl border border-primary/20 bg-primary-soft/40 p-5">
-                  <p className="mb-3 text-[10px] font-black uppercase tracking-widest text-primary">
-                    Indicateurs (World Bank, matérialisés)
-                  </p>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-                    {popWb != null ? (
-                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Population</div>
-                        <div className="text-sm font-black text-text">{fmtIntlFrInteger(popWb)}</div>
-                      </div>
-                    ) : null}
-                    {gdpUsd != null ? (
-                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">PIB (USD)</div>
-                        <div className="text-sm font-black text-text">{fmtUsdCompact(gdpUsd)}</div>
-                      </div>
-                    ) : null}
-                    {gdpCap != null ? (
-                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">PIB / hab.</div>
-                        <div className="text-sm font-black text-text">{fmtUsdInteger(gdpCap)}</div>
-                      </div>
-                    ) : null}
-                    {lifeExp != null ? (
-                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Espérance de vie</div>
-                        <div className="text-sm font-black text-text">{fmtLifeExpectancyYears(lifeExp)}</div>
-                      </div>
-                    ) : null}
-                    {unempPct != null ? (
-                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Chômage (actifs)</div>
-                        <div className="text-sm font-black text-text">{fmtUnemploymentLaborForcePct(unempPct)}</div>
-                      </div>
-                    ) : null}
-                    {urbanPopPct != null ? (
-                      <div className="rounded-xl border border-line bg-surface px-3 py-2 text-center">
-                        <div className="text-[9px] font-bold uppercase tracking-wider text-muted">Pop. urbaine</div>
-                        <div className="text-sm font-black text-text">{fmtUrbanPopulationPct(urbanPopPct)}</div>
-                      </div>
-                    ) : null}
-                  </div>
-                  {intelLatest ? (
-                    <p className="mt-3 text-[10px] font-medium text-muted">
-                      Dernière mise à jour des indicateurs :{' '}
-                      {new Date(intelLatest).toLocaleString('fr-FR', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      })}
-                    </p>
+                <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  {popWb != null ? (
+                    <StatTile label="Population" value={fmtIntlFrInteger(popWb)} />
+                  ) : null}
+                  {gdpCap != null ? (
+                    <StatTile label="GDP / Capita" value={fmtUsdInteger(gdpCap)} />
+                  ) : null}
+                  {unempPct != null ? (
+                    <StatTile label="Unemployment" value={fmtUnemploymentLaborForcePct(unempPct)} />
                   ) : null}
                 </div>
+              ) : null}
+
+              {intelLatest ? (
+                <p className="mt-4 text-[10px] font-medium text-[#0D1B3E]/55">
+                  Dernière mise à jour des indicateurs :{' '}
+                  {new Date(intelLatest).toLocaleString('fr-FR', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                  })}
+                </p>
               ) : null}
 
               <IntelligenceProvenanceCollapsible
                 countryId={String(Array.isArray(id) ? id[0] ?? '' : id ?? '')}
               />
-
               <CountryDbInsightsCollapsible rows={dbInsightRows} />
 
-              <p className="mt-8 text-[10px] font-medium leading-relaxed text-muted">
+              <p className="mt-8 text-[10px] font-medium leading-relaxed text-[#0D1B3E]/55">
                 {SCORE_SCALE_LEGEND_FR.visaBarsSubtitle}
               </p>
-              <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <ScoreBar label="Visa tourisme" value={tourismScore} />
                 <ScoreBar label="Visa études" value={studyScore} />
                 <ScoreBar label="Visa travail" value={workScore} />
@@ -588,53 +592,118 @@ export default function CountryDetailPage() {
               </div>
 
               <BlockFeedback blockId="country-reality" countryId={countryPageId} />
-            </div>
+            </section>
+
+            {dataQualityAnomalies.length > 0 ? (
+              <section
+                role="status"
+                className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4"
+              >
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-700" aria-hidden />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-amber-800">
+                    Data quality signals
+                  </p>
+                  <ul className="mt-2 space-y-1 font-serif text-sm font-medium leading-relaxed text-amber-900">
+                    {dataQualityAnomalies.map((a) => (
+                      <li key={a.code}>{a.messageFr}</li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            ) : null}
 
             <DeepReportTeaser countryName={country.name} countryId={countryPageId} />
 
             <GoogleAd slot="country_detail_mid" />
-          </section>
 
-          {/* Appointment Audit */}
-          <section className="rounded-[2.5rem] border border-line bg-surface p-8 shadow-card">
-            <h2 className="mb-8 flex items-center gap-2 text-xl font-black text-text">
-              <Clock className="h-5 w-5 text-accent" /> Audit des rendez-vous
-            </h2>
+            <section aria-labelledby="appointment-audit-heading">
+              <h2
+                id="appointment-audit-heading"
+                className="mb-4 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl"
+              >
+                Appointment Audit
+              </h2>
+              <div className="rounded-xl border border-[#0D1B3E]/10 bg-white p-5 shadow-sm sm:p-6">
+                <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+                  <div>
+                    <dt className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                      Platform
+                    </dt>
+                    <dd className="mt-1.5 font-serif text-base font-black text-[#0D1B3E]">
+                      {String(appointmentAudit?.platform ?? '—')}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                      Difficulty Level
+                    </dt>
+                    <dd className="mt-1.5 font-serif text-base font-black text-rose-700">
+                      {String(appointmentAudit?.real_difficulty ?? '—')}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                      Avg. Delay
+                    </dt>
+                    <dd className="mt-1.5 font-serif text-base font-black text-[#0D1B3E]">
+                      {String(appointmentAudit?.avg_wait_time ?? '—')}
+                    </dd>
+                  </div>
+                </dl>
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between border-b border-line pb-4">
-                  <span className="text-sm font-bold text-muted">Plateforme</span>
-                  <span className="font-black text-text">{String(appointmentAudit?.platform ?? '')}</span>
-                </div>
-                <div className="flex items-center justify-between border-b border-line pb-4">
-                  <span className="text-sm font-bold text-muted">Difficulté réelle</span>
-                  <span className="font-black text-danger">{String(appointmentAudit?.real_difficulty ?? '')}</span>
-                </div>
-                <div className="flex items-center justify-between border-b border-line pb-4">
-                  <span className="text-sm font-bold text-muted">Délai moyen</span>
-                  <span className="font-black text-text">{String(appointmentAudit?.avg_wait_time ?? '')}</span>
+                {(appointmentAudit?.issues as string[] | undefined)?.length ? (
+                  <div className="mt-6 border-t border-[#0D1B3E]/10 pt-5">
+                    <p className="mb-2 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-rose-700">
+                      <AlertTriangle className="h-3.5 w-3.5" aria-hidden /> Issues signalés
+                    </p>
+                    <ul className="space-y-1.5">
+                      {(appointmentAudit?.issues as string[] | undefined)?.map((issue, i) => (
+                        <li
+                          key={i}
+                          className="flex items-start gap-2 font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/80"
+                        >
+                          <XCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-rose-600" aria-hidden />
+                          <span>{issue}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                <BlockFeedback blockId="country-appointment-audit" countryId={countryPageId} />
+              </div>
+            </section>
+
+            <section aria-labelledby="driving-mobility-heading">
+              <h2
+                id="driving-mobility-heading"
+                className="mb-4 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl"
+              >
+                Driving &amp; Mobility
+              </h2>
+              <div className="mb-4 rounded-xl border border-[#0D1B3E]/10 bg-white p-5 shadow-sm sm:p-6">
+                <div className="flex items-start gap-3">
+                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]">
+                    <Car className="h-5 w-5" aria-hidden />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-serif text-base font-black text-[#0D1B3E]">
+                      {drivingIntel.eligibility.idpRequired === true
+                        ? 'International Driving Permit (IDP) Required'
+                        : drivingIntel.eligibility.idpRequired === false
+                          ? 'International Driving Permit (IDP) Not Required'
+                          : 'International Driving Permit (IDP) — À confirmer'}
+                    </p>
+                    <p className="mt-1 font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/75">
+                      {drivingIntel.simpleSummaryFr ||
+                        'Consultez la matrice détaillée ci-dessous pour vos droits de conduite par profil de résidence.'}
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              <div className="rounded-3xl border border-[#f3afaf] bg-[#fff0f0] p-6">
-                <h4 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-danger">
-                  <AlertTriangle className="h-4 w-4" /> Problèmes signalés (OSINT)
-                </h4>
-                <ul className="space-y-3">
-                  {((appointmentAudit?.issues as string[] | undefined) || []).map((issue: string, i: number) => (
-                    <li key={i} className="flex gap-2 text-sm font-bold text-danger">
-                      <XCircle className="mt-0.5 h-4 w-4 shrink-0" /> {issue}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <BlockFeedback blockId="country-appointment-audit" countryId={countryPageId} />
-          </section>
-
-          <DrivingRightsIntelSection countryName={country.name} countryId={id as string} intel={drivingIntel} />
+              <DrivingRightsIntelSection countryName={country.name} countryId={id as string} intel={drivingIntel} />
+            </section>
 
           {showPhdTeaser && phdModel ? (
             <PhDStudiesCountryTeaser
@@ -728,79 +797,99 @@ export default function CountryDetailPage() {
           </section>
         </div>
 
-          {/* Right Column: Sidebar Stats */}
-          <div className="space-y-8">
-            <div className="sticky top-24 rounded-[2.5rem] border border-line bg-surface p-8 shadow-card lg:top-28">
-              <h3 className="mb-8 flex items-center gap-2 text-xl font-black text-text">
-                <ShieldCheck className="h-5 w-5 text-success" /> Contexte ambassade
-              </h3>
-              
-              <div className="space-y-8">
-                <div>
-                  <div className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">
-                    Comportement consulaire
+          <aside className="space-y-6">
+            <div className="sticky top-24 space-y-6 lg:top-28">
+              <div
+                aria-hidden
+                className="flex h-32 items-center justify-center rounded-xl border border-[#0D1B3E]/10 bg-[#F4EFE2] text-[#0D1B3E]/40"
+              >
+                <MapIcon className="h-7 w-7" aria-hidden />
+              </div>
+
+              <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm">
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                  Embassy Context
+                </p>
+                <h3 className="mt-1 font-serif text-lg font-black tracking-tight text-[#0D1B3E]">
+                  Behavioral Profile
+                </h3>
+                <p className="mt-3 font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/75">
+                  {typeof full.embassy_behavior === 'string' && full.embassy_behavior.trim()
+                    ? full.embassy_behavior
+                    : '—'}
+                </p>
+
+                <dl className="mt-5 space-y-3 border-t border-[#0D1B3E]/10 pt-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="font-serif text-sm font-medium text-[#0D1B3E]">Tourism Visa</dt>
+                    <dd>
+                      <span
+                        className={`rounded-md border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.18em] ${
+                          isStrictTourism
+                            ? 'border-rose-200 bg-rose-50 text-rose-700'
+                            : 'border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]/75'
+                        }`}
+                      >
+                        {isStrictTourism ? 'Strict' : tourismDifficulty}
+                      </span>
+                    </dd>
                   </div>
-                  <p className="text-sm font-bold leading-relaxed text-text">
-                    {typeof full.embassy_behavior === 'string' && full.embassy_behavior.trim()
-                      ? full.embassy_behavior
-                      : '—'}
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="font-serif text-sm font-medium text-[#0D1B3E]">Work/Study Permits</dt>
+                    <dd>
+                      <span
+                        className={`rounded-md border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.18em] ${
+                          isStructuredWork
+                            ? 'border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]/75'
+                            : 'border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]/75'
+                        }`}
+                      >
+                        {isStructuredWork ? 'Structured' : workAvailability}
+                      </span>
+                    </dd>
+                  </div>
+                </dl>
+
+                <div className="mt-5 rounded-xl border border-[#0D1B3E]/10 bg-[#FDFBF4] p-4">
+                  <p className="mb-2 inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65">
+                    <CheckCircle2 className="h-3 w-3" aria-hidden /> Darija Tip
+                  </p>
+                  <p className="font-serif text-sm font-medium italic leading-relaxed text-[#0D1B3E]">
+                    &laquo;&nbsp;{moroccoProTipText(full as Record<string, unknown>)}&nbsp;&raquo;
                   </p>
                 </div>
+                <BlockFeedback
+                  blockId="country-darija-tip"
+                  countryId={countryPageId}
+                  className="!mt-3 !border-t-0 !pt-3"
+                />
+              </div>
 
-                <div className="border-t border-line pt-8">
-                  <div className="mb-4 text-[10px] font-black uppercase tracking-widest text-muted">Système de visa</div>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-muted">Tourisme</span>
-                      <span className="rounded-lg bg-inset px-2 py-1 text-xs font-black text-text">
-                        {(visaTourism?.difficulty as string | undefined) ?? '—'}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-muted">Travail</span>
-                      <span className="rounded-lg bg-inset px-2 py-1 text-xs font-black text-text">
-                        {(visaWork?.availability as string | undefined) || 'Limitée'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t border-line pt-8">
-                  <div className="mb-3 text-[10px] font-black uppercase tracking-widest text-muted">
-                    Synthèse des scores
-                  </div>
-                  <div className="space-y-3">
-                    <SidebarBar
-                      label="Moyenne visas"
-                      value={Math.round((tourismScore + studyScore + workScore + businessScore) / 4)}
-                    />
-                    <SidebarBar label="Lecture friction" value={frictionScore} />
-                    <SidebarBar label="Score global" value={finalScore} />
-                  </div>
-                </div>
-
-                <div className="border-t border-line pt-8">
-                  <div className="rounded-2xl border border-primary/30 bg-primary-soft p-4">
-                    <h4 className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
-                      <CheckCircle2 className="w-3 h-3" /> Conseil (Darija)
-                    </h4>
-                    <p className="text-sm font-black italic text-text">
-                      &quot;{moroccoProTipText(full as Record<string, unknown>)}&quot;
-                    </p>
-                  </div>
-                  <BlockFeedback
-                    blockId="country-darija-tip"
-                    countryId={countryPageId}
-                    className="!mt-3 !border-t-0 !pt-3"
+              <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm">
+                <p className="mb-4 text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                  Processing Metrics
+                </p>
+                <div className="space-y-4">
+                  <ProcessingMetricBar
+                    label="Processing Speed"
+                    value={100 - frictionScore}
+                    rightLabel={frictionScore >= 55 ? 'Slow' : frictionScore >= 35 ? 'Moderate' : 'Fast'}
+                    inverted
+                  />
+                  <ProcessingMetricBar
+                    label="Administrative Friction"
+                    value={frictionScore}
+                    rightLabel={frictionScore >= 55 ? 'High' : frictionScore >= 35 ? 'Moderate' : 'Low'}
                   />
                 </div>
+              </div>
 
-                <div className="border-t border-line pt-8">
-                  <GoogleAd slot="country_detail_sidebar" />
-                </div>
+              <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-4 shadow-sm">
+                <GoogleAd slot="country_detail_sidebar" />
               </div>
             </div>
-          </div>
+          </aside>
+        </div>
       </div>
     </div>
 
@@ -912,26 +1001,72 @@ export default function CountryDetailPage() {
 function ScoreBar({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted">
+      <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
         <span>{label}</span>
-        <span className="text-text">{Number.isInteger(value) ? value : value.toFixed(1)}</span>
+        <span className="text-[#0D1B3E]">{Number.isInteger(value) ? value : value.toFixed(1)}</span>
       </div>
-      <div className="h-2 w-full overflow-hidden rounded-full bg-[#eadfcf]">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#0D1B3E]/10">
         <div className={`h-full ${barTone(value)}`} style={{ width: `${value}%` }} />
       </div>
     </div>
   )
 }
 
-function SidebarBar({ label, value }: { label: string; value: number }) {
+function TerrainBar({
+  label,
+  value,
+  accent,
+}: {
+  label: string
+  value: number
+  accent: 'emerald' | 'rose'
+}) {
+  const fill = accent === 'rose' ? 'bg-rose-600' : 'bg-emerald-600'
   return (
     <div>
-      <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-muted">
+      <div className="mb-1 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
         <span>{label}</span>
-        <span className="text-muted">{Number.isInteger(value) ? value : value.toFixed(1)}</span>
+        <span className="text-[#0D1B3E]">{value}%</span>
       </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#eadfcf]">
-        <div className={`h-full ${barTone(value)}`} style={{ width: `${value}%` }} />
+      <div className="h-1 w-full overflow-hidden rounded-full bg-[#0D1B3E]/10">
+        <div className={`h-full ${fill}`} style={{ width: `${value}%` }} />
+      </div>
+    </div>
+  )
+}
+
+function StatTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-[#0D1B3E]/10 bg-[#FDFBF4] px-4 py-3">
+      <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">{label}</p>
+      <p className="mt-1 font-serif text-lg font-black text-[#0D1B3E]">{value}</p>
+    </div>
+  )
+}
+
+function ProcessingMetricBar({
+  label,
+  value,
+  rightLabel,
+  inverted = false,
+}: {
+  label: string
+  value: number
+  rightLabel: string
+  inverted?: boolean
+}) {
+  const ratio = Math.max(0, Math.min(100, value))
+  const isWarn = inverted ? value <= 45 : value >= 55
+  const fill = isWarn ? 'bg-rose-600' : 'bg-emerald-600'
+  const tone = isWarn ? 'text-rose-700' : 'text-emerald-700'
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+        <span>{label}</span>
+        <span className={tone}>{rightLabel}</span>
+      </div>
+      <div className="h-1 w-full overflow-hidden rounded-full bg-[#0D1B3E]/10">
+        <div className={`h-full ${fill}`} style={{ width: `${ratio}%` }} />
       </div>
     </div>
   )
