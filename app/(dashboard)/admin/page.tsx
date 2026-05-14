@@ -431,6 +431,13 @@ export default function AdminPage() {
               Azimuth · Objectif
             </Link>
             <Link
+              href="/admin/radar"
+              className="inline-flex shrink-0 items-center justify-center rounded-md border bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]"
+              style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+            >
+              Radar · Sentry
+            </Link>
+            <Link
               href="/admin/rampart"
               className="inline-flex shrink-0 items-center justify-center rounded-md border bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]"
               style={{ borderColor: 'rgba(13,27,62,0.10)' }}
