@@ -103,4 +103,13 @@ Split view **tribunal minimaliste** : gauche liste stricte monospace IDs légers
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 25]
+Fichier repo : `docs/google-stitch/assets/page-25-scale-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Scale tribunal split view)** : shell **cream `#FAF7EE`**. Refactor en **3 zones logiques** : 
+- **Queue list (colonne `lg:w-[300px]`)** : pill mono `File d'attente`, badge dot rouge `{N} En attente` + bouton `RefreshCw` icon-only ; chaque entrée pending est une carte cream cliquable (ID mono `ID-{id}`, `time-ago` court FR `Il y a 2m / 15m / 1h / 3j / 12 mars`, nom + pays). Item sélectionné : **left border rouge 3px**, fond blanc, badge actif.
+- **Détail (colonne flex-1)** : titre serif `Modération` + sous-titre `Examen des signalements du registre de risques.` ; carte blanche avec **border-top rouge 4px** : entête avatar `User` + nom + email + chip pays (`Globe`) à droite ; eyebrow rouge `Contenu signalé — en attente` ; bloc cream `quote` avec glyph `Quote` et texte du commentaire ; deux boutons grid 2-col : outline rouge `Refuser` (`XCircle`) + navy filled `Approuver` (`CheckCircle2`). Sans pending : empty state cream centré avec `ShieldCheck`.
+- **Registre / Historique récent** sous le panneau détail : eyebrow + serif `Historique récent` ; table cream blanche avec colonnes `Utilisateur / Pays / Extrait / Statut / Action`. Statut affiché en chip dot (`emerald` = `APPROUVÉ`, `rose` = `REFUSÉ`). Action `Trash2` rouge supprime via `DELETE /api/comments/:id`.
+
+Logique préservée : `GET /api/comments`, `PATCH /api/comments/:id { status }`, `DELETE /api/comments/:id`, mise à jour optimiste de la liste locale ; garde accès 403 (`ShieldAlert`) ; `DashboardPageSkeleton variant="table"` pendant fetch. Aucun changement d'API ni de modèle de données.
+
+**A11y / UX upgrades** : `aria-current` sur ligne sélectionnée, `<time dateTime>` pour les horodatages, bouton Refresh `aria-label`, et déduction automatique du sélectionné = premier `PENDING` après chaque `fetchComments`.
