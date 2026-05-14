@@ -98,4 +98,16 @@ Illustration **glitch géométrique contrôlé** (3 lignes décalées) — pas d
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 29]
+Fichier repo : `docs/google-stitch/assets/page-29-fault-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Fault System card)** : `app/error.tsx` (client boundary) réécrit en composition centrée carrée sur shell cream `#FAF7EE`.
+
+- **Cream shell pleine page** + smudge décoratif (large radial gradient gris pâle haut-gauche, `pointer-events-none`).
+- **Card centrale** : white card carrée (`max-w-md`, padding généreux), border subtile `#0D1B3E/10`, ombre douce.
+  - **Eyebrow `SYSTEM FAULT`** mono uppercase tracking-`0.28em` + pastille rose `bg-rose-500` 6×6px.
+  - **Glitch geometric mark** SVG : 3 traits horizontaux courts décalés (Stitch §12 « glitch géométrique contrôlé »).
+  - **`h1`** serif navy `Une erreur est survenue` (clamp).
+  - **Paragraphe** étendu : « Nous n'avons pas pu charger ce composant. Vous pouvez réessayer ou retourner à l'accueil pour reprendre votre session. »
+  - **2 boutons** centrés : navy filled `Réessayer` (icône `RefreshCcw`, `onClick={() => reset()}`), white outlined `Accueil` (lien `/`).
+  - **Code de référence** mono tracking-`0.26em` : `CODE DE RÉFÉRENCE : ERR-XXXX` — calculé à partir de `error.digest` (premiers 4 caractères uppercase) ou hash stable du message d'erreur en fallback. Permet au support de tracer.
+- **Observabilité préservée** : `useEffect` continue d'appeler `console.error(error)` + `Sentry.captureException(error)`.
