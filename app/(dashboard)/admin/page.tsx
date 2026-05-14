@@ -5,9 +5,6 @@ import {
   AlertTriangle,
   BarChart3,
   CheckCircle,
-  Database,
-  FileStack,
-  MessageSquare,
   ShieldAlert,
   XCircle,
 } from 'lucide-react'
@@ -118,6 +115,81 @@ type AgentHealth = {
     withCuratedImage: number
     likelyGenericFallback: number
   }
+}
+
+function formatCompact(n: number): string {
+  if (!Number.isFinite(n)) return '0'
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1).replace(/\.0$/, '')}m`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1).replace(/\.0$/, '')}k`
+  return String(n)
+}
+
+function runSuccessRate(runs: IntelligenceSummary['recentRuns']): number {
+  if (!runs || runs.length === 0) return 0
+  const ok = runs.filter((r) => r.status === 'SUCCESS' || r.status === 'OK' || r.status === 'COMPLETED').length
+  return Math.round((ok / runs.length) * 100)
+}
+
+type AgentStatusTone = { dot: string; text: string; label: string }
+function statusTone(kind: 'healthy' | 'delayed' | 'failed'): AgentStatusTone {
+  if (kind === 'failed') return { dot: 'bg-rose-500', text: 'text-rose-700', label: 'FAILED' }
+  if (kind === 'delayed') return { dot: 'bg-amber-500', text: 'text-amber-700', label: 'DELAYED' }
+  return { dot: 'bg-emerald-500', text: 'text-emerald-700', label: 'HEALTHY' }
+}
+
+function relativeTimeFr(iso: string | null | undefined): string {
+  if (!iso) return '—'
+  const t = new Date(iso).getTime()
+  if (!Number.isFinite(t)) return '—'
+  const diff = Math.max(0, Date.now() - t)
+  const m = Math.floor(diff / 60_000)
+  if (m < 1) return 'just now'
+  if (m < 60) return `${m} min${m > 1 ? 's' : ''} ago`
+  const h = Math.floor(m / 60)
+  if (h < 24) return `${h} hr${h > 1 ? 's' : ''} ago`
+  const d = Math.floor(h / 24)
+  return `${d} day${d > 1 ? 's' : ''} ago`
+}
+
+type AgentStatusRow = { id: string; target: string; tone: AgentStatusTone; lastSync: string }
+function buildAgentStatusRows(
+  health: AgentHealth | null,
+  intel: IntelligenceSummary | null,
+): AgentStatusRow[] {
+  const out: AgentStatusRow[] = []
+  if (health?.failedTasks) {
+    for (const t of health.failedTasks.slice(0, 3)) {
+      out.push({
+        id: `AG-${t.id.slice(0, 6).toUpperCase()}`,
+        target: `${t.country} · ${t.domain}`,
+        tone: statusTone('failed'),
+        lastSync: relativeTimeFr(intel?.lastRun?.startedAt ?? null),
+      })
+    }
+  }
+  if (health?.queuedPreview) {
+    for (const t of health.queuedPreview.slice(0, Math.max(0, 5 - out.length))) {
+      const isLate =
+        t.nextRunAt && new Date(t.nextRunAt).getTime() < Date.now() - 30 * 60_000
+      out.push({
+        id: `AG-${t.id.slice(0, 6).toUpperCase()}`,
+        target: `${t.country} · ${t.domain}`,
+        tone: statusTone(isLate ? 'delayed' : 'healthy'),
+        lastSync: relativeTimeFr(t.nextRunAt),
+      })
+    }
+  }
+  if (out.length === 0 && intel?.observationsBySource) {
+    for (const s of intel.observationsBySource.slice(0, 3)) {
+      out.push({
+        id: `AG-${s.slug.slice(0, 6).toUpperCase()}`,
+        target: s.name,
+        tone: statusTone('healthy'),
+        lastSync: relativeTimeFr(intel.lastRun?.startedAt ?? null),
+      })
+    }
+  }
+  return out
 }
 
 export default function AdminPage() {
@@ -283,69 +355,110 @@ export default function AdminPage() {
   }
 
   if (loading) {
-    return <DashboardPageSkeleton />
-  }
-
-  if (forbidden) {
     return (
-      <div className="mx-auto max-w-xl px-4 py-12 text-center sm:py-16">
-        <ShieldAlert className="mx-auto mb-4 h-14 w-14 text-danger" />
-        <h1 className="text-2xl font-black text-text">Accès admin refusé</h1>
-        <p className="mt-2 text-muted">Cette zone est réservée aux comptes avec rôle ADMIN.</p>
-        <Link href="/overview" className="mt-6 inline-block text-sm font-bold text-primary hover:text-primary-hover">
-          Retour à l&apos;aperçu
-        </Link>
+      <div className="min-h-screen" style={{ backgroundColor: '#FAF7EE' }}>
+        <div className="mx-auto max-w-6xl px-5 pt-8 sm:px-6 lg:px-8">
+          <DashboardPageSkeleton />
+        </div>
       </div>
     )
   }
 
+  if (forbidden) {
+    return (
+      <div className="min-h-screen" style={{ backgroundColor: '#FAF7EE' }}>
+        <div className="mx-auto max-w-xl px-5 py-20 text-center sm:px-6">
+          <ShieldAlert className="mx-auto mb-5 h-12 w-12 text-rose-600" aria-hidden />
+          <h1 className="font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">
+            Accès admin refusé
+          </h1>
+          <p className="mt-3 font-serif text-base font-medium text-[#0D1B3E]/65">
+            Cette zone est réservée aux comptes avec rôle ADMIN.
+          </p>
+          <Link
+            href="/overview"
+            className="mt-8 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+          >
+            ← Retour à l&apos;aperçu
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const tabs: Array<{ id: Tab; label: string; count?: number }> = [
+    { id: 'comments', label: 'Modération' },
+    { id: 'countries', label: 'Pays (Editor)' },
+    { id: 'assist', label: 'Assist', count: assistRows.length },
+    { id: 'intelligence', label: 'Intelligence' },
+  ]
+  const envBadge =
+    typeof process !== 'undefined' && process.env?.NODE_ENV === 'production' ? 'PROD' : 'DEV'
+
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-12 sm:space-y-8 sm:pb-16">
-      <div>
-        <h1 className="text-2xl font-black text-text sm:text-3xl">Administration</h1>
-        <p className="mt-1 text-sm text-muted">Modération rapide et édition des scores pays (MVP).</p>
+    <div className="min-h-screen" style={{ backgroundColor: '#FAF7EE' }}>
+      <div className="border-b bg-[#0D1B3E]/5 md:hidden" style={{ borderColor: 'rgba(13,27,62,0.10)' }}>
+        <p className="mx-auto max-w-6xl px-5 py-2 text-center text-[10px] font-black uppercase tracking-[0.26em] text-[#0D1B3E]/65 sm:px-6">
+          Utilisez un écran large pour une édition optimale
+        </p>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <Button
-          className="w-full justify-center gap-2 sm:w-auto sm:justify-start"
-          variant={tab === 'comments' ? 'default' : 'outline'}
-          type="button"
-          onClick={() => setTab('comments')}
+      <div className="mx-auto max-w-6xl space-y-6 px-5 pb-20 pt-8 sm:space-y-8 sm:px-6 lg:px-8">
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <span className="font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">
+            VisaFlow
+          </span>
+          <span
+            className="inline-flex items-center self-start rounded-md border border-rose-600/30 bg-rose-600/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.26em] text-rose-700 sm:self-auto"
+          >
+            {envBadge}
+          </span>
+          <span aria-hidden className="hidden h-5 w-px bg-[#0D1B3E]/15 sm:block" />
+          <div className="min-w-0">
+            <h1 className="font-serif text-xl font-black tracking-tight text-[#0D1B3E] sm:text-2xl">
+              Citadel Admin Console
+            </h1>
+            <p className="text-[13px] font-medium text-[#0D1B3E]/55">
+              Modération rapide et édition des scores pays (MVP).
+            </p>
+          </div>
+          <Link
+            href="/moderation"
+            className="ml-auto inline-flex shrink-0 items-center justify-center rounded-md border bg-white px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]"
+            style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+          >
+            Vue modération
+          </Link>
+        </header>
+
+        <nav
+          aria-label="Onglets admin"
+          className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b"
+          style={{ borderColor: 'rgba(13,27,62,0.10)' }}
         >
-          <MessageSquare className="h-4 w-4 shrink-0" /> Commentaires
-        </Button>
-        <Button
-          className="w-full justify-center gap-2 sm:w-auto sm:justify-start"
-          variant={tab === 'countries' ? 'default' : 'outline'}
-          type="button"
-          onClick={() => setTab('countries')}
-        >
-          <Database className="h-4 w-4 shrink-0" /> Données pays
-        </Button>
-        <Button
-          className="w-full justify-center gap-2 sm:w-auto sm:justify-start"
-          variant={tab === 'assist' ? 'default' : 'outline'}
-          type="button"
-          onClick={() => setTab('assist')}
-        >
-          <FileStack className="h-4 w-4 shrink-0" /> Assist ({assistRows.length})
-        </Button>
-        <Button
-          className="w-full justify-center gap-2 sm:w-auto sm:justify-start"
-          variant={tab === 'intelligence' ? 'default' : 'outline'}
-          type="button"
-          onClick={() => setTab('intelligence')}
-        >
-          <BarChart3 className="h-4 w-4 shrink-0" /> Intelligence
-        </Button>
-        <Link
-          href="/moderation"
-          className="inline-flex min-h-[2.75rem] w-full items-center justify-center gap-2 rounded-xl border border-line px-4 py-2 text-center text-sm font-bold text-muted hover:bg-primary-soft sm:min-h-0 sm:w-auto"
-        >
-          Vue modération complète
-        </Link>
-      </div>
+          {tabs.map((t) => {
+            const isActive = tab === t.id
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setTab(t.id)}
+                aria-current={isActive ? 'page' : undefined}
+                className={`relative -mb-px pb-3 pt-1 text-[11px] font-black uppercase tracking-[0.22em] transition-colors ${
+                  isActive ? 'text-[#0D1B3E]' : 'text-[#0D1B3E]/55 hover:text-[#0D1B3E]'
+                }`}
+              >
+                {t.label}
+                {typeof t.count === 'number' ? (
+                  <span className="ml-1.5 text-[#0D1B3E]/45">({t.count})</span>
+                ) : null}
+                {isActive ? (
+                  <span aria-hidden className="absolute inset-x-0 bottom-0 h-[2px] bg-[#0D1B3E]" />
+                ) : null}
+              </button>
+            )
+          })}
+        </nav>
 
       {agentHealth && (
         <Card>
@@ -650,6 +763,128 @@ export default function AdminPage() {
 
       {tab === 'intelligence' && (
         <section className="space-y-6">
+          {intelligence ? (
+            <div>
+              <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-[#0D1B3E]/55">
+                Pipeline Health
+              </p>
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+                <div
+                  className="rounded-xl border bg-white p-4"
+                  style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                    Sources
+                  </p>
+                  <p className="mt-2 flex items-baseline gap-2 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">
+                    {intelligence.sourceCount}
+                    <span className="text-[11px] font-bold text-[#0D1B3E]/45">active</span>
+                  </p>
+                </div>
+                <div
+                  className="rounded-xl border bg-white p-4"
+                  style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                    Observations
+                  </p>
+                  <p className="mt-2 flex items-baseline gap-2 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">
+                    {formatCompact(intelligence.observationCount)}
+                    <span className="text-[11px] font-bold text-[#0D1B3E]/45">total</span>
+                  </p>
+                </div>
+                <div
+                  className="rounded-xl border bg-white p-4"
+                  style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                    Runs
+                  </p>
+                  <p className="mt-2 flex items-baseline gap-2 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">
+                    {runSuccessRate(intelligence.recentRuns)}%
+                    <span className="text-[11px] font-bold text-[#0D1B3E]/45">succ</span>
+                  </p>
+                </div>
+                <div
+                  className="rounded-xl border bg-white p-4"
+                  style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                    Jobs
+                  </p>
+                  <p className="mt-2 flex items-baseline gap-2 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">
+                    {intelligence.pipelineJobQueue.pending}
+                    <span className="text-[11px] font-bold text-[#0D1B3E]/45">queued</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {agentHealth?.failedTasks || agentHealth?.queuedPreview ? (
+            <div
+              className="rounded-xl border bg-white"
+              style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+            >
+              <div
+                className="flex items-center justify-between border-b px-5 py-3"
+                style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+              >
+                <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#0D1B3E]/55">
+                  System Agents Status
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void loadAgentHealth()}
+                  className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65 underline decoration-[#0D1B3E]/25 underline-offset-4 transition-colors hover:text-[#0D1B3E] hover:decoration-[#0D1B3E]"
+                >
+                  View logs
+                </button>
+              </div>
+              <table className="w-full text-left text-sm">
+                <thead
+                  className="border-b text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55"
+                  style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+                >
+                  <tr>
+                    <th className="px-5 py-3">Agent ID</th>
+                    <th className="px-5 py-3">Target</th>
+                    <th className="px-5 py-3">Status</th>
+                    <th className="px-5 py-3">Last sync</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {buildAgentStatusRows(agentHealth, intelligence).map((row) => (
+                    <tr
+                      key={row.id}
+                      className="border-b last:border-0"
+                      style={{ borderColor: 'rgba(13,27,62,0.08)' }}
+                    >
+                      <td className="px-5 py-3 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-[#0D1B3E]/65">
+                        {row.id}
+                      </td>
+                      <td className="px-5 py-3 font-medium text-[#0D1B3E]">{row.target}</td>
+                      <td className="px-5 py-3">
+                        <span
+                          className={`inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.22em] ${row.tone.text}`}
+                        >
+                          <span
+                            aria-hidden
+                            className={`inline-block h-1.5 w-1.5 rounded-full ${row.tone.dot}`}
+                          />
+                          {row.tone.label}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3 font-mono text-[11px] text-[#0D1B3E]/55">
+                        {row.lastSync}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <div className="flex min-w-0 items-center gap-2">
               <BarChart3 className="h-5 w-5 shrink-0 text-primary" />
@@ -928,6 +1163,7 @@ export default function AdminPage() {
           ) : null}
         </section>
       )}
+      </div>
     </div>
   )
 }
