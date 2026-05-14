@@ -100,4 +100,6 @@ Graphismes **waveforms** abstraits liés à la phonétique. Cartes pays avec **b
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 11]
+Fichier repo : `docs/google-stitch/assets/page-11-polyglot-stitch-reference.png`
+
+**Architecture livrée (Stitch v1)** : shell **cream `#FDFBF4`** avec grille subtile (cohérent pages 02–10). En-tête **`SECTION 04 / LANGUAGE PROGRAMS`** + titre serif **« Apprendre une langue. »** et sous-titre éditorial. Barre de filtres = `Sélectionner une langue` (select global icône `Globe`) + `Type de programme` (select alimenté par `/api/education/programs?kind=LANGUAGE_STUDY`) + bouton plein `FILTRER` (navy). Section **« Préparation aux Certifications »** éditoriale (4 cartes — IELTS Academic, TOEFL iBT, DELF/DALF, TestDaF) + tuile statistique navy plein `85%`. Section **« Destinations d'Immersion »** dynamique : cartes pays issues de **`GET /api/education/programs?kind=LANGUAGE_STUDY`** (filtres `programType`, `cost`, `bac`, `q` côté serveur grâce aux index `kind_*` du modèle `CountryEducationProgram`). Carte = bandeau gris (placeholder image), `country.name`, tag accès, `Coût mensuel moyen`, `Type de visa`, citation `insight` italique. CTA explorateur en bas via `educationHubExplorerHref(preference.primarySlug)`.
