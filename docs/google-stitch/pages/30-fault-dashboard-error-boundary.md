@@ -95,4 +95,20 @@ Afficher **mini aperçu sidebar fantôme** atténuée derrière la carte erreur 
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 30]
+Fichier repo : `docs/google-stitch/assets/page-30-fault-dash-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Fault·Dash workspace error)** : `app/(dashboard)/error.tsx` réécrit en composition pleine page avec **sidebar fantôme** désaturée (Stitch §12) en arrière-plan + carte erreur centrée.
+
+- **Cream shell** `#FAF7EE`, layout 2 colonnes `lg:grid-cols-[220px_1fr]`.
+- **Ghost sidebar** (lg+ only, `aria-hidden`) : faux nav désaturé avec wordmark `Intelligence` serif + mono `Mobility Terminal` + 4 entrées icônées (`BarChart3`, `Map`, `ShieldCheck`, `Archive`) à 40 % d'opacité + faux bouton `Export Report` outline en bas. Pure décor — pas de liens fonctionnels (Stitch §12 « aperçu sidebar fantôme »).
+- **Carte erreur centrée** (`max-w-md`) : white card border `#0D1B3E/10`, padding généreux.
+  - **Icône warning** `FileWarning` à 36 px, gris doux.
+  - **Eyebrow `SYSTEM INTERRUPT`** mono uppercase tracking-`0.26em`.
+  - **`h1`** serif navy `Erreur dans l'espace connecté` (clamp).
+  - **Paragraphe** : « Nous n'avons pas pu charger vos données personnelles. Vous pouvez réessayer ou retourner à votre tableau de bord. »
+  - **3 CTAs stacked** :
+    - navy filled full-width `Réessayer` (`onClick={() => reset()}`),
+    - white outlined full-width `Mon Tableau de bord` (lien `/overview`),
+    - lien texte underline `Retour à l'accueil` vers `/`.
+- **Observabilité préservée** : `useEffect` continue `console.error` + `Sentry.captureException`.
+- Sortie marketing (`/`) conservée comme tertiaire (Stitch §5.2).
