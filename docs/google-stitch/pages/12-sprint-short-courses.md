@@ -95,4 +95,6 @@ Visual **stopwatch géométrique** intégré au hero. Cartes programmes avec **c
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 12]
+Fichier repo : `docs/google-stitch/assets/page-12-sprint-stitch-reference.png`
+
+**Architecture livrée (Stitch v1)** : shell **cream `#FDFBF4`** (cohérent pages 02–11). En-tête `SPRINT HUB` (label) + **horloge SVG minimaliste** à droite ; titre serif **« Formations courtes & Bootcamps »** ; sous-titre ROI 2 semaines → 6 mois. Filter bar single-row : `RECHERCHE` (text input, domaine/compétence), `BAC REQUIS` (select bucket), `DURÉE` (select bucket textuel ex. "2 semaines / 1-2 mois / 3-6 mois / 6+ mois"), `BUDGET` (select bucket LOW/MEDIUM/HIGH), bouton plein navy **`FILTRER`**. Section **`Timeline of Intensity`** = 4 cartes éditoriales fixes (Micro-certificats 2-4 sem / Sprint Académique 1-2 mois / Professional Bootcamps 3-6 mois / Diplômes Courts 6+ mois) — non dynamiques. Section principale = grille de **3 cartes pays** alimentée par **`GET /api/education/programs?kind=SHORT_COURSES`** avec `bac` / `cost` / `q` (recherche), index `kind_*` de `CountryEducationProgram`. Carte = bandeau placeholder image + tag durée orange brûlé, label pays (mono uppercase), nom programme serif (depuis `programType`), grille Type / Bac requis / Budget (dots) / Visa, citation `insight` italique. CTA circulaire **`Explore with Objective`** vers `/explorer` (objectif-aware) ; ad slot ; footer Stitch.

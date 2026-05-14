@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Formations courtes',
+  title: 'Sprint — Formations courtes & Bootcamps',
   description:
-    'Formations brèves à l’étranger pour profils marocains : durées, coûts et pays les plus accessibles selon VisaFlow.',
+    'Upskilling rapide à l’étranger : micro-certificats, sprints académiques et bootcamps pro de 2 semaines à 6 mois pour un ROI temps maximal.',
 }
 
 export default function ShortCoursesLayout({ children }: { children: ReactNode }) {
