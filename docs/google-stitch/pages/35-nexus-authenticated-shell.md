@@ -107,4 +107,27 @@ Générer **un frame maître “Dashboard shell”** réutilisable dans Figma/St
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 35]
+Fichier repo : `docs/google-stitch/assets/page-35-nexus-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Nexus workspace shell exclusif)** : rewrite complet du shell `(dashboard)` pour qu'il **remplace** entièrement le `SiteChrome` public sur les routes connectées (Stitch §11 « les pages publiques hors `(dashboard)` reviennent au PAGE 34 »).
+
+**`SiteChrome` (`components/layout/SiteChrome.tsx`)** : ajout des routes dashboard au `STANDALONE_PATH_PREFIXES` (`/overview`, `/history`, `/profile`, `/admin`, `/design-system`, `/moderation`). Sur ces routes, **aucun** SiteHeader, SitePrimaryNavColumn, SiteObjectiveDock, SiteFooter ; le shell perso prend tout l'écran. Toaster `AppToaster` conservé.
+
+**`DashboardLayoutClient`** : cream `#FAF7EE` shell flex avec sidebar gauche + main droit, top bar collée en haut (desktop). Mobile : hamburger button ouvre le drawer sidebar avec overlay 45 % navy + ESC + scroll-lock préservés.
+
+**`DashboardSidebar`** (rewrite complet, parité Stitch §5.1–5.2) :
+- Header rail : serif `Mobility Intel` + mono `Premium Access` (Stitch parle directement marque produit interne).
+- 2 groupes typographiques : `Workspace` (Aperçu, Historique, Mon profil, Moteur probabilités, Moteur reco pro, Mes recommandations, Administration, Design system) puis `Data & Analysis` (Explorer global avec href objectif-aware, Vue Schengen, Comparer pays avec href objectif-aware, Communauté, Business, Investment, Education prefix, Permis, Modération).
+- Active state : background `bg-white` + accent vertical navy 3px gauche + texte navy + icône navy. Inactive : texte navy/60 + hover navy soft tint.
+- CTA primaire bas du rail : navy filled `Nouvelle exploration` (lien `ctaExploreHref(preference.primarySlug)`).
+- Footer rail : 2 liens mono uppercase tracking : `Settings` (Settings icon) → `/profile` ; `Support` (LifeBuoy icon) → `mailto:support@visaflow.com?subject=Support%20VisaFlow`.
+- Mobile drawer : même rendu, surface white pleine hauteur, `BrandBlock` + bouton close `X` ; ARIA `role="navigation"` + label « Navigation espace connecté » (Stitch §9).
+
+**Top bar `DashboardTopBar`** (desktop, sticky) :
+- Eyebrow gauche mono `Espace connecté`.
+- Liens secondaires centre : `Tendances mondiales` → `/explorer`, `Mises à jour de politique` → `/community`.
+- Actions droite : outlined `Export Data` → `/profile` (déclenche flux GDPR existant), bouton `Bell` aria-labellisé (notifications stub — toast `appToast.info` "Aucune notification" si cliqué), Clerk `<UserButton afterSignOutUrl="/" />`.
+
+**Slot contenu `main`** : padding cohérent + watermark subtil grille technique 48 px (Stitch §12 « content slot »), placeholder visible uniquement si aucune route active. Quand une route dashboard rend `children`, ils prennent le slot.
+
+Titre dynamique préservé : `getDashboardNavTitle(pathname)` continue d'alimenter le `<h1>` mobile et le `<title>` HTML via metadata du layout serveur.

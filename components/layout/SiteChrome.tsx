@@ -7,7 +7,16 @@ import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteObjectiveDock } from '@/components/layout/SiteObjectiveDock';
 import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
 
-const STANDALONE_PATH_PREFIXES = ['/sign-in', '/sign-up'];
+const STANDALONE_PATH_PREFIXES = [
+  '/sign-in',
+  '/sign-up',
+  '/overview',
+  '/history',
+  '/profile',
+  '/admin',
+  '/design-system',
+  '/moderation',
+];
 
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
