@@ -118,4 +118,22 @@ Pour **chaque mockup de page**, inclure **les 16px de marge du chrome global** e
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 34]
+Fichier repo : `docs/google-stitch/assets/page-34-glimpse-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Glimpse système chrome global)** : PAGE 34 est transversale (pas de route dédiée). La maquette montre un **skeleton générique** illustrant les slots du chrome enveloppant **toutes** les pages — les éléments visibles précisément (header, nav rail, dock objectif, toaster) sont **détaillés et stylés dans leurs propres pages dédiées** :
+
+- **Header `EXPLORER / COMPARE / INTELLIGENCE` + GlobalCountrySearch + Log in / Get Started** → **PAGE 43** (Harbor) — site header & footer.
+- **Rail latéral vertical `EXPLORER · COMPARE · INTEL · PROFILE`** → **PAGE 44** (Quay) — `SitePrimaryNavColumn` rail + drawer mobile.
+- **Recherche pays dans le header** → **PAGE 45** (Waypoint) — `GlobalCountrySearch`.
+- **Dock bas `Objectif actuel : Études au Canada`** → **PAGE 41** (Azimuth) — `SiteObjectiveDock` + objectif persistant + wizard.
+- **Status pill `Données synchronisées`** → **PAGE 40** (Flare) — `AppToaster` global feedback.
+
+**Livré pour PAGE 34 (chrome composition layer)** :
+- **Skip-to-content link** : premier élément focusable du `SiteChrome` (`<a href="#main-content">` translaté hors écran, devient visible sur `:focus-visible` avec fond navy / texte blanc / ring). Requis a11y §9 (« Skip link "Aller au contenu" à ajouter si audit l'exige »).
+- **`<main id="main-content" tabIndex={-1}>`** : cible explicite du skip link, focusable programatiquement, `focus:outline-none` pour éviter ring superflu après navigation skip.
+- **Bypass conditionnel via `usePathname`** : `/sign-in` et `/sign-up` rendus en standalone sans chrome (déjà livré PAGE 33). Le skip link disparaît proprement sur ces routes.
+- **Continuité papier chaud** : background root layout reste `bg-bg` (`#f7f3eb`) — token global cohérent avec toutes les sections, pas de saut brutal entre routes sœurs (§6).
+- **`lang="fr"`** conservé sur `<html>`.
+- **Stitch §12 documenté** : chaque mockup de page Stitch doit inclure les 16 px du chrome global, le fond `bg-bg`, et — si dock objectif visible — une ombre portée légère séparant le dock du contenu.
+
+Cette page sert de **contrat structurel** : toutes les autres pages héritent automatiquement de ces invariants via `app/layout.tsx → ClerkProvider → AppObjectiveRoot → SiteChrome → children`.

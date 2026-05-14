@@ -28,11 +28,21 @@ export function SiteChrome({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
+      <a
+        href="#main-content"
+        className="sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:left-4 focus-visible:top-4 focus-visible:z-[60] focus-visible:rounded-lg focus-visible:bg-[#0D1B3E] focus-visible:px-4 focus-visible:py-2 focus-visible:text-xs focus-visible:font-black focus-visible:uppercase focus-visible:tracking-[0.22em] focus-visible:text-white focus-visible:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF7EE]"
+      >
+        Aller au contenu
+      </a>
       <SiteHeader onPrimaryNavOpen={() => setMobileOpen(true)} />
       <AppToaster />
       <div className="flex min-h-0 min-w-0 flex-1">
         <SitePrimaryNavColumn mobileOpen={mobileOpen} onMobileClose={closeMobile} />
-        <main className="min-w-0 flex-1 px-4 py-5 pb-[calc(var(--vf-objective-dock-height,5.5rem)+1rem)] sm:px-6 lg:px-8 lg:py-6">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="min-w-0 flex-1 px-4 py-5 pb-[calc(var(--vf-objective-dock-height,5.5rem)+1rem)] focus:outline-none sm:px-6 lg:px-8 lg:py-6"
+        >
           {children}
         </main>
       </div>
