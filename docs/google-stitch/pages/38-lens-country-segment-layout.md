@@ -109,4 +109,21 @@ Produire un **mock “résultat Google”** + **carte Twitter** utilisant exacte
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 38]
+Fichier repo : `docs/google-stitch/assets/page-38-lens-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Lens SEO contract hardening)** : PAGE 38 reste un layout serveur transparent (Stitch §5.5) ; le travail livré est le **durcissement du contrat** et la suppression du risque de drift entre la metadata Next et le JSON-LD.
+
+- **`lib/country-display-copy.ts`** (nouveau module pur — pas d'imports Prisma / React, donc unit-testable sous `node:test`) : expose `buildCountryDisplayCopy(name, region)` retournant `{ schengen, regionLabel, title, description }`. Stratégie : **une seule fonction** détient le pattern Stitch §3 (`{name} — visa & mobilité` + suffixe `· Schengen` conditionné par `isSchengenMember`, description `Scores visa, friction, études, business et permis pour {name} ({regionLabel}) — perspective Maroc / VisaFlow.`).
+- **`lib/country-layout-meta.ts`** ré-exporte le helper pour préserver les imports existants (`@/lib/country-layout-meta`).
+- **`lib/country-display-copy.test.ts`** : 4 assertions `node:test` couvrant Schengen-suffix, non-Schengen, alias EN canoniques, parité de description avec le contrat JSON-LD. `npm run test:lib` → 220/220 verts.
+- **`app/(public)/countries/[id]/layout.tsx`** (Stitch §4) :
+  - `generateMetadata` consomme `buildCountryDisplayCopy` au lieu de reconstruire title/description manuellement.
+  - Ajout `keywords` (name, region, Schengen?, visa, mobilité, études, travail, business, VisaFlow, Maroc) pour les SERP secondaires.
+  - Ajout `openGraph.siteName = 'VisaFlow Intelligence'` (Stitch §5.3 OpenGraph hardening).
+  - Ajout `metadataBase: new URL(origin)` quand `getPublicSiteOrigin()` retourne une origine — élimine warnings Next sur les URL relatives et propage `og:url` cohérent.
+  - Ajout `other['vf:country-region'] = regionLabel` (tag custom pour outils internes de QA SEO).
+  - Le **body** du layout réutilise le même helper pour bâtir `{ title, description }` du JSON-LD → suppression de la duplication source d'incohérence Stitch §5.6 (PAGE 16 §5.17).
+  - L'escape `</` → `\u003c` dans `JSON.stringify(jsonLd).replace(/</g, '\\u003c')` reste en place (Stitch §3 — XSS guard).
+- **Edge cases conservés** (Stitch §10) : `id` non parseable → metadata générique `Fiche pays` ; `resolveCountryLayoutMeta` retourne `null` → metadata `Pays introuvable` ; pas de canonical absolu si `getPublicSiteOrigin()` indéfini ; pas de JSON-LD si origin absent ou pays inconnu.
+
+**Mock visuel Stitch (planche technique, non-route, Stitch §12)** : le screenshot interne décrit 3 frames de référence Figma — résultat Google (chip metadata RSC + SERP card), card OpenGraph (Twitter/LinkedIn preview), bloc JSON-LD monospace. Ces frames doivent être **alimentées par la sortie réelle** de `buildCountryDisplayCopy('Canada', 'Amérique du Nord')` pour rester source-of-truth ; toute future évolution du pattern de titre passera par cette fonction unique.

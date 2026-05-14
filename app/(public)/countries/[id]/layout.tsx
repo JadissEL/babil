@@ -1,6 +1,5 @@
-import { resolveCountryLayoutMeta } from '@/lib/country-layout-meta';
+import { buildCountryDisplayCopy, resolveCountryLayoutMeta } from '@/lib/country-layout-meta';
 import { buildCountryPageJsonLd } from '@/lib/country-page-json-ld';
-import { isSchengenMember } from '@/lib/schengen-members';
 import { getPublicSiteOrigin } from '@/lib/site-public-url';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
@@ -8,25 +7,47 @@ import type { ReactNode } from 'react';
 type PageParams = { id: string };
 
 function metadataFromNameRegion(name: string, region: string, countryId: string): Metadata {
-  const schengen = isSchengenMember(name);
-  const title = `${name} — visa & mobilité${schengen ? ' · Schengen' : ''}`;
-  const regionLabel = schengen ? `${region}, espace Schengen` : region;
-  const description = `Scores visa, friction, études, business et permis pour ${name} (${regionLabel}) — perspective Maroc / VisaFlow.`;
+  const { schengen, regionLabel, title, description } = buildCountryDisplayCopy(name, region);
+  const keywords = [
+    name,
+    region,
+    schengen ? 'Schengen' : null,
+    'visa',
+    'mobilité',
+    'études',
+    'travail',
+    'business',
+    'VisaFlow',
+    'Maroc',
+  ].filter(Boolean) as string[];
+
   const base: Metadata = {
     title,
     description,
-    openGraph: { title, description, locale: 'fr_FR', type: 'website' },
+    keywords,
+    openGraph: {
+      title,
+      description,
+      locale: 'fr_FR',
+      type: 'website',
+      siteName: 'VisaFlow Intelligence',
+    },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
     },
+    other: {
+      'vf:country-region': regionLabel,
+    },
   };
+
   const origin = getPublicSiteOrigin();
   if (origin) {
     const canonical = `${origin}/countries/${countryId}`;
     return {
       ...base,
+      metadataBase: new URL(origin),
       alternates: { canonical },
       openGraph: { ...base.openGraph, url: canonical },
     };
@@ -68,10 +89,7 @@ export default async function CountryDetailLayout({
   if (origin && Number.isFinite(id) && id >= 1) {
     const meta = await resolveCountryLayoutMeta(id);
     if (meta) {
-      const schengen = isSchengenMember(meta.name);
-      const title = `${meta.name} — visa & mobilité${schengen ? ' · Schengen' : ''}`;
-      const regionLabel = schengen ? `${meta.region}, espace Schengen` : meta.region;
-      const description = `Scores visa, friction, études, business et permis pour ${meta.name} (${regionLabel}) — perspective Maroc / VisaFlow.`;
+      const { title, description } = buildCountryDisplayCopy(meta.name, meta.region);
       jsonLd = buildCountryPageJsonLd({
         origin,
         countryId,

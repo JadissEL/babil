@@ -2,6 +2,8 @@ import { loadFallbackCountries } from '@/lib/countries-fallback';
 import { getMergedCountriesListCached } from '@/lib/countries-prisma-merge';
 import prisma from '@/lib/prisma';
 
+export { buildCountryDisplayCopy, type CountryDisplayCopy } from '@/lib/country-display-copy';
+
 export type CountryLayoutMeta = { name: string; region: string };
 
 /**
