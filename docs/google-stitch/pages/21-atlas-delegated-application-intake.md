@@ -117,4 +117,10 @@ Stepper **glass pills** avec progression lumineuse. Résumé final comme **reçu
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 21]
+Fichier repo : `docs/google-stitch/assets/page-21-atlas-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — VisaFlow Vault clean banking)** : shell **cream `#FAF7EE`**. Breadcrumb mono `← RETOUR AU CATALOGUE` (préserve `category`/`package`/`countryId`/`countryName` via lien retour). Hero **2-col** : à gauche titre serif `{pkg.name} — {country?}` + sous-ligne `Clock` `Délai de traitement estimé : {pkg.turnaroundNote}` ; à droite **stepper horizontal pill** `Informations → Détails → Documents → Confirmation` (heuristique d'étape déduite de l'avancement du formulaire : contact rempli → étape 2 ; champs projet remplis → étape 3 ; case garantie cochée → étape 4 ; succès → étape 4 active). **Layout 2-col `lg:grid-cols-[1fr_320px]`** : 
+- Colonne form (gauche) : cartes blanches `border-[#0D1B3E]/10`, chaque section a une icône (`UserRound` Identité & Contact / `Plane` Détails de Mobilité / `FolderOpen` Documents Requis) + titre serif navy ; inputs cream height 48px, border thin, focus ring navy. Bloc Identité (nom/email/téléphone/langue) → bloc Projet (job ou university selon `category`) → bloc Documents (zone "Déposez vos documents ici" + textarea masquée pour décrire les pièces). Checkbox certification + bouton **navy filled `Soumettre le dossier`**. 
+- Colonne summary (droite, sticky) : carte cream élevée. Eyebrow `Résumé de la demande` + référence mono `TX-XXXX-X` générée par hash stable de `pkg.id + sessionId`. Liste `Service / Traitement / Calendrier / Honoraires HT` + ligne **Total estimé** en serif navy.
+
+Logique préservée intacte : `useSearchParams` (`category`, `package`, `countryId`, `countryName`), pré-fill Clerk `useUser`, états `job` / `university`, POST `/api/delegated-application-requests`, gestion `error` / `submitting` / `doneId` / `appToast`. État succès restylé en **reçu cream** : eyebrow `Demande enregistrée`, référence dossier `#{id}`, rappel garantie 50%, liens vers overview / catalogue / garantie. État fallback `Forfait introuvable` recolorisé cream.
