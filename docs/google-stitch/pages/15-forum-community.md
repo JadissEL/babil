@@ -103,4 +103,6 @@ Ambiance **café diaspora** : bois clair, typographie semi-serif pour citations.
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 15]
+Fichier repo : `docs/google-stitch/assets/page-15-forum-stitch-reference.png`
+
+**Architecture livrée (Stitch v1)** : shell **cream `#FDFBF4`** (cohérent pages 10–14). Composant reste **RSC** (pas de `'use client'`) — SEO friendly, statique. Hero centré : pill `💬 COMMUNAUTÉ`, titre serif **« Partagez l'expérience, maîtrisez le voyage. »** (deux lignes), long paragraphe sur la modération + agrégation contextuelle ; CTAs duaux **`Parcourir les pays`** (navy plein, `ObjectiveAwareExplorerLink`) + **`Recommandations personnalisées`** (outlined → `/recommendations`). Section **2 cartes side-by-side** : `NAVIGATION → Explorer par objectif` (icon `Compass`, ouvre explorer objectif-aware) ; `ADMINISTRATION → Portail de Modération` (icon `ShieldAlert`, lien `/moderation`). Section **`Échos de la communauté`** = heading centré + grille **3 cartes témoignages** statiques (eyebrow `DESTINATION : PAYS` mono, citation italique en serif, ligne auteur = avatar pastille + nom + métier/âge). Données témoignages hardcodées dans un const `COMMUNITY_ECHOES` (Espagne / Japon / Canada) — façade marketing ; à terme remplaçable par un endpoint `traveler_quotes` filtrant les meilleurs récits. Footer Stitch via layout global.
