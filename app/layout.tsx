@@ -1,12 +1,38 @@
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
-import { Inter } from 'next/font/google'
+import { Fraunces, Inter, JetBrains_Mono } from 'next/font/google'
 import { AppObjectiveRoot } from '@/components/layout/AppObjectiveRoot'
 import { SiteChrome } from '@/components/layout/SiteChrome'
 import { SentryClerkSync } from '@/components/SentryClerkSync'
 import type { Metadata } from 'next'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-sans',
+})
+
+/**
+ * Fraunces — editorial serif for PAGE 01 (MERIDIAN) hero + section titles,
+ * also inherited by Clerk auth surfaces (PAGE 33 — headerTitle uses font-serif).
+ */
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-serif',
+  weight: ['600', '700', '800', '900'],
+  axes: ['opsz'],
+})
+
+/**
+ * JetBrains Mono — kicker / eyebrow / trust badges across Stitch design system.
+ */
+const jetbrains = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono',
+  weight: ['500', '700', '800'],
+})
 
 export const metadata: Metadata = {
   title: 'VisaFlow — Mobilité internationale',
@@ -60,7 +86,10 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider appearance={clerkAppearance}>
-      <html lang="fr">
+      <html
+        lang="fr"
+        className={`${inter.variable} ${fraunces.variable} ${jetbrains.variable}`}
+      >
         <body
           className={
             inter.className + ' flex min-h-screen flex-col bg-bg text-text antialiased'

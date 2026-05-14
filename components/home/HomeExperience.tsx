@@ -5,14 +5,15 @@ import {
   BarChart3,
   Briefcase,
   Car,
+  Compass,
+  FileStack,
   GraduationCap,
   MessagesSquare,
   Scale,
   ShieldCheck,
   Sparkles,
-  Zap,
-  FileStack,
   Target,
+  Zap,
 } from 'lucide-react';
 import Link from 'next/link';
 import { type ReactNode, useMemo } from 'react';
@@ -33,71 +34,87 @@ import {
 } from '@/lib/user-objectives/home-orchestration';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 
+const INK = '#0D1B3E';
+const INK_60 = 'rgba(13,27,62,0.60)';
+const INK_45 = 'rgba(13,27,62,0.45)';
+const INK_10 = 'rgba(13,27,62,0.10)';
+const CREAM_BG = '#FDF8EF';
+const CREAM_PANEL = '#F5F0E3';
+
 const FEATURE_MAP: Record<
   HomeFeatureKey,
   { href: string; icon: ReactNode; title: string; description: string }
 > = {
   probability: {
     href: '/probability',
-    icon: <Zap className="h-5 w-5 text-blue-400" />,
+    icon: <Zap className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Moteur de probabilités',
     description: 'Scores déterministes avec décomposition lisible pays par pays.',
   },
   schengen: {
     href: '/schengen',
-    icon: <ShieldCheck className="h-5 w-5 text-indigo-400" />,
+    icon: <ShieldCheck className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Espace Schengen',
     description: 'Friction, acceptation et comparaisons côte à côte.',
   },
   delegated: {
     href: '/services/delegated-applications',
-    icon: <FileStack className="h-5 w-5 text-rose-400" />,
+    icon: <FileStack className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Assist candidatures',
     description: 'CV, lettres et dossiers délégués — utilisateurs connectés.',
   },
   education: {
     href: '/education',
-    icon: <GraduationCap className="h-5 w-5 text-violet-400" />,
+    icon: <GraduationCap className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Éducation',
     description: 'Langues, formations techniques et cours courts à l’étranger.',
   },
   community: {
     href: '/community',
-    icon: <MessagesSquare className="h-5 w-5 text-fuchsia-400" />,
+    icon: <MessagesSquare className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Communauté',
     description: 'Retours terrain et commentaires modérés par pays.',
   },
   business: {
     href: '/business',
-    icon: <Briefcase className="h-5 w-5 text-amber-400" />,
+    icon: <Briefcase className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Business',
     description: 'Installation, marchés et pistes investissement.',
   },
   investment: {
     href: '/investment',
-    icon: <BarChart3 className="h-5 w-5 text-emerald-400" />,
+    icon: <BarChart3 className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Investissement',
     description: 'Cadres, risques et signaux pour projets capital.',
   },
   permis: {
     href: '/permis',
-    icon: <Car className="h-5 w-5 text-teal-400" />,
+    icon: <Car className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Permis de conduire',
     description: 'Validité et conversion selon la destination.',
   },
   recommendations: {
     href: '/recommendations',
-    icon: <BarChart3 className="h-5 w-5 text-cyan-400" />,
+    icon: <BarChart3 className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Recommandations',
     description: 'Classement explicable aligné sur votre profil.',
   },
   compare: {
     href: '/compare',
-    icon: <Scale className="h-5 w-5 text-orange-400" />,
+    icon: <Scale className="h-4 w-4" style={{ color: INK }} aria-hidden />,
     title: 'Comparer',
     description: 'Comparer pays et critères visa / friction côte à côte.',
   },
 };
+
+const WORLD_MAP_DATA_URL =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 640' preserveAspectRatio='xMidYMid meet'%3E%3Cpath fill='%230D1B3E' d='M156 240c44-22 88-30 132-22 38 7 70 26 100 50 24 19 50 33 78 41 33 9 68 9 102 4 35-5 70-15 105-22 33-7 67-12 100-7 30 4 58 18 84 36 22 16 41 36 56 60 12 19 21 41 26 64 5 22 6 46 1 69-4 22-13 43-26 61-15 22-35 39-58 50-25 12-52 18-79 19-30 0-60-6-87-19-25-12-46-31-63-53-15-19-26-41-31-66-5-25-5-51 1-76 6-25 17-49 33-69 18-22 41-38 67-49 9-3 18-6 27-8z M820 130c30-12 62-18 94-15 28 2 55 12 79 29 21 14 39 33 51 56 12 22 18 47 17 73-1 28-9 55-23 79-14 23-34 42-58 56-26 15-55 23-85 24-31 1-62-6-90-19-23-12-43-29-58-51-13-19-22-42-26-65-5-24-4-50 4-74 8-25 22-47 41-66 15-15 33-26 53-32 1-1 1-1 1-2zM280 410c34-10 70-12 104-5 31 6 60 19 86 36 22 14 41 31 57 51 14 17 25 36 31 56 6 19 7 39 4 59-4 21-13 41-27 58-15 19-34 33-56 43-23 11-49 17-75 17-28 0-56-6-81-19-22-12-41-29-56-50-13-18-22-39-26-60-5-22-5-44 1-65 7-22 19-43 36-60 14-15 30-26 49-32 5-1 9-2 14-3z'/%3E%3C/svg%3E\")";
+
+const TRUST_BADGES = [
+  'Sources officielles',
+  'Méthodologie ouverte',
+  'Mis à jour en continu',
+];
 
 export function HomeExperience({
   topCountries,
@@ -124,19 +141,19 @@ export function HomeExperience({
   const testimonials = [
     {
       name: 'Yassine A.',
-      role: 'Profil travail - Casablanca',
+      role: 'Profil travail · Casablanca',
       quote:
         'J’ai réduit mon shortlist de 12 pays à 3 en une soirée. Les scores de friction m’ont évité des pistes trop compliquées pour mon profil.',
     },
     {
       name: 'Salma M.',
-      role: 'Objectif études - Rabat',
+      role: 'Objectif études · Rabat',
       quote:
-        'La comparaison Schengen + les modules education m’ont aidée à comprendre où mes chances étaient réalistes, pas seulement “populaires”.',
+        'La comparaison Schengen + les modules education m’ont aidée à comprendre où mes chances étaient réalistes, pas seulement « populaires ».',
     },
     {
       name: 'Imane K.',
-      role: 'Projet business - Tanger',
+      role: 'Projet business · Tanger',
       quote:
         'Le croisement visa, business et terrain m’a donné un plan concret. J’ai pu prioriser un pays avec moins de risque opérationnel.',
     },
@@ -145,7 +162,7 @@ export function HomeExperience({
   const bestPractices = [
     {
       title: 'Commencer par ton objectif réel',
-      text: 'Ton objectif principal pilote désormais l’accueil et les raccourcis. Tu peux le changer depuis l’en-tête à tout moment.',
+      text: 'Ton objectif principal pilote l’accueil et les raccourcis. Tu peux le changer depuis l’en-tête à tout moment.',
     },
     {
       title: 'Comparer au moins 3 pays avant décision',
@@ -157,241 +174,328 @@ export function HomeExperience({
     },
     {
       title: 'Utiliser les retours terrain',
-      text: 'Consulte la section communauté et les commentaires modérés pour compléter la vue “officielle” par la réalité d’exécution.',
+      text: 'Consulte la section communauté et les commentaires modérés pour compléter la vue « officielle » par la réalité d’exécution.',
     },
   ];
 
   return (
-    <div className="home-meridian -mx-4 -mt-5 min-w-0 bg-[#e8ecf2] px-4 pb-16 pt-8 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      <div className="mx-auto w-full max-w-7xl space-y-8">
-      <section className="relative overflow-hidden rounded-[1.25rem] border border-slate-200/90 bg-white p-8 shadow-[0_20px_50px_rgba(10,31,51,0.07)] md:p-10 lg:p-12">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.06]"
-          aria-hidden
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'%3E%3Cpath fill='%230a1f33' d='M120 180c40-30 90-50 150-45 80 5 140 50 200 95 50 40 100 70 170 75 60 5 110-15 160-45V400H0V160c35 20 75 35 120 20z'/%3E%3C/svg%3E")`,
-            backgroundPosition: '80% 60%',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'min(90%, 52rem)',
-          }}
-        />
-        <div className="relative grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#0a1f33]/80">
-              <Sparkles className="h-3.5 w-3.5 text-[#3157d5]" aria-hidden /> {heroCopy.badge}
-            </div>
-            <h1 className="mt-5 max-w-4xl text-3xl font-black tracking-tight text-[#0a1f33] md:text-4xl lg:text-[2.75rem] lg:leading-tight">
-              {heroCopy.title}
-            </h1>
-            <p className="mt-4 max-w-2xl text-sm font-medium leading-relaxed text-slate-600 md:text-base">
-              {heroCopy.subtitle}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/probability"
-                className="inline-flex items-center gap-2 rounded-2xl bg-[#0a1f33] px-6 py-3.5 text-xs font-black uppercase tracking-widest text-white shadow-md transition-colors hover:bg-[#0f2d4a]"
+    <div
+      className="home-meridian -mx-4 -mt-5 min-w-0 px-4 pb-16 pt-8 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8"
+      style={{ backgroundColor: CREAM_BG, color: INK }}
+    >
+      <div className="mx-auto w-full max-w-6xl space-y-14">
+        {/* HERO — Stitch alignment: single-column over faded world map */}
+        <section
+          className="relative overflow-hidden rounded-[2rem] border bg-white shadow-[0_24px_60px_rgba(13,27,62,0.08)]"
+          style={{ borderColor: INK_10 }}
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: WORLD_MAP_DATA_URL,
+              backgroundPosition: 'right -2% top 50%',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'min(110%, 56rem)',
+              opacity: 0.085,
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 hidden w-2/3 bg-gradient-to-r from-white via-white/95 to-transparent lg:block"
+          />
+          <div className="relative px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20">
+            <div className="max-w-2xl">
+              <p
+                className="inline-flex items-center gap-2 font-mono text-[10px] font-black uppercase tracking-[0.32em]"
+                style={{ color: INK_60 }}
               >
-                Évaluer mes chances <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href={exploreCtaHref}
-                className="inline-flex items-center gap-2 rounded-2xl border border-slate-300 bg-white px-6 py-3.5 text-xs font-black uppercase tracking-widest text-[#0a1f33] shadow-sm transition-colors hover:bg-slate-50"
+                <Sparkles className="h-3 w-3" style={{ color: INK }} aria-hidden />
+                {heroCopy.badge}
+              </p>
+              <h1
+                className="mt-5 font-serif text-[clamp(2.5rem,5vw,3.75rem)] font-black leading-[1.02] tracking-tight"
+                style={{ color: INK }}
               >
-                Ouvrir l&apos;Explorer
-              </Link>
+                {heroCopy.title}
+              </h1>
+              <p
+                className="mt-5 max-w-xl text-[15px] leading-relaxed sm:text-[16px]"
+                style={{ color: INK_60 }}
+              >
+                {heroCopy.subtitle}
+              </p>
+              <div className="mt-9 flex flex-wrap items-center gap-4">
+                <Link
+                  href="/probability"
+                  className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[12px] font-black uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(13,27,62,0.20)] transition-[transform,filter] hover:translate-y-[-1px] hover:brightness-110"
+                  style={{ backgroundColor: INK }}
+                >
+                  Évaluer mes chances
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                </Link>
+                <Link
+                  href={exploreCtaHref}
+                  className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.22em] underline-offset-4 transition-colors hover:underline"
+                  style={{ color: INK }}
+                >
+                  Ouvrir l&apos;Explorer
+                </Link>
+              </div>
+              <ul
+                className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[10px] font-black uppercase tracking-[0.22em]"
+                style={{ color: INK_45 }}
+                aria-label="Garanties éditoriales"
+              >
+                {TRUST_BADGES.map((b) => (
+                  <li key={b} className="inline-flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-1 w-1 rounded-full"
+                      style={{ backgroundColor: INK_45 }}
+                      aria-hidden
+                    />
+                    {b}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
-          <div className="relative min-h-[220px] lg:min-h-[280px]">
-            <div className="absolute inset-0 rounded-2xl opacity-90 ring-1 ring-slate-200/80 lg:opacity-100">
-              <HeroWorldCarousel slides={heroSlides} />
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="rounded-2xl border border-slate-200/90 bg-white/90 p-5 shadow-sm md:p-6">
-        <div className="mb-3 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[#0a1f33]">
-          <Target className="h-4 w-4 shrink-0" aria-hidden />
-          Priorités pour votre parcours
-        </div>
-        <ul className="grid gap-2 text-sm font-medium text-[#0a1f33] md:grid-cols-2">
-          {focusStrip.map((line) => (
-            <li key={line} className="flex gap-2 rounded-xl border border-slate-200/80 bg-slate-50/90 px-3 py-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#3157d5]" aria-hidden />
-              <span>{line}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <HomeQuickFilterEngine initialExplorerGoal={quickGoal} />
-
-      <DelegatedApplicationsHomePromo variant="meridianBanner" />
-
-      <section className="mt-2">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-black text-[#0a1f33]">Pays à la une</h2>
-          <Link
-            href={exploreCtaHref}
-            className="text-xs font-black uppercase tracking-widest text-[#3157d5] hover:text-[#2749bb]"
+        {/* PRIORITIES STRIP — objective-aware */}
+        <section
+          className="rounded-2xl border bg-white px-5 py-5 sm:px-6"
+          style={{ borderColor: INK_10 }}
+          aria-labelledby="home-focus-title"
+        >
+          <h2
+            id="home-focus-title"
+            className="mb-3 flex items-center gap-2 font-mono text-[10px] font-black uppercase tracking-[0.28em]"
+            style={{ color: INK_60 }}
           >
-            Tout voir
-          </Link>
-        </div>
-        <CountryGrid countries={topCountries} />
-      </section>
+            <Target className="h-3.5 w-3.5" aria-hidden style={{ color: INK }} />
+            Priorités pour votre parcours
+          </h2>
+          <ul className="grid gap-2 text-[13.5px] font-medium md:grid-cols-2" style={{ color: INK }}>
+            {focusStrip.map((line) => (
+              <li
+                key={line}
+                className="flex items-start gap-2 rounded-xl border px-3 py-2"
+                style={{ borderColor: INK_10, backgroundColor: CREAM_PANEL }}
+              >
+                <span
+                  className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{ backgroundColor: INK }}
+                  aria-hidden
+                />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-      <section className="mt-8">
-        <div className="space-y-4 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm sm:p-6">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Fonctionnalités</p>
-          <p className="text-xs font-medium text-slate-600">
-            Ordre adapté à votre objectif — les moteurs restent les mêmes, seule la mise en avant change.
+        {/* QUICK FILTER ENGINE */}
+        <HomeQuickFilterEngine initialExplorerGoal={quickGoal} />
+
+        {/* DARK NAVY BANNER — Stitch alignment */}
+        <DelegatedApplicationsHomePromo variant="meridianBanner" />
+
+        {/* DESTINATIONS — moved here from inside the hero (was carousel-in-hero) */}
+        <section aria-labelledby="home-destinations-title" className="space-y-4">
+          <header className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p
+                className="font-mono text-[10px] font-black uppercase tracking-[0.28em]"
+                style={{ color: INK_60 }}
+              >
+                Destinations vérifiées
+              </p>
+              <h2
+                id="home-destinations-title"
+                className="mt-1 font-serif text-[26px] font-black tracking-tight"
+                style={{ color: INK }}
+              >
+                Le monde, en images sourcées.
+              </h2>
+            </div>
+            <Link
+              href={exploreCtaHref}
+              className="font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 hover:underline"
+              style={{ color: INK }}
+            >
+              Tout explorer
+            </Link>
+          </header>
+          <HeroWorldCarousel slides={heroSlides} />
+        </section>
+
+        {/* COUNTRY GRID */}
+        <section aria-labelledby="home-grid-title" className="space-y-4">
+          <header className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p
+                className="font-mono text-[10px] font-black uppercase tracking-[0.28em]"
+                style={{ color: INK_60 }}
+              >
+                Pays à la une
+              </p>
+              <h2
+                id="home-grid-title"
+                className="mt-1 font-serif text-[26px] font-black tracking-tight"
+                style={{ color: INK }}
+              >
+                Atterrissez sur la bonne piste.
+              </h2>
+            </div>
+            <Link
+              href={exploreCtaHref}
+              className="inline-flex items-center gap-1.5 font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 hover:underline"
+              style={{ color: INK }}
+            >
+              <Compass className="h-3.5 w-3.5" aria-hidden />
+              Tout voir
+            </Link>
+          </header>
+          <CountryGrid countries={topCountries} />
+        </section>
+
+        {/* FEATURES — objective-aware */}
+        <section
+          className="rounded-2xl border bg-white p-6 sm:p-8"
+          style={{ borderColor: INK_10 }}
+          aria-labelledby="home-features-title"
+        >
+          <p
+            className="font-mono text-[10px] font-black uppercase tracking-[0.28em]"
+            style={{ color: INK_60 }}
+          >
+            Modules VisaFlow
           </p>
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
+          <h2
+            id="home-features-title"
+            className="mt-1 max-w-2xl font-serif text-[26px] font-black tracking-tight"
+            style={{ color: INK }}
+          >
+            Une seule plateforme, alignée sur votre objectif.
+          </h2>
+          <p className="mt-2 max-w-2xl text-[13.5px]" style={{ color: INK_60 }}>
+            L&apos;ordre s&apos;adapte à votre choix dans le dock — les moteurs restent les mêmes, seule la
+            mise en avant change.
+          </p>
+          <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
             {featureKeys.map((key) => {
               const f = FEATURE_MAP[key];
               const href = key === 'compare' ? compareCtaHref : f.href;
-              return <Feature key={key} href={href} icon={f.icon} title={f.title} description={f.description} />;
+              return (
+                <Feature key={key} href={href} icon={f.icon} title={f.title} description={f.description} />
+              );
             })}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="mt-8 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm md:p-8">
-        <div className="mb-5 flex items-end justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted">Avis utilisateurs</p>
-            <h2 className="mt-2 text-2xl font-black text-[#0a1f33]">Retours après utilisation</h2>
-          </div>
-          <Link
-            href="/community"
-            className="text-xs font-black uppercase tracking-widest text-[#3157d5] hover:text-[#2749bb]"
-          >
-            Voir la communauté
-          </Link>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {testimonials.map((t) => (
-            <div key={t.name} className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-4">
-              <p className="text-sm font-medium italic text-[#0a1f33]">
-                <span className="not-italic">&ldquo;</span>
-                {t.quote}
-                <span className="not-italic">&rdquo;</span>
-              </p>
-              <p className="mt-4 text-sm font-black text-[#0a1f33]">{t.name}</p>
-              <p className="text-xs font-semibold text-muted">{t.role}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm md:p-8">
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Bonnes pratiques</p>
-        <h2 className="mt-2 text-2xl font-black text-[#0a1f33]">Enchaînez les étapes dans le bon ordre</h2>
-        <div className="mt-5 grid gap-4 md:grid-cols-2">
-          {bestPractices.map((item, idx) => (
-            <div key={item.title} className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-4">
-              <p className="text-xs font-black uppercase tracking-widest text-[#3157d5]">Étape {idx + 1}</p>
-              <h3 className="mt-2 text-base font-black text-[#0a1f33]">{item.title}</h3>
-              <p className="mt-2 text-sm font-medium text-muted">{item.text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <div className="mt-8">
-        <GoogleAd slot="home_top" />
-      </div>
-
-      <footer className="mt-10 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm md:p-8">
-        <nav
-          className="mb-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 border-b border-slate-200/80 pb-6 text-sm font-semibold text-slate-600"
-          aria-label="Liens pied de page"
+        {/* TESTIMONIALS */}
+        <section
+          className="rounded-2xl border bg-white p-6 sm:p-8"
+          style={{ borderColor: INK_10 }}
+          aria-labelledby="home-testimonials-title"
         >
-          <span className="cursor-default opacity-60" title="Bientôt disponible">
-            Mentions légales
-          </span>
-          <span className="cursor-default opacity-60" title="Bientôt disponible">
-            Confidentialité
-          </span>
-          <Link href="/community" className="text-[#0a1f33] underline-offset-4 hover:text-[#3157d5] hover:underline">
-            Contact
-          </Link>
-        </nav>
-        <div className="grid gap-8 md:grid-cols-4">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">VisaFlow</p>
-            <p className="mt-2 text-sm font-medium text-slate-600">
-              Plateforme d&apos;aide à la décision pour la mobilité internationale : visas, études, business et
-              installation.
-            </p>
-          </div>
-          <div>
-            <p className="text-sm font-black text-[#0a1f33]">Plateforme</p>
-            <div className="mt-3 space-y-2 text-sm">
-              <Link href={exploreCtaHref} className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Explorer
-              </Link>
-              <Link href={compareCtaHref} className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Comparer
-              </Link>
-              <Link href="/schengen" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Schengen
-              </Link>
-              <Link href="/probability" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Moteur de probabilités
-              </Link>
-            </div>
-          </div>
-          <div>
-            <p className="text-sm font-black text-[#0a1f33]">Parcours mobilité</p>
-            <div className="mt-3 space-y-2 text-sm">
-              <Link
-                href="/services/delegated-applications"
-                className="block font-medium text-slate-600 hover:text-[#3157d5]"
+          <header className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p
+                className="font-mono text-[10px] font-black uppercase tracking-[0.28em]"
+                style={{ color: INK_60 }}
               >
-                Assist candidatures
-              </Link>
-              <Link href="/education" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Éducation
-              </Link>
-              <Link href="/business" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Business
-              </Link>
-              <Link href="/investment" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Investissement
-              </Link>
-              <Link href="/permis" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Permis de conduire
-              </Link>
+                Avis utilisateurs
+              </p>
+              <h2
+                id="home-testimonials-title"
+                className="mt-1 font-serif text-[26px] font-black tracking-tight"
+                style={{ color: INK }}
+              >
+                Retours après utilisation.
+              </h2>
             </div>
+            <Link
+              href="/community"
+              className="font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 hover:underline"
+              style={{ color: INK }}
+            >
+              Voir la communauté
+            </Link>
+          </header>
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
+            {testimonials.map((t) => (
+              <figure
+                key={t.name}
+                className="flex h-full flex-col rounded-2xl border px-5 py-5"
+                style={{ borderColor: INK_10, backgroundColor: CREAM_PANEL }}
+              >
+                <blockquote
+                  className="text-[14px] leading-relaxed"
+                  style={{ color: INK }}
+                >
+                  « {t.quote} »
+                </blockquote>
+                <figcaption className="mt-auto pt-5">
+                  <p className="text-[14px] font-black" style={{ color: INK }}>
+                    {t.name}
+                  </p>
+                  <p className="text-[11.5px]" style={{ color: INK_60 }}>
+                    {t.role}
+                  </p>
+                </figcaption>
+              </figure>
+            ))}
           </div>
-          <div>
-            <p className="text-sm font-black text-[#0a1f33]">Compte & communauté</p>
-            <div className="mt-3 space-y-2 text-sm">
-              <Link href="/overview" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Tableau de bord
-              </Link>
-              <Link href="/recommendations" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Recommandations
-              </Link>
-              <Link href="/community" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Communauté
-              </Link>
-              <Link href="/moderation" className="block font-medium text-slate-600 hover:text-[#3157d5]">
-                Modération
-              </Link>
-            </div>
-          </div>
-        </div>
-        <div className="mt-8 space-y-2 border-t border-slate-200/80 pt-4 text-xs font-semibold text-slate-500">
-          <p>Conçu pour des décisions de mobilité concrètes et comparables.</p>
-          <p>
-            © {new Date().getFullYear()} VisaFlow · Réalisé par{' '}
-            <span className="font-black text-[#0a1f33]">JADISS EL ANTAKI</span>
+        </section>
+
+        {/* BEST PRACTICES */}
+        <section
+          className="rounded-2xl border bg-white p-6 sm:p-8"
+          style={{ borderColor: INK_10 }}
+          aria-labelledby="home-bp-title"
+        >
+          <p
+            className="font-mono text-[10px] font-black uppercase tracking-[0.28em]"
+            style={{ color: INK_60 }}
+          >
+            Bonnes pratiques
           </p>
+          <h2
+            id="home-bp-title"
+            className="mt-1 max-w-2xl font-serif text-[26px] font-black tracking-tight"
+            style={{ color: INK }}
+          >
+            Enchaînez les étapes dans le bon ordre.
+          </h2>
+          <ol className="mt-6 grid gap-4 md:grid-cols-2">
+            {bestPractices.map((item, idx) => (
+              <li
+                key={item.title}
+                className="flex flex-col rounded-2xl border px-5 py-5"
+                style={{ borderColor: INK_10, backgroundColor: CREAM_PANEL }}
+              >
+                <p
+                  className="font-mono text-[10px] font-black uppercase tracking-[0.24em]"
+                  style={{ color: INK_60 }}
+                >
+                  Étape {idx + 1}
+                </p>
+                <h3 className="mt-2 text-[16px] font-black" style={{ color: INK }}>
+                  {item.title}
+                </h3>
+                <p className="mt-2 text-[13.5px] leading-relaxed" style={{ color: INK_60 }}>
+                  {item.text}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* AD SLOT — quiet placement */}
+        <div className="pt-2">
+          <GoogleAd slot="home_top" />
         </div>
-      </footer>
       </div>
     </div>
   );
@@ -411,13 +515,31 @@ function Feature({
   return (
     <Link
       href={href}
-      className="rounded-xl border border-slate-200/90 bg-slate-50/90 p-4 transition-colors hover:border-[#3157d5]/35 hover:bg-white"
+      className="group flex h-full flex-col rounded-2xl border px-5 py-4 transition-[transform,border-color,background-color] hover:translate-y-[-1px] hover:border-[#0D1B3E]"
+      style={{ borderColor: INK_10, backgroundColor: CREAM_PANEL }}
     >
       <div className="mb-3 flex items-center gap-2">
-        {icon}
-        <h3 className="text-sm font-black text-[#0a1f33]">{title}</h3>
+        <span
+          className="inline-flex h-7 w-7 items-center justify-center rounded-md bg-white"
+          style={{ border: `1px solid ${INK_10}` }}
+          aria-hidden
+        >
+          {icon}
+        </span>
+        <h3 className="text-[14px] font-black" style={{ color: INK }}>
+          {title}
+        </h3>
       </div>
-      <p className="text-sm font-medium text-slate-600">{description}</p>
+      <p className="text-[13px] leading-relaxed" style={{ color: INK_60 }}>
+        {description}
+      </p>
+      <span
+        className="mt-3 inline-flex items-center gap-1 font-mono text-[10px] font-black uppercase tracking-[0.22em] opacity-0 transition-opacity group-hover:opacity-100"
+        style={{ color: INK }}
+      >
+        Ouvrir
+        <ArrowRight className="h-3 w-3" aria-hidden />
+      </span>
     </Link>
   );
 }

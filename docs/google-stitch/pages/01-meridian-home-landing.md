@@ -42,22 +42,43 @@ L’accueil **ancre la promesse VisaFlow** : mobilité internationale pour profi
 ## 4. Layout Architecture
 **Racine (`app/page.tsx`) :** RSC `force-dynamic` ; `Promise.all` → `resolveHomeShowcaseCountries()` + `buildHomeHeroSlides()` passés au client **`HomeExperience`** (`components/home/HomeExperience.tsx`).
 
-**Dans `HomeExperience` (ordre macro — code actuel) :** `PageContainer` → **bloc hero** (`section` carte : badge `heroCopy.badge`, `h1` `heroCopy.title`, sous-texte `heroCopy.subtitle`, deux CTA + **`HeroWorldCarousel`** en grille `lg`) → **bandeau priorités** (`focusStripForObjective`) → **`HomeQuickFilterEngine`** → **`DelegatedApplicationsHomePromo`** → **grille pays** (`CountryGrid` / `topCountries`) → **grille 2 col** : **`AppSidebar`** + **carte “Fonctionnalités”** (`FEATURE_MAP` / `homeFeatureOrderForObjective`) → **témoignages** → **bonnes pratiques** → **`GoogleAd`** (`home_top`) → **`<footer>` local** (4 colonnes liens + copyright — **en plus** du **`SiteFooter`** global **PAGE 43** sous `SiteChrome`).
+**Dans `HomeExperience` (ordre macro — code 2026-05-14, refonte Stitch) :**
+1. **Hero éditorial single-column** — fond crème `#FDF8EF`, carte blanche `rounded-[2rem]`, **carte monde inline SVG** floutée (opacity ~8.5 %) en fond de droite, **gradient blanc-vers-transparent** sur 2/3 gauche pour garantir le contraste, **kicker mono uppercase** (`heroCopy.badge`), **titre serif Fraunces** (`clamp(2.5rem,5vw,3.75rem)`), sous-texte, **CTA primaire navy pill** `Évaluer mes chances` (→ `/probability`), **CTA secondaire texte** `Ouvrir l'Explorer`, **ligne de garanties** mono : `Sources officielles · Méthodologie ouverte · Mis à jour en continu`.
+2. **Bandeau priorités** (`focusStripForObjective`) — carte blanche + chips crème `#F5F0E3`.
+3. **`HomeQuickFilterEngine`**.
+4. **`DelegatedApplicationsHomePromo`** (`variant="meridianBanner"`, bandeau bleu nuit `#0a1f33` + CTA blanc).
+5. **Section « Destinations vérifiées »** — header éditorial + **`HeroWorldCarousel`** (déplacé hors du hero).
+6. **Section « Pays à la une »** — header éditorial + **`CountryGrid`** (`topCountries`).
+7. **Section « Modules VisaFlow »** — `FEATURE_MAP` / `homeFeatureOrderForObjective` ; tuiles crème, icône navy dans cube blanc, micro-CTA *Ouvrir* en hover.
+8. **Section « Retours après utilisation »** — 3 témoignages, blockquote serif.
+9. **Section « Bonnes pratiques »** — 4 étapes numérotées.
+10. **`GoogleAd`** (`home_top`).
+11. **PAS de footer local** — délégué au **`SiteFooter`** global (**PAGE 43** / **PAGE 36** quand routé).
+
+**Tokens couleur :** `INK = #0D1B3E` (texte/CTA), `INK_60` `INK_45` `INK_10` pour hiérarchie, `CREAM_BG = #FDF8EF` (fond page), `CREAM_PANEL = #F5F0E3` (chips & nested panels).
+
+**Typographie (PAGE 33 family) :**
+- **Sans** Inter via `next/font` (`var(--font-sans)`) — corps & boutons.
+- **Serif** Fraunces variable via `next/font` (`var(--font-serif)`) — `h1` hero + `h2` sections + `headerTitle` Clerk.
+- **Mono** JetBrains Mono via `next/font` (`var(--font-mono)`) — kickers, garanties, micro-CTA.
 
 **Chrome global :** header / rail dock / footer = **PAGE 34**–**PAGE 45** (pas redocumentés ici).
 
-**Maquette Stitch de référence :** capture **`../assets/page-01-meridian-stitch-reference.png`** — voir **§4bis** pour l’écart volontaire ou à converger.
+**Maquette Stitch de référence :** capture **`../assets/page-01-meridian-stitch-reference.png`**.
 
-### 4bis. Écart maquette ↔ implémentation (à trancher produit)
-**État code (2026-05) :** la home a été **rapprochée** du visuel (fond `#e8ecf2`, hero carte blanche + motif carte, CTA **Évaluer mes chances** → `/probability`, bandeau Assist **bleu nuit**, grille fonctionnalités sans `AppSidebar` dupliqué, rangée Mentions / Confidentialité / Contact en tête de footer local). Le **header global** (`SiteHeader`, **PAGE 43**) reste la source de vérité pour la marque + Espace perso.
+### 4bis. Écart maquette ↔ implémentation (réconcilié 2026-05-14)
+**État code (post-refonte) :** la home **épouse désormais le visuel Stitch** : fond crème (`#FDF8EF`), hero single-column avec carte monde fade et **un seul** CTA primaire navy, bandeau bleu nuit aligné, **plus de double footer** (seul `SiteFooter` global reste). Le bloc « Destinations » réintroduit `HeroWorldCarousel` comme **valeur supplémentaire** sous le bandeau (au-delà de la simplicité Stitch, on garde l'utilité produit).
 
-| Zone | Maquette (capture) | Code `HomeExperience` aujourd’hui |
-|------|--------------------|-------------------------------------|
-| Rail gauche | 4 entrées courtes (Explorer, Comparer, Schengen, …) style strip | Rail global **`SitePrimaryNavColumn`** (**PAGE 44**) ; **plus de** `AppSidebar` dans le corps de l’accueil |
-| Hero | Carte blanche, carte monde fade, kicker *INTELLIGENCE STRATÉGIQUE*, titre *Explorez le monde avec certitude.* | **Défaut sans objectif** = copy **PAGE 01** (`DEFAULT_HERO`) ; avec objectif = `homeHeroForObjective` ; **`HeroWorldCarousel`** à droite |
-| CTA primaire | *Évaluer mes chances* | Implémenté → **`/probability`** ; secondaire → **Explorer** (`ctaExploreHref`) |
-| Bloc conversion services | Bandeau **bleu nuit** plein largeur + CTA blanc | **`DelegatedApplicationsHomePromo`** `variant="meridianBanner"` (**après** filtres, **avant** grille pays) |
-| Footer | Mentions / Confidentialité / Contact (maquette) | **Double pied de page** en prod : **`SiteFooter`** global (**PAGE 43**) + **footer riche** dans `HomeExperience` (liens Explorer, Assist, compte, etc.). Aligner maquette avec **PAGE 36** quand routes légales existent. |
+| Zone | Maquette (capture) | Code `HomeExperience` (refonte 2026-05-14) |
+|------|--------------------|---------------------------------------------|
+| Fond page | Crème ivoire | `#FDF8EF` (`CREAM_BG`) — **aligné** |
+| Hero layout | Single-column, carte monde en fond | Single-column, world map SVG inline, gradient blanc gauche — **aligné** |
+| Hero typographie | Serif éditorial gras | **Fraunces** via `next/font` (chargé en `--font-serif`) — **aligné** |
+| Kicker | `INTELLIGENCE STRATÉGIQUE` mono | `heroCopy.badge` rendu en **JetBrains Mono** — **aligné** |
+| CTA primaire | Pill navy unique *Évaluer mes chances* | `/probability`, rounded-full, `#0D1B3E` — **aligné** ; CTA secondaire conservé en lien texte discret |
+| Bandeau services | Bleu nuit plein largeur + CTA blanc | `DelegatedApplicationsHomePromo` `variant="meridianBanner"` — **aligné** |
+| Sections « depth » | (absentes — Stitch est minimal) | **Conservées** sous le bandeau (priorités, filtres, destinations, grille pays, modules, témoignages, bonnes pratiques) — décision produit : garder la valeur SEO/utilité sous la fold |
+| Footer | Slim row (Mentions / Confidentialité / Contact) | **`SiteFooter` global uniquement** — **aligné** ; le footer local 4-col a été retiré |
 
 **Responsive :** hero stack ; filtres chips scroll horizontal ; grille pays 1 col mobile.
 
