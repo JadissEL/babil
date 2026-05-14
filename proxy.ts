@@ -1,5 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
+import { PROTECTED_ROUTE_PATTERNS } from '@/lib/auth-protected-routes';
 import { BABIL_REQUEST_ID_HEADER } from '@/lib/request-id-constants';
 
 function resolveRequestId(req: Request): string {
@@ -26,23 +27,14 @@ function shouldJsonAccessLog(): boolean {
  * - Matcher skips static assets (`_next`, images, fonts, …) — see `config.matcher`.
  * - **G.91:** ensures `x-babil-request-id` on request + response for log correlation.
  */
-const isProtectedRoute = createRouteMatcher([
-  '/services/delegated-applications(.*)',
-  '/overview(.*)',
-  '/history(.*)',
-  '/profile(.*)',
-  '/design-system(.*)',
-  '/moderation(.*)',
-  /** /probability, /recommendations, /recommendation-engine : publics (voir proxy + doc moteurs) */
-  '/admin(.*)',
-  '/api/admin(.*)',
-  '/api/comments(.*)',
-  '/api/user/profile(.*)',
-  '/api/user/favorites(.*)',
-  '/api/user/history(.*)',
-  '/api/user/data-export(.*)',
-  '/api/delegated-application-requests(.*)',
-]);
+/**
+ * Liste centralisée dans `lib/auth-protected-routes.ts` (single source of truth
+ * partagée avec le dashboard Rampart — Stitch PAGE 39 §5.2).
+ *
+ * Routes publiques notables (non listées ici) :
+ *   `/probability`, `/recommendations`, `/recommendation-engine`.
+ */
+const isProtectedRoute = createRouteMatcher([...PROTECTED_ROUTE_PATTERNS]);
 
 export default clerkMiddleware(async (auth, req) => {
   const requestId = resolveRequestId(req);
