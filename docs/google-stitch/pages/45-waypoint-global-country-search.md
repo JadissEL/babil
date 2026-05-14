@@ -114,4 +114,28 @@ Quatre frames : trigger **fermé** (mobile vs desktop width) ; dialogue **ouvert
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 45]
+![Waypoint — Global country search system sheet](../assets/page-45-waypoint-stitch-reference.png)
+
+---
+
+## 14. Implementation Notes (PAGE 45)
+
+> **Statut implémenté :** PAGE 45 — Waypoint matérialisé en **specimen sheet** sous `/admin/waypoint`, alignée avec les planches précédentes (`azimuth` / `radar` / `harbor` / `quay` / `rampart` / `flare`). Le runtime (`components/nav/GlobalCountrySearch.tsx`) reste **inchangé** — la planche documente les quatre frames demandés par §12 (déclencheurs desktop/mobile, palette ouverte, états système).
+
+### 14.1 Specimen `/admin/waypoint`
+- **`app/(dashboard)/admin/waypoint/layout.tsx`** — `getAdminUser()` + `redirect('/')`, `robots: { index: false, follow: false }`.
+- **`app/(dashboard)/admin/waypoint/page.tsx`** — Server Component (`dynamic = 'force-dynamic'`). Cadre principal blanc bordé contenant :
+  - **Mock chrome bar** décoratif (VisaFlow + nav `Research / Strategy / Compliance / Archives / Global Waypoint underlined` + `Search` + `CircleUserRound`) — sans interactivité, juste pour situer le contexte Research Terminal.
+  - **Hero cream** : serif `PAGE 45 — WAYPOINT` + sous-titre `Technical design sheet detailing the interactions, states, and visual structure of the global country search mechanism within the Research Terminal environment.`.
+  - **§1.0 Header Triggers** : 2 cartes blanches (label `Desktop` / `Mobile` mono top-right). Desktop : pill `Search destinations… [⌘K]`. Mobile : bouton rond icône loupe. Chaque carte porte une `Annotation:` paragraphe pédagogique.
+  - **§2.0 Desktop Command Palette** (`1.4fr`) : maquette dialog ancré dans une carte cream — champ `Can` + `[ESC]`, mono header `Destinations`, 3 rows `France · Canada (highlighted, navy left rail + ArrowLeft) · Spain`, footer mono `Use arrows to navigate · Z-Index: 70`.
+  - **§3.0 Mobile Overlay** (`1fr`) : carte gris doux `#F3F4F6` accueillant un dialog blanc — `ArrowLeft + Search…` + mono `Recent Searches` + 2 lignes (`Clock` + `United Kingdom`, `Japan`). Légende centrée mono `System Keyboard`.
+  - **§4.0 System States** : 3 cartes — `Loading` (3 dots dégradés + `Querying database...`), `Empty` (`Telescope` + `No results found` + `Try a different term`), `Error` (filet rouge `inset shadow` + `AlertCircle` rouge + `Connection Interrupted` + `Unable to reach terminal servers`).
+  - **Runtime contract** (carte blanche, 2-col) : source données `/api/countries?light=1` + `normalizeCountriesApiListResponse`, préchargement `requestIdleCallback / setTimeout(500ms)`, raccourci `⌘K / Ctrl+K` via `useAppleLikePlatform` (court-circuité si focus sur champ éditable), Z-index `60 / 70` cohérent avec ladder Quay/Harbor/Azimuth/Flare, bornes liste (`14 sans requête`, `max 24 avec filtre substring lowercase`), hauteur max calée sur `--vf-objective-dock-height` + safe-area (PAGE 41).
+  - **Footer page** : citation `components/nav/GlobalCountrySearch.tsx` + `lib/country-full-data-materialize.ts` + lien retour `← Citadel Admin Console`.
+
+### 14.2 Navigation
+- `app/(dashboard)/admin/page.tsx` — ajout du lien `Waypoint · Search → /admin/waypoint` dans l'en-tête Citadel (ordre éditorial : `Azimuth → Radar → Rampart → Harbor → Quay → Waypoint → Flare`).
+
+### 14.3 Runtime non modifié
+- Aucune modification de `components/nav/GlobalCountrySearch.tsx`. Les contrats clavier (`⌘K/Ctrl+K`, `Escape`, ArrowUp/Down modulo, Enter), le re-fetch `useEffect` sur `[open, load]`, l'`autoComplete="off"` du champ et le `setTimeout(0) → inputRef.focus()` à l'ouverture restent la source de vérité — Waypoint en **photographie** simplement les sorties pour PR review.
