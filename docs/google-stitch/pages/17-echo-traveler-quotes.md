@@ -100,4 +100,6 @@ Mise en page **magazine editorial** : citations en pull-quote, crédits en colon
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 17]
+Fichier repo : `docs/google-stitch/assets/page-17-echo-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — magazine editorial)** : shell **cream `#FDFBF4`**. Header breadcrumb double : `← HUB {COUNTRY}` (retour `/countries/[id]`) à gauche, lien mono `DOSSIER DE RECHERCHE` à droite. **Hero featured quote** centré : filigrane `Quote` géant (10% opacité) en arrière-plan, eyebrow `ÉCHOS & EXPÉRIENCES`, citation serif xxl (la 1ère **positive** ou la 1ère du tableau si aucune positive), ligne auteur (nom + petite pill `sourceName`). **Grille editorial masonry** des citations restantes : layout **2-col** asymétrique (`md:grid-cols-2`) avec mélange de cartes pleine largeur / mi-largeur (alternance via index modulo) ; chaque carte : filigrane guillemet en coin, citation serif italique, ligne pied = avatar pastille (initiale auteur), nom + métier secondaire (auteur), chip mono pays/source (lien `sourceUrl` externe si dispo). Page **abandonne le composant `TravelerQuotesSection`** ici (toujours utilisé en mode `previewOnly` sur PAGE 16) au profit d'un layout dédié plein écran. Footer Stitch via layout public global. Empty state : copy prudente + retour hub.
