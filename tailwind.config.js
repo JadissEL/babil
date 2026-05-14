@@ -39,6 +39,15 @@ module.exports = {
         soft: '0 1px 2px rgba(20, 26, 36, 0.06), 0 8px 24px rgba(20, 26, 36, 0.08)',
         card: '0 2px 6px rgba(20, 26, 36, 0.05), 0 14px 28px rgba(20, 26, 36, 0.08)',
       },
+      keyframes: {
+        'flare-in': {
+          '0%': { opacity: '0', transform: 'translateY(8px) scale(0.98)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+      },
+      animation: {
+        'flare-in': 'flare-in 220ms cubic-bezier(0.16, 1, 0.3, 1) both',
+      },
     },
   },
   plugins: [],

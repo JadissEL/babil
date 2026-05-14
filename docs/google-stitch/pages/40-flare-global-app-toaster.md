@@ -111,4 +111,24 @@ Planche **“FLARE — 3 états”** : success / error / info côte à côte sur
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 40]
+Fichier repo : `docs/google-stitch/assets/page-40-flare-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Flare toaster hardening + specimen plate)** :
+
+- **`tailwind.config.js`** : ajout keyframe `flare-in` (220 ms `cubic-bezier(0.16, 1, 0.3, 1)` slide-up + scale légère) et utility `animate-flare-in` (Stitch §7 — slide-in léger sans toucher au store).
+- **`components/AppToaster.tsx`** hardening conservatif :
+  - `animate-flare-in` appliqué à chaque carte → entrée fluide à l'apparition.
+  - `data-variant={t.variant}` pour cibler QA / Playwright / Cypress facilement.
+  - `role="alert"` ajouté **uniquement** sur la variante `error` (annonces immédiates pour lecteurs d'écran ; success/info gardent la zone `aria-live="polite"` parente sans doublon ARIA).
+  - Bouton fermer : passe de `p-1` à `inline-flex h-9 w-9` avec offset négatif `-mr-1 -mt-1` → tap target conforme cible mobile ≥ 36 px (Stitch §6 / §9). Comportement & tokens visuels préservés à l'identique.
+  - Tous les autres comportements (variants `success`/`error`/`info`, icônes Lucide, `pointer-events-none`/`auto`, dock offset `VF_OBJECTIVE_DOCK_HEIGHT_VAR`, safe area, `useSyncExternalStore` avec snapshot serveur stable) intacts.
+- **`app/(dashboard)/admin/flare/`** (nouvelle route specimen) :
+  - Layout server-side admin-RBAC gated (`getAdminUser()` + `redirect('/')`), `robots: noindex/nofollow`. Stitch §12 dit « planche FLARE » → on construit un outil interne, pas une route publique.
+  - Page client cream `#FAF7EE` avec header serif `FLARE – 3 états`, décor minimal (Bell + CircleUser droite, pas de sidebar pour fidélité Stitch §12).
+  - Grille `sm:grid-cols-3` : 3 specimens statiques côte à côte (success / error / info) utilisant **exactement les mêmes classes** que `AppToaster` pour parité visuelle, chacun avec bouton ✕ fonctionnel local (dismiss du specimen).
+  - 4 boutons de déclenchement live (`Trigger live success / error / info` + `Reset specimens`) qui appellent l'API réelle `appToast.success | error | info` → permet de vérifier le **flux complet** (store + AppToaster monté dans `SiteChrome` parent) sur le même écran.
+  - `FakeDock` décoratif fixé en bas avec 4 icônes (Insights / Flow / Objectives / Profile) — reproduit la position du `SiteObjectiveDock` (PAGE 41) pour **valider le clearance vertical** Stitch §3 / §12.
+  - Note pédagogique en bas avec références fichiers (`components/AppToaster.tsx`, `lib/toast-store.ts`, API `appToast`).
+- **`app/(dashboard)/admin/page.tsx`** : nouveau bouton `Flare · Toasts` ajouté à côté de `Rampart · Edge Auth` dans le header Citadel pour découvrabilité ops.
+
+**Contrat verrouillé** : aucune autre surface (page, modale, formulaire) ne doit re-dessiner ses propres snackbars — tout passe par `appToast.*`. La planche FLARE est l'unique source visuelle de référence pour valider variant, ton et clearance.
