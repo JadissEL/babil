@@ -106,4 +106,17 @@ Cartes settings avec **icône gauche + titre + chevron** uniformes. Section séc
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 24]
+Fichier repo : `docs/google-stitch/assets/page-24-identity-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Identity 2-col settings)** : shell **cream `#FAF7EE`**. Layout 2-col `lg:grid-cols-[1fr_320px]` :
+- **Hero card** blanche : serif `Votre profil` + sous-titre `Gérez vos informations personnelles et vos préférences de mobilité.` ; bouton navy `Sauvegarder` ancré en haut à droite (avec `Save` icon). Bannière succès verte inline si `message` (RGPD-friendly `aria-live`).
+- **Colonne form** (gauche) — carte blanche unique avec bordure gauche accent navy `border-l-4 border-l-[#0D1B3E]`, divisée en groupes par **pill eyebrow** mono :
+  - `Identité & Situation` : Prénom (Clerk read-only) / Nom (Clerk read-only) ; Âge / Statut marital (select).
+  - `Finances & Objectifs` : Revenu Mensuel Net (MAD) / Épargne Disponible (MAD) ; Profession (select) ; Objectif de Mobilité (select reprenant `goal_type` → 5 valeurs tourisme/études/travail/business/formation) ; toggle navy `CNSS déclaré`.
+  - `Attaches` : ligne `Famille en Europe` titre + body + radio `Oui/Non` (remplace l'ancien toggle, plus lisible Stitch) ; textarea `Détails` conditionnelle.
+- **Colonne sidebar** (droite, `lg:sticky lg:top-6`) — 3 cartes blanches au style Settings (icône en pastille cream + titre serif) :
+  - `Profils Types` : 3 lignes cliquables (`Étudiant` `Nomade Digital` `Business`) avec icône glyph + chevron, qui `patch` le state via `PERSONA_PRESETS` (toast inchangé).
+  - `Assistance & Candidatures` : 3 liens row navy (`Services Délégués` → catalogue, `Mes demandes` → `/overview#assist-requests`, `Historique des demandes` → `/history`).
+  - `Confidentialité` : copy Clerk + bouton `Exporter mes données` (`Download` icon) qui appelle `handleGdprExport` inchangé.
+
+Logique préservée intacte : `GET/POST /api/user/profile`, `GET /api/user/data-export`, Clerk `useUser` (firstName/lastName/email), `PERSONA_PRESETS`, `appToast`, `DashboardPageSkeleton variant="profile"`. Le formulaire continue d'écrire `age / profession / income / savings / CNSS_status / marital_status / family_in_europe / family_details / goal_type` exactement comme avant — seul le rendu est restylé en banking cream.
