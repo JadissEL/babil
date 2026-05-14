@@ -112,4 +112,30 @@ Trois frames : checklist **0/3** ; **2/3** avec une ligne cochée ; état **masq
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 46]
+![Runway Onboarding Checklist — specs sheet](../assets/page-46-runway-stitch-reference.png)
+
+---
+
+## 14. Implementation Notes (PAGE 46)
+
+> **Statut implémenté :** PAGE 46 — Runway matérialisé en **specimen sheet** sous `/admin/runway`, aligné avec la collection ops (`azimuth` / `radar` / `harbor` / `quay` / `waypoint` / `rampart` / `flare`). Le runtime (`components/dashboard/PostSignupOnboarding.tsx` + `lib/onboarding-storage.ts`) reste **inchangé** : la planche photographie les 3 états canoniques (`0/3`, `2/3`, `dismissed/null`) sans dupliquer la logique de complétion.
+
+### 14.1 Specimen `/admin/runway`
+- **`app/(dashboard)/admin/runway/layout.tsx`** — `getAdminUser()` + `redirect('/')`, `robots: { index: false, follow: false }`.
+- **`app/(dashboard)/admin/runway/page.tsx`** — Server Component (`dynamic = 'force-dynamic'`). Cadre blanc bordé + mock chrome bar (`VisaFlow` + nav `Specs (active) / Components / Guidelines` + pill `PAGE 46`).
+- **Hero cream** : serif `Runway Onboarding Checklist` + sous-titre technique `Technical specification and state variations for the new user onboarding widget (Dashboard component).`.
+- **Grille 2×2** :
+  - **Technical Implementation** (carte blanche) — icône `Database` + bullet `localStorage Persistence:` détaillant la clé `vf_onboarding_v1` (champs `dismissed / recoSeen / explorerDone`) et le triple resync (`ONBOARDING_STORAGE_UPDATED_EVENT` + `focus` + `storage` + `visibilitychange`). Bullet `Return Null Conditions:` avec **chips code rouge** `!isLoaded || dismissed === true || accountAgeDays > 21 || allDone === true`, suivi d'une note `profil complet ⇔ income > 0 & savings fini & goal_type trim ≠ ''`.
+  - **State : 0/3 (Initial)** — `ChecklistCard` `Premiers pas sur VisaFlow` + sous-titre engageant + 3 lignes non cochées avec lien mono `Ouvrir →`.
+  - **State : 2/3 (Progress)** — sous-titre `Presque terminé. Complétez la dernière étape.` ; lignes 1 & 2 strike-through cream + check vert ; ligne 3 active (`inset 0 0 0 1px #0D1B3E`).
+  - **State : Dismissed / Null** — 2 placeholders gris `Standard Card` + carte rose dashed `COMPONENT REMOVED · Space reclaimed by layout engine.` (icône `EyeOff` rose).
+- **Section `Runtime contract`** (carte blanche) — récapitulatif 2-col : montage (`/overview` après `ObjectivePreferencePanel`), storage helpers, sources de complétion (étape 1 = `GET /api/user/profile`, étape 2 = `recoSeen` depuis `/recommendations`, étape 3 = `markExplorerOnboardingEngaged()`), hrefs objectif-aware via `useObjectivePreferenceOptional() + ctaExploreHref / ctaCompareHref` (PAGE 41), conditions null (`!isLoaded / !hydrated / !user / dismissed / !recent && profileOk (accountIsRecent(createdAt, 21)) / allDone`), a11y (`aria-label="Masquer la checklist"` + icônes `aria-hidden`).
+- **Footer page** : citation `components/dashboard/PostSignupOnboarding.tsx` + `lib/onboarding-storage.ts` + lien retour `← Citadel Admin Console`.
+
+> **Note de fidélité Stitch :** la maquette source mentionnait `accountAgeDays > 14`, mais le runtime utilise `accountIsRecent(createdAt, 21)` (cf. §5.1). Le specimen affiche **`> 21`** pour rester aligné sur la vraie condition d'affichage ; toute future bascule devra modifier `components/dashboard/PostSignupOnboarding.tsx` puis la planche.
+
+### 14.2 Navigation
+- `app/(dashboard)/admin/page.tsx` — ajout du lien `Runway · Onboarding → /admin/runway` dans l'en-tête Citadel (ordre éditorial : `Azimuth → Radar → Rampart → Harbor → Quay → Waypoint → Runway → Flare`).
+
+### 14.3 Runtime non modifié
+- Aucune modification de `components/dashboard/PostSignupOnboarding.tsx`, `lib/onboarding-storage.ts`, ni des sources de complétion (`/profile`, `/recommendations`, `/explorer`). Les 4 conditions `return null` (§5.1) et l'ordre des étapes (§5.4) restent la source de vérité — Runway documente sans dévier.
