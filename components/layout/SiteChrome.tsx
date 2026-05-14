@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import { AppToaster } from '@/components/AppToaster';
+import { CookieConsentBanner } from '@/components/cookies/CookieConsentBanner';
 import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteObjectiveDock } from '@/components/layout/SiteObjectiveDock';
 import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
@@ -57,6 +58,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
       </div>
       <SiteObjectiveDock />
       <SiteFooter />
+      <CookieConsentBanner />
     </div>
   );
 }

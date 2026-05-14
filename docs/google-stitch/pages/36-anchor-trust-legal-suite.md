@@ -113,4 +113,20 @@ Créer un **“legal reader”** premium : colonne sommaire fine grisée, corps 
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 36]
+Fichier repo : `docs/google-stitch/assets/page-36-anchor-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Anchor legal reader + cookie consent)** :
+- **Route `/legal`** créée comme single-page reader. Layout serveur (`app/(public)/legal/layout.tsx`) porte les `metadata` (titre, description). Page client (`app/(public)/legal/page.tsx`) implémente le 2-col cream Stitch :
+  - **Sommaire sticky gauche** (`lg:sticky lg:top-24`) sur surface cream `#F5F0E3`, eyebrow mono « Sommaire légal », 4 entrées (`Mentions Légales`, `Politique de Confidentialité`, `Gestion des Cookies`, `CGU`). Active state pill white + accent vertical navy 3px gauche (mêmes tokens que PAGE 35). Scroll-spy via `IntersectionObserver`.
+  - **Header article** : chip blanche `Mise à jour : 15 Octobre 2024` + serif `h1` `Mentions Légales & Confidentialité` (fluid clamp 2.2–3rem) + intro paragraphe.
+  - **Section 01 Mentions Légales** : héritage loi 2004-575, white card `Éditeur du site` (dl mono labels / valeurs), white card `Hébergement` (Vercel / Render / Neon) — Stitch §5.1.
+  - **Section 02 Politique de Confidentialité** : intro RGPD, h3 `Collecte des Données` avec checkmarks accent bleu (5 lignes : identification, connexion, requêtes, profil mobilité, dossiers délégués — couvre Stitch §5.2 + §5.7 + §5.8). h3 `Sous-traitants techniques` (Clerk, Vercel, Render+Neon, Sentry). Callout bleu pâle « Vos droits RGPD » avec lien `/profile` + mail `dpo@visaflow.com`. Note finale liant `/intelligence-fieldpaths` (PAGE 32 / §5.9).
+  - **Section 03 Gestion des Cookies** : table 4 colonnes (Nom · Finalité · Durée · Statut) avec status pill `Essentiel` (emerald) ou `Opt-in` (amber). 4 cookies déclarés : `__clerk_session`, `vf.cookies.v1`, `vf.objective.v1`, `_vercel_speed_insights`. CTA navy « Gérer mes préférences cookies » → réouvre la bannière (event bus `vf:cookies:open`).
+  - **Section 04 CGU** : engagements utilisateur (checklist 4 items), limitation de responsabilité, white card finale `legal@visaflow.com` + clause de compétence territoriale Paris.
+  - Footer d'article : ligne fine + mono « Document maintenu par l'équipe Légal & Confidentialité — version du 15 Octobre 2024 ».
+- **Bannière consentement `CookieConsentBanner`** (`components/cookies/CookieConsentBanner.tsx`) : glass dark `#0E141F/95` backdrop-blur, fixed bottom centré largeur `min(46rem,100vw-2rem)`, role="dialog". Titre serif `Préférences de navigation` + icône `ShieldCheck` or. Body 12.5px. 3 boutons : outline `Personnaliser` (navigue `/legal#cookies`), outline `Refuser`, bleu `Accepter`. Stockage `localStorage` `vf.cookies.v1` = `{ status, ts }`. Apparaît seulement si pas de consent ; réouverture via event `vf:cookies:open` (helper exporté `openCookiePreferences()`).
+- **`SiteChrome`** monte `<CookieConsentBanner />` dans la branche publique (pas standalone) — il ne pollue donc pas les routes `/sign-in`, `/sign-up`, et dashboard.
+- **`SiteFooter`** restylé en bloc Anchor :
+  - Ligne 1 : logo VisaFlow + nav légale mono uppercase tracking (`Legal`, `Support` mailto, `Privacy Policy`, `Terms of Service`, bouton `Gérer les cookies` qui ré-ouvre la bannière) + copyright droite « © {year} VisaFlow Intelligence. Tous droits réservés ».
+  - Ligne 2 (séparée par filet) : signature `Réalisé par JADISS EL ANTAKI` + CTA PayPal Don préservé.
+- **A11y** : `role="dialog"` + `aria-labelledby` + `aria-describedby` sur la bannière, scroll-mt-28 sur chaque section pour ancres hash, `aria-current="true"` sur item TOC actif, h1/h2/h3 hiérarchiques.
