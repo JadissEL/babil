@@ -19,6 +19,16 @@ const STANDALONE_PATH_PREFIXES = [
   '/moderation',
 ];
 
+/**
+ * Routes exactes qui fournissent leur **propre chrome marketing complet** (header + footer)
+ * et n'attendent du `SiteChrome` que les utilitaires runtime transverses
+ * (AppToaster, SiteObjectiveDock, CookieConsentBanner).
+ *
+ * PAGE 01 (MERIDIAN) — `/` rend son propre `MeridianHomeHeader` / `MeridianHomeFooter`
+ * et n'a pas besoin du rail latéral `SitePrimaryNavColumn`.
+ */
+const MERIDIAN_HOME_PATHS = ['/'];
+
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { mobileOpen, setMobileOpen, closeMobile } = useSitePrimaryNavState();
@@ -27,11 +37,29 @@ export function SiteChrome({ children }: { children: ReactNode }) {
     pathname?.startsWith(prefix),
   );
 
+  const isMeridianHome = pathname != null && MERIDIAN_HOME_PATHS.includes(pathname);
+
   if (isStandalone) {
     return (
       <div className="flex min-h-screen flex-1 flex-col">
         <AppToaster />
         {children}
+      </div>
+    );
+  }
+
+  if (isMeridianHome) {
+    /**
+     * Shell home : pas de SiteHeader / SitePrimaryNavColumn / SiteFooter globaux —
+     * `HomeExperience` rend son propre chrome MERIDIAN (header + main + footer).
+     * On garde toutes les utilités runtime (toasts, dock objectif, consent cookies).
+     */
+    return (
+      <div className="flex min-h-screen flex-1 flex-col bg-[#FDF8EF]">
+        <AppToaster />
+        {children}
+        <SiteObjectiveDock />
+        <CookieConsentBanner />
       </div>
     );
   }
