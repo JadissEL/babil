@@ -116,4 +116,27 @@ Trois états **mobile** : fermé (aperçu burger) ; ouvert (tiroir + backdrop) ;
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 44]
+![Quay Navigation System — 3 états (desktop rail, mobile header, mobile drawer)](../assets/page-44-quay-stitch-reference.png)
+
+---
+
+## 14. Implementation Notes (PAGE 44)
+
+> **Statut implémenté :** PAGE 44 — Quay matérialisé en **specimen sheet** sous `/admin/quay`, alignée avec `/admin/azimuth` (41), `/admin/radar` (42), `/admin/harbor` (43), `/admin/rampart` (39), `/admin/flare` (40). Le runtime (`components/layout/SitePrimaryNav.tsx` : `SitePrimaryNavColumn`, `SiteHeaderMenuButton`, `useSitePrimaryNavState`) reste **inchangé** — la planche documente les trois états canoniques sans réécrire la logique.
+
+### 14.1 Specimen `/admin/quay`
+- **`app/(dashboard)/admin/quay/layout.tsx`** — `getAdminUser()` + `redirect('/')`, `robots: { index: false, follow: false }`.
+- **`app/(dashboard)/admin/quay/page.tsx`** — Server Component (`dynamic = 'force-dynamic'`). Header mono `DESIGN SYSTEM SPECIFICATION` + serif `Quay Navigation System` + sous-titre `Technical design sheet illustrating the structural states of the primary navigation rail.`.
+- **Layout 2 colonnes (lg+ `1.7fr / 1fr`)** :
+  - **Gauche — State 01 : Desktop Rail (Sticky)** : carte 2-col (rail cream `260px` + stage). Rail VisaFlow + mono `Global Mobility Suite`, 11 items (`Explorer / Schengen / Comparer (active) / Visa Engine / Recommendation Lab / Assist / Education / Community / Business / Permits / Investment`) avec icônes Lucide (`Compass`, `Map`, `ArrowLeftRight`, `Sliders`, `FlaskConical`, `Headphones`, `GraduationCap`, `Users`, `Briefcase`, `FileText`, `Landmark`), bouton CTA navy `Upgrade to Premium · Award`. Stage : eyebrow mono `COMPARE VISAS`, serif `Schengen Assessment`, 2 cartes ghost, et **annotation rose** flottante `TECHNICAL ANNOTATION — position: sticky; top: 0; height: 100vh; overflow-y: auto;`.
+  - **Droite — State 03 : Mobile Header (Closed)** : phone-like card avec `Menu` + `VisaFlow` serif + `CircleUserRound` avatar ghost.
+  - **Droite — State 02 : Mobile Drawer (Open)** : aside cream `68%` (`Menu` + `X`, 4 items dont `Comparer (active)`) au-dessus d'un backdrop assombri `55%` avec annotation rose `BACKDROP — z-index: 40; bg-primary/40`. Sous la maquette, carte `DRAWER LAYOUT` mono `position: fixed; left: 0; z-index: 50; w-[280px];`.
+- **Section `Runtime contract`** (carte blanche) : listing en grille 2-col résumant Z-index (`aside z-[56] / backdrop z-[55] / header z-50 / dock z-30`), classes sticky `lg:sticky lg:top-16 lg:h-[calc(100dvh-4rem)] lg:w-56`, largeur drawer `w-[min(19rem,88vw)]`, liens dynamiques `ctaExploreHref / ctaCompareHref` (PAGE 41), `aria-current="page"` + scroll lock global + `Escape` via `useSitePrimaryNavState`.
+- **Pastille rose** en bas de section rappelant la contrainte de cohérence runtime : *« lg:left-56 du dock objectif doit suivre le changement de lg:w-56 du rail »* (cf. PAGE 41).
+- **Footer page** : citation `components/layout/SitePrimaryNav.tsx` + lien retour `← Citadel Admin Console`.
+
+### 14.2 Navigation
+- `app/(dashboard)/admin/page.tsx` — ajout du lien `Quay · Nav rail → /admin/quay` dans l'en-tête Citadel (ordre éditorial : `Azimuth → Radar → Rampart → Harbor → Quay → Flare`).
+
+### 14.3 Runtime non modifié
+- Aucune modification de `components/layout/SitePrimaryNav.tsx` ni de ses dépendances (`ObjectivePreferenceProvider`, `lib/cta-hrefs`). L'ordre exact `[Explorer, Schengen, Comparer, ...STATIC_LINKS.slice(1)]` (Schengen dédupliqué) et la map `isActivePath` (matching pathname sans querystring) restent la source de vérité comportementale ; le specimen ne fait que **photographier** ces décisions pour PR review.
