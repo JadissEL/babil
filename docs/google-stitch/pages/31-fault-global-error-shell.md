@@ -96,4 +96,18 @@ Reset complet session utilisateur.
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 31]
+Fichier repo : `docs/google-stitch/assets/page-31-fault-global-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Fault·Global brutalisme doux)** : `app/global-error.tsx` réécrit avec composition centrée pleine page + typo géante watermark `FAULT`.
+
+- **Shell** `<html lang="fr">` + `<body>` cream `#FAF7EE` avec **styles inline critiques** (background, font, color) pour résilience même si Tailwind/CSS racine échoue (Stitch §3 « aucune dépendance style externe fragile »).
+- **Composition centrée** flex column `min-h-screen` :
+  - **Carré rose bordered** (border-rose-200 + bg-rose-50 légère) avec `AlertTriangle` rouge centré — signal d'alerte mesuré.
+  - **Watermark typo géante** `FAULT` en `font-black` ultra grand (clamp 4rem → 9rem) `text-[#0D1B3E]/8` absolument positionné derrière le titre — typo-as-decor (Stitch §12 « typo géante »).
+  - **`h1` `Une erreur critique est survenue`** serif navy 2 lignes, clamp responsive, z-index au-dessus du watermark.
+  - **Paragraphe** : « L'application a rencontré un problème majeur. Vous pouvez tenter de recharger la page ou retourner à l'accueil pour réinitialiser votre session. »
+  - **CTA primaire** plein largeur mobile, navy filled : `Recharger l'application` (calls `reset()` + `window.location.reload()` fallback).
+  - **2 liens secondaires** avec icônes : `Home` → `/`, `Headphones` → `mailto:support@visaflow.com?subject=Erreur%20critique%20VisaFlow`.
+  - **Footer ID** mono uppercase tracking-`0.22em` : pastille rose + `ERR_BOUNDARY_FAULT_GLOBAL` + suffix court dérivé de `error.digest` (premiers 4 chars) si disponible. Stitch §5.5 / §10 (Sentry id pour support).
+- **Observabilité** : `Sentry.captureException(error)` préservé dans `useEffect`. Ajout de `console.error(error)` (Stitch §5.2 « acceptable si Sentry agrège », mais on garde les deux pour parité avec PAGES 29-30).
+- Contrainte App Router respectée : composant retourne `<html>` + `<body>` complets.
