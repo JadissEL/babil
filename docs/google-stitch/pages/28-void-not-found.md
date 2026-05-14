@@ -93,4 +93,14 @@ Ajouter **léger grain** sur fond pour chaleur. Illustration abstraite **trou de
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 28]
+Fichier repo : `docs/google-stitch/assets/page-28-void-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Void wormhole 404)** : page `app/not-found.tsx` réécrite en composition centrée pleine page sur cream `#FAF7EE`.
+
+- **Logo `VisaFlow`** serif navy top-left (`max-w-6xl px-8 pt-10`).
+- **Illustration `WormholeMark`** SVG pure (viewBox 600×600, `aria-hidden`) : disque sombre central rempli d'un `radialGradient` navy → cream chaud `#FAF7EE` au centre, **18 concentric ring strokes** avec opacités décroissantes simulant un tunnel optique, halo cream `#FFEFD9` au centre, et anneau extérieur pâle pour décoller du fond. Taille `max-w-[460px]` mobile / `max-w-[520px]` desktop, hauteur respiratoire généreuse.
+- **Filet horizontal** + kicker mono `ERREUR 404` tracking-`0.3em` `text-[#0D1B3E]/60`.
+- **Titre `h1`** serif navy `Page introuvable` (clamp 2.25rem→3rem) — unique sur la vue.
+- **Paragraphe** copy étendu Stitch : « Le document ou la ressource que vous tentez de consulter n'est plus disponible à cette adresse. L'architecture de nos données a pu être mise à jour. Nous vous invitons à regagner l'espace principal. »
+- **CTA pill navy** `Retour à l'accueil` (uppercase tracking-`0.2em`, icône `ArrowLeft`, hover plus sombre, focus ring) — lien `/`.
+- Métadonnées SEO conservées (`metadata.title` / `description`).
