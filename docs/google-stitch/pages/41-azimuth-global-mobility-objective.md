@@ -122,4 +122,27 @@ Trois planches : (1) **wizard** desktop + mobile avec grille objectifs ; (2) **d
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 41]
+![Azimuth — Technical Design Sheet (3 états)](../assets/page-41-azimuth-stitch-reference.png)
+
+---
+
+## 14. Implementation Notes (PAGE 41)
+
+> **Statut implémenté :** PAGE 41 — fiche technique « Azimuth System » montée comme **specimen interne** sous `/admin/azimuth`, en pendant des planches `/admin/rampart` (PAGE 39) et `/admin/flare` (PAGE 40). Le système objectif global lui-même (wizard + dock) reste rendu en runtime via `AppObjectiveRoot` dans `app/layout.tsx` — la fiche ne fait que **documenter visuellement** les trois états attendus.
+
+### 14.1 Specimen `/admin/azimuth`
+- **`app/(dashboard)/admin/azimuth/layout.tsx`** — `getAdminUser()` + `redirect('/')`, `robots: { index: false, follow: false }`.
+- **`app/(dashboard)/admin/azimuth/page.tsx`** — Server Component (`dynamic = 'force-dynamic'`) en cream `#FAF7EE` avec :
+  - **Header** : eyebrow mono `TECHNICAL DESIGN SHEET`, serif `Azimuth System`, et 2 pastilles à droite (`STATUS Approved` + dot émeraude, `VERSION v1.2`).
+  - **State 1 — Initial Discovery** : conteneur `rounded-3xl border` avec 3 « dots » de barre titre type macOS, fond `#F5F0E3`, titre serif centré `Quel est votre objectif de mobilité ?`, mini-grille `sm:grid-cols-3` de 5 cartes specimen (`Tourisme`, `Études`, `Travail`, `Business`, `Investissement`) basée sur `USER_OBJECTIVES` (slugs `tourism / studies_master / work / business / investment`), bouton `FERMER SANS CHOISIR ×` mono uppercase top-right, chip mono `z-index 200` bottom-left.
+  - **State 2 — Dock Closed** : carte blanche avec 5 barres skeleton, chip mono `--vf-objective-dock-height 64px (fixed)`, et un `DockShell` fermé (eyebrow `OBJECTIF PRINCIPAL`, label `Études en France`, chevron-down).
+  - **State 3 — Dock Expanded** : carte blanche avec un mini `listbox` (4 lignes, première sélectionnée au tone accent `#3B7DFF` + dot plein), et un `DockShell` ouvert (chevron-up).
+  - **Footer** : sources runtime listées en mono (`AppObjectiveRoot.tsx`, `SiteObjectiveDock.tsx`, `FirstVisitObjectiveWizard.tsx`, `DockObjectivePicker.tsx`) + lien retour `← Citadel Admin Console`.
+- **Pas d'instanciation live** : la planche affiche des reproductions visuelles statiques pour éviter de capter le focus / déclencher le wizard global / écrire dans `objective-preference-storage` ; le code de référence est cité en footer.
+
+### 14.2 Navigation
+- `app/(dashboard)/admin/page.tsx` — ajout d'un lien d'en-tête `Azimuth · Objectif → /admin/azimuth`, en amont des pastilles `Rampart · Edge Auth` et `Flare · Toasts` (ordre éditorial : `Azimuth → Rampart → Flare`).
+
+### 14.3 Runtime non modifié (volontairement)
+- `components/layout/AppObjectiveRoot.tsx`, `components/layout/SiteObjectiveDock.tsx`, `components/objectives/{ObjectivePreferenceProvider,FirstVisitObjectiveWizard,DockObjectivePicker}.tsx` et `lib/user-objectives/registry.ts` restent inchangés : la spec runtime décrite aux §4–§10 est déjà honorée (z-index 200 / 80 / 30, `--vf-objective-dock-height ≥ 48px`, scroll-lock body pendant wizard, listbox `bottom-full`, etc.).
+- Toute modification produit (ex. nouveau slug, nouvelle catégorie, copy wizard) doit passer par `lib/user-objectives/registry.ts` puis se refléter dans le specimen — la fiche `/admin/azimuth` joue le rôle de **single source of truth visuelle** pour PR review.
