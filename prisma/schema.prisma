@@ -62,10 +62,73 @@ model Country {
   driving_license_status      String?
   full_data                   String? /// JSON fiche : friction_score 0–100, brutal_reality_score 0–10 ; les snapshots visa sont en colonnes 1–10 — voir lib/score-scale-lexicon.ts
 
-  comments      Comment[]
-  insights      CountryInsight[]
-  favoritedBy   FavoriteCountry[]
-  observations  CountryObservation[]
+  comments           Comment[]
+  insights           CountryInsight[]
+  favoritedBy        FavoriteCountry[]
+  observations       CountryObservation[]
+  educationPrograms  CountryEducationProgram[]
+}
+
+/** I.10x — Education mobility programmes relationalisés depuis `full_data.education_mobility.*`.
+ * Une ligne par couple (countryId, kind). Champs scalaires bucketisés pour filtres indexés (pages 11/12/13).
+ */
+model CountryEducationProgram {
+  id                Int                          @id @default(autoincrement())
+  countryId         Int
+  kind              EducationProgramKind
+  bacBucket         EducationBacBucket           @default(UNKNOWN)
+  costBucket        EducationCostBucket          @default(UNKNOWN)
+  workRightsBucket  EducationWorkRightsBucket    @default(UNKNOWN)
+  programType       String?
+  visaType          String?
+  durationText      String?
+  costText          String?
+  estimatedCostText String?
+  bacRequiredText   String?
+  workRightsText    String?
+  access            String?
+  insight           String?
+  /** Liste des sous-types proposés (typ. short_courses.types, technical_training.types). */
+  typesJson         Json?
+  /** technical_training: accès post-bac vs sans bac. */
+  accessBac         Boolean                      @default(false)
+  accessNoBac       Boolean                      @default(false)
+  sourceVersion     String?
+  updatedAt         DateTime                     @updatedAt
+
+  country Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+
+  @@unique([countryId, kind])
+  @@index([kind])
+  @@index([kind, bacBucket])
+  @@index([kind, costBucket])
+}
+
+enum EducationProgramKind {
+  LANGUAGE_STUDY
+  SHORT_COURSES
+  TECHNICAL_TRAINING
+}
+
+enum EducationBacBucket {
+  NOT_REQUIRED
+  REQUIRED
+  SCHOOL_DEPENDENT
+  UNKNOWN
+}
+
+enum EducationCostBucket {
+  LOW
+  MEDIUM
+  HIGH
+  UNKNOWN
+}
+
+enum EducationWorkRightsBucket {
+  ALLOWED
+  LIMITED
+  FORBIDDEN
+  UNKNOWN
 }
 
 // --- Country Intelligence System (multi-source, append-only facts) ---

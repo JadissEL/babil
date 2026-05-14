@@ -4,6 +4,7 @@ import { recordAdminAudit } from '@/lib/admin-audit-log';
 import { getAdminUser } from '@/lib/admin-auth';
 import { publicApiErrorMessage } from '@/lib/api-public-error';
 import { MERGED_COUNTRIES_LIST_CACHE_TAG } from '@/lib/countries-prisma-merge';
+import { syncCountryEducationProgramsFromFullData } from '@/lib/country-education-programs-sync';
 import { parseCountryFullData } from '@/lib/country-full-data-json';
 import { materializePublicFullData } from '@/lib/country-full-data-materialize';
 import { isDbUnavailable } from '@/lib/db-resilience';
@@ -152,6 +153,16 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       revalidateTag(MERGED_COUNTRIES_LIST_CACHE_TAG);
     } catch {
       /* revalidateTag requires Next server context */
+    }
+    try {
+      await syncCountryEducationProgramsFromFullData(prisma, id, mergedFull, {
+        sourceVersion: 'admin.patch',
+      });
+    } catch (syncErr) {
+      console.warn(
+        '[admin.patch] education programs sync failed',
+        syncErr instanceof Error ? syncErr.message : syncErr,
+      );
     }
     void recordAdminAudit(admin.id, {
       action: 'country.patch',

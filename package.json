@@ -40,6 +40,8 @@
     "db:report-contract": "tsx scripts/report-db-contract-summary.ts",
     "db:upsert-missing:dry": "tsx scripts/upsert-missing-countries-from-static.ts --dry-run",
     "db:upsert-missing:apply": "tsx scripts/upsert-missing-countries-from-static.ts --apply",
+    "db:education-programs:dry": "tsx scripts/backfill-country-education-programs.ts --dry-run",
+    "db:education-programs:apply": "tsx scripts/backfill-country-education-programs.ts --apply",
     "intelligence:seed-sources": "tsx scripts/intelligence-enrichment-pipeline.ts --seed-sources-only",
     "intelligence:pipeline": "tsx scripts/intelligence-enrichment-pipeline.ts",
     "intelligence:world-bank": "tsx scripts/intelligence-enrichment-pipeline.ts --world-bank",

@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import fs from 'fs'
 import path from 'path'
 
+import { syncCountryEducationProgramsFromFullData } from '../lib/country-education-programs-sync'
 import { buildCountryPrismaPayloadFromStaticRecord } from '../lib/country-upsert-from-static'
 
 const prisma = new PrismaClient()
@@ -15,11 +16,22 @@ async function main() {
 
   for (const c of countries) {
     const countryData = buildCountryPrismaPayloadFromStaticRecord(c as Record<string, unknown>)
-    await prisma.country.upsert({
+    const row = await prisma.country.upsert({
       where: { name: countryData.name },
       update: countryData,
       create: countryData,
     })
+    try {
+      const parsed = countryData.full_data ? JSON.parse(countryData.full_data) : null
+      await syncCountryEducationProgramsFromFullData(prisma, row.id, parsed, {
+        sourceVersion: 'seed',
+      })
+    } catch (err) {
+      console.warn(
+        `[seed] education programs sync skipped for ${countryData.name}:`,
+        err instanceof Error ? err.message : err,
+      )
+    }
   }
 
   console.log('Seeding completed successfully!')
