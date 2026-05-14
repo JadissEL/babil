@@ -108,4 +108,18 @@ Ajouter **colonne “icône source”** minimaliste (globe, agent, banque) pour 
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 32]
+Fichier repo : `docs/google-stitch/assets/page-32-beacon-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Beacon Glossaire des Données)** : page client `/intelligence-fieldpaths` réécrite en layout 2 colonnes éditorial sur cream `#FAF7EE`. Header / footer fournis par `SiteChrome` racine.
+
+- **Hero** : eyebrow mono `Documentation Technique` + serif `h1` `Glossaire des Données` + paragraphe intro mentionnant `fieldPath`, `CountryObservation`, `full_data` en mono inline chips. 2 liens d'accroche : `← Retour à l'explorateur` (`ObjectiveAwareExplorerLink`) + `(Info) Comprendre la provenance sur un profil` (ancre conceptuelle vers `/countries/[id]`).
+- **Layout** : `lg:grid-cols-[1fr_320px]` — main glossaire à gauche, sidebar architecture sticky à droite.
+- **Toolbar main** : `Input` recherche `Search` icon (filtre client-side temps réel sur `fieldPath` + `labelFr` + `descriptionFr`) + **3 chips source toggle** : `Publique` (`Globe`), `Institutionnelle` (`Landmark`), `Agent IA` (`Cpu`). Active state = navy filled, inactive = white border.
+- **Tableau** white card border `#0D1B3E/10` :
+  - colonnes **SRC** (icône source 16×16) · **FIELDPATH** mono · **DESCRIPTION** serif · **EXEMPLE** mono · **SOURCE** (`labelShort` + libellé secondaire si présent) · **MISE À JOUR** mono.
+  - Header sticky avec léger blur (Stitch §12).
+  - Zebra rows alterné `#0D1B3E/[0.02]`, hover row navy soft tint.
+  - Clic sur `fieldPath` ⇒ `navigator.clipboard.writeText` + `appToast.success` "Identifiant copié" (Stitch §5.3).
+  - Empty state si filtres ⇒ aucun résultat : message *« Aucun champ — élargir la recherche »*.
+- **Sidebar `Architecture`** sticky `lg:top-24` : eyebrow mono + serif title `Relation avec la provenance UI` + paragraphe + **mini wireframe** (carte UI `Page 16 · Taux d'acceptation` avec lien `Source`, flèche `ArrowDown`, carte dark mono `SELECT value FROM full_data WHERE path = 'visa.accept_rate'`).
+- **Glossaire `FieldPathGlossaryEntry`** étendu (optional fields) : `sourceKind: 'publique' | 'institutionnelle' | 'agent'`, `exampleFr`, `sourceLabelFr`, `updatedAtFr`. 7 entrées existantes enrichies avec valeurs réalistes (World Bank `2024-Q1`, ILO `Live`, etc.). Aucun changement breaking — fonctions existantes (`getIntelligenceFieldPathGlossaryEntry`) continuent d'opérer.
