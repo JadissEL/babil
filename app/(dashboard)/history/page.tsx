@@ -1,19 +1,16 @@
 'use client'
 
-import { History } from 'lucide-react'
+import {
+  Activity,
+  FileText,
+  MapPin,
+  MessageSquare,
+  Search,
+} from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { historyEventTypeLabelFr } from '@/lib/history-event-labels'
 
 type HistoryEvent = {
@@ -24,6 +21,11 @@ type HistoryEvent = {
 }
 
 type CountryRow = { id: number; name: string }
+
+const SHELL = '#FAF7EE'
+const INK_10 = 'rgba(13,27,62,0.10)'
+const INK_05 = 'rgba(13,27,62,0.05)'
+const PAGE_STEP = 50
 
 function payloadPreview(payload: Record<string, unknown> | null): string {
   if (!payload || typeof payload !== 'object') return '—'
@@ -46,12 +48,21 @@ function countryLinkFromPayload(payload: Record<string, unknown> | null): string
   return id != null ? `/countries/${id}` : null
 }
 
+function iconForType(type: string): ComponentType<{ className?: string }> {
+  const t = (type || '').toUpperCase()
+  if (t === 'VIEW_COUNTRY') return MapPin
+  if (t.startsWith('RUN_') || t.includes('ENGINE') || t.includes('SCORE')) return Activity
+  if (t.startsWith('COMMENT') || t.includes('FORUM')) return MessageSquare
+  return FileText
+}
+
 export default function HistoryPage() {
   const [events, setEvents] = useState<HistoryEvent[]>([])
   const [countries, setCountries] = useState<CountryRow[]>([])
   const [loading, setLoading] = useState(true)
   const [typeFilter, setTypeFilter] = useState<string>('__all__')
   const [search, setSearch] = useState('')
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_STEP)
 
   useEffect(() => {
     let cancelled = false
@@ -119,133 +130,227 @@ export default function HistoryPage() {
     })
   }, [byType, q, countryById])
 
-  return (
-    <div>
-      <div className="mb-8 sm:mb-10">
-        <h1 className="mb-2 flex items-center gap-2 text-2xl font-black tracking-tight text-text sm:text-3xl lg:text-4xl">
-          <History className="h-8 w-8 shrink-0 text-primary" />
-          Historique d&apos;activité
-        </h1>
-        <p className="text-sm font-medium text-muted sm:text-base">
-          Événements enregistrés pour votre compte (consultation de fiches pays, etc.). Données limitées aux 200
-          entrées les plus récentes.
-        </p>
-      </div>
+  useEffect(() => {
+    setVisibleCount(PAGE_STEP)
+  }, [typeFilter, q])
 
-      <Card className="border-line bg-surface shadow-card">
-        <CardContent className="space-y-4 p-4 sm:p-6">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-            <div className="min-w-0 flex-1 space-y-2">
-              <label htmlFor="history-search" className="text-xs font-black uppercase tracking-widest text-muted">
-                Recherche
-              </label>
-              <Input
-                id="history-search"
-                type="search"
-                placeholder="Pays, type, date, contenu du payload…"
-                value={search}
-                onChange={(ev) => setSearch(ev.target.value)}
-                className="border-line bg-inset"
-                autoComplete="off"
-              />
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
-              <p className="text-sm font-bold text-text sm:pt-6">
-                {loading ? 'Chargement…' : `${filtered.length} événement${filtered.length > 1 ? 's' : ''}`}
-              </p>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-widest text-muted">Type</span>
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
-                  <SelectTrigger className="w-full border-line bg-inset sm:w-[220px]">
-                    <SelectValue placeholder="Tous" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__all__">Tous les types</SelectItem>
-                    {types.map((t) => (
-                      <SelectItem key={t} value={t}>
-                        {historyEventTypeLabelFr(t === '(vide)' ? '' : t)}
-                        {t && t !== '(vide)' ? ` (${t})` : ''}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+  const total = filtered.length
+  const shown = Math.min(visibleCount, total)
+  const visibleEvents = filtered.slice(0, shown)
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: SHELL }}>
+      <div className="mx-auto max-w-6xl px-5 pb-20 pt-8 sm:px-6 lg:px-8">
+        <header className="mb-10">
+          <span
+            className="inline-flex items-center rounded-md border bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.28em] text-[#0D1B3E]/65"
+            style={{ borderColor: INK_10 }}
+          >
+            Log System
+          </span>
+          <h1 className="mt-5 font-serif text-3xl font-black leading-[1.05] tracking-tight text-[#0D1B3E] sm:text-4xl md:text-[44px]">
+            Chronicle
+          </h1>
+          <p className="mt-4 max-w-2xl font-serif text-[15px] font-medium leading-relaxed text-[#0D1B3E]/65">
+            Mémoire de vos explorations et analyses (limite 200 entrées). Un historique immuable
+            des activités au sein du terminal.
+          </p>
+        </header>
+
+        <section
+          className="rounded-xl border bg-white"
+          style={{ borderColor: INK_10 }}
+          aria-label="Chronicle log"
+        >
+          <div className="flex flex-col gap-4 px-5 py-5 sm:px-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-3 lg:flex-1">
+              <div className="relative min-w-0 flex-1">
+                <Search
+                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#0D1B3E]/45"
+                  aria-hidden
+                />
+                <input
+                  id="history-search"
+                  type="search"
+                  placeholder="Pays, type, date…"
+                  value={search}
+                  onChange={(ev) => setSearch(ev.target.value)}
+                  autoComplete="off"
+                  aria-label="Recherche historique"
+                  className="h-11 w-full rounded-md border bg-[#FAF7EE] pl-9 pr-3 text-sm font-medium text-[#0D1B3E] outline-none placeholder:text-[#0D1B3E]/35 focus:border-[#0D1B3E] focus:ring-2 focus:ring-[#0D1B3E]/15"
+                  style={{ borderColor: INK_10 }}
+                />
               </div>
+              <select
+                aria-label="Filtrer par type"
+                className="h-11 rounded-md border bg-[#FAF7EE] px-3 text-sm font-medium text-[#0D1B3E] outline-none focus:border-[#0D1B3E] focus:ring-2 focus:ring-[#0D1B3E]/15 sm:min-w-[200px]"
+                style={{ borderColor: INK_10 }}
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+              >
+                <option value="__all__">Tous les types</option>
+                {types.map((t) => (
+                  <option key={t} value={t}>
+                    {historyEventTypeLabelFr(t === '(vide)' ? '' : t)}
+                    {t && t !== '(vide)' ? ` (${t})` : ''}
+                  </option>
+                ))}
+              </select>
             </div>
+            <p
+              className="text-[10px] font-black uppercase tracking-[0.24em] text-[#0D1B3E]/55"
+              aria-live="polite"
+            >
+              {loading
+                ? 'Chargement…'
+                : total === 0
+                  ? 'Affichage 0 sur 0'
+                  : `Affichage 1–${shown} sur ${total}`}
+            </p>
           </div>
 
           {loading ? (
-            <DashboardPageSkeleton variant="table" />
-          ) : filtered.length === 0 ? (
-            <div className="space-y-4 py-12">
-              <p className="text-center text-sm font-medium text-muted">
-                Aucun événement pour ce filtre. Les visites de fiches pays apparaissent après connexion sur une page
-                pays.
+            <div className="border-t px-5 py-8 sm:px-6" style={{ borderColor: INK_10 }}>
+              <DashboardPageSkeleton variant="table" />
+            </div>
+          ) : total === 0 ? (
+            <div
+              className="space-y-4 border-t px-5 py-14 text-center sm:px-6"
+              style={{ borderColor: INK_10 }}
+            >
+              <p className="font-serif text-base font-medium text-[#0D1B3E]/65">
+                Aucun événement pour ce filtre. Les visites de fiches pays apparaissent après
+                connexion sur une page pays.
               </p>
-              <div className="flex flex-col items-center justify-center gap-3 pb-8 sm:flex-row">
-                <ObjectiveAwareExplorerLink className="inline-flex rounded-xl border border-line bg-surface px-5 py-3 text-sm font-bold text-primary transition-colors hover:bg-primary-soft">
+              <div className="mt-2 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <ObjectiveAwareExplorerLink className="inline-flex items-center justify-center rounded-md border bg-white px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]">
                   Ouvrir l&apos;explorateur
                 </ObjectiveAwareExplorerLink>
                 <Link
                   href="/profile"
-                  className="inline-flex rounded-xl border border-line bg-inset px-5 py-3 text-sm font-bold text-text transition-colors hover:bg-primary-soft"
+                  className="inline-flex items-center justify-center rounded-md border bg-[#FAF7EE] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]"
+                  style={{ borderColor: INK_10 }}
                 >
                   Vérifier mon profil
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-line">
-              <table className="w-full min-w-[720px] text-left text-sm">
-                <thead className="border-b border-line bg-inset text-[10px] font-black uppercase tracking-widest text-muted">
-                  <tr>
-                    <th className="px-4 py-3">Date</th>
-                    <th className="px-4 py-3">Type</th>
-                    <th className="px-4 py-3">Pays</th>
-                    <th className="px-4 py-3">Détails</th>
-                    <th className="px-4 py-3">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.map((e) => {
-                    const pl = e.payload
-                    const countryHref = e.type === 'VIEW_COUNTRY' ? countryLinkFromPayload(pl) : null
-                    const cid = countryIdFromPayload(pl)
-                    const countryName =
-                      e.type === 'VIEW_COUNTRY' && cid != null ? countryById.get(cid) ?? `ID ${cid}` : '—'
-                    const typeFr = historyEventTypeLabelFr(e.type)
-                    return (
-                      <tr key={e.id} className="border-b border-line/80 last:border-0">
-                        <td className="whitespace-nowrap px-4 py-3 font-medium text-text">
-                          {new Date(e.createdAt).toLocaleString('fr-FR')}
-                        </td>
-                        <td className="px-4 py-3 font-bold text-text">
-                          <span title={e.type || undefined}>{typeFr}</span>
-                        </td>
-                        <td className="px-4 py-3 font-medium text-text">{countryName}</td>
-                        <td className="max-w-xs truncate px-4 py-3 font-mono text-xs text-muted" title={payloadPreview(pl)}>
-                          {payloadPreview(pl)}
-                        </td>
-                        <td className="px-4 py-3">
-                          {countryHref ? (
-                            <Link
-                              href={countryHref}
-                              className="font-bold text-primary underline-offset-2 hover:underline"
+            <>
+              <div className="overflow-x-auto border-t" style={{ borderColor: INK_10 }}>
+                <table className="w-full min-w-[820px] text-left text-sm">
+                  <thead
+                    className="border-b text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55"
+                    style={{ borderColor: INK_10, backgroundColor: INK_05 }}
+                  >
+                    <tr>
+                      <th className="px-5 py-3 font-black">Date &amp; heure</th>
+                      <th className="px-5 py-3 font-black">Type d&apos;activité</th>
+                      <th className="px-5 py-3 font-black">Cible / Pays</th>
+                      <th className="px-5 py-3 font-black">Détails (payload)</th>
+                      <th className="px-5 py-3 text-right font-black">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visibleEvents.map((e) => {
+                      const pl = e.payload
+                      const countryHref =
+                        e.type === 'VIEW_COUNTRY' ? countryLinkFromPayload(pl) : null
+                      const cid = countryIdFromPayload(pl)
+                      const countryName =
+                        e.type === 'VIEW_COUNTRY' && cid != null
+                          ? countryById.get(cid) ?? `ID ${cid}`
+                          : null
+                      const typeFr = historyEventTypeLabelFr(e.type)
+                      const Icon = iconForType(e.type)
+                      const payload = payloadPreview(pl)
+                      const isPayloadEmpty = payload === '—'
+                      return (
+                        <tr
+                          key={e.id}
+                          className="border-b last:border-0 transition-colors hover:bg-[#FAF7EE]/60"
+                          style={{ borderColor: INK_10 }}
+                        >
+                          <td className="whitespace-nowrap px-5 py-4 font-mono text-[12px] font-medium text-[#0D1B3E]/75">
+                            <time dateTime={e.createdAt}>
+                              {new Date(e.createdAt).toLocaleString('fr-FR')}
+                            </time>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span
+                              className="inline-flex items-center gap-2 font-medium text-[#0D1B3E]"
+                              title={e.type || undefined}
                             >
-                              Fiche pays
-                            </Link>
-                          ) : (
-                            <span className="text-muted">—</span>
-                          )}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+                              <span
+                                aria-hidden
+                                className="flex h-7 w-7 items-center justify-center rounded-full border bg-[#FAF7EE] text-[#0D1B3E]/65"
+                                style={{ borderColor: INK_10 }}
+                              >
+                                <Icon className="h-3.5 w-3.5" />
+                              </span>
+                              {typeFr}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4">
+                            {countryName ? (
+                              <span className="font-medium text-[#0D1B3E]">{countryName}</span>
+                            ) : (
+                              <span className="font-serif italic text-[#0D1B3E]/45">Global</span>
+                            )}
+                          </td>
+                          <td className="max-w-[260px] px-5 py-4">
+                            {isPayloadEmpty ? (
+                              <span className="text-[#0D1B3E]/35">—</span>
+                            ) : (
+                              <span
+                                className="inline-block max-w-full truncate rounded-md border bg-[#FAF7EE] px-2.5 py-1 font-mono text-[11px] text-[#0D1B3E]/75"
+                                style={{ borderColor: INK_10 }}
+                                title={payload}
+                              >
+                                {payload}
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            {countryHref ? (
+                              <Link
+                                href={countryHref}
+                                className="text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+                              >
+                                Fiche pays
+                              </Link>
+                            ) : (
+                              <span
+                                className="inline-flex items-center rounded-md border px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/45"
+                                style={{ borderColor: INK_10 }}
+                              >
+                                Log system
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {shown < total ? (
+                <div className="flex justify-center border-t px-5 py-5 sm:px-6" style={{ borderColor: INK_10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount((v) => v + PAGE_STEP)}
+                    className="inline-flex items-center justify-center rounded-md border bg-white px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]"
+                    style={{ borderColor: INK_10 }}
+                  >
+                    Charger plus d&apos;entrées
+                  </button>
+                </div>
+              ) : null}
+            </>
           )}
-        </CardContent>
-      </Card>
+        </section>
+      </div>
     </div>
   )
 }

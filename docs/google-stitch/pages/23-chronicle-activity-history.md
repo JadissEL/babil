@@ -104,4 +104,21 @@ Items comme **fiches archives** avec micro texture papier. Icônes événement m
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 23]
+Fichier repo : `docs/google-stitch/assets/page-23-chronicle-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Chronicle cream log table)** : shell **cream `#FAF7EE`** sur le main du dashboard. 
+- **Hero** : pill `LOG SYSTEM` (mono `tracking-[0.28em]`) + serif `Chronicle` + sous-titre `Mémoire de vos explorations et analyses (limite 200 entrées). Un historique immuable des activités au sein du terminal.`
+- **Filter row** : `Input` cream (`Search` icon préfixe), select navy `Tous les types`, et **compteur** `Affichage 1-N sur TOTAL` mono à droite.
+- **Tableau** carte blanche `border-[#0D1B3E]/10` :
+  - thead mono uppercase (`Date & heure / Type d'activité / Cible / Pays / Détails (payload) / Action`)
+  - tbody : 
+    - colonne **Date** `toLocaleString('fr-FR')` ;
+    - colonne **Type d'activité** : icône glyph (`MapPin` pour `VIEW_COUNTRY`, `Activity` pour `RUN_*`, `MessageSquare` pour `COMMENT*`, `FileText` fallback) + libellé FR ;
+    - colonne **Cible / Pays** : nom de pays résolu (ou `Global` en italique gris si aucun `countryId`) ;
+    - colonne **Détails (payload)** : pill cream `bg-[#FAF7EE]` mono `truncate` avec `title` complet ;
+    - colonne **Action** : lien navy `Fiche pays` si `VIEW_COUNTRY` + `countryId` résolu, sinon micro chip mono `LOG SYSTEM` neutre quand aucune action utilisateur n'est disponible.
+  - **Hover** ligne : fond `#FAF7EE`.
+- **Pagination locale** : `visibleCount` (50 initial), bouton outline navy `Charger plus d'entrées` qui ajoute +50 jusqu'à atteindre `filtered.length` ; disparaît quand tout est visible.
+- **Empty state filtré** restylé cream avec CTA `ObjectiveAwareExplorerLink` + lien `/profile`.
+
+Logique préservée : `GET /api/user/history?limit=200`, `GET /api/countries?light=1`, `historyEventTypeLabelFr`, filtres search + type, `payloadPreview`, `countryIdFromPayload`, `countryLinkFromPayload`. Seul le rendu est restylé.
