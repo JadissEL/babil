@@ -18,6 +18,7 @@ type Props = {
 export function BlockFeedback({ blockId, countryId, className = '' }: Props) {
   const { user } = useUser()
   const [value, setValue] = useState<'up' | 'down' | null>(null)
+  const [justVoted, setJustVoted] = useState(false)
 
   useEffect(() => {
     try {
@@ -31,6 +32,7 @@ export function BlockFeedback({ blockId, countryId, className = '' }: Props) {
   const persist = (helpful: boolean) => {
     const next = helpful ? 'up' : 'down'
     setValue(next)
+    setJustVoted(true)
     try {
       localStorage.setItem(storageKey(blockId, countryId), next)
     } catch {
@@ -44,7 +46,10 @@ export function BlockFeedback({ blockId, countryId, className = '' }: Props) {
           type: 'CONTENT_FEEDBACK',
           payload: {
             blockId,
-            countryId: countryId == null || countryId === '' ? null : Number(countryId) || String(countryId),
+            countryId:
+              countryId == null || countryId === ''
+                ? null
+                : Number(countryId) || String(countryId),
             helpful,
           },
         }),
@@ -58,12 +63,14 @@ export function BlockFeedback({ blockId, countryId, className = '' }: Props) {
       role="group"
       aria-label="Ce bloc vous est-il utile ?"
     >
-      <span className="mr-auto text-[10px] font-black uppercase tracking-widest text-muted">Utile ?</span>
+      <span className="mr-auto text-[10px] font-black uppercase tracking-widest text-muted">
+        Utile&nbsp;?
+      </span>
       <button
         type="button"
         aria-pressed={value === 'up'}
         onClick={() => persist(true)}
-        className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors ${
+        className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
           value === 'up'
             ? 'border-success/50 bg-[#e9f9f1] text-success'
             : 'border-line bg-inset text-muted hover:border-primary/30 hover:text-text'
@@ -76,7 +83,7 @@ export function BlockFeedback({ blockId, countryId, className = '' }: Props) {
         type="button"
         aria-pressed={value === 'down'}
         onClick={() => persist(false)}
-        className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors ${
+        className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-bg ${
           value === 'down'
             ? 'border-danger/45 bg-[#fff0f0] text-danger'
             : 'border-line bg-inset text-muted hover:border-primary/30 hover:text-text'
@@ -85,6 +92,13 @@ export function BlockFeedback({ blockId, countryId, className = '' }: Props) {
         <ThumbsDown className="h-3.5 w-3.5" aria-hidden />
         Non
       </button>
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {justVoted
+          ? value === 'up'
+            ? 'Vote enregistré — Oui, ce bloc est utile.'
+            : 'Vote enregistré — Non, ce bloc n’est pas utile.'
+          : ''}
+      </span>
     </div>
   )
 }

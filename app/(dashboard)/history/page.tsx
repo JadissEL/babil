@@ -6,6 +6,7 @@ import {
   MapPin,
   MessageSquare,
   Search,
+  ThumbsUp,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useMemo, useState, type ComponentType } from 'react'
@@ -51,6 +52,7 @@ function countryLinkFromPayload(payload: Record<string, unknown> | null): string
 function iconForType(type: string): ComponentType<{ className?: string }> {
   const t = (type || '').toUpperCase()
   if (t === 'VIEW_COUNTRY') return MapPin
+  if (t === 'CONTENT_FEEDBACK' || t.includes('FEEDBACK')) return ThumbsUp
   if (t.startsWith('RUN_') || t.includes('ENGINE') || t.includes('SCORE')) return Activity
   if (t.startsWith('COMMENT') || t.includes('FORUM')) return MessageSquare
   return FileText

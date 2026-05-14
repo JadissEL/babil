@@ -5,6 +5,7 @@ import { historyEventTypeLabelFr } from './history-event-labels'
 describe('historyEventTypeLabelFr', () => {
   it('maps known API types', () => {
     assert.equal(historyEventTypeLabelFr('VIEW_COUNTRY'), 'Consultation fiche pays')
+    assert.equal(historyEventTypeLabelFr('CONTENT_FEEDBACK'), 'Avis sur un bloc de contenu')
   })
 
   it('passes through unknown types', () => {

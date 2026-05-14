@@ -113,4 +113,26 @@ Ne **pas** transformer en étoiles ou emoji. Garder **pills fines** alignées à
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 37]
+Fichier repo : `docs/google-stitch/assets/page-37-relay-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Relay micro-feedback contract)** : `components/feedback/BlockFeedback.tsx` est le **seul** composant autorisé pour ce micro-pattern. Stitch §5.1 verrouille les tokens sémantiques — ils ne doivent pas être substitués.
+
+- **Container** : `flex flex-wrap items-center justify-end gap-2 border-t border-line pt-4 mt-4`, `role="group"` + `aria-label="Ce bloc vous est-il utile ?"` (Stitch §4 & §5.2).
+- **Label** : `Utile ?` (avec NBSP avant `?`), `text-[10px] font-black uppercase tracking-widest text-muted`, alignée gauche via `mr-auto` (Stitch §6).
+- **Pills** : `Oui` / `Non` `inline-flex rounded-xl border px-3 py-1.5 text-[10px] font-black uppercase tracking-wider`. Icônes `ThumbsUp` / `ThumbsDown` `h-3.5 w-3.5` `aria-hidden` (Stitch §12).
+- **États** (verrouillés Stitch §5.1) :
+  - Neutre → `border-line bg-inset text-muted hover:border-primary/30 hover:text-text`.
+  - Oui sélectionné → `border-success/50 bg-[#e9f9f1] text-success`.
+  - Non sélectionné → `border-danger/45 bg-[#fff0f0] text-danger`.
+- **Transitions** : `transition-colors duration-150 ease-out` explicite (Stitch §7 — pas de bounce, 150ms).
+- **Focus** : `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2 focus-visible:ring-offset-bg` pour parité avec les autres boutons primaires du système.
+- **A11y `aria-pressed`** : `true|false` selon l'état actif (Stitch §5.2).
+- **A11y `aria-live`** : zone `sr-only` polite atomic annonce le vote enregistré ("Vote enregistré — Oui, ce bloc est utile." / "… — Non, ce bloc n'est pas utile.") sans pollution visuelle (Stitch §9 — annonce optionnelle implémentée).
+- **Persistance locale** : clé `babil:content-feedback:v1:{blockId}:{countryId|na}` (Stitch §5.3). `localStorage` indisponible → silent fallback session-only.
+- **Persistance serveur** (utilisateur connecté Clerk) : `POST /api/user/history` `{ type: 'CONTENT_FEEDBACK', payload: { blockId, countryId, helpful } }`, silencieux (`.catch(() => {})` — Stitch §5.4).
+- **Cohérence PAGE 23 (Chronicle)** : 
+  - `lib/history-event-labels.ts` mappe désormais `CONTENT_FEEDBACK` → `'Avis sur un bloc de contenu'`.
+  - `app/(dashboard)/history/page.tsx` rend l'icône `ThumbsUp` pour la ligne `CONTENT_FEEDBACK` via `iconForType`.
+  - Test unitaire `lib/history-event-labels.test.ts` couvre le nouveau libellé.
+- **Cohérence PAGE 27 (Design system)** : la specimen `BlockFeedback` du ledger continue de rendre le composant en l'état (parité QA).
+- **Anti-patterns documentés** : pas d'étoiles, pas d'emoji, pas de pop-up agressif après "Non", pas de toast obligatoire (Stitch §12 + §3).
