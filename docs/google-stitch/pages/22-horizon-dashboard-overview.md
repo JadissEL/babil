@@ -109,4 +109,16 @@ Créer **bento dashboard** asymétrique premium : widget “Prochaine étape” 
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 22]
+Fichier repo : `docs/google-stitch/assets/page-22-horizon-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Horizon Dashboard cream)** : refactor **chirurgical** de `OverviewPageClient.tsx`. Tous les composants riches restent **intacts** (`MyDelegatedRequests`, `PostSignupOnboarding`, `ObjectivePreferencePanel`, `RecentlyViewedCountries`) — seul le shell + headers + tuiles statiques sont restylés en banking cream.
+- **Hero** : eyebrow mono `Horizon Dashboard` + serif `Bonjour, {firstName}.` à gauche ; bloc `Dernière synchronisation` (`Aujourd'hui, HH:MM`) à droite.
+- **`MyDelegatedRequests`** intact (gère sa propre liste / empty state).
+- **Stats strip** (`Score moyen` / `Pays analysés` / `Alertes actives` / `Note utilisateur`) : 4 tuiles cream **sans** pastilles colorées géantes — eyebrow mono + chiffre serif + chevron `↗` succès / dot rouge alertes / `/5` rating.
+- **`ObjectivePreferencePanel`** + **`PostSignupOnboarding`** rendus dans des cards cream avec eyebrows `Parcours initial` + `Préférence objectif` au-dessus.
+- **`RecentlyViewedCountries`** intact sous eyebrow `Récemment consulté`.
+- **Grid 2/3 + 1/3** : 
+  - Gauche : `Outils mobilité` — eyebrow + serif title, grille 2-col responsive de `ModuleTile` banking (icône carrée minimale, status pill `Prêt / Nouveau / Bientôt / Mise à jour`, titre serif, description, `ChevronRight Accéder` link), tous les 9 modules réels préservés (probabilités, reco pro, compare, recommandations, friction map, permis, assist, éducation, business).
+  - Droite : `Flash OSINT` — carte cream élevée, intro italique, 3 entrées (Espagne BLS / France TLS / Italie) avec eyebrow tracking-uppercase coloré ton signal + titre serif + texte, CTA bouton outline `Ouvrir l'Explorer ↗` vers `explorerHref` (toujours dérivé de `useObjectivePreference`).
+
+Logique inchangée : `useUser()` (Clerk), `useObjectivePreference()`, `ctaExploreHref` / `ctaCompareHref` (lien Compare / Friction Map dynamiques), pas de fetch ajouté. Stats restent statiques (placeholder produit signalé en spec §5.6) — Stitch ne change pas la stratégie données.
