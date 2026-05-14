@@ -109,4 +109,20 @@ Page **atelier de laboratoire** : fond blanc cassé avec grille ; chaque composa
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 27]
+Fichier repo : `docs/google-stitch/assets/page-27-ledger-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Ledger typography specimen + atelier laboratoire)** : page client `/design-system` réécrite en **2 colonnes** `lg:grid-cols-[240px_1fr]` sur shell cream `#FAF7EE`.
+
+- **Rail gauche** (sticky, white) : header serif `VisaFlow` + mono `LEDGER SYSTEM`, puis 3 groupes typographiquement séparés par eyebrows mono `PRIMITIVES` / `LAYOUT` / `PATTERNS`. Chaque entrée = icône lucide + label ; l'entrée active prend pill gris pâle `bg-[#0D1B3E]/06` + texte navy + indicateur scroll-spy. Footer rail : mono `v2.4.1 — Stable`.
+- **Top bar canvas** : breadcrumb mono `Citadel › Ledger` (lien `/admin`) à gauche, bouton outline `Theme` (moon icon) à droite — wired sur le composant `ThemeCursorToggle` existant côté layout (la page se contente d'un placeholder visuel ; toggle réel via header global).
+- **Canvas** : fond gridé technique 8px (`background-image` lignes 1px `#0D1B3E/06`) + 6 sections ancrées :
+  - `Actions` → `<BUTTON>` specimen : sous-blocs `Primary` (Small / Default / Large / Processing avec spinner), `Outline & Ghost`, `Destructive` (Delete Record rouge filled, Archive rouge outlined).
+  - `Forms` → `<INPUT>` + `<SELECT>` specimens avec états (`default`, `aria-invalid`, `disabled`).
+  - `Surfaces` → `<CARD>` + `<BADGE>` + `<PROGRESS>` (4 valeurs, avec valeur textuelle à côté).
+  - `Navigation` → `<FILTERBAR>` specimen (FilterBar live rendering avec goal/region state).
+  - `Feedback` → `<BLOCKFEEDBACK>` specimen (instance localStorage démo).
+  - `Country Surfaces` → `<COUNTRYCARD>` + `<OFFICIALSOURCESCARD>` + `<EXPLORERREGIONSCORESTRIP>`.
+- Chaque specimen card : **étiquette technique** chip gris `<TAG>` en mono uppercase tracking-`0.22em`, fond blanc, border `#0D1B3E/10`, titre section serif navy + courte description italique.
+- **Scroll-spy** simple basé sur `IntersectionObserver` pour highlighter l'entrée du rail correspondante.
+
+Comportement préservé : tous les composants instanciés sont des **vraies instances produit** (`Button`, `Badge`, `Card`, `Progress`, `Input`, `Select`, `FilterBar`, `CountryCard`, `OfficialSourcesCard`, `ExplorerRegionScoreStrip`, `BlockFeedback`) — la page reste un sandbox vivant non-stockée hors prod (`/design-system` route logged-in).
