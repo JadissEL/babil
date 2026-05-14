@@ -1,13 +1,30 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import { AppToaster } from '@/components/AppToaster';
 import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteObjectiveDock } from '@/components/layout/SiteObjectiveDock';
 import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
 
+const STANDALONE_PATH_PREFIXES = ['/sign-in', '/sign-up'];
+
 export function SiteChrome({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const { mobileOpen, setMobileOpen, closeMobile } = useSitePrimaryNavState();
+
+  const isStandalone = STANDALONE_PATH_PREFIXES.some((prefix) =>
+    pathname?.startsWith(prefix),
+  );
+
+  if (isStandalone) {
+    return (
+      <div className="flex min-h-screen flex-1 flex-col">
+        <AppToaster />
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">

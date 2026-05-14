@@ -103,4 +103,17 @@ Arrière-plan **depth blur** fort avec **silhouette carte monde** très fade. Ca
 ## 13. Screenshot Placeholder
 
 ### Stitch Screenshot Reference
-[PASTE SCREENSHOT HERE — PAGE 33]
+Fichier repo : `docs/google-stitch/assets/page-33-keyhole-stitch-reference.png`
+
+**Architecture livrée (Stitch v1 — Keyhole co-branding VisaFlow ⨯ Clerk)** :
+
+- **Theming Clerk centralisé** : `ClerkProvider` dans `app/layout.tsx` reçoit un objet `appearance` (variables `colorPrimary`, `colorText`, `colorBackground`, `colorInputBackground`, `colorTextSecondary`, `borderRadius` `0.5rem`, `fontFamily` Inter) + element overrides (`card` transparent border-less puisque wrappé, `formButtonPrimary` navy uppercase tracking, `formFieldInput` cream, `footerActionLink` navy underline). **Tous** les surfaces Clerk (modal `SignInButton mode="modal"`, modal `SignUpButton`, pages `<SignIn />`/`<SignUp />`, `UserButton`) héritent automatiquement de cette identité.
+- **Routes locales dédiées** créées (Stitch §1 « toutes surfaces d'identité ») :
+  - `app/sign-in/[[...sign-in]]/page.tsx` — wrapping centré cream `#FAF7EE` autour de `<SignIn />` Clerk avec wordmark serif `VisaFlow` + caption mono `POWERED BY CLERK` + microcopy chaleureuse `Sauvegardez vos scénarios en un compte.` (Stitch §12).
+  - `app/sign-up/[[...sign-up]]/page.tsx` — symétrique avec microcopy `Créez votre compte VisaFlow.` autour de `<SignUp />`.
+  - Routes catch-all `[[...sign-in]]` requises par Clerk pour gérer les sous-étapes (verification email, MFA, reset password).
+  - `metadata` SEO et `noindex` (`robots: { index: false, follow: false }`) sur ces routes (auth surfaces ne doivent pas être indexées).
+- **`SiteChrome` mis à jour** (`usePathname`) : si la route commence par `/sign-in` ou `/sign-up`, **bypass complet** du header, footer, sidebar et dock objectif — la page d'auth occupe l'écran entier en standalone (Stitch §4 « overlay full viewport »). Toaster conservé.
+- **Background** : radial gradient subtil (« silhouette carte monde très fade » Stitch §12) + glassmorphism léger sur la carte Clerk wrapper via `bg-white/85 backdrop-blur` autour du composant Clerk lui-même.
+- **`.env.example`** mis à jour pour activer les URLs Clerk : `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in`, `NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up`, `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/overview`, `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/overview` (décommentés, valeurs par défaut). Le modal Clerk `SignInButton mode="modal"` reste **inchangé** comme chemin par défaut depuis le header — les routes hébergées servent en fallback (SSO callback, reset password, deep link).
+- **Sécurité UX** : focus trap / ESC Clerk natifs préservés (pas d'`z-index` custom qui les casse). Microcopy autour reste hors carte Clerk pour éviter shift de layout.
