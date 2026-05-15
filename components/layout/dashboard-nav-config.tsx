@@ -30,6 +30,8 @@ export type DashboardNavItem = {
   href: string
   icon: ComponentType<LucideProps>
   match?: 'exact' | 'prefix'
+  /** When true, link is shown only if `getAdminUser` / Prisma role ADMIN. */
+  requiresAdmin?: boolean
 }
 
 export const dashboardNav: DashboardNavItem[] = [
@@ -46,8 +48,8 @@ export const dashboardNav: DashboardNavItem[] = [
     icon: FileStack,
     match: 'prefix',
   },
-  { label: 'Administration', href: '/admin', icon: Shield },
-  { label: 'Design system', href: '/design-system', icon: SwatchBook },
+  { label: 'Administration', href: '/admin', icon: Shield, requiresAdmin: true },
+  { label: 'Design system', href: '/design-system', icon: SwatchBook, requiresAdmin: true },
 ]
 
 export const explorerNav: DashboardNavItem[] = [
@@ -64,9 +66,15 @@ export const explorerNav: DashboardNavItem[] = [
     href: '/intelligence-fieldpaths',
     icon: Sparkles,
     match: 'prefix',
+    requiresAdmin: true,
   },
-  { label: 'Modération', href: '/moderation', icon: MessageSquare },
+  { label: 'Modération', href: '/moderation', icon: MessageSquare, requiresAdmin: true },
 ]
+
+export function filterNavItemsByRole(items: DashboardNavItem[], isAdmin: boolean): DashboardNavItem[] {
+  if (isAdmin) return items
+  return items.filter((item) => !item.requiresAdmin)
+}
 
 export function normalizeDashboardPath(p: string) {
   if (p.length > 1 && p.endsWith('/')) return p.slice(0, -1)

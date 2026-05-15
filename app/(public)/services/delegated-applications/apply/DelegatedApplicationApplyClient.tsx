@@ -21,7 +21,13 @@ import {
   formatPriceMad,
   type DelegatedCategory,
 } from '@/lib/delegated-application-catalog';
+import {
+  NEXUS_FOCUS_VISIBLE,
+  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+  NEXUS_TRANSITION,
+} from '@/lib/nexus-chrome';
 import { appToast } from '@/lib/toast-store';
+import { cn } from '@/lib/utils';
 
 const SHELL = '#FAF7EE';
 const NAVY = '#0D1B3E';
@@ -297,7 +303,11 @@ export default function DelegatedApplicationApplyClient() {
           </p>
           <Link
             href="/services/delegated-applications"
-            className="mt-8 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+            className={cn(
+              'mt-8 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]',
+              NEXUS_TRANSITION,
+              NEXUS_FOCUS_VISIBLE,
+            )}
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Retour aux forfaits
           </Link>
@@ -312,7 +322,11 @@ export default function DelegatedApplicationApplyClient() {
         <div className="mx-auto max-w-2xl px-6 py-16 sm:px-8">
           <Link
             href={`/services/delegated-applications${catalogQueryReturn}`}
-            className="mb-8 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65 transition-colors hover:text-[#0D1B3E]"
+            className={cn(
+              'mb-8 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65 hover:text-[#0D1B3E]',
+              NEXUS_TRANSITION,
+              NEXUS_FOCUS_VISIBLE,
+            )}
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Retour au catalogue
           </Link>
@@ -357,7 +371,11 @@ export default function DelegatedApplicationApplyClient() {
               />
               <Link
                 href="/services/delegated-applications#assist-garantie"
-                className="mt-3 inline-block text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+                className={cn(
+                  'mt-3 inline-block text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE,
+                )}
               >
                 Lire le texte complet →
               </Link>
@@ -366,13 +384,21 @@ export default function DelegatedApplicationApplyClient() {
             <div className="mt-8 flex flex-wrap justify-center gap-3">
               <Link
                 href="/overview#assist-requests"
-                className="rounded-md bg-[#0D1B3E] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#1A2A52]"
+                className={cn(
+                  'rounded-md bg-[#0D1B3E] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-white hover:bg-[#1A2A52]',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+                )}
               >
                 Voir mes demandes
               </Link>
               <Link
                 href={`/services/delegated-applications${catalogQueryReturn}`}
-                className="rounded-md border border-[#0D1B3E]/15 bg-white px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]"
+                className={cn(
+                  'rounded-md border border-[#0D1B3E]/15 bg-white px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] hover:border-[#0D1B3E]',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE,
+                )}
               >
                 Autre forfait
               </Link>
@@ -388,7 +414,11 @@ export default function DelegatedApplicationApplyClient() {
       <div className="mx-auto max-w-6xl px-5 pb-20 pt-10 sm:px-6 lg:px-8">
         <Link
           href={`/services/delegated-applications${catalogQueryReturn}`}
-          className="mb-6 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65 transition-colors hover:text-[#0D1B3E]"
+          className={cn(
+            'mb-6 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65 hover:text-[#0D1B3E]',
+            NEXUS_TRANSITION,
+            NEXUS_FOCUS_VISIBLE,
+          )}
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Retour au catalogue
         </Link>
@@ -613,7 +643,7 @@ export default function DelegatedApplicationApplyClient() {
             >
               <input
                 type="checkbox"
-                className="mt-1 h-4 w-4 rounded border-[#0D1B3E]/30 text-[#0D1B3E] focus:ring-[#0D1B3E]/40"
+                className="mt-1 h-4 w-4 rounded border-[#0D1B3E]/30 text-[#0D1B3E] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                 checked={guaranteeAck}
                 onChange={(e) => setGuaranteeAck(e.target.checked)}
                 required
@@ -625,7 +655,11 @@ export default function DelegatedApplicationApplyClient() {
                 l&apos;absence de résultats éligibles dans le cadre contractuel).{' '}
                 <Link
                   href="/services/delegated-applications#assist-garantie"
-                  className="font-black text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-2 hover:decoration-[#0D1B3E]"
+                  className={cn(
+                    'font-black text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-2 hover:decoration-[#0D1B3E]',
+                    NEXUS_TRANSITION,
+                    NEXUS_FOCUS_VISIBLE,
+                  )}
                 >
                   Voir le texte complet
                 </Link>
@@ -646,14 +680,22 @@ export default function DelegatedApplicationApplyClient() {
               <button
                 type="button"
                 onClick={() => router.push(`/services/delegated-applications${catalogQueryReturn}`)}
-                className="text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55 transition-colors hover:text-[#0D1B3E]"
+                className={cn(
+                  'text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55 hover:text-[#0D1B3E]',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE,
+                )}
               >
                 Changer de forfait
               </button>
               <button
                 type="submit"
                 disabled={submitting || !guaranteeAck}
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-[#0D1B3E] px-6 py-3.5 text-[11px] font-black uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#1A2A52] disabled:cursor-not-allowed disabled:opacity-50"
+                className={cn(
+                  'inline-flex items-center justify-center gap-2 rounded-md bg-[#0D1B3E] px-6 py-3.5 text-[11px] font-black uppercase tracking-[0.22em] text-white hover:bg-[#1A2A52] disabled:cursor-not-allowed disabled:opacity-50',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+                )}
               >
                 {submitting ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
                 Soumettre le dossier

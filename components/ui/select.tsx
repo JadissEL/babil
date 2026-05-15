@@ -2,6 +2,7 @@
 
 import { ChevronDown } from 'lucide-react'
 import * as React from 'react'
+import { NEXUS_TRANSITION } from '@/lib/nexus-chrome'
 import { cn } from '@/lib/utils'
 
 type SelectCtx = {
@@ -100,7 +101,8 @@ export function SelectTrigger({
       aria-haspopup="listbox"
       aria-expanded={ctx.open}
       className={cn(
-        'flex h-10 items-center justify-between gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-left text-sm text-text transition-colors hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40',
+        'flex h-10 items-center justify-between gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-left text-sm text-text hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
+        NEXUS_TRANSITION,
         className,
       )}
       onClick={() => ctx.setOpen(!ctx.open)}
@@ -171,7 +173,7 @@ export function SelectItem({
       role="option"
       aria-selected={ctx.value === value}
       className={cn(
-        'relative flex w-full cursor-pointer select-none rounded-lg px-2.5 py-1.5 text-left text-sm text-text outline-none hover:bg-primary-soft data-[highlighted=true]:bg-primary-soft',
+        'relative flex w-full cursor-pointer select-none rounded-lg px-2.5 py-1.5 text-left text-sm text-text outline-none hover:bg-primary-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 data-[highlighted=true]:bg-primary-soft',
         ctx.value === value && 'bg-primary-soft text-primary',
       )}
       data-highlighted={ctx.value === value}

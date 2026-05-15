@@ -31,6 +31,7 @@ import {
   parseExplorerRegionFilter,
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
+import { NEXUS_FOCUS_VISIBLE, NEXUS_TRANSITION } from '@/lib/nexus-chrome'
 import { appToast } from '@/lib/toast-store'
 import { userObjectiveSlugToCompareObjectiveId } from '@/lib/user-objectives/compare-bridge'
 import { cn } from '@/lib/utils'
@@ -382,7 +383,11 @@ export function CompareExperience() {
                   setCategoryId(cat.id)
                   setStep('objective')
                 }}
-                className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-4 text-left shadow-md transition-all hover:border-[#0D1B3E]/25 hover:bg-[#FDFBF4] sm:p-5"
+                className={cn(
+                  'rounded-2xl border border-[#0D1B3E]/10 bg-white p-4 text-left shadow-md hover:border-[#0D1B3E]/25 hover:bg-[#FDFBF4] sm:p-5',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE,
+                )}
               >
                 <span className="text-base font-black text-[#0D1B3E] sm:text-lg">{cat.label}</span>
                 <p className="mt-2 text-sm font-medium text-[#0D1B3E]/65">{cat.description}</p>
@@ -410,7 +415,9 @@ export function CompareExperience() {
                 type="button"
                 onClick={() => commitObjective(o.id)}
                 className={cn(
-                  'rounded-2xl border border-[#0D1B3E]/10 bg-white p-4 text-left shadow-md transition-all hover:border-[#0D1B3E]/25 sm:p-5',
+                  'rounded-2xl border border-[#0D1B3E]/10 bg-white p-4 text-left shadow-md hover:border-[#0D1B3E]/25 sm:p-5',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE,
                   objective.id === o.id && 'ring-2 ring-[#0D1B3E]',
                 )}
               >

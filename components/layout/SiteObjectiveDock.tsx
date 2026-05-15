@@ -31,13 +31,15 @@ function usePublishObjectiveDockHeight(ref: RefObject<HTMLElement | null>) {
 
 type ObjectiveDockInlineProps = {
   className?: string;
+  /** Nexus header: align with h-10 toolbar row (compactHeader picker only). */
+  toolbarRhythm?: boolean;
 };
 
 /**
  * Sélecteur d’objectif **inline** dans la barre d’en-tête (près du logo) : pilule compacte,
  * sans barre fixe plein écran — ne recouvre plus le pied de page.
  */
-export function ObjectiveDockInline({ className }: ObjectiveDockInlineProps) {
+export function ObjectiveDockInline({ className, toolbarRhythm }: ObjectiveDockInlineProps) {
   const ref = useRef<HTMLElement>(null);
   usePublishObjectiveDockHeight(ref);
 
@@ -47,10 +49,11 @@ export function ObjectiveDockInline({ className }: ObjectiveDockInlineProps) {
       aria-label="Objectif principal"
       className={cn(
         'shrink-0 rounded-xl border border-line bg-[#fdf8ef]/95 py-1 pl-1.5 pr-1.5 shadow-sm backdrop-blur-sm',
+        toolbarRhythm && 'flex h-10 items-stretch rounded-lg py-0 pl-1 pr-1',
         className,
       )}
     >
-      <DockObjectivePicker variant="compactHeader" />
+      <DockObjectivePicker variant="compactHeader" toolbarRhythm={toolbarRhythm} />
     </section>
   );
 }

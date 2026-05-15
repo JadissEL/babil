@@ -3,6 +3,8 @@ import { ComparePrismTable } from '@/components/compare/ComparePrismTable'
 import type { CompareRow } from '@/lib/compare-rows'
 import { CTA_COMPARE_TOURISM_HREF, CTA_EXPLORE_HREF } from '@/lib/cta-hrefs'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
+import { NEXUS_FOCUS_VISIBLE, NEXUS_FOCUS_VISIBLE_ON_INK_SOLID, NEXUS_TRANSITION } from '@/lib/nexus-chrome'
+import { SITE_FOCUS_VISIBLE_ON_PRIMARY, SITE_FOCUS_VISIBLE_SOFT } from '@/lib/site-chrome-tokens'
 import { cn } from '@/lib/utils'
 
 export type CompareTableProps = {
@@ -58,7 +60,11 @@ function CompareMobileCards({ rows, winnerId }: Pick<CompareTableProps, 'rows' |
                     {k.key === 'phd' && k.value === 'Oui' ? (
                       <Link
                         href={`/countries/${c.id}`}
-                        className="font-black text-primary underline decoration-primary/30 underline-offset-2"
+                        className={cn(
+                          'font-black text-primary underline decoration-primary/30 underline-offset-2',
+                          NEXUS_TRANSITION,
+                          NEXUS_FOCUS_VISIBLE,
+                        )}
                       >
                         Voir fiche
                       </Link>
@@ -98,25 +104,33 @@ export function CompareTable({
       ? 'rounded-2xl border border-dashed border-[#0D1B3E]/25 bg-white/60 p-8 text-center text-[#0D1B3E]/75 sm:p-12'
       : 'rounded-2xl border border-dashed border-line bg-inset p-8 text-center text-muted sm:p-12'
 
-  const emptyPrimaryBtn =
-    variant === 'prism'
-      ? 'inline-flex justify-center rounded-xl bg-[#0D1B3E] px-6 py-3 text-sm font-black text-white shadow-md transition-colors hover:bg-[#0D1B3E]/90'
-      : 'inline-flex justify-center rounded-xl bg-primary px-6 py-3 text-sm font-black text-white shadow-soft transition-colors hover:bg-primary-hover'
-
-  const emptySecondaryBtn =
-    variant === 'prism'
-      ? 'inline-flex justify-center rounded-xl border-2 border-[#0D1B3E] bg-white px-6 py-3 text-sm font-black text-[#0D1B3E] transition-colors hover:bg-[#FDFBF4]'
-      : 'inline-flex justify-center rounded-xl border border-line bg-surface px-6 py-3 text-sm font-black text-text transition-colors hover:bg-primary-soft'
-
   if (rows.length === 0) {
     return (
       <div className={emptyShell}>
         <p className="mb-6 font-medium">Sélectionnez au moins un pays pour afficher le tableau.</p>
         <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
-          <Link href={emptyExploreHref} className={emptyPrimaryBtn}>
+          <Link
+            href={emptyExploreHref}
+            className={cn(
+              variant === 'prism'
+                ? 'inline-flex justify-center rounded-xl bg-[#0D1B3E] px-6 py-3 text-sm font-black text-white shadow-md hover:bg-[#0D1B3E]/90'
+                : 'inline-flex justify-center rounded-xl bg-primary px-6 py-3 text-sm font-black text-white shadow-soft hover:bg-primary-hover',
+              NEXUS_TRANSITION,
+              variant === 'prism' ? NEXUS_FOCUS_VISIBLE_ON_INK_SOLID : SITE_FOCUS_VISIBLE_ON_PRIMARY,
+            )}
+          >
             Choisir dans l&apos;explorateur
           </Link>
-          <Link href={emptyCompareHref} className={emptySecondaryBtn}>
+          <Link
+            href={emptyCompareHref}
+            className={cn(
+              variant === 'prism'
+                ? 'inline-flex justify-center rounded-xl border-2 border-[#0D1B3E] bg-white px-6 py-3 text-sm font-black text-[#0D1B3E] hover:bg-[#FDFBF4]'
+                : 'inline-flex justify-center rounded-xl border border-line bg-surface px-6 py-3 text-sm font-black text-text hover:bg-primary-soft',
+              NEXUS_TRANSITION,
+              variant === 'prism' ? NEXUS_FOCUS_VISIBLE : SITE_FOCUS_VISIBLE_SOFT,
+            )}
+          >
             Exemple : ouvrir le comparateur
           </Link>
         </div>
@@ -200,7 +214,11 @@ export function CompareTable({
                       {k.key === 'phd' && k.value === 'Oui' ? (
                         <Link
                           href={`/countries/${c.id}`}
-                          className="font-black text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary-hover"
+                          className={cn(
+                            'font-black text-primary underline decoration-primary/30 underline-offset-2 hover:text-primary-hover',
+                            NEXUS_TRANSITION,
+                            NEXUS_FOCUS_VISIBLE,
+                          )}
                           title="Fiche pays — bloc doctorat"
                         >
                           Oui

@@ -9,10 +9,19 @@ import { getDashboardNavTitle } from '@/components/layout/dashboard-nav-config'
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
 import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock'
 import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch'
+import {
+  isNexusReadingWidthPath,
+  NEXUS_BORDER,
+  NEXUS_FOCUS_VISIBLE,
+  NEXUS_READING_INNER_CLASS,
+  NEXUS_TOOLBAR_H_CLASS,
+  NEXUS_TOOLBAR_ICON_W_CLASS,
+  NEXUS_TRANSITION,
+  NEXUS_TRANSITION_UNDERLINE,
+  NEXUS_TW,
+} from '@/lib/nexus-chrome'
 import { appToast } from '@/lib/toast-store'
 import { cn } from '@/lib/utils'
-
-const INK_10 = 'rgba(13,27,62,0.10)'
 
 function TopNavLink({
   href,
@@ -27,13 +36,23 @@ function TopNavLink({
     <Link
       href={href}
       className={cn(
-        'rounded-md px-2 py-1 text-[13px] transition-colors',
-        active
-          ? 'font-semibold text-[#0D1B3E]'
-          : 'font-medium text-[#0D1B3E]/65 hover:text-[#0D1B3E]',
+        'group relative rounded-md px-2 py-1.5 text-[13px] motion-reduce:transition-none',
+        NEXUS_TRANSITION,
+        NEXUS_FOCUS_VISIBLE,
+        active ? cn('font-semibold', NEXUS_TW.ink) : cn('font-medium', NEXUS_TW.ink65, 'hover:text-[#0D1B3E]'),
       )}
     >
-      {children}
+      <span className="relative z-10">{children}</span>
+      <span
+        className={cn(
+          'pointer-events-none absolute bottom-0 left-2 right-2 h-0.5 origin-left rounded-full',
+          NEXUS_TRANSITION_UNDERLINE,
+          active
+            ? cn('scale-x-100', NEXUS_TW.underlineActive)
+            : cn('scale-x-0', NEXUS_TW.underlineMuted, 'group-hover:scale-x-100'),
+        )}
+        aria-hidden
+      />
     </Link>
   )
 }
@@ -54,72 +73,117 @@ function DashboardTopBar({
 
   return (
     <header
-      className="sticky top-0 z-40 flex min-h-16 shrink-0 flex-wrap items-center gap-2 gap-y-2 border-b bg-[#FAF7EE]/95 px-4 py-2 backdrop-blur-md sm:gap-3 sm:px-6"
-      style={{ borderColor: INK_10 }}
+      className={cn(
+        'relative sticky top-0 z-40 shrink-0 border-b before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:z-10 before:h-px',
+        NEXUS_TW.headerBg,
+        NEXUS_TW.headerHairline,
+      )}
+      style={{ borderColor: NEXUS_BORDER }}
     >
-      <button
-        type="button"
-        onClick={onMenuOpen}
-        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-[#0D1B3E]/65 transition-colors hover:bg-[#0D1B3E]/[0.04] hover:text-[#0D1B3E]"
-        style={{ borderColor: INK_10 }}
-        aria-expanded={menuOpen}
-        aria-controls="dashboard-workspace-nav"
-        aria-haspopup="dialog"
-        aria-label="Ouvrir le menu Mobility Intel (workspace)"
-      >
-        <Menu className="h-5 w-5" />
-      </button>
+      <div className="flex min-h-14 w-full flex-wrap items-center gap-x-2 gap-y-2 px-4 py-2 sm:px-6 lg:flex-nowrap lg:items-center lg:gap-6 lg:py-2.5">
+        {/* Left: menu + eyebrow / serif title */}
+        <div className="flex min-w-0 flex-1 items-center gap-3 lg:max-w-[min(38vw,22rem)] lg:flex-none">
+          <button
+            type="button"
+            onClick={onMenuOpen}
+            className={cn(
+              NEXUS_TOOLBAR_H_CLASS,
+              NEXUS_TOOLBAR_ICON_W_CLASS,
+              NEXUS_TRANSITION,
+              NEXUS_FOCUS_VISIBLE,
+              'inline-flex shrink-0 items-center justify-center rounded-lg border',
+              NEXUS_TW.ink65,
+              NEXUS_TW.hoverSurface,
+              NEXUS_TW.ink,
+            )}
+            style={{ borderColor: NEXUS_BORDER }}
+            aria-expanded={menuOpen}
+            aria-controls="dashboard-workspace-nav"
+            aria-haspopup="dialog"
+            aria-label="Ouvrir le menu Mobility Intel (workspace)"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <div className="min-w-0 flex-1">
+            <span
+              className={cn(
+                'mb-0.5 hidden font-mono text-[9px] font-black uppercase tracking-[0.26em] lg:block',
+                NEXUS_TW.ink45,
+              )}
+            >
+              Espace connecté
+            </span>
+            <h1 className={cn('truncate font-serif text-sm font-semibold sm:text-base', NEXUS_TW.ink)}>
+              {title}
+            </h1>
+          </div>
+        </div>
 
-      <span className="hidden font-mono text-[11px] font-black uppercase tracking-[0.28em] text-[#0D1B3E] lg:inline">
-        Espace connecté
-      </span>
-
-      <h1 className="min-w-0 flex-1 truncate font-serif text-base font-semibold text-[#0D1B3E] sm:max-w-[40%] lg:max-w-[min(22rem,40vw)]">
-        {title}
-      </h1>
-
-      <nav
-        aria-label="Navigation secondaire"
-        className="order-4 hidden w-full items-center gap-2 lg:order-none lg:ml-8 lg:flex lg:w-auto"
-      >
-        <TopNavLink href="/explorer" active={onExplorerActive}>
-          Tendances mondiales
-        </TopNavLink>
-        <TopNavLink href="/community" active={onCommunityActive}>
-          Mises à jour de politique
-        </TopNavLink>
-      </nav>
-
-      <div className="order-2 flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2 lg:order-none lg:gap-3">
-        <ObjectiveDockInline className="hidden min-w-0 max-w-none border-[rgba(13,27,62,0.12)] bg-white/90 lg:inline-flex lg:max-w-[13.5rem]" />
-        <GlobalCountrySearch />
-      </div>
-
-      <div className="order-3 ml-auto flex shrink-0 items-center gap-2 sm:gap-3 lg:order-none lg:ml-0">
-        <Link
-          href="/profile"
-          className="hidden items-center gap-2 rounded-lg border bg-white px-3 py-2 text-[12px] font-semibold text-[#0D1B3E] transition-colors hover:bg-[#0D1B3E]/[0.04] sm:inline-flex"
-          style={{ borderColor: INK_10 }}
+        {/* Center: secondary nav (desktop) */}
+        <nav
+          aria-label="Navigation secondaire"
+          className="order-3 hidden w-full justify-center gap-4 lg:order-none lg:flex lg:w-auto lg:flex-1 lg:px-2"
         >
-          <Download className="h-3.5 w-3.5" aria-hidden />
-          Export Data
-        </Link>
-        <button
-          type="button"
-          onClick={() => appToast.info('Aucune notification pour l’instant.')}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full text-[#0D1B3E]/65 transition-colors hover:bg-[#0D1B3E]/[0.06] hover:text-[#0D1B3E]"
-          aria-label="Notifications"
-        >
-          <Bell className="h-4 w-4" />
-        </button>
-        <UserButton
-          afterSignOutUrl="/sign-in"
-          appearance={{
-            elements: {
-              avatarBox: 'h-9 w-9',
-            },
-          }}
-        />
+          <TopNavLink href="/explorer" active={onExplorerActive}>
+            Tendances mondiales
+          </TopNavLink>
+          <TopNavLink href="/community" active={onCommunityActive}>
+            Mises à jour de politique
+          </TopNavLink>
+        </nav>
+
+        {/* Right: single utility cluster */}
+        <div className="order-2 flex max-w-full flex-wrap items-center justify-end gap-2 sm:ml-auto lg:order-none lg:ml-0 lg:max-w-none lg:flex-nowrap lg:shrink-0">
+          <ObjectiveDockInline
+            toolbarRhythm
+            className={cn(
+              'hidden min-w-0 max-w-none bg-white/90 lg:flex lg:max-w-[13.5rem]',
+              NEXUS_TW.borderStrong,
+            )}
+          />
+          <GlobalCountrySearch toolbar />
+          <Link
+            href="/profile"
+            className={cn(
+              NEXUS_TOOLBAR_H_CLASS,
+              NEXUS_TRANSITION,
+              NEXUS_FOCUS_VISIBLE,
+              'hidden items-center gap-1.5 rounded-lg border bg-white/90 px-3 text-[11px] font-medium sm:inline-flex',
+              NEXUS_TW.ink85,
+              NEXUS_TW.hoverSurface,
+            )}
+            style={{ borderColor: NEXUS_BORDER }}
+          >
+            <Download className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            Export Data
+          </Link>
+          <button
+            type="button"
+            onClick={() => appToast.info('Aucune notification pour l’instant.')}
+            className={cn(
+              NEXUS_TOOLBAR_H_CLASS,
+              NEXUS_TOOLBAR_ICON_W_CLASS,
+              NEXUS_TRANSITION,
+              NEXUS_FOCUS_VISIBLE,
+              'inline-flex shrink-0 items-center justify-center rounded-lg border',
+              NEXUS_TW.ink65,
+              NEXUS_TW.hoverSurface,
+              NEXUS_TW.ink,
+            )}
+            style={{ borderColor: NEXUS_BORDER }}
+            aria-label="Notifications"
+          >
+            <Bell className="h-4 w-4" />
+          </button>
+          <UserButton
+            afterSignOutUrl="/sign-in"
+            appearance={{
+              elements: {
+                avatarBox: 'h-10 w-10 rounded-lg',
+              },
+            }}
+          />
+        </div>
       </div>
     </header>
   )
@@ -129,6 +193,7 @@ export default function DashboardLayoutClient({ children }: { children: ReactNod
   const pathname = usePathname() ?? '/'
   const [workspaceNavOpen, setWorkspaceNavOpen] = useState(false)
   const title = getDashboardNavTitle(pathname)
+  const readingWidth = isNexusReadingWidthPath(pathname)
 
   useEffect(() => {
     setWorkspaceNavOpen(false)
@@ -168,11 +233,8 @@ export default function DashboardLayoutClient({ children }: { children: ReactNod
   }, [workspaceNavOpen])
 
   return (
-    <div className="flex min-h-screen bg-[#FAF7EE] text-[#0D1B3E]">
-      <DashboardSidebar
-        open={workspaceNavOpen}
-        onClose={() => setWorkspaceNavOpen(false)}
-      />
+    <div className={cn('flex min-h-screen', NEXUS_TW.pageBg)}>
+      <DashboardSidebar open={workspaceNavOpen} onClose={() => setWorkspaceNavOpen(false)} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardTopBar
@@ -182,7 +244,7 @@ export default function DashboardLayoutClient({ children }: { children: ReactNod
           menuOpen={workspaceNavOpen}
         />
         <main id="dashboard-content" className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
-          {children}
+          <div className={cn(readingWidth && NEXUS_READING_INNER_CLASS)}>{children}</div>
         </main>
       </div>
     </div>

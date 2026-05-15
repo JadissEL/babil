@@ -6,6 +6,13 @@ import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
+import {
+  SITE_BACKDROP_TRANSITION,
+  SITE_FOCUS_VISIBLE,
+  SITE_FOCUS_VISIBLE_SOFT,
+  SITE_INTERACTION_TRANSITION,
+  SITE_RAIL_TRANSITION,
+} from '@/lib/site-chrome-tokens';
 import { isExplorerNavHrefInPerspective } from '@/lib/user-objectives/perspective-nav';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 import { cn } from '@/lib/utils';
@@ -46,7 +53,11 @@ export function SiteHeaderMenuButton({ onClick }: { onClick: () => void }) {
   return (
     <button
       type="button"
-      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-text transition-colors hover:border-primary/35 hover:bg-primary-soft hover:text-primary lg:hidden"
+      className={cn(
+        'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-text hover:border-primary/35 hover:bg-primary-soft hover:text-primary lg:hidden',
+        SITE_INTERACTION_TRANSITION,
+        SITE_FOCUS_VISIBLE_SOFT,
+      )}
       aria-label="Ouvrir le menu de navigation"
       onClick={onClick}
     >
@@ -106,7 +117,9 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
             onClick={closeIfNavigated}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'rounded-xl px-3 py-2.5 text-sm font-black tracking-tight text-text transition-colors',
+              'rounded-xl px-3 py-2.5 text-sm font-black tracking-tight text-text',
+              SITE_INTERACTION_TRANSITION,
+              SITE_FOCUS_VISIBLE,
               active
                 ? 'bg-primary-soft text-primary ring-1 ring-primary/25'
                 : 'text-muted hover:bg-primary-soft/70 hover:text-primary',
@@ -125,7 +138,8 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
         type="button"
         aria-hidden={!mobileOpen}
         className={cn(
-          'fixed inset-0 z-[55] bg-text/40 backdrop-blur-[1px] transition-opacity lg:hidden',
+          'fixed inset-0 z-[55] bg-text/40 backdrop-blur-[1px] lg:hidden',
+          SITE_BACKDROP_TRANSITION,
           mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
         onClick={onMobileClose}
@@ -133,7 +147,8 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
       <aside
         id="site-primary-nav"
         className={cn(
-          'z-[56] flex flex-col border-line bg-[#fdf8ef]/95 shadow-[4px_0_24px_rgba(20,26,36,0.08)] backdrop-blur-sm transition-transform duration-200 ease-out',
+          'z-[56] flex flex-col border-line bg-[#fdf8ef]/95 shadow-[4px_0_24px_rgba(20,26,36,0.08)] backdrop-blur-sm',
+          SITE_RAIL_TRANSITION,
           'fixed inset-y-0 left-0 w-[min(19rem,88vw)] border-r lg:sticky lg:top-16 lg:z-0 lg:h-[calc(100dvh-4rem)] lg:w-56 lg:max-w-none lg:translate-x-0 lg:self-start lg:shadow-none',
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
         )}
@@ -143,7 +158,11 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
           <span className="text-[10px] font-black uppercase tracking-widest text-muted">Menu</span>
           <button
             type="button"
-            className="rounded-xl border border-line bg-surface p-2 text-muted transition-colors hover:bg-primary-soft hover:text-primary"
+            className={cn(
+              'rounded-xl border border-line bg-surface p-2 text-muted hover:bg-primary-soft hover:text-primary',
+              SITE_INTERACTION_TRANSITION,
+              SITE_FOCUS_VISIBLE_SOFT,
+            )}
             aria-label="Fermer le menu"
             onClick={onMobileClose}
           >

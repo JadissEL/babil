@@ -34,6 +34,7 @@ import GoogleAd from '@/components/GoogleAd'
 import { DeepReportTeaser } from '@/components/monetization/DeepReportTeaser'
 import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
+import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
 import { filterPublicCountryInsights } from '@/lib/country-db-insights'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
@@ -44,17 +45,22 @@ import {
 } from '@/lib/country-observation-confidence-aggregate'
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies'
 import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel'
-import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromIntelMeta } from '@/lib/intel-freshness'
 import { parseDataQualityAnomaliesPayload } from '@/lib/intelligence-data-anomalies'
+import {
+  NEXUS_FOCUS_VISIBLE,
+  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+  NEXUS_TRANSITION,
+} from '@/lib/nexus-chrome'
 import { officialSourcesForCountry } from '@/lib/official-sources'
 import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
-import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav'
-import { getObjectiveBySlug } from '@/lib/user-objectives/registry'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { SCORE_SCALE_LEGEND_FR } from '@/lib/score-scale-lexicon'
 import { appToast } from '@/lib/toast-store'
+import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav'
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry'
+import { cn } from '@/lib/utils'
 
 type PublicCountryComment = {
   id: number
@@ -411,7 +417,11 @@ export default function CountryDetailPage() {
     <div className="min-h-screen bg-[#FDFBF4] print:hidden">
       <div className="mx-auto max-w-6xl px-4 pb-16 pt-6 sm:px-6 lg:px-8">
         <ObjectiveAwareExplorerLink
-          className="mb-5 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-[#0D1B3E]/65 transition-colors hover:text-[#0D1B3E]"
+          className={cn(
+            'mb-5 inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-[0.24em] text-[#0D1B3E]/65 hover:text-[#0D1B3E]',
+            NEXUS_TRANSITION,
+            NEXUS_FOCUS_VISIBLE,
+          )}
         >
           <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Back to Explorer
         </ObjectiveAwareExplorerLink>
@@ -458,7 +468,11 @@ export default function CountryDetailPage() {
                 type="button"
                 onClick={() => window.print()}
                 aria-label="Imprimer / PDF"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[#0D1B3E]/15 bg-white text-[#0D1B3E] transition-colors hover:bg-[#FDFBF4]"
+                className={cn(
+                  'inline-flex h-9 w-9 items-center justify-center rounded-md border border-[#0D1B3E]/15 bg-white text-[#0D1B3E] hover:bg-[#FDFBF4]',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE,
+                )}
               >
                 <Printer className="h-4 w-4" aria-hidden />
               </button>
@@ -485,11 +499,15 @@ export default function CountryDetailPage() {
               onClick={toggleFavorite}
               disabled={favLoading}
               aria-label={favorited ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-              className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
+              className={cn(
+                'inline-flex h-10 w-10 items-center justify-center rounded-full border',
+                NEXUS_TRANSITION,
+                NEXUS_FOCUS_VISIBLE,
                 favorited
                   ? 'border-rose-300 bg-rose-50 text-rose-600'
-                  : 'border-[#0D1B3E]/15 bg-white text-[#0D1B3E]/55 hover:text-[#0D1B3E]'
-              } ${favLoading ? 'opacity-60' : ''}`}
+                  : 'border-[#0D1B3E]/15 bg-white text-[#0D1B3E]/55 hover:text-[#0D1B3E]',
+                favLoading && 'opacity-60',
+              )}
             >
               <Heart className={`h-4 w-4 ${favorited ? 'fill-current' : ''}`} aria-hidden />
             </button>
@@ -520,7 +538,11 @@ export default function CountryDetailPage() {
             </div>
             <Link
               href={`/countries/${countryPageId}/doctorat`}
-              className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#0D1B3E] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:shadow-md"
+              className={cn(
+                'inline-flex shrink-0 items-center justify-center rounded-xl bg-[#0D1B3E] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-white shadow-sm hover:-translate-y-0.5 hover:shadow-md motion-reduce:hover:translate-y-0',
+                NEXUS_TRANSITION,
+                NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+              )}
             >
               Voir le parcours PhD
             </Link>
@@ -748,7 +770,10 @@ export default function CountryDetailPage() {
                 className="space-y-4 rounded-[2rem] border border-primary/25 bg-surface p-6 shadow-soft"
               >
                 <textarea
-                  className="min-h-[100px] w-full rounded-2xl border border-line bg-inset p-4 font-medium text-text outline-none placeholder:text-muted focus:ring-2 focus:ring-primary/50"
+                  className={cn(
+                    'min-h-[100px] w-full rounded-2xl border border-line bg-inset p-4 font-medium text-text placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
+                    NEXUS_TRANSITION,
+                  )}
                   placeholder="Partagez votre expérience (rendez-vous, refus, accueil…)"
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
@@ -760,7 +785,11 @@ export default function CountryDetailPage() {
                   <button
                     type="submit"
                     disabled={submitting || !comment.trim()}
-                    className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-black text-white transition-all hover:bg-primary-hover disabled:opacity-50"
+                    className={cn(
+                      'flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-black text-white hover:bg-primary-hover disabled:pointer-events-none disabled:opacity-50',
+                      NEXUS_TRANSITION,
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
+                    )}
                   >
                     {submitting ? (
                       'Envoi…'

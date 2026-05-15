@@ -3,6 +3,8 @@
 import { ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { SITE_FOCUS_VISIBLE_ON_INK_PANEL, SITE_INTERACTION_TRANSITION } from '@/lib/site-chrome-tokens';
+import { cn } from '@/lib/utils';
 
 const STORAGE_KEY = 'vf.cookies.v1';
 const REOPEN_EVENT = 'vf:cookies:open';
@@ -94,21 +96,33 @@ export function CookieConsentBanner() {
           <Link
             href="/legal#cookies"
             onClick={() => setVisible(false)}
-            className="rounded-md border border-white/15 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-white/80 transition-colors hover:bg-white/[0.06] hover:text-white"
+            className={cn(
+              'rounded-md border border-white/15 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-white/80 hover:bg-white/[0.06] hover:text-white',
+              SITE_INTERACTION_TRANSITION,
+              SITE_FOCUS_VISIBLE_ON_INK_PANEL,
+            )}
           >
             Personnaliser
           </Link>
           <button
             type="button"
             onClick={() => dismiss('rejected')}
-            className="rounded-md border border-white/15 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-white/80 transition-colors hover:bg-white/[0.06] hover:text-white"
+            className={cn(
+              'rounded-md border border-white/15 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-white/80 hover:bg-white/[0.06] hover:text-white',
+              SITE_INTERACTION_TRANSITION,
+              SITE_FOCUS_VISIBLE_ON_INK_PANEL,
+            )}
           >
             Refuser
           </button>
           <button
             type="button"
             onClick={() => dismiss('accepted')}
-            className="rounded-md bg-[#3B7DFF] px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-white transition-colors hover:bg-[#2D6EF0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3B7DFF]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E141F]"
+            className={cn(
+              'rounded-md bg-[#3B7DFF] px-3 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-white hover:bg-[#2D6EF0]',
+              SITE_INTERACTION_TRANSITION,
+              SITE_FOCUS_VISIBLE_ON_INK_PANEL,
+            )}
           >
             Accepter
           </button>

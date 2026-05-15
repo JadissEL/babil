@@ -4,6 +4,9 @@ import Image from 'next/image'
 import { useEffect, useMemo, useState } from 'react'
 import curatedSlidesStatic from '@/data/hero-slides.json'
 import type { HomeHeroSlide } from '@/lib/home-hero-slides'
+import { NEXUS_TRANSITION } from '@/lib/nexus-chrome'
+import { SITE_FOCUS_VISIBLE_ON_MEDIA_OVERLAY } from '@/lib/site-chrome-tokens'
+import { cn } from '@/lib/utils'
 
 function isRenderableSlide(slide: HomeHeroSlide) {
   return Boolean(
@@ -104,9 +107,10 @@ export default function HeroWorldCarousel({ slides }: Props) {
           src={slide.imageUrl}
           alt={`${slide.place}, ${slide.country}`}
           fill
-          className={`object-cover transition-opacity duration-700 ${
-            slideIndex === index ? 'opacity-100' : 'opacity-0'
-          }`}
+          className={cn(
+            'object-cover transition-opacity duration-700 motion-reduce:transition-none',
+            slideIndex === index ? 'opacity-100' : 'opacity-0',
+          )}
           style={{
             animation: slideIndex === index ? `heroKenBurns ${currentDelay}ms ease-out both` : undefined,
             animationPlayState: isPaused ? 'paused' : 'running',
@@ -136,7 +140,11 @@ export default function HeroWorldCarousel({ slides }: Props) {
               href={current.sourceUrl}
               target="_blank"
               rel="noreferrer"
-              className="mt-1 inline-flex text-xs font-semibold text-white/80 underline underline-offset-2 hover:text-white"
+              className={cn(
+                'mt-1 inline-flex rounded-sm text-xs font-semibold text-white/80 underline underline-offset-2 hover:text-white',
+                NEXUS_TRANSITION,
+                SITE_FOCUS_VISIBLE_ON_MEDIA_OVERLAY,
+              )}
             >
               Source photo: {current.sourceName}
             </a>
@@ -149,9 +157,11 @@ export default function HeroWorldCarousel({ slides }: Props) {
               type="button"
               aria-label={`Go to slide ${dotIndex + 1}`}
               onClick={() => setIndex(dotIndex)}
-              className={`h-2.5 w-2.5 rounded-full border border-white/40 ${
-                dotIndex === index ? 'bg-white' : 'bg-white/30'
-              }`}
+              className={cn(
+                'h-2.5 w-2.5 rounded-full border border-white/40 motion-reduce:transition-none',
+                dotIndex === index ? 'bg-white' : 'bg-white/30',
+                SITE_FOCUS_VISIBLE_ON_MEDIA_OVERLAY,
+              )}
             />
           ))}
         </div>

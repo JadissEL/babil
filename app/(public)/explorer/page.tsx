@@ -37,9 +37,15 @@ import {
   readExplorerSavedFilters,
   writeExplorerSavedFilters,
 } from '@/lib/explorer-saved-filters'
+import {
+  NEXUS_FOCUS_VISIBLE,
+  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+  NEXUS_TRANSITION,
+} from '@/lib/nexus-chrome'
 import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
 import { appToast } from '@/lib/toast-store'
 import { explorerFilterGoalFromObjectiveSlug } from '@/lib/user-objectives/explorer-filter-goal'
+import { cn } from '@/lib/utils'
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -293,7 +299,11 @@ function ExplorerPageInner() {
                 type="button"
                 onClick={() => void copyExplorerShareLink()}
                 aria-label="Copier le lien de cette vue Explorer dans le presse-papiers"
-                className="mx-0.5 inline-flex items-center gap-1.5 rounded-lg border border-[#0D1B3E]/15 bg-white px-2.5 py-1 align-middle text-xs font-semibold text-[#0D1B3E] transition-colors hover:bg-[#0D1B3E]/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/25"
+                className={cn(
+                  'mx-0.5 inline-flex items-center gap-1.5 rounded-lg border border-[#0D1B3E]/15 bg-white px-2.5 py-1 align-middle text-xs font-semibold text-[#0D1B3E] hover:bg-[#0D1B3E]/[0.04]',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
               >
                 <Copy className="h-3.5 w-3.5 shrink-0" aria-hidden />
                 Copier le lien
@@ -306,7 +316,10 @@ function ExplorerPageInner() {
             <input
               type="search"
               placeholder="Rechercher une destination…"
-              className="w-full rounded-2xl border border-[#0D1B3E]/12 bg-white py-3 pl-10 pr-4 text-sm font-medium text-[#0D1B3E] outline-none placeholder:text-[#0D1B3E]/40 focus:ring-2 focus:ring-[#0D1B3E]/25"
+              className={cn(
+                'w-full rounded-2xl border border-[#0D1B3E]/12 bg-white py-3 pl-10 pr-4 text-sm font-medium text-[#0D1B3E] outline-none placeholder:text-[#0D1B3E]/40 focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FDFBF4]',
+                NEXUS_TRANSITION,
+              )}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onBlur={() => commitExplorerUrl()}
@@ -335,7 +348,7 @@ function ExplorerPageInner() {
                 commitExplorerUrl({ region: nextR })
               }}
             />
-            <label className="inline-flex cursor-pointer items-center gap-3 self-stretch rounded-2xl border border-[#0D1B3E]/12 bg-[#FDFBF4] px-4 py-3 xl:self-center">
+            <label className="inline-flex cursor-pointer items-center gap-3 self-stretch rounded-2xl border border-[#0D1B3E]/12 bg-[#FDFBF4] px-4 py-3 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#0D1B3E]/25 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-white xl:self-center">
               <span className="text-[10px] font-black tracking-[0.18em] text-[#0D1B3E]">SCHENGEN ONLY</span>
               <input
                 type="checkbox"
@@ -358,7 +371,14 @@ function ExplorerPageInner() {
                   setMode('explorer')
                   commitExplorerUrl({ mode: 'explorer' })
                 }}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'explorer' ? 'bg-[#0D1B3E] text-white shadow-md' : 'text-[#0D1B3E]/70 hover:text-[#0D1B3E]'}`}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider',
+                  NEXUS_TRANSITION,
+                  mode === 'explorer' ? NEXUS_FOCUS_VISIBLE_ON_INK_SOLID : NEXUS_FOCUS_VISIBLE,
+                  mode === 'explorer'
+                    ? 'bg-[#0D1B3E] text-white shadow-md'
+                    : 'text-[#0D1B3E]/70 hover:text-[#0D1B3E]',
+                )}
               >
                 <SlidersHorizontal className="h-4 w-4" /> Liste
               </button>
@@ -368,7 +388,14 @@ function ExplorerPageInner() {
                   setMode('recommendation')
                   commitExplorerUrl({ mode: 'recommendation' })
                 }}
-                className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider ${mode === 'recommendation' ? 'bg-[#0D1B3E] text-white shadow-md' : 'text-[#0D1B3E]/70 hover:text-[#0D1B3E]'}`}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider',
+                  NEXUS_TRANSITION,
+                  mode === 'recommendation' ? NEXUS_FOCUS_VISIBLE_ON_INK_SOLID : NEXUS_FOCUS_VISIBLE,
+                  mode === 'recommendation'
+                    ? 'bg-[#0D1B3E] text-white shadow-md'
+                    : 'text-[#0D1B3E]/70 hover:text-[#0D1B3E]',
+                )}
               >
                 <Target className="h-4 w-4" /> Recommandation
               </button>
@@ -383,14 +410,21 @@ function ExplorerPageInner() {
                 schengenOnly,
               })}
               onClick={() => markExplorerOnboardingEngaged()}
-              className="inline-flex items-center gap-2 rounded-xl border border-[#0D1B3E]/20 bg-white px-3 py-2 text-xs font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]/35 hover:bg-[#FDFBF4]"
+              className={cn(
+                'inline-flex items-center gap-2 rounded-xl border border-[#0D1B3E]/20 bg-white px-3 py-2 text-xs font-black uppercase tracking-wider text-[#0D1B3E] hover:border-[#0D1B3E]/35 hover:bg-[#FDFBF4]',
+                NEXUS_FOCUS_VISIBLE,
+                NEXUS_TRANSITION,
+              )}
             >
               <Scale className="h-4 w-4 shrink-0" aria-hidden />
               Comparer
             </Link>
 
             <select
-              className="rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2.5 text-sm font-bold text-[#0D1B3E] outline-none"
+              className={cn(
+                'rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2.5 text-sm font-bold text-[#0D1B3E] outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+                NEXUS_TRANSITION,
+              )}
               value={difficulty}
               onChange={(e) => {
                 const v = e.target.value
@@ -407,7 +441,10 @@ function ExplorerPageInner() {
             </select>
 
             <select
-              className="rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2.5 text-sm font-bold text-[#0D1B3E] outline-none"
+              className={cn(
+                'rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2.5 text-sm font-bold text-[#0D1B3E] outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+                NEXUS_TRANSITION,
+              )}
               value={budget}
               onChange={(e) => {
                 const v = e.target.value as Budget
@@ -438,7 +475,11 @@ function ExplorerPageInner() {
                   setHasSavedView(true)
                   appToast.success('Vue enregistrée — vous pourrez la rouvrir d’un clic.')
                 }}
-                className="rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]/25 hover:bg-[#FDFBF4]"
+                className={cn(
+                  'rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] hover:border-[#0D1B3E]/25 hover:bg-[#FDFBF4]',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
               >
                 Mémoriser la vue
               </button>
@@ -457,7 +498,11 @@ function ExplorerPageInner() {
                   markExplorerOnboardingEngaged()
                   appToast.success('Vue restaurée.')
                 }}
-                className="rounded-xl border border-[#0D1B3E]/20 bg-[#FDFBF4] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-45"
+                className={cn(
+                  'rounded-xl border border-[#0D1B3E]/20 bg-[#FDFBF4] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] hover:bg-white disabled:cursor-not-allowed disabled:opacity-45',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
               >
                 Restaurer
               </button>
@@ -469,7 +514,11 @@ function ExplorerPageInner() {
                   setHasSavedView(false)
                   appToast.info('Mémorisation supprimée.')
                 }}
-                className="rounded-xl border border-[#0D1B3E]/10 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/60 transition-colors hover:text-[#0D1B3E] disabled:cursor-not-allowed disabled:opacity-45"
+                className={cn(
+                  'rounded-xl border border-[#0D1B3E]/10 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/60 hover:text-[#0D1B3E] disabled:cursor-not-allowed disabled:opacity-45',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
               >
                 Oublier
               </button>

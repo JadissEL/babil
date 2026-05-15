@@ -31,7 +31,12 @@ export type ProtectedRouteRule = {
   note?: string;
 };
 
-const NEXUS_RBAC_PREFIXES = ['/admin', '/moderation'] as const;
+const NEXUS_RBAC_PREFIXES = [
+  '/admin',
+  '/moderation',
+  '/design-system',
+  '/intelligence-fieldpaths',
+] as const;
 
 const NEXUS_APP_ROUTE_RULES: readonly ProtectedRouteRule[] = nexusProtectedRoutePatterns()
   .filter((pattern) => pattern !== '/')
@@ -71,6 +76,20 @@ export const PROTECTED_ROUTE_RULES: readonly ProtectedRouteRule[] = [
     note: 'Console Citadel — rôle ADMIN requis côté route handler.',
   },
   {
+    pattern: '/design-system(.*)',
+    displayPath: '/design-system',
+    requirement: 'auth+rbac',
+    category: 'app',
+    note: 'Design system interne — rôle ADMIN (layout serveur).',
+  },
+  {
+    pattern: '/intelligence-fieldpaths(.*)',
+    displayPath: '/intelligence-fieldpaths',
+    requirement: 'auth+rbac',
+    category: 'app',
+    note: 'Glossaire intelligence — rôle ADMIN (layout serveur).',
+  },
+  {
     pattern: '/api/admin(.*)',
     displayPath: '/api/admin/*',
     requirement: 'auth+rbac',
@@ -90,6 +109,13 @@ export const PROTECTED_ROUTE_RULES: readonly ProtectedRouteRule[] = [
     requirement: 'auth',
     category: 'api',
     note: 'Lecture / patch profil.',
+  },
+  {
+    pattern: '/api/user/access(.*)',
+    displayPath: '/api/user/access',
+    requirement: 'auth',
+    category: 'api',
+    note: 'Indicateur RBAC pour le shell Nexus (isAdmin).',
   },
   {
     pattern: '/api/user/favorites(.*)',

@@ -8,6 +8,12 @@ import GoalFilter from '@/components/filters/GoalFilter'
 import RegionFilter from '@/components/filters/RegionFilter'
 import RiskFilter from '@/components/filters/RiskFilter'
 import { compareHrefForHomeQuickFilters } from '@/lib/explorer-goal-to-compare-objective'
+import {
+  SITE_FOCUS_HOME_CTA_GHOST,
+  SITE_FOCUS_HOME_CTA_SOLID,
+  SITE_INTERACTION_TRANSITION,
+} from '@/lib/site-chrome-tokens'
+import { cn } from '@/lib/utils'
 
 /** Maps home quick filters → Explorer search params (explorer already applies them). */
 function buildExplorerHref(goal: string, budget: string, region: string, risk: string): string {
@@ -63,14 +69,22 @@ export default function HomeQuickFilterEngine({
         <div className="flex w-full shrink-0 flex-col gap-2 sm:w-auto sm:flex-row">
           <Link
             href={compareHref}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-50 px-5 py-2.5 text-xs font-black uppercase tracking-widest text-[#0a1f33] shadow-sm transition-colors hover:bg-white sm:w-auto"
+            className={cn(
+              'inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-50 px-5 py-2.5 text-xs font-black uppercase tracking-widest text-[#0a1f33] shadow-sm hover:bg-white sm:w-auto',
+              SITE_INTERACTION_TRANSITION,
+              SITE_FOCUS_HOME_CTA_GHOST,
+            )}
           >
             <Scale className="h-3.5 w-3.5 shrink-0" aria-hidden />
             Comparer
           </Link>
           <Link
             href={resultsHref}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0a1f33] px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-md transition-colors hover:bg-[#0f2d4a] sm:w-auto"
+            className={cn(
+              'inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0a1f33] px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-md hover:bg-[#0f2d4a] sm:w-auto',
+              SITE_INTERACTION_TRANSITION,
+              SITE_FOCUS_HOME_CTA_SOLID,
+            )}
           >
             Voir les résultats
             <ArrowRight className="h-3.5 w-3.5 shrink-0" aria-hidden />

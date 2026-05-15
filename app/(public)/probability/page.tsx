@@ -21,6 +21,11 @@ import { useState, useEffect, useMemo, useRef, Suspense } from 'react';
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton';
 import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
+import {
+  NEXUS_FOCUS_VISIBLE,
+  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+  NEXUS_TRANSITION,
+} from '@/lib/nexus-chrome';
 import { formatGoalTypeLabelFr } from '@/lib/probability-profile-narrative';
 import {
   describeTopCountrySignals,
@@ -32,10 +37,16 @@ import {
 import { PUBLIC_READ_ONLY_DEMO_PROFILE } from '@/lib/public-read-only-demo-profile';
 import { formatScoreDriversFrench } from '@/lib/score-driver-explain';
 import { englishScoreLevelToFr } from '@/lib/score-level-fr';
+import {
+  SITE_FOCUS_VISIBLE_ON_PRIMARY,
+  SITE_FOCUS_VISIBLE_SOFT,
+  SITE_INTERACTION_TRANSITION,
+} from '@/lib/site-chrome-tokens';
 import { appToast } from '@/lib/toast-store';
 import type { ProbabilityApiRow } from '@/lib/types';
-import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav';
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
+import { cn } from '@/lib/utils';
 
 const ORBIT_NAVY = '#0D1B3E';
 
@@ -302,11 +313,19 @@ function ProbabilityPageInner() {
               type="button"
               onClick={() => setShowComparison(!showComparison)}
               disabled={comparisonList.length < 2}
-              className={`flex w-full items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-xs font-black uppercase tracking-wider transition-all sm:w-auto sm:px-5 ${
+              className={cn(
+                'flex w-full items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-xs font-black uppercase tracking-wider motion-reduce:transition-none sm:w-auto sm:px-5',
+                NEXUS_TRANSITION,
                 comparisonList.length >= 2
-                  ? 'border-[#0D1B3E] bg-[#0D1B3E] text-white shadow-md hover:bg-[#0D1B3E]/90'
-                  : 'cursor-not-allowed border-[#0D1B3E]/15 bg-white text-[#0D1B3E]/40'
-              }`}
+                  ? cn(
+                      'border-[#0D1B3E] bg-[#0D1B3E] text-white shadow-md hover:bg-[#0D1B3E]/90',
+                      NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+                    )
+                  : cn(
+                      'cursor-not-allowed border-[#0D1B3E]/15 bg-white text-[#0D1B3E]/40',
+                      NEXUS_FOCUS_VISIBLE,
+                    ),
+              )}
             >
               <Scale className="h-5 w-5 shrink-0" />
               <span className="truncate">
@@ -333,7 +352,11 @@ function ProbabilityPageInner() {
             <SignUpButton mode="modal">
               <button
                 type="button"
-                className="w-full shrink-0 rounded-xl bg-[#0D1B3E] px-6 py-3.5 text-center text-xs font-black uppercase tracking-[0.2em] text-white shadow-md transition-colors hover:bg-[#0D1B3E]/90 sm:w-auto"
+                className={cn(
+                  'w-full shrink-0 rounded-xl bg-[#0D1B3E] px-6 py-3.5 text-center text-xs font-black uppercase tracking-[0.2em] text-white shadow-md hover:bg-[#0D1B3E]/90 sm:w-auto',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+                )}
               >
                 Créer un compte
               </button>
@@ -351,14 +374,22 @@ function ProbabilityPageInner() {
             {focusCountryName ? ` (#${focusCountryId})` : null}.{' '}
             <Link
               href={`/countries/${focusCountryId}`}
-              className="font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+              className={cn(
+                'rounded-sm font-black text-primary underline decoration-primary/40 underline-offset-2 hover:decoration-primary',
+                NEXUS_FOCUS_VISIBLE,
+                NEXUS_TRANSITION,
+              )}
             >
               Revoir la fiche
             </Link>
             {' · '}
             <Link
               href="/probability"
-              className="font-black text-muted underline decoration-muted/50 underline-offset-2 hover:text-primary hover:decoration-primary"
+              className={cn(
+                'rounded-sm font-black text-muted underline decoration-muted/50 underline-offset-2 hover:text-primary hover:decoration-primary',
+                NEXUS_FOCUS_VISIBLE,
+                NEXUS_TRANSITION,
+              )}
             >
               Effacer le contexte
             </Link>
@@ -376,19 +407,31 @@ function ProbabilityPageInner() {
             <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:flex-wrap">
               <Link
                 href="/profile"
-                className="inline-flex justify-center rounded-2xl bg-primary px-8 py-4 font-black text-white shadow-soft transition-colors hover:bg-primary-hover"
+                className={cn(
+                  'inline-flex justify-center rounded-2xl bg-primary px-8 py-4 font-black text-white shadow-soft hover:bg-primary-hover',
+                  SITE_INTERACTION_TRANSITION,
+                  SITE_FOCUS_VISIBLE_ON_PRIMARY,
+                )}
               >
                 Compléter mon profil
               </Link>
               <Link
                 href={emptyCtaExploreHref}
-                className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
+                className={cn(
+                  'inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text hover:bg-primary-soft',
+                  SITE_INTERACTION_TRANSITION,
+                  SITE_FOCUS_VISIBLE_SOFT,
+                )}
               >
                 Explorer les pays
               </Link>
               <Link
                 href={emptyCtaCompareHref}
-                className="inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text transition-colors hover:bg-primary-soft"
+                className={cn(
+                  'inline-flex justify-center rounded-2xl border border-line bg-inset px-8 py-4 font-black text-text hover:bg-primary-soft',
+                  SITE_INTERACTION_TRANSITION,
+                  SITE_FOCUS_VISIBLE_SOFT,
+                )}
               >
                 Ouvrir le comparateur
               </Link>
@@ -407,7 +450,11 @@ function ProbabilityPageInner() {
                 <SignUpButton mode="modal">
                   <button
                     type="button"
-                    className="inline-flex shrink-0 items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+                    className={cn(
+                      'inline-flex shrink-0 items-center gap-2 rounded-sm text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]',
+                      NEXUS_FOCUS_VISIBLE,
+                      NEXUS_TRANSITION,
+                    )}
                   >
                     <PencilLine className="h-4 w-4" aria-hidden />
                     Modifier
@@ -416,7 +463,11 @@ function ProbabilityPageInner() {
               ) : (
                 <Link
                   href="/profile"
-                  className="inline-flex shrink-0 items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+                  className={cn(
+                    'inline-flex shrink-0 items-center gap-2 rounded-sm text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]',
+                    NEXUS_FOCUS_VISIBLE,
+                    NEXUS_TRANSITION,
+                  )}
                 >
                   <PencilLine className="h-4 w-4" aria-hidden />
                   Modifier
@@ -490,7 +541,11 @@ function ProbabilityPageInner() {
                   <button
                     type="button"
                     onClick={() => setComparisonList([])}
-                    className="self-start text-sm font-bold text-muted transition-colors hover:text-primary sm:self-auto"
+                    className={cn(
+                      'self-start rounded-sm text-sm font-bold text-muted hover:text-primary sm:self-auto',
+                      NEXUS_FOCUS_VISIBLE,
+                      NEXUS_TRANSITION,
+                    )}
                   >
                     Vider la liste
                   </button>
@@ -593,11 +648,13 @@ function ProbabilityPageInner() {
                           e.stopPropagation();
                           toggleComparison(r.country);
                         }}
-                        className={`rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest transition-all ${
+                        className={cn(
+                          'rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest motion-reduce:transition-none',
+                          NEXUS_TRANSITION,
                           comparisonList.includes(r.country)
-                            ? 'bg-primary text-white shadow-soft'
-                            : 'bg-inset text-muted hover:bg-primary-soft'
-                        }`}
+                            ? cn('bg-primary text-white shadow-soft', SITE_FOCUS_VISIBLE_ON_PRIMARY)
+                            : cn('bg-inset text-muted hover:bg-primary-soft', NEXUS_FOCUS_VISIBLE, SITE_FOCUS_VISIBLE_SOFT),
+                        )}
                       >
                         {comparisonList.includes(r.country) ? 'Sélectionné' : 'Comparer'}
                       </button>

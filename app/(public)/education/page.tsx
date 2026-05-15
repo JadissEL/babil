@@ -22,6 +22,11 @@ import {
 } from '@/lib/country-full-data-materialize';
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies';
 import { educationHubExplorerHref } from '@/lib/cta-hrefs';
+import {
+  NEXUS_FOCUS_VISIBLE,
+  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+  NEXUS_TRANSITION,
+} from '@/lib/nexus-chrome';
 import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 import { cn } from '@/lib/utils';
@@ -141,7 +146,10 @@ export default function EducationPage() {
               <input
                 type="search"
                 placeholder="Rechercher une destination, un diplôme…"
-                className="w-full border-0 border-none bg-transparent py-2 pl-9 pr-2 text-sm font-medium text-[#0D1B3E] outline-none ring-0 placeholder:text-[#0D1B3E]/40 focus:ring-0"
+                className={cn(
+                  'w-full border-0 border-none bg-transparent py-2 pl-9 pr-2 text-sm font-medium text-[#0D1B3E] ring-0 placeholder:text-[#0D1B3E]/40 focus:ring-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FDFBF4]',
+                  NEXUS_TRANSITION,
+                )}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Filtrer les destinations"
@@ -152,7 +160,11 @@ export default function EducationPage() {
           {showPhdPerspective ? (
           <Link
             href={hubExplorerHref}
-            className="group flex min-h-[280px] flex-col justify-between rounded-3xl bg-[#0D1B3E] p-8 text-white shadow-xl transition-transform hover:-translate-y-0.5 sm:p-10"
+            className={cn(
+              'group flex min-h-[280px] flex-col justify-between rounded-3xl bg-[#0D1B3E] p-8 text-white shadow-xl hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 sm:p-10',
+              NEXUS_TRANSITION,
+              NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+            )}
           >
             <div className="flex items-start justify-between gap-4">
               <span className="rounded-md border border-white/25 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.18em] text-white/90">
@@ -190,7 +202,11 @@ export default function EducationPage() {
           </Link>
           <Link
             href="/education/technical-training"
-            className="flex h-full flex-col rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-7"
+            className={cn(
+              'flex h-full flex-col rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm hover:-translate-y-0.5 hover:shadow-md motion-reduce:hover:translate-y-0 sm:p-7',
+              NEXUS_TRANSITION,
+              NEXUS_FOCUS_VISIBLE,
+            )}
           >
             <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#0D1B3E]/12 text-[#0D1B3E]">
               <Wrench className="h-6 w-6" aria-hidden />
@@ -202,7 +218,11 @@ export default function EducationPage() {
           </Link>
           <Link
             href="/education/short-courses"
-            className="flex h-full flex-col rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-7"
+            className={cn(
+              'flex h-full flex-col rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm hover:-translate-y-0.5 hover:shadow-md motion-reduce:hover:translate-y-0 sm:p-7',
+              NEXUS_TRANSITION,
+              NEXUS_FOCUS_VISIBLE,
+            )}
           >
             <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#0D1B3E]/12 text-[#0D1B3E]">
               <Timer className="h-6 w-6" aria-hidden />
@@ -232,7 +252,9 @@ export default function EducationPage() {
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  '-mb-px pb-3.5 text-left text-[10px] font-black uppercase tracking-[0.2em] transition-colors sm:text-[11px]',
+                  '-mb-px pb-3.5 text-left text-[10px] font-black uppercase tracking-[0.2em] sm:text-[11px]',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE,
                   activeTab === tab.id
                     ? 'border-b-2 border-[#0D1B3E] text-[#0D1B3E]'
                     : 'border-b-2 border-transparent text-[#0D1B3E]/45 hover:text-[#0D1B3E]/70',
@@ -326,7 +348,11 @@ export default function EducationPage() {
                       <div className="mt-auto flex flex-col gap-2 pt-6">
                         <Link
                           href={`/countries/${c.id}`}
-                          className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#0D1B3E]/12 bg-[#f0eeeb] py-3 text-center text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]/25 hover:bg-[#e8e4df]"
+                          className={cn(
+                            'inline-flex items-center justify-center gap-2 rounded-xl border border-[#0D1B3E]/12 bg-[#f0eeeb] py-3 text-center text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] hover:border-[#0D1B3E]/25 hover:bg-[#e8e4df]',
+                            NEXUS_TRANSITION,
+                            NEXUS_FOCUS_VISIBLE,
+                          )}
                         >
                           Voir la fiche pays
                           <ArrowRight className="h-4 w-4" aria-hidden />
@@ -334,7 +360,11 @@ export default function EducationPage() {
                         {hasPhd && showPhdPerspective ? (
                           <Link
                             href={`/countries/${c.id}/doctorat`}
-                            className="inline-flex items-center justify-center gap-2 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#0D1B3E] underline decoration-[#0D1B3E]/25 underline-offset-4 hover:decoration-[#0D1B3E]"
+                            className={cn(
+                              'inline-flex items-center justify-center gap-2 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#0D1B3E] underline decoration-[#0D1B3E]/25 underline-offset-4 hover:decoration-[#0D1B3E]',
+                              NEXUS_TRANSITION,
+                              NEXUS_FOCUS_VISIBLE,
+                            )}
                           >
                             <GraduationCap className="h-4 w-4 shrink-0" aria-hidden />
                             Parcours doctoral

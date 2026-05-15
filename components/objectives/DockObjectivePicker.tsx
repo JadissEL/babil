@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
+import { NEXUS_FOCUS_VISIBLE } from '@/lib/nexus-chrome';
 import {
   listObjectivesGrouped,
   USER_OBJECTIVE_CATEGORY_ORDER,
@@ -49,8 +50,11 @@ type ListboxLayout =
  */
 export function DockObjectivePicker({
   variant = 'default',
+  toolbarRhythm = false,
 }: {
   variant?: DockObjectivePickerVariant;
+  /** Nexus header: fixed row height with squared caps (compactHeader only). */
+  toolbarRhythm?: boolean;
 }) {
   const { preference, ready, setPrimaryObjective } = useObjectivePreference();
   const [open, setOpen] = useState(false);
@@ -66,6 +70,7 @@ export function DockObjectivePicker({
 
   const compactHeader = variant === 'compactHeader';
   const compact = variant === 'compact' || compactHeader;
+  const headerToolbar = compactHeader && toolbarRhythm;
 
   const flatOptions = useMemo(() => {
     const out: { slug: UserObjectiveSlug; label: string }[] = [];
@@ -263,7 +268,8 @@ export function DockObjectivePicker({
       <div
         className={cn(
           'animate-pulse rounded-2xl border border-line bg-inset',
-          compactHeader && 'h-8 w-[11.25rem] sm:w-[13.25rem]',
+          compactHeader && !headerToolbar && 'h-8 w-[11.25rem] sm:w-[13.25rem]',
+          headerToolbar && 'h-10 w-[11.25rem] sm:w-[13.25rem]',
           variant === 'compact' && 'h-9 w-full max-w-[17.5rem]',
           variant === 'default' && 'h-12 w-full max-w-xl',
         )}
@@ -376,7 +382,8 @@ export function DockObjectivePicker({
       ref={rootRef}
       className={cn(
         'relative',
-        compactHeader && 'min-w-0 w-[11.25rem] sm:w-[13.25rem]',
+        compactHeader && !headerToolbar && 'min-w-0 w-[11.25rem] sm:w-[13.25rem]',
+        headerToolbar && 'h-10 min-w-0 w-[11.25rem] sm:w-[13.25rem]',
         variant === 'compact' && !compactHeader && 'w-full max-w-[17.5rem]',
         variant === 'default' && 'mx-auto w-full max-w-3xl',
       )}
@@ -390,8 +397,10 @@ export function DockObjectivePicker({
         onClick={() => setOpen((o) => !o)}
         onKeyDown={onButtonKeyDown}
         className={cn(
-          'flex w-full items-center justify-between gap-2 rounded-2xl border border-line bg-surface text-left shadow-soft transition-colors motion-reduce:transition-none',
-          compact ? 'px-2 py-1.5 sm:px-2.5 sm:py-1.5' : 'gap-3 px-4 py-3',
+          'flex w-full items-center justify-between gap-2 border border-line bg-surface text-left shadow-soft transition-colors motion-reduce:transition-none',
+          NEXUS_FOCUS_VISIBLE,
+          headerToolbar ? 'h-full rounded-lg px-2.5 py-0' : 'rounded-2xl',
+          !headerToolbar && compact ? 'px-2 py-1.5 sm:px-2.5 sm:py-1.5' : !headerToolbar ? 'gap-3 px-4 py-3' : '',
           open ? 'border-primary/40 ring-2 ring-primary/25' : 'hover:border-primary/35 hover:bg-primary-soft/50',
         )}
       >
@@ -399,7 +408,8 @@ export function DockObjectivePicker({
           <span
             className={cn(
               'block font-black uppercase tracking-widest text-muted',
-              compact ? 'text-[7px] tracking-[0.18em]' : 'text-[9px] tracking-widest',
+              compact && !headerToolbar ? 'text-[7px] tracking-[0.18em]' : !compact ? 'text-[9px] tracking-widest' : '',
+              headerToolbar && 'text-[7px] tracking-[0.18em] leading-none',
             )}
           >
             Objectif principal
@@ -407,7 +417,8 @@ export function DockObjectivePicker({
           <span
             className={cn(
               'block truncate font-black text-text',
-              compact ? 'mt-0.5 text-[11px] leading-tight sm:text-xs' : 'mt-0.5 text-sm',
+              compact && !headerToolbar ? 'mt-0.5 text-[11px] leading-tight sm:text-xs' : !compact ? 'mt-0.5 text-sm' : '',
+              headerToolbar && 'mt-px text-[11px] leading-tight sm:text-xs',
             )}
           >
             {currentLabel ?? 'Choisir votre objectif…'}

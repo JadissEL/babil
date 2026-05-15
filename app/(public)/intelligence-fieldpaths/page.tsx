@@ -19,7 +19,9 @@ import {
   type FieldPathGlossaryEntry,
   type FieldPathSourceKind,
 } from '@/lib/intelligence-fieldpath-glossary'
+import { NEXUS_FOCUS_VISIBLE, NEXUS_TRANSITION } from '@/lib/nexus-chrome'
 import { appToast } from '@/lib/toast-store'
+import { cn } from '@/lib/utils'
 
 const SHELL = '#FAF7EE'
 const INK_10 = 'rgba(13,27,62,0.10)'
@@ -109,13 +111,23 @@ export default function IntelligenceFieldPathsPage() {
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-medium text-[#0D1B3E]/65">
-            <ObjectiveAwareExplorerLink className="inline-flex items-center gap-2 transition-colors hover:text-[#0D1B3E]">
+            <ObjectiveAwareExplorerLink
+              className={cn(
+                'inline-flex items-center gap-2 hover:text-[#0D1B3E]',
+                NEXUS_TRANSITION,
+                NEXUS_FOCUS_VISIBLE,
+              )}
+            >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
               Retour à l’explorateur
             </ObjectiveAwareExplorerLink>
             <Link
               href="/countries/1#provenance"
-              className="inline-flex items-center gap-2 transition-colors hover:text-[#0D1B3E]"
+              className={cn(
+                'inline-flex items-center gap-2 hover:text-[#0D1B3E]',
+                NEXUS_TRANSITION,
+                NEXUS_FOCUS_VISIBLE,
+              )}
             >
               <Info className="h-3.5 w-3.5" aria-hidden />
               Comprendre la provenance sur un profil
@@ -140,7 +152,10 @@ export default function IntelligenceFieldPathsPage() {
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Rechercher par fieldPath ou description…"
                   aria-label="Rechercher dans le glossaire"
-                  className="w-full rounded-lg border bg-white py-2.5 pl-9 pr-3 text-sm font-medium text-[#0D1B3E] placeholder:text-[#0D1B3E]/40 focus:border-[#0D1B3E] focus:outline-none focus:ring-2 focus:ring-[#0D1B3E]/15"
+                  className={cn(
+                    'w-full rounded-lg border bg-white py-2.5 pl-9 pr-3 text-sm font-medium text-[#0D1B3E] placeholder:text-[#0D1B3E]/40 focus-visible:border-[#0D1B3E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/15',
+                    NEXUS_TRANSITION,
+                  )}
                   style={{ borderColor: INK_10 }}
                 />
               </div>
@@ -155,11 +170,14 @@ export default function IntelligenceFieldPathsPage() {
                         type="button"
                         onClick={() => toggleKind(kind)}
                         aria-pressed={active}
-                        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors ${
+                        className={cn(
+                          'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium',
+                          NEXUS_TRANSITION,
+                          NEXUS_FOCUS_VISIBLE,
                           active
                             ? 'border-[#0D1B3E]/20 bg-[#0D1B3E]/[0.04] text-[#0D1B3E]'
-                            : 'border-transparent bg-white text-[#0D1B3E]/40 hover:text-[#0D1B3E]/65'
-                        }`}
+                            : 'border-transparent bg-white text-[#0D1B3E]/40 hover:text-[#0D1B3E]/65',
+                        )}
                       >
                         <Icon className="h-3.5 w-3.5" aria-hidden />
                         {SOURCE_LABEL[kind]}
@@ -307,7 +325,10 @@ function GlossaryRow({
   const Icon = SOURCE_ICON[kind]
   return (
     <tr
-      className="border-b align-top transition-colors hover:bg-[#0D1B3E]/[0.03]"
+          className={cn(
+            'border-b align-top hover:bg-[#0D1B3E]/[0.03]',
+            NEXUS_TRANSITION,
+          )}
       style={{
         borderColor: INK_10,
         backgroundColor: zebra ? 'rgba(13,27,62,0.02)' : 'transparent',
@@ -328,7 +349,11 @@ function GlossaryRow({
           onClick={onCopy}
           title="Copier l’identifiant"
           aria-label={`Copier ${row.fieldPath}`}
-          className="group inline-flex items-center gap-2 rounded font-mono text-[12.5px] font-medium text-[#0D1B3E] transition-colors hover:text-[#0D1B3E]/80"
+          className={cn(
+            'group inline-flex items-center gap-2 rounded font-mono text-[12.5px] font-medium text-[#0D1B3E] hover:text-[#0D1B3E]/80',
+            NEXUS_TRANSITION,
+            NEXUS_FOCUS_VISIBLE,
+          )}
         >
           <span className="break-all">{row.fieldPath}</span>
           <Copy

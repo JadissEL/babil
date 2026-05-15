@@ -5,6 +5,16 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { normalizeCountriesApiListResponse } from '@/lib/country-full-data-materialize'
+import {
+  NEXUS_FOCUS_VISIBLE,
+  NEXUS_TOOLBAR_H_CLASS,
+  NEXUS_TRANSITION,
+  NEXUS_TW,
+} from '@/lib/nexus-chrome'
+import {
+  SITE_FOCUS_VISIBLE_SOFT,
+  SITE_INTERACTION_TRANSITION,
+} from '@/lib/site-chrome-tokens'
 import { cn } from '@/lib/utils'
 
 type Row = { id: string | number; name: string }
@@ -35,7 +45,7 @@ function useAppleLikePlatform() {
   return isApple
 }
 
-export function GlobalCountrySearch() {
+export function GlobalCountrySearch({ toolbar = false }: { toolbar?: boolean }) {
   const router = useRouter()
   const isApple = useAppleLikePlatform()
   const shortcutLabel = isApple ? '⌘K' : 'Ctrl+K'
@@ -133,7 +143,26 @@ export function GlobalCountrySearch() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-[10px] font-black uppercase tracking-wider text-muted transition-colors hover:border-primary/40 hover:bg-primary-soft hover:text-primary sm:px-3.5 sm:text-xs"
+        className={cn(
+          'inline-flex items-center gap-2 border',
+          NEXUS_TRANSITION,
+          toolbar
+            ? cn(
+                NEXUS_TOOLBAR_H_CLASS,
+                NEXUS_FOCUS_VISIBLE,
+                'shrink-0 rounded-lg bg-white/90 px-2.5 text-[10px] font-black uppercase tracking-wider',
+                NEXUS_TW.borderStrong,
+                NEXUS_TW.ink65,
+                NEXUS_TW.hoverBorder,
+                'hover:bg-white',
+                NEXUS_TW.ink,
+              )
+            : cn(
+                'rounded-xl border-line bg-surface px-3 py-2 text-[10px] font-black uppercase tracking-wider text-muted hover:border-primary/40 hover:bg-primary-soft hover:text-primary sm:px-3.5 sm:text-xs',
+                SITE_INTERACTION_TRANSITION,
+                SITE_FOCUS_VISIBLE_SOFT,
+              ),
+        )}
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label="Rechercher un pays"
@@ -141,7 +170,12 @@ export function GlobalCountrySearch() {
       >
         <Search className="h-4 w-4 shrink-0" aria-hidden />
         <span className="max-[420px]:sr-only">Pays</span>
-        <kbd className="hidden rounded border border-line bg-inset px-1.5 py-0.5 font-mono text-[10px] font-bold text-muted sm:inline">
+        <kbd
+          className={cn(
+            'hidden rounded border px-1.5 py-0.5 font-mono text-[10px] font-bold sm:inline',
+            toolbar ? cn(NEXUS_TW.kbdBar) : 'border-line bg-inset text-muted',
+          )}
+        >
           {shortcutLabel}
         </kbd>
       </button>

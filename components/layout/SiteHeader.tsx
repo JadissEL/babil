@@ -4,10 +4,18 @@ import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@cl
 import { Globe, Heart, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { openCookiePreferences } from '@/components/cookies/CookieConsentBanner';
-import { SiteHeaderMenuButton } from '@/components/layout/SitePrimaryNav';
 import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock';
+import { SiteHeaderMenuButton } from '@/components/layout/SitePrimaryNav';
 import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch';
 import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate';
+import {
+  SITE_FOCUS_VISIBLE,
+  SITE_FOCUS_VISIBLE_ON_DARK_CTA,
+  SITE_FOCUS_VISIBLE_ON_PRIMARY,
+  SITE_FOCUS_VISIBLE_SOFT,
+  SITE_INTERACTION_TRANSITION,
+} from '@/lib/site-chrome-tokens';
+import { cn } from '@/lib/utils';
 
 /**
  * En-tête global : menu, logo, **objectif principal** (inline), recherche pays, auth.
@@ -19,7 +27,10 @@ export function SiteHeader({ onPrimaryNavOpen }: { onPrimaryNavOpen?: () => void
       <div className="mx-auto flex min-h-16 w-full max-w-[1600px] flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-2 sm:px-6 lg:px-8">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 sm:gap-3">
           {onPrimaryNavOpen ? <SiteHeaderMenuButton onClick={onPrimaryNavOpen} /> : null}
-          <Link href="/" className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/"
+            className={cn('flex shrink-0 items-center gap-2 rounded-lg', SITE_FOCUS_VISIBLE)}
+          >
             <div className="rounded-lg bg-primary p-1.5 text-white shadow-soft">
               <Globe className="h-6 w-6" />
             </div>
@@ -35,7 +46,11 @@ export function SiteHeader({ onPrimaryNavOpen }: { onPrimaryNavOpen?: () => void
               <SignInButton mode="modal">
                 <button
                   type="button"
-                  className="rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white shadow-soft transition-all hover:bg-primary-hover"
+                  className={cn(
+                    'rounded-xl bg-primary px-5 py-2 text-xs font-black uppercase tracking-widest text-white shadow-soft hover:bg-primary-hover',
+                    SITE_INTERACTION_TRANSITION,
+                    SITE_FOCUS_VISIBLE_ON_PRIMARY,
+                  )}
                 >
                   Connexion
                 </button>
@@ -43,7 +58,11 @@ export function SiteHeader({ onPrimaryNavOpen }: { onPrimaryNavOpen?: () => void
               <SignUpButton mode="modal">
                 <button
                   type="button"
-                  className="rounded-xl border border-line bg-surface px-5 py-2 text-xs font-black uppercase tracking-widest text-text transition-all hover:bg-primary-soft"
+                  className={cn(
+                    'rounded-xl border border-line bg-surface px-5 py-2 text-xs font-black uppercase tracking-widest text-text hover:bg-primary-soft',
+                    SITE_INTERACTION_TRANSITION,
+                    SITE_FOCUS_VISIBLE_SOFT,
+                  )}
                 >
                   S&apos;inscrire
                 </button>
@@ -54,7 +73,11 @@ export function SiteHeader({ onPrimaryNavOpen }: { onPrimaryNavOpen?: () => void
             <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
               <Link
                 href="/overview"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-2 text-[10px] font-black uppercase tracking-wider text-text transition-colors hover:bg-primary-soft sm:gap-2 sm:px-4 sm:text-xs sm:tracking-widest"
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-2 text-[10px] font-black uppercase tracking-wider text-text hover:bg-primary-soft sm:gap-2 sm:px-4 sm:text-xs sm:tracking-widest',
+                  SITE_INTERACTION_TRANSITION,
+                  SITE_FOCUS_VISIBLE_SOFT,
+                )}
                 title="Tableau de bord"
               >
                 <LayoutDashboard className="h-4 w-4 shrink-0" />
@@ -75,7 +98,10 @@ export function SiteFooter() {
     <footer className="border-t border-line bg-[#fdf8ef]/90 text-text">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 sm:py-9 lg:px-8">
         <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <Link href="/" className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/"
+            className={cn('flex shrink-0 items-center gap-2 rounded-lg', SITE_FOCUS_VISIBLE)}
+          >
             <div className="rounded-lg bg-primary p-1.5 text-white shadow-soft">
               <Globe className="h-5 w-5" />
             </div>
@@ -86,25 +112,38 @@ export function SiteFooter() {
             aria-label="Liens légaux"
             className="flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-[10px] font-black uppercase tracking-[0.22em] text-muted"
           >
-            <Link href="/legal#mentions" className="transition-colors hover:text-text">
+            <Link
+              href="/legal#mentions"
+              className={cn('rounded-sm', SITE_INTERACTION_TRANSITION, SITE_FOCUS_VISIBLE, 'hover:text-text')}
+            >
               Legal
             </Link>
             <a
               href="mailto:support@visaflow.com?subject=Support%20VisaFlow"
-              className="transition-colors hover:text-text"
+              className={cn('rounded-sm', SITE_INTERACTION_TRANSITION, SITE_FOCUS_VISIBLE, 'hover:text-text')}
             >
               Support
             </a>
-            <Link href="/legal#confidentialite" className="transition-colors hover:text-text">
+            <Link
+              href="/legal#confidentialite"
+              className={cn('rounded-sm', SITE_INTERACTION_TRANSITION, SITE_FOCUS_VISIBLE, 'hover:text-text')}
+            >
               Privacy Policy
             </Link>
-            <Link href="/legal#cgu" className="transition-colors hover:text-text">
+            <Link
+              href="/legal#cgu"
+              className={cn('rounded-sm', SITE_INTERACTION_TRANSITION, SITE_FOCUS_VISIBLE, 'hover:text-text')}
+            >
               Terms of Service
             </Link>
             <button
               type="button"
               onClick={() => openCookiePreferences()}
-              className="cursor-pointer font-mono text-[10px] font-black uppercase tracking-[0.22em] text-muted transition-colors hover:text-text"
+              className={cn(
+                'cursor-pointer rounded-sm font-mono text-[10px] font-black uppercase tracking-[0.22em] text-muted hover:text-text',
+                SITE_INTERACTION_TRANSITION,
+                SITE_FOCUS_VISIBLE,
+              )}
             >
               Gérer les cookies
             </button>
@@ -123,7 +162,11 @@ export function SiteFooter() {
             href={PAYPAL_DONATE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#0070BA] to-[#003087] px-5 py-2.5 text-[11px] font-black uppercase tracking-wider text-white shadow-[0_1px_2px_rgba(0,48,135,0.25)] ring-1 ring-[#009CDE]/35 transition-[filter] hover:brightness-110"
+            className={cn(
+              'inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-[#0070BA] to-[#003087] px-5 py-2.5 text-[11px] font-black uppercase tracking-wider text-white shadow-[0_1px_2px_rgba(0,48,135,0.25)] ring-1 ring-[#009CDE]/35 hover:brightness-110',
+              'transition-[filter] duration-200 ease-out motion-reduce:transition-none',
+              SITE_FOCUS_VISIBLE_ON_DARK_CTA,
+            )}
           >
             <Heart className="h-3.5 w-3.5 shrink-0 fill-white/95" aria-hidden />
             PayPal · Don

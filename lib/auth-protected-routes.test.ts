@@ -38,13 +38,19 @@ describe('PROTECTED_ROUTE_RULES', () => {
   });
 
   it('flags /admin and /moderation as auth+rbac (RBAC enforced downstream)', () => {
-    const admin = PROTECTED_ROUTE_RULES.find((r) => r.pattern === '/admin(.*)');
-    const moderation = PROTECTED_ROUTE_RULES.find((r) => r.pattern === '/moderation(.*)');
-    const apiAdmin = PROTECTED_ROUTE_RULES.find((r) => r.pattern === '/api/admin(.*)');
-    assert.equal(admin?.requirement, 'auth+rbac');
-    assert.equal(moderation?.requirement, 'auth+rbac');
-    assert.equal(apiAdmin?.requirement, 'auth+rbac');
-  });
+    const admin = PROTECTED_ROUTE_RULES.find((r) => r.pattern === '/admin(.*)')
+    const moderation = PROTECTED_ROUTE_RULES.find((r) => r.pattern === '/moderation(.*)')
+    const apiAdmin = PROTECTED_ROUTE_RULES.find((r) => r.pattern === '/api/admin(.*)')
+    const designSystem = PROTECTED_ROUTE_RULES.find((r) => r.pattern === '/design-system(.*)')
+    const fieldpaths = PROTECTED_ROUTE_RULES.find(
+      (r) => r.pattern === '/intelligence-fieldpaths(.*)',
+    )
+    assert.equal(admin?.requirement, 'auth+rbac')
+    assert.equal(moderation?.requirement, 'auth+rbac')
+    assert.equal(apiAdmin?.requirement, 'auth+rbac')
+    assert.equal(designSystem?.requirement, 'auth+rbac')
+    assert.equal(fieldpaths?.requirement, 'auth+rbac')
+  })
 });
 
 describe('getProtectedRouteDisplayRows', () => {

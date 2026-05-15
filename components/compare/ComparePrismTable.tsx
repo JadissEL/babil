@@ -15,6 +15,7 @@ import type { CompareRow } from '@/lib/compare-rows'
 import { COUNTRY_HIGHLIGHTS } from '@/lib/country-highlights'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 import { atlasVisaDelayDays } from '@/lib/explorer-atlas-ui'
+import { NEXUS_FOCUS_VISIBLE, NEXUS_FOCUS_VISIBLE_ON_INK_SOLID, NEXUS_TRANSITION } from '@/lib/nexus-chrome'
 import { cn } from '@/lib/utils'
 
 export type ComparePrismTableProps = {
@@ -173,13 +174,21 @@ export function ComparePrismTable({
               <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
                 <Link
                   href="/services/delegated-applications"
-                  className="inline-flex items-center justify-center rounded-xl border-2 border-[#0D1B3E] bg-white px-4 py-2.5 text-center text-xs font-black uppercase tracking-wider text-[#0D1B3E] transition-colors hover:bg-[#FDFBF4]"
+                  className={cn(
+                    'inline-flex items-center justify-center rounded-xl border-2 border-[#0D1B3E] bg-white px-4 py-2.5 text-center text-xs font-black uppercase tracking-wider text-[#0D1B3E] hover:bg-[#FDFBF4]',
+                    NEXUS_TRANSITION,
+                    NEXUS_FOCUS_VISIBLE,
+                  )}
                 >
                   Obtenir de l&apos;aide
                 </Link>
                 <Link
                   href={`/countries/${winnerId}`}
-                  className="inline-flex items-center justify-center rounded-xl bg-[#0D1B3E] px-4 py-2.5 text-center text-xs font-black uppercase tracking-wider text-white transition-colors hover:bg-[#0D1B3E]/90"
+                  className={cn(
+                    'inline-flex items-center justify-center rounded-xl bg-[#0D1B3E] px-4 py-2.5 text-center text-xs font-black uppercase tracking-wider text-white hover:bg-[#0D1B3E]/90',
+                    NEXUS_TRANSITION,
+                    NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+                  )}
                 >
                   Voir {winnerName}
                 </Link>

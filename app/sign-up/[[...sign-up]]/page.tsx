@@ -1,5 +1,7 @@
 import { SignUp } from '@clerk/nextjs'
 import Link from 'next/link'
+import { NEXUS_FOCUS_VISIBLE, NEXUS_TRANSITION } from '@/lib/nexus-chrome'
+import { cn } from '@/lib/utils'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -38,7 +40,11 @@ export default function SignUpPage({ searchParams }: Props) {
         <div className="text-center">
           <Link
             href="/"
-            className="inline-block font-serif text-3xl font-black tracking-tight text-[#0D1B3E] transition-opacity hover:opacity-80"
+            className={cn(
+              'inline-block rounded-md font-serif text-3xl font-black tracking-tight text-[#0D1B3E] hover:opacity-80',
+              NEXUS_FOCUS_VISIBLE,
+              NEXUS_TRANSITION,
+            )}
           >
             VisaFlow
           </Link>
@@ -62,7 +68,11 @@ export default function SignUpPage({ searchParams }: Props) {
         <p className="mt-6 text-center font-serif text-[12.5px] font-medium text-[#0D1B3E]/55">
           <Link
             href="/"
-            className="underline decoration-[#0D1B3E]/20 underline-offset-4 transition-colors hover:text-[#0D1B3E] hover:decoration-[#0D1B3E]"
+            className={cn(
+              'rounded-sm underline decoration-[#0D1B3E]/20 underline-offset-4 hover:text-[#0D1B3E] hover:decoration-[#0D1B3E]',
+              NEXUS_FOCUS_VISIBLE,
+              NEXUS_TRANSITION,
+            )}
           >
             Retour à l’accueil
           </Link>

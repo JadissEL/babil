@@ -27,12 +27,18 @@ import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedA
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import type { HomeHeroSlide } from '@/lib/home-hero-slides';
 import {
+  NEXUS_FOCUS_VISIBLE,
+  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+  NEXUS_TRANSITION,
+} from '@/lib/nexus-chrome';
+import {
   focusStripForObjective,
   homeHeroForObjective,
   visibleHomeFeatureKeysForObjective,
   type HomeFeatureKey,
 } from '@/lib/user-objectives/home-orchestration';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
+import { cn } from '@/lib/utils';
 
 const INK = '#0D1B3E';
 const INK_60 = 'rgba(13,27,62,0.60)';
@@ -223,7 +229,10 @@ export function HomeExperience({
                 <div className="mt-9 flex flex-wrap items-center gap-4">
                   <Link
                     href="/probability"
-                    className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[12px] font-black uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(13,27,62,0.20)] transition-[transform,filter] hover:translate-y-[-1px] hover:brightness-110"
+                    className={cn(
+                      'inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[12px] font-black uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(13,27,62,0.20)] transition-[transform,filter] motion-reduce:transition-none hover:translate-y-[-1px] hover:brightness-110',
+                      NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+                    )}
                     style={{ backgroundColor: INK }}
                   >
                     Évaluer mes chances
@@ -231,7 +240,11 @@ export function HomeExperience({
                   </Link>
                   <Link
                     href={exploreCtaHref}
-                    className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-[0.22em] underline-offset-4 transition-colors hover:underline"
+                    className={cn(
+                      'inline-flex items-center gap-2 rounded-sm text-[12px] font-black uppercase tracking-[0.22em] underline-offset-4 transition-colors hover:underline',
+                      NEXUS_FOCUS_VISIBLE,
+                      NEXUS_TRANSITION,
+                    )}
                     style={{ color: INK }}
                   >
                     Ouvrir l&apos;Explorer
@@ -315,7 +328,11 @@ export function HomeExperience({
               </div>
               <Link
                 href={exploreCtaHref}
-                className="font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 hover:underline"
+                className={cn(
+                  'rounded-sm font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 transition-colors hover:underline',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
                 style={{ color: INK }}
               >
                 Tout explorer
@@ -344,7 +361,11 @@ export function HomeExperience({
               </div>
               <Link
                 href={exploreCtaHref}
-                className="inline-flex items-center gap-1.5 font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 hover:underline"
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-sm font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 transition-colors hover:underline',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
                 style={{ color: INK }}
               >
                 <Compass className="h-3.5 w-3.5" aria-hidden />
@@ -412,7 +433,11 @@ export function HomeExperience({
               </div>
               <Link
                 href="/community"
-                className="font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 hover:underline"
+                className={cn(
+                  'rounded-sm font-mono text-[11px] font-black uppercase tracking-[0.22em] underline-offset-4 transition-colors hover:underline',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
                 style={{ color: INK }}
               >
                 Voir la communauté
@@ -511,7 +536,10 @@ function Feature({
   return (
     <Link
       href={href}
-      className="group flex h-full flex-col rounded-2xl border px-5 py-4 transition-[transform,border-color,background-color] hover:translate-y-[-1px] hover:border-[#0D1B3E]"
+      className={cn(
+        'group flex h-full flex-col rounded-2xl border px-5 py-4 transition-[transform,border-color,background-color] motion-reduce:transition-none hover:translate-y-[-1px] hover:border-[#0D1B3E]',
+        NEXUS_FOCUS_VISIBLE,
+      )}
       style={{ borderColor: INK_10, backgroundColor: CREAM_PANEL }}
     >
       <div className="mb-3 flex items-center gap-2">

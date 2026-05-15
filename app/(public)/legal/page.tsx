@@ -13,6 +13,8 @@ import {
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { openCookiePreferences } from '@/components/cookies/CookieConsentBanner';
+import { NEXUS_FOCUS_VISIBLE, NEXUS_FOCUS_VISIBLE_ON_INK_SOLID, NEXUS_TRANSITION } from '@/lib/nexus-chrome';
+import { cn } from '@/lib/utils';
 
 const INK = '#0D1B3E';
 const INK_10 = 'rgba(13,27,62,0.10)';
@@ -152,11 +154,13 @@ export default function LegalPage() {
                     <a
                       href={`#${item.id}`}
                       aria-current={active ? 'true' : undefined}
-                      className={
+                      className={cn(
+                        NEXUS_FOCUS_VISIBLE,
+                        NEXUS_TRANSITION,
                         active
                           ? 'block rounded-md bg-white px-3 py-2 text-[13px] font-semibold text-[#0D1B3E] shadow-[inset_3px_0_0_0_#0D1B3E]'
-                          : 'block rounded-md px-3 py-2 text-[13px] font-medium text-[#0D1B3E]/65 transition-colors hover:bg-white/60 hover:text-[#0D1B3E]'
-                      }
+                          : 'block rounded-md px-3 py-2 text-[13px] font-medium text-[#0D1B3E]/65 hover:bg-white/60 hover:text-[#0D1B3E]',
+                      )}
                     >
                       {item.shortLabel}
                     </a>
@@ -225,7 +229,11 @@ export default function LegalPage() {
                 <dd>
                   <a
                     href="mailto:contact@visaflow.com"
-                    className="inline-flex items-center gap-1.5 text-[#0D1B3E] underline-offset-2 hover:underline"
+                    className={cn(
+                      'inline-flex items-center gap-1.5 rounded-sm text-[#0D1B3E] underline-offset-2 hover:underline',
+                      NEXUS_FOCUS_VISIBLE,
+                      NEXUS_TRANSITION,
+                    )}
                   >
                     <Mail className="h-3.5 w-3.5" aria-hidden />
                     contact@visaflow.com
@@ -319,14 +327,25 @@ export default function LegalPage() {
               <p className="text-[14px] leading-relaxed text-[#0D1B3E]/80">
                 Vous pouvez exercer vos droits d&apos;accès, de rectification, d&apos;opposition,
                 d&apos;effacement et de portabilité depuis votre{' '}
-                <Link href="/profile" className="underline-offset-2 hover:underline">
+                <Link
+                  href="/profile"
+                  className={cn(
+                    'rounded-sm underline-offset-2 hover:underline',
+                    NEXUS_FOCUS_VISIBLE,
+                    NEXUS_TRANSITION,
+                  )}
+                >
                   espace profil
                 </Link>{' '}
                 — un export JSON RGPD complet est disponible via la section
                 «&nbsp;Confidentialité&nbsp;» du profil. Pour toute question complémentaire&nbsp;:{' '}
                 <a
                   href="mailto:dpo@visaflow.com"
-                  className="font-semibold text-[#0D1B3E] underline-offset-2 hover:underline"
+                  className={cn(
+                    'rounded-sm font-semibold text-[#0D1B3E] underline-offset-2 hover:underline',
+                    NEXUS_FOCUS_VISIBLE,
+                    NEXUS_TRANSITION,
+                  )}
                 >
                   dpo@visaflow.com
                 </a>
@@ -337,7 +356,14 @@ export default function LegalPage() {
             <p className="text-[13px] leading-relaxed text-[#0D1B3E]/60">
               Pour comprendre la nature des champs intelligence affichés sur les fiches pays,
               consultez le{' '}
-              <Link href="/intelligence-fieldpaths" className="underline-offset-2 hover:underline">
+              <Link
+                href="/intelligence-fieldpaths"
+                className={cn(
+                  'rounded-sm underline-offset-2 hover:underline',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
+              >
                 glossaire des field paths
               </Link>{' '}
               (PAGE 32).
@@ -402,7 +428,11 @@ export default function LegalPage() {
             <button
               type="button"
               onClick={() => openCookiePreferences()}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#0D1B3E] px-4 py-2.5 text-[12px] font-bold text-white transition-colors hover:bg-[#0D1B3E]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF7EE]"
+              className={cn(
+                'inline-flex items-center gap-2 rounded-xl bg-[#0D1B3E] px-4 py-2.5 text-[12px] font-bold text-white hover:bg-[#0D1B3E]/90',
+                NEXUS_TRANSITION,
+                NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+              )}
             >
               <CookieIcon className="h-3.5 w-3.5" aria-hidden />
               Gérer mes préférences cookies
@@ -463,7 +493,11 @@ export default function LegalPage() {
                 Pour signaler un litige ou une demande contractuelle&nbsp;:{' '}
                 <a
                   href="mailto:legal@visaflow.com"
-                  className="font-semibold text-[#0D1B3E] underline-offset-2 hover:underline"
+                  className={cn(
+                    'rounded-sm font-semibold text-[#0D1B3E] underline-offset-2 hover:underline',
+                    NEXUS_FOCUS_VISIBLE,
+                    NEXUS_TRANSITION,
+                  )}
                 >
                   legal@visaflow.com
                 </a>

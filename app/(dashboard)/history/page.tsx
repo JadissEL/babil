@@ -13,6 +13,8 @@ import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import { historyEventTypeLabelFr } from '@/lib/history-event-labels'
+import { NEXUS_FOCUS_VISIBLE, NEXUS_TRANSITION } from '@/lib/nexus-chrome'
+import { cn } from '@/lib/utils'
 
 type HistoryEvent = {
   id: string
@@ -179,13 +181,19 @@ export default function HistoryPage() {
                   onChange={(ev) => setSearch(ev.target.value)}
                   autoComplete="off"
                   aria-label="Recherche historique"
-                  className="h-11 w-full rounded-md border bg-[#FAF7EE] pl-9 pr-3 text-sm font-medium text-[#0D1B3E] outline-none placeholder:text-[#0D1B3E]/35 focus:border-[#0D1B3E] focus:ring-2 focus:ring-[#0D1B3E]/15"
+                  className={cn(
+                    'h-11 w-full rounded-md border bg-[#FAF7EE] pl-9 pr-3 text-sm font-medium text-[#0D1B3E] outline-none placeholder:text-[#0D1B3E]/35 focus-visible:border-[#0D1B3E] focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/15',
+                    NEXUS_TRANSITION,
+                  )}
                   style={{ borderColor: INK_10 }}
                 />
               </div>
               <select
                 aria-label="Filtrer par type"
-                className="h-11 rounded-md border bg-[#FAF7EE] px-3 text-sm font-medium text-[#0D1B3E] outline-none focus:border-[#0D1B3E] focus:ring-2 focus:ring-[#0D1B3E]/15 sm:min-w-[200px]"
+                className={cn(
+                  'h-11 rounded-md border bg-[#FAF7EE] px-3 text-sm font-medium text-[#0D1B3E] outline-none focus-visible:border-[#0D1B3E] focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/15 sm:min-w-[200px]',
+                  NEXUS_TRANSITION,
+                )}
                 style={{ borderColor: INK_10 }}
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value)}
@@ -225,12 +233,20 @@ export default function HistoryPage() {
                 connexion sur une page pays.
               </p>
               <div className="mt-2 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <ObjectiveAwareExplorerLink className="inline-flex items-center justify-center rounded-md border bg-white px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]">
+                <ObjectiveAwareExplorerLink className={cn(
+                  'inline-flex items-center justify-center rounded-md border bg-white px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] hover:border-[#0D1B3E]',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE,
+                )}>
                   Ouvrir l&apos;explorateur
                 </ObjectiveAwareExplorerLink>
                 <Link
                   href="/profile"
-                  className="inline-flex items-center justify-center rounded-md border bg-[#FAF7EE] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]"
+                  className={cn(
+                    'inline-flex items-center justify-center rounded-md border bg-[#FAF7EE] px-5 py-3 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] hover:border-[#0D1B3E]',
+                    NEXUS_TRANSITION,
+                    NEXUS_FOCUS_VISIBLE,
+                  )}
                   style={{ borderColor: INK_10 }}
                 >
                   Vérifier mon profil
@@ -317,7 +333,11 @@ export default function HistoryPage() {
                             {countryHref ? (
                               <Link
                                 href={countryHref}
-                                className="text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]"
+                                className={cn(
+                                  'text-[11px] font-black uppercase tracking-[0.18em] text-[#0D1B3E] underline decoration-[#0D1B3E]/30 underline-offset-4 hover:decoration-[#0D1B3E]',
+                                  NEXUS_TRANSITION,
+                                  NEXUS_FOCUS_VISIBLE,
+                                )}
                               >
                                 Fiche pays
                               </Link>
@@ -342,7 +362,11 @@ export default function HistoryPage() {
                   <button
                     type="button"
                     onClick={() => setVisibleCount((v) => v + PAGE_STEP)}
-                    className="inline-flex items-center justify-center rounded-md border bg-white px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] transition-colors hover:border-[#0D1B3E]"
+                    className={cn(
+                      'inline-flex items-center justify-center rounded-md border bg-white px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E] hover:border-[#0D1B3E]',
+                      NEXUS_TRANSITION,
+                      NEXUS_FOCUS_VISIBLE,
+                    )}
                     style={{ borderColor: INK_10 }}
                   >
                     Charger plus d&apos;entrées
