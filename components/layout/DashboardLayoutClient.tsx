@@ -71,13 +71,13 @@ function DashboardTopBar({
         Espace connecté
       </span>
 
-      <h1 className="min-w-0 flex-1 truncate font-serif text-base font-semibold text-[#0D1B3E] lg:hidden">
+      <h1 className="min-w-0 flex-1 truncate font-serif text-base font-semibold text-[#0D1B3E] sm:max-w-[40%] lg:hidden">
         {title}
       </h1>
 
       <nav
         aria-label="Navigation secondaire"
-        className="order-3 hidden w-full items-center gap-2 sm:order-none sm:ml-4 sm:w-auto lg:ml-8 lg:flex"
+        className="order-4 hidden w-full items-center gap-2 lg:order-none lg:ml-8 lg:flex lg:w-auto"
       >
         <TopNavLink href="/explorer" active={onExplorerActive}>
           Tendances mondiales
@@ -87,12 +87,12 @@ function DashboardTopBar({
         </TopNavLink>
       </nav>
 
-      <div className="order-2 flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2 sm:order-none sm:gap-3">
-        <ObjectiveDockInline className="hidden min-w-0 max-w-none border-[rgba(13,27,62,0.12)] bg-white/90 sm:inline-flex md:max-w-[13.5rem]" />
+      <div className="order-2 flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2 lg:order-none lg:gap-3">
+        <ObjectiveDockInline className="hidden min-w-0 max-w-none border-[rgba(13,27,62,0.12)] bg-white/90 lg:inline-flex lg:max-w-[13.5rem]" />
         <GlobalCountrySearch />
       </div>
 
-      <div className="order-4 ml-auto flex items-center gap-2 sm:order-none sm:ml-0 sm:gap-3">
+      <div className="order-3 ml-auto flex shrink-0 items-center gap-2 sm:gap-3 lg:order-none lg:ml-0">
         <Link
           href="/profile"
           className="hidden items-center gap-2 rounded-lg border bg-white px-3 py-2 text-[12px] font-semibold text-[#0D1B3E] transition-colors hover:bg-[#0D1B3E]/[0.04] sm:inline-flex"
@@ -110,7 +110,7 @@ function DashboardTopBar({
           <Bell className="h-4 w-4" />
         </button>
         <UserButton
-          afterSignOutUrl="/"
+          afterSignOutUrl="/sign-in"
           appearance={{
             elements: {
               avatarBox: 'h-9 w-9',

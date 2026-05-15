@@ -95,7 +95,7 @@ Contenu plus haut que viewport : seul `main` scroll, pas la sidebar.
 ---
 
 ## 11. User Journey Connections
-Toutes les routes produit Nexus (`lib/nexus-shell-routes.ts` : `/`, outils workspace, explorer, etc.) partagent ce shell via `NexusShellGate` + `DashboardLayoutClient`. Seules les routes marketing résiduelles (`/countries/*`, `/legal`, …) conservent le shell public PAGE 34. Visiteurs non connectés : redirection Clerk vers `/sign-in?redirect_url=…`.
+Toutes les routes produit Nexus (`lib/nexus-shell-routes.ts` : `/`, outils workspace, explorer, glossaire intelligence, assist candidatures, etc.) partagent ce shell via `NexusShellGate` + `DashboardLayoutClient`. **Connectés** sur `/countries/[id]` : même shell Nexus (sans auth forcée sur l’URL). **Anonymes** sur pays / legal : shell public PAGE 34. Visiteurs non connectés sur routes produit : `/sign-in?redirect_url=…`.
 
 ---
 

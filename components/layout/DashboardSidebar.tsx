@@ -11,6 +11,7 @@ import {
   normalizeDashboardPath,
   type DashboardNavItem,
 } from '@/components/layout/dashboard-nav-config'
+import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock'
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
 import { cn } from '@/lib/utils'
@@ -199,6 +200,7 @@ export function DashboardSidebar({ mobileOpen = false, onMobileClose }: Dashboar
             <X className="h-4 w-4" />
           </button>
         </div>
+        <ObjectiveDockInline className="w-full max-w-none border-[rgba(13,27,62,0.12)] bg-[#FAF7EE]/90 lg:hidden" />
         <NavGroup label="Workspace" items={dashboardNav} pathname={pathname} onNavigate={close} />
         <NavGroup
           label="Data & Analysis"

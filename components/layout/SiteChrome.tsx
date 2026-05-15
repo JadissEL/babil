@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@clerk/nextjs';
 import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import { AppToaster } from '@/components/AppToaster';
@@ -7,11 +8,34 @@ import { CookieConsentBanner } from '@/components/cookies/CookieConsentBanner';
 import { NexusShellGate } from '@/components/layout/NexusShellGate';
 import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
 import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
-import { isAuthPath, isNexusPath, isPublicMarketingPath } from '@/lib/nexus-shell-routes';
+import {
+  isAuthPath,
+  isNexusPath,
+  isPublicMarketingPath,
+  NEXUS_COUNTRIES_PREFIX,
+  normalizePathname,
+} from '@/lib/nexus-shell-routes';
+
+function shouldUseNexusShell(
+  pathname: string | null,
+  isSignedIn: boolean,
+  isLoaded: boolean,
+): boolean {
+  if (!pathname || isAuthPath(pathname)) return false;
+  if (isNexusPath(pathname)) return true;
+  if (!isLoaded || !isSignedIn) return false;
+  const p = normalizePathname(pathname);
+  return (
+    p === NEXUS_COUNTRIES_PREFIX || p.startsWith(`${NEXUS_COUNTRIES_PREFIX}/`)
+  );
+}
 
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { isLoaded, isSignedIn } = useAuth();
   const { mobileOpen, setMobileOpen, closeMobile } = useSitePrimaryNavState();
+
+  const useNexus = shouldUseNexusShell(pathname, Boolean(isSignedIn), isLoaded);
 
   if (isAuthPath(pathname)) {
     return (
@@ -22,7 +46,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
     );
   }
 
-  if (isNexusPath(pathname)) {
+  if (useNexus) {
     return (
       <div className="flex min-h-screen flex-1 flex-col bg-[#FAF7EE]">
         <AppToaster />

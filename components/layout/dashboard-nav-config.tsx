@@ -18,6 +18,8 @@ import {
   SwatchBook,
   History,
   Home,
+  FileStack,
+  Sparkles,
 } from 'lucide-react'
 import type { LucideProps } from 'lucide-react'
 import type { ComponentType } from 'react'
@@ -38,6 +40,12 @@ export const dashboardNav: DashboardNavItem[] = [
   { label: 'Moteur reco (pro)', href: '/recommendation-engine', icon: Activity },
   { label: 'Mes recommandations', href: '/recommendations', icon: Map },
   { label: 'Mon profil', href: '/profile', icon: User },
+  {
+    label: 'Assist candidatures',
+    href: '/services/delegated-applications',
+    icon: FileStack,
+    match: 'prefix',
+  },
   { label: 'Administration', href: '/admin', icon: Shield },
   { label: 'Design system', href: '/design-system', icon: SwatchBook },
 ]
@@ -51,6 +59,12 @@ export const explorerNav: DashboardNavItem[] = [
   { label: 'Investissement / CBI', href: '/investment', icon: CreditCard },
   { label: 'Éducation & Formation', href: '/education', icon: GraduationCap, match: 'prefix' },
   { label: 'Permis International', href: '/permis', icon: Car },
+  {
+    label: 'Glossaire intelligence',
+    href: '/intelligence-fieldpaths',
+    icon: Sparkles,
+    match: 'prefix',
+  },
   { label: 'Modération', href: '/moderation', icon: MessageSquare },
 ]
 
@@ -70,6 +84,7 @@ export function hrefDashboardActive(normalizedPathname: string, item: DashboardN
 export function getDashboardNavTitle(pathname: string): string {
   const p = normalizeDashboardPath(pathname)
   if (p === '/') return 'Accueil'
+  if (p.startsWith('/countries/')) return 'Fiche pays'
   for (const item of dashboardNav) {
     if (item.href === '/' && p !== '/') continue
     if (hrefDashboardActive(p, item)) return item.label

@@ -24,7 +24,12 @@ const NEXUS_NAV_HREFS = [
   '/education',
   '/permis',
   '/moderation',
+  '/intelligence-fieldpaths',
+  '/services/delegated-applications',
 ] as const;
+
+/** Signed-in users keep the Nexus shell on country detail pages (public URLs). */
+export const NEXUS_COUNTRIES_PREFIX = '/countries';
 
 const AUTH_PATH_PREFIXES = ['/sign-in', '/sign-up'] as const;
 
