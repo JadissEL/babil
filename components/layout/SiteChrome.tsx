@@ -79,7 +79,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
         <main
           id="main-content"
           tabIndex={-1}
-          className="min-w-0 flex-1 px-4 py-5 pb-[calc(var(--vf-objective-dock-height,5.5rem)+1rem)] focus:outline-none sm:px-6 lg:px-8 lg:py-6"
+          className="min-w-0 flex-1 px-4 py-5 pb-8 focus:outline-none sm:px-6 lg:px-8 lg:py-6"
         >
           {children}
         </main>

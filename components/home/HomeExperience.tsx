@@ -675,8 +675,7 @@ function MeridianHomeFooter() {
       style={{
         backgroundColor: CREAM_BG,
         borderColor: INK_10,
-        paddingBottom:
-          'calc(var(--vf-objective-dock-height,5.5rem) + env(safe-area-inset-bottom,0px) + 0.5rem)',
+        paddingBottom: 'max(1rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))',
       }}
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col items-start gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">

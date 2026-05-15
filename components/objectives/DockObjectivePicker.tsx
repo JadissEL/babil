@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import {
@@ -11,9 +11,10 @@ import {
 import { cn } from '@/lib/utils';
 
 /**
- * Sélecteur d’objectif en bas de page : panneau personnalisé (style VisaFlow) au lieu du menu natif du `<select>`.
+ * Sélecteur d’objectif : panneau personnalisé (style VisaFlow) au lieu du menu natif du `<select>`.
+ * `compact` : pilule étroite pour le dock haut ({@link SiteObjectiveDock}).
  */
-export function DockObjectivePicker() {
+export function DockObjectivePicker({ variant = 'default' }: { variant?: 'default' | 'compact' }) {
   const { preference, ready, setPrimaryObjective } = useObjectivePreference();
   const [open, setOpen] = useState(false);
   const [busySlug, setBusySlug] = useState<string | null>(null);
@@ -53,30 +54,52 @@ export function DockObjectivePicker() {
 
   if (!ready) {
     return (
-      <div className="h-12 w-full max-w-xl animate-pulse rounded-2xl border border-line bg-inset" aria-hidden />
+      <div
+        className={cn(
+          'animate-pulse rounded-2xl border border-line bg-inset',
+          variant === 'compact' ? 'h-9 w-full max-w-[17.5rem]' : 'h-12 w-full max-w-xl',
+        )}
+        aria-hidden
+      />
     );
   }
 
+  const compact = variant === 'compact';
+
   return (
-    <div ref={rootRef} className="relative mx-auto w-full max-w-3xl">
+    <div ref={rootRef} className={cn('relative', compact ? 'w-full max-w-[17.5rem]' : 'mx-auto w-full max-w-3xl')}>
       <button
         type="button"
         aria-expanded={open}
         aria-haspopup="listbox"
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          'flex w-full items-center justify-between gap-3 rounded-2xl border border-line bg-surface px-4 py-3 text-left shadow-soft transition-colors',
+          'flex w-full items-center justify-between gap-2 rounded-2xl border border-line bg-surface text-left shadow-soft transition-colors',
+          compact ? 'px-2.5 py-1.5' : 'gap-3 px-4 py-3',
           open ? 'border-primary/40 ring-2 ring-primary/25' : 'hover:border-primary/35 hover:bg-primary-soft/50',
         )}
       >
         <span className="min-w-0 flex-1">
-          <span className="block text-[9px] font-black uppercase tracking-widest text-muted">Objectif principal</span>
-          <span className="mt-0.5 block truncate text-sm font-black text-text">
+          <span
+            className={cn(
+              'block font-black uppercase tracking-widest text-muted',
+              compact ? 'text-[7px] tracking-[0.18em]' : 'text-[9px] tracking-widest',
+            )}
+          >
+            Objectif principal
+          </span>
+          <span
+            className={cn('block truncate font-black text-text', compact ? 'mt-0.5 text-xs leading-tight' : 'mt-0.5 text-sm')}
+          >
             {currentLabel ?? 'Choisir votre objectif…'}
           </span>
         </span>
-        <ChevronUp
-          className={cn('h-5 w-5 shrink-0 text-muted transition-transform', open ? 'rotate-180' : '')}
+        <ChevronDown
+          className={cn(
+            'shrink-0 text-muted transition-transform',
+            compact ? 'h-3.5 w-3.5' : 'h-5 w-5',
+            open ? 'rotate-180' : '',
+          )}
           aria-hidden
         />
       </button>
@@ -84,7 +107,7 @@ export function DockObjectivePicker() {
       {open ? (
         <div
           role="listbox"
-          className="absolute bottom-full left-0 right-0 z-[80] mb-2 max-h-[min(60dvh,22rem)] overflow-y-auto overscroll-y-contain rounded-2xl border border-line bg-[#fdf8ef] p-3 shadow-card"
+          className="absolute left-0 right-0 top-full z-[80] mt-1.5 max-h-[min(60dvh,22rem)] overflow-y-auto overscroll-y-contain rounded-2xl border border-line bg-[#fdf8ef] p-3 shadow-card"
         >
           <p className="mb-2 px-1 text-[11px] font-medium text-muted">
             L’accueil, l’explorateur et les raccourcis s’alignent sur votre choix.

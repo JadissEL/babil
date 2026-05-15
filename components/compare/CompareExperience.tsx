@@ -337,7 +337,7 @@ export function CompareExperience() {
   const prismChrome = step === 'countries'
 
   return (
-    <div className="min-w-0 space-y-8 pb-[max(9rem,calc(7.5rem+var(--vf-objective-dock-height,5.5rem)+env(safe-area-inset-bottom,0px)))] sm:space-y-10">
+    <div className="min-w-0 space-y-8 pb-[max(6rem,calc(4rem+env(safe-area-inset-bottom,0px)))] sm:space-y-10">
       <ComparePrismHeader step={step} objective={objective} />
 
       <nav
