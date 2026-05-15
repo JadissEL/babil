@@ -22,6 +22,7 @@ import {
 import type { LucideProps } from 'lucide-react'
 import type { ComponentType } from 'react'
 
+/** Keep `lib/nexus-shell-routes.ts` `NEXUS_NAV_HREFS` in sync when adding routes here. */
 export type DashboardNavItem = {
   label: string
   href: string

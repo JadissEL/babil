@@ -7,6 +7,8 @@ import { usePathname } from 'next/navigation'
 import { ReactNode, useEffect, useState } from 'react'
 import { getDashboardNavTitle } from '@/components/layout/dashboard-nav-config'
 import { DashboardSidebar } from '@/components/layout/DashboardSidebar'
+import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock'
+import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch'
 import { appToast } from '@/lib/toast-store'
 import { cn } from '@/lib/utils'
 
@@ -50,7 +52,7 @@ function DashboardTopBar({
 
   return (
     <header
-      className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-3 border-b bg-[#FAF7EE]/95 px-4 backdrop-blur-md sm:px-6"
+      className="sticky top-0 z-40 flex min-h-16 shrink-0 flex-wrap items-center gap-2 gap-y-2 border-b bg-[#FAF7EE]/95 px-4 py-2 backdrop-blur-md sm:gap-3 sm:px-6"
       style={{ borderColor: INK_10 }}
     >
       <button
@@ -75,7 +77,7 @@ function DashboardTopBar({
 
       <nav
         aria-label="Navigation secondaire"
-        className="ml-8 hidden items-center gap-2 lg:flex"
+        className="order-3 hidden w-full items-center gap-2 sm:order-none sm:ml-4 sm:w-auto lg:ml-8 lg:flex"
       >
         <TopNavLink href="/explorer" active={onExplorerActive}>
           Tendances mondiales
@@ -85,7 +87,12 @@ function DashboardTopBar({
         </TopNavLink>
       </nav>
 
-      <div className="ml-auto flex items-center gap-2 sm:gap-3">
+      <div className="order-2 flex min-w-0 flex-1 flex-wrap items-center justify-end gap-2 sm:order-none sm:gap-3">
+        <ObjectiveDockInline className="hidden min-w-0 max-w-none border-[rgba(13,27,62,0.12)] bg-white/90 sm:inline-flex md:max-w-[13.5rem]" />
+        <GlobalCountrySearch />
+      </div>
+
+      <div className="order-4 ml-auto flex items-center gap-2 sm:order-none sm:ml-0 sm:gap-3">
         <Link
           href="/profile"
           className="hidden items-center gap-2 rounded-lg border bg-white px-3 py-2 text-[12px] font-semibold text-[#0D1B3E] transition-colors hover:bg-[#0D1B3E]/[0.04] sm:inline-flex"

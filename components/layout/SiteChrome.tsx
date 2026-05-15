@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 import { ReactNode } from 'react';
 import { AppToaster } from '@/components/AppToaster';
 import { CookieConsentBanner } from '@/components/cookies/CookieConsentBanner';
-import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
 import { NexusShellGate } from '@/components/layout/NexusShellGate';
+import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
 import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
 import { isAuthPath, isNexusPath, isPublicMarketingPath } from '@/lib/nexus-shell-routes';
 

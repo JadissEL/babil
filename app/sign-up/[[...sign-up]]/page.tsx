@@ -10,7 +10,16 @@ export const metadata: Metadata = {
 
 const SHELL = '#FAF7EE'
 
-export default function SignUpPage() {
+type Props = {
+  searchParams?: { redirect_url?: string }
+}
+
+export default function SignUpPage({ searchParams }: Props) {
+  const redirectTarget =
+    typeof searchParams?.redirect_url === 'string' && searchParams.redirect_url.startsWith('/')
+      ? searchParams.redirect_url
+      : '/overview'
+
   return (
     <div
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-12 sm:px-8"
@@ -46,7 +55,7 @@ export default function SignUpPage() {
             path="/sign-up"
             routing="path"
             signInUrl="/sign-in"
-            forceRedirectUrl="/overview"
+            forceRedirectUrl={redirectTarget}
           />
         </div>
 
