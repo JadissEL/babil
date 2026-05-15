@@ -15,13 +15,13 @@ const inter = Inter({
 /**
  * Fraunces — editorial serif for PAGE 01 (MERIDIAN) hero + section titles,
  * also inherited by Clerk auth surfaces (PAGE 33 — headerTitle uses font-serif).
+ * Static weights only: `next/font` does not allow `axes` with discrete `weight` slices.
  */
 const fraunces = Fraunces({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-serif',
   weight: ['600', '700', '800', '900'],
-  axes: ['opsz'],
 })
 
 /**
