@@ -9,6 +9,8 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
+  type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
@@ -20,6 +22,24 @@ import {
 import { cn } from '@/lib/utils';
 
 export type DockObjectivePickerVariant = 'default' | 'compact' | 'compactHeader';
+
+const MIN_PANEL_PX = 160;
+
+type ListboxLayout =
+  | {
+      placement: 'below';
+      top: number;
+      left: number;
+      width: number;
+      maxHeightPx: number;
+    }
+  | {
+      placement: 'above';
+      bottom: number;
+      left: number;
+      width: number;
+      maxHeightPx: number;
+    };
 
 /**
  * Sélecteur d’objectif : panneau personnalisé (style VisaFlow) au lieu du menu natif du `<select>`.
@@ -35,9 +55,8 @@ export function DockObjectivePicker({
   const { preference, ready, setPrimaryObjective } = useObjectivePreference();
   const [open, setOpen] = useState(false);
   const [busySlug, setBusySlug] = useState<string | null>(null);
-  const [listboxRect, setListboxRect] = useState<{ top: number; left: number; width: number } | null>(
-    null,
-  );
+  const [listboxLayout, setListboxLayout] = useState<ListboxLayout | null>(null);
+  const [highlightIndex, setHighlightIndex] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listboxPortalRef = useRef<HTMLDivElement | null>(null);
@@ -47,6 +66,18 @@ export function DockObjectivePicker({
 
   const compactHeader = variant === 'compactHeader';
   const compact = variant === 'compact' || compactHeader;
+
+  const flatOptions = useMemo(() => {
+    const out: { slug: UserObjectiveSlug; label: string }[] = [];
+    for (const cat of USER_OBJECTIVE_CATEGORY_ORDER) {
+      const items = grouped.get(cat);
+      if (!items?.length) continue;
+      for (const o of items) {
+        out.push({ slug: o.slug, label: o.labelFr });
+      }
+    }
+    return out;
+  }, [grouped]);
 
   const currentLabel = useMemo(() => {
     if (!preference.primarySlug) return null;
@@ -59,7 +90,7 @@ export function DockObjectivePicker({
 
   useLayoutEffect(() => {
     if (!open || !compactHeader) {
-      setListboxRect(null);
+      setListboxLayout(null);
       return;
     }
 
@@ -72,7 +103,32 @@ export function DockObjectivePicker({
       let left = r.left;
       if (left + width > window.innerWidth - 8) left = window.innerWidth - 8 - width;
       if (left < 8) left = 8;
-      setListboxRect({ top: r.bottom + 6, left, width });
+
+      const ih = window.innerHeight;
+      const spaceBelow = ih - r.bottom - 12;
+      const spaceAbove = r.top - 12;
+      const preferBelow = spaceBelow >= MIN_PANEL_PX || spaceBelow >= spaceAbove;
+      const cap = Math.floor(ih * 0.62);
+
+      if (preferBelow) {
+        const maxHeightPx = Math.max(120, Math.min(cap, spaceBelow));
+        setListboxLayout({
+          placement: 'below',
+          top: r.bottom + 6,
+          left,
+          width,
+          maxHeightPx,
+        });
+      } else {
+        const maxHeightPx = Math.max(120, Math.min(cap, spaceAbove));
+        setListboxLayout({
+          placement: 'above',
+          bottom: ih - r.top + 6,
+          left,
+          width,
+          maxHeightPx,
+        });
+      }
     };
 
     const schedule = () => {
@@ -89,6 +145,18 @@ export function DockObjectivePicker({
       window.removeEventListener('scroll', schedule, true);
     };
   }, [open, compactHeader]);
+
+  useEffect(() => {
+    if (!open || flatOptions.length === 0) return;
+    const i = flatOptions.findIndex((o) => o.slug === preference.primarySlug);
+    setHighlightIndex(i >= 0 ? i : 0);
+  }, [open, flatOptions, preference.primarySlug]);
+
+  useEffect(() => {
+    if (!open || highlightIndex < 0) return;
+    const el = document.querySelector(`[data-vf-obj-opt="${highlightIndex}"]`);
+    el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [highlightIndex, open]);
 
   useEffect(() => {
     if (!open) return;
@@ -124,12 +192,12 @@ export function DockObjectivePicker({
 
   /** Focus initial sur le panneau porté (lecteurs d’écran, navigation clavier). */
   useEffect(() => {
-    if (!open || !compactHeader || !listboxRect) return;
+    if (!open || !compactHeader || !listboxLayout) return;
     const id = requestAnimationFrame(() => {
       listboxPortalRef.current?.focus({ preventScroll: true });
     });
     return () => cancelAnimationFrame(id);
-  }, [open, compactHeader, listboxRect]);
+  }, [open, compactHeader, listboxLayout]);
 
   const onPick = useCallback(
     async (slug: UserObjectiveSlug) => {
@@ -142,6 +210,52 @@ export function DockObjectivePicker({
       }
     },
     [setPrimaryObjective],
+  );
+
+  const onListKeyDown = useCallback(
+    (e: ReactKeyboardEvent<HTMLDivElement>) => {
+      if (!open || flatOptions.length === 0) return;
+      const last = flatOptions.length - 1;
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          setHighlightIndex((i) => Math.min(i + 1, last));
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setHighlightIndex((i) => Math.max(i - 1, 0));
+          break;
+        case 'Home':
+          e.preventDefault();
+          setHighlightIndex(0);
+          break;
+        case 'End':
+          e.preventDefault();
+          setHighlightIndex(last);
+          break;
+        case 'Enter':
+        case ' ': {
+          e.preventDefault();
+          const slug = flatOptions[highlightIndex]?.slug;
+          if (slug) void onPick(slug);
+          break;
+        }
+        default:
+          break;
+      }
+    },
+    [flatOptions, highlightIndex, onPick, open],
+  );
+
+  const onButtonKeyDown = useCallback(
+    (e: ReactKeyboardEvent<HTMLButtonElement>) => {
+      if (open) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setOpen(true);
+      }
+    },
+    [open],
   );
 
   if (!ready) {
@@ -158,14 +272,10 @@ export function DockObjectivePicker({
     );
   }
 
-  const listboxMaxHeightPx =
-    typeof window !== 'undefined' && listboxRect
-      ? Math.max(140, Math.min(Math.floor(window.innerHeight * 0.62), window.innerHeight - listboxRect.top - 12))
-      : undefined;
-
   const listboxClassName =
     'overflow-y-auto overscroll-y-contain rounded-2xl border border-line bg-[#fdf8ef] p-3 shadow-card outline-none focus-visible:ring-2 focus-visible:ring-primary/35';
 
+  let flatIdx = 0;
   const listboxInner = (
     <>
       <p className="mb-2 px-1 text-[11px] font-medium text-muted" id={`${listboxId}-hint`}>
@@ -181,25 +291,33 @@ export function DockObjectivePicker({
                 {items[0]!.categoryLabelFr}
               </p>
               <div className="grid gap-2 sm:grid-cols-2">
-                {items.map((o) => (
-                  <button
-                    key={o.slug}
-                    type="button"
-                    role="option"
-                    aria-selected={preference.primarySlug === o.slug}
-                    disabled={busySlug !== null}
-                    onClick={() => void onPick(o.slug)}
-                    className={cn(
-                      'flex flex-col rounded-xl border px-3 py-2.5 text-left text-sm font-black transition-all disabled:opacity-50',
-                      preference.primarySlug === o.slug
-                        ? 'border-primary/40 bg-primary-soft text-primary ring-1 ring-primary/25'
-                        : 'border-line bg-surface text-text hover:border-primary/35 hover:shadow-sm',
-                    )}
-                  >
-                    {busySlug === o.slug ? 'Enregistrement…' : o.labelFr}
-                    <span className="mt-1 text-[11px] font-medium leading-snug text-muted">{o.teaserFr}</span>
-                  </button>
-                ))}
+                {items.map((o) => {
+                  const optIdx = flatIdx++;
+                  const highlighted = open && optIdx === highlightIndex;
+                  return (
+                    <button
+                      key={o.slug}
+                      type="button"
+                      role="option"
+                      data-vf-obj-opt={optIdx}
+                      id={`${listboxId}-opt-${optIdx}`}
+                      aria-selected={preference.primarySlug === o.slug}
+                      disabled={busySlug !== null}
+                      onClick={() => void onPick(o.slug)}
+                      onMouseEnter={() => setHighlightIndex(optIdx)}
+                      className={cn(
+                        'flex flex-col rounded-xl border px-3 py-2.5 text-left text-sm font-black transition-all disabled:opacity-50',
+                        preference.primarySlug === o.slug
+                          ? 'border-primary/40 bg-primary-soft text-primary ring-1 ring-primary/25'
+                          : 'border-line bg-surface text-text hover:border-primary/35 hover:shadow-sm',
+                        highlighted && 'ring-2 ring-primary/50 ring-offset-1 ring-offset-[#fdf8ef]',
+                      )}
+                    >
+                      {busySlug === o.slug ? 'Enregistrement…' : o.labelFr}
+                      <span className="mt-1 text-[11px] font-medium leading-snug text-muted">{o.teaserFr}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           );
@@ -208,41 +326,49 @@ export function DockObjectivePicker({
     </>
   );
 
+  const activeOptionId =
+    open && flatOptions.length > 0 ? `${listboxId}-opt-${highlightIndex}` : undefined;
+
+  const listboxShellProps = {
+    id: listboxId,
+    role: 'listbox' as const,
+    tabIndex: -1 as const,
+    'aria-labelledby': `${listboxId}-hint`,
+    'aria-activedescendant': activeOptionId,
+    className: cn(
+      listboxClassName,
+      compactHeader ? 'fixed z-[90]' : 'absolute left-0 right-0 top-full z-[80] mt-1.5 max-h-[min(60dvh,22rem)]',
+    ),
+    onKeyDown: onListKeyDown,
+  };
+
   const listboxNode = (() => {
     if (!open) return null;
     if (compactHeader) {
-      if (!listboxRect || typeof document === 'undefined') return null;
+      if (!listboxLayout || typeof document === 'undefined') return null;
+      const style: CSSProperties =
+        listboxLayout.placement === 'below'
+          ? {
+              top: listboxLayout.top,
+              left: listboxLayout.left,
+              width: listboxLayout.width,
+              maxHeight: `${listboxLayout.maxHeightPx}px`,
+            }
+          : {
+              top: 'auto',
+              bottom: listboxLayout.bottom,
+              left: listboxLayout.left,
+              width: listboxLayout.width,
+              maxHeight: `${listboxLayout.maxHeightPx}px`,
+            };
       return createPortal(
-        <div
-          ref={listboxPortalRef}
-          id={listboxId}
-          role="listbox"
-          tabIndex={-1}
-          aria-labelledby={`${listboxId}-hint`}
-          className={cn(listboxClassName, 'fixed z-[90]')}
-          style={{
-            top: listboxRect.top,
-            left: listboxRect.left,
-            width: listboxRect.width,
-            maxHeight: listboxMaxHeightPx ? `${listboxMaxHeightPx}px` : 'min(60dvh,22rem)',
-          }}
-        >
+        <div ref={listboxPortalRef} {...listboxShellProps} style={style}>
           {listboxInner}
         </div>,
         document.body,
       );
     }
-    return (
-      <div
-        id={listboxId}
-        role="listbox"
-        tabIndex={-1}
-        aria-labelledby={`${listboxId}-hint`}
-        className={cn('absolute left-0 right-0 top-full z-[80] mt-1.5 max-h-[min(60dvh,22rem)]', listboxClassName)}
-      >
-        {listboxInner}
-      </div>
-    );
+    return <div {...listboxShellProps}>{listboxInner}</div>;
   })();
 
   return (
@@ -262,6 +388,7 @@ export function DockObjectivePicker({
         aria-haspopup="listbox"
         aria-controls={open ? listboxId : undefined}
         onClick={() => setOpen((o) => !o)}
+        onKeyDown={onButtonKeyDown}
         className={cn(
           'flex w-full items-center justify-between gap-2 rounded-2xl border border-line bg-surface text-left shadow-soft transition-colors motion-reduce:transition-none',
           compact ? 'px-2 py-1.5 sm:px-2.5 sm:py-1.5' : 'gap-3 px-4 py-3',
