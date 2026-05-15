@@ -142,13 +142,13 @@ function SidebarFooter({
 }
 
 type DashboardSidebarProps = {
-  mobileOpen?: boolean
-  onMobileClose?: () => void
+  open: boolean
+  onClose: () => void
 }
 
-export function DashboardSidebar({ mobileOpen = false, onMobileClose }: DashboardSidebarProps) {
+export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
   const pathname = normalizeDashboardPath(usePathname() || '')
-  const close = () => onMobileClose?.()
+  const close = () => onClose()
   const { preference } = useObjectivePreference()
   const explorerHref = useMemo(
     () => ctaExploreHref(preference.primarySlug),
@@ -177,23 +177,27 @@ export function DashboardSidebar({ mobileOpen = false, onMobileClose }: Dashboar
     <>
       <button
         type="button"
-        aria-label="Fermer le menu"
+        aria-label="Fermer le menu workspace"
         className={cn(
-          'fixed inset-0 z-[90] bg-[#0D1B3E]/45 backdrop-blur-[2px] transition-opacity duration-300 lg:hidden',
-          mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
+          'fixed inset-0 z-[90] bg-[#0D1B3E]/45 backdrop-blur-[2px] transition-opacity duration-300 lg:bg-[#0D1B3E]/30 lg:backdrop-blur-[1px]',
+          open ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
         onClick={close}
       />
       <aside
-        id="dashboard-mobile-nav"
-        role="navigation"
-        aria-label="Navigation espace connecté"
+        id="dashboard-workspace-nav"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation workspace Mobility Intel"
         className={cn(
-          'fixed inset-y-0 left-0 z-[100] flex w-[min(20rem,92vw)] flex-col gap-7 overflow-y-auto overscroll-contain border-r bg-white pl-[max(1.5rem,calc(1.25rem+env(safe-area-inset-left,0px)))] pr-5 pb-[max(2rem,calc(1.25rem+env(safe-area-inset-bottom,0px)))] pt-[max(1.5rem,calc(1rem+env(safe-area-inset-top,0px)))] shadow-2xl transition-transform duration-300 ease-out lg:hidden',
-          mobileOpen ? 'translate-x-0' : 'pointer-events-none -translate-x-full',
+          'fixed z-[100] flex flex-col gap-7 overflow-y-auto overscroll-contain border bg-white shadow-2xl transition-[transform,opacity] duration-300 ease-out',
+          'max-lg:inset-y-0 max-lg:left-0 max-lg:h-full max-lg:w-[min(20rem,92vw)] max-lg:pl-[max(1.5rem,calc(1.25rem+env(safe-area-inset-left,0px)))] max-lg:pr-5 max-lg:pb-[max(2rem,calc(1.25rem+env(safe-area-inset-bottom,0px)))] max-lg:pt-[max(1.5rem,calc(1rem+env(safe-area-inset-top,0px)))]',
+          open ? 'max-lg:translate-x-0' : 'max-lg:pointer-events-none max-lg:-translate-x-full',
+          'lg:left-4 lg:right-auto lg:top-[4.25rem] lg:h-auto lg:max-h-[min(36rem,calc(100dvh-5.5rem))] lg:w-[22rem] lg:rounded-2xl lg:border lg:px-5 lg:pb-6 lg:pt-5',
+          open ? 'lg:translate-y-0 lg:opacity-100 lg:visible' : 'lg:pointer-events-none lg:-translate-y-2 lg:opacity-0 lg:invisible',
         )}
         style={{ borderColor: INK_10 }}
-        aria-hidden={!mobileOpen}
+        aria-hidden={!open}
       >
         <div className="flex items-start justify-between gap-3">
           <BrandBlock onNavigate={close} />
@@ -207,7 +211,7 @@ export function DashboardSidebar({ mobileOpen = false, onMobileClose }: Dashboar
             <X className="h-4 w-4" />
           </button>
         </div>
-        <ObjectiveDockInline className="w-full max-w-none border-[rgba(13,27,62,0.12)] bg-[#FAF7EE]/90 lg:hidden" />
+        <ObjectiveDockInline className="w-full max-w-none border-[rgba(13,27,62,0.12)] bg-[#FAF7EE]/90" />
         <NavGroup label="Workspace" items={dashboardNav} pathname={pathname} onNavigate={close} />
         <NavGroup
           label="Data & Analysis"
@@ -216,18 +220,6 @@ export function DashboardSidebar({ mobileOpen = false, onMobileClose }: Dashboar
           onNavigate={close}
         />
         <SidebarFooter exploreHref={explorerHref} onNavigate={close} />
-      </aside>
-
-      <aside
-        role="navigation"
-        aria-label="Navigation espace connecté"
-        className="hidden w-64 shrink-0 flex-col gap-7 border-r bg-[#F5F0E3] px-5 pb-6 pt-7 lg:flex"
-        style={{ borderColor: INK_10 }}
-      >
-        <BrandBlock />
-        <NavGroup label="Workspace" items={dashboardNav} pathname={pathname} />
-        <NavGroup label="Data & Analysis" items={explorerItems} pathname={pathname} />
-        <SidebarFooter exploreHref={explorerHref} />
       </aside>
     </>
   )

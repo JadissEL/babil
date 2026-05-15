@@ -42,10 +42,12 @@ function DashboardTopBar({
   pathname,
   onMenuOpen,
   title,
+  menuOpen,
 }: {
   pathname: string
   onMenuOpen: () => void
   title: string
+  menuOpen: boolean
 }) {
   const onExplorerActive = pathname === '/explorer' || pathname.startsWith('/explorer/')
   const onCommunityActive = pathname === '/community'
@@ -58,11 +60,12 @@ function DashboardTopBar({
       <button
         type="button"
         onClick={onMenuOpen}
-        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-[#0D1B3E]/65 transition-colors hover:bg-[#0D1B3E]/[0.04] hover:text-[#0D1B3E] lg:hidden"
+        className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-[#0D1B3E]/65 transition-colors hover:bg-[#0D1B3E]/[0.04] hover:text-[#0D1B3E]"
         style={{ borderColor: INK_10 }}
-        aria-expanded={false}
-        aria-controls="dashboard-mobile-nav"
-        aria-label="Ouvrir le menu de navigation"
+        aria-expanded={menuOpen}
+        aria-controls="dashboard-workspace-nav"
+        aria-haspopup="dialog"
+        aria-label="Ouvrir le menu Mobility Intel (workspace)"
       >
         <Menu className="h-5 w-5" />
       </button>
@@ -71,7 +74,7 @@ function DashboardTopBar({
         Espace connecté
       </span>
 
-      <h1 className="min-w-0 flex-1 truncate font-serif text-base font-semibold text-[#0D1B3E] sm:max-w-[40%] lg:hidden">
+      <h1 className="min-w-0 flex-1 truncate font-serif text-base font-semibold text-[#0D1B3E] sm:max-w-[40%] lg:max-w-[min(22rem,40vw)]">
         {title}
       </h1>
 
@@ -124,40 +127,59 @@ function DashboardTopBar({
 
 export default function DashboardLayoutClient({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? '/'
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [workspaceNavOpen, setWorkspaceNavOpen] = useState(false)
   const title = getDashboardNavTitle(pathname)
 
   useEffect(() => {
-    setMobileOpen(false)
+    setWorkspaceNavOpen(false)
   }, [pathname])
 
   useEffect(() => {
-    if (!mobileOpen) return
+    if (!workspaceNavOpen) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileOpen(false)
+      if (e.key === 'Escape') setWorkspaceNavOpen(false)
     }
     window.addEventListener('keydown', onKey)
+
     const html = document.documentElement
+    const body = document.body
     const prevHtml = html.style.overflow
-    const prevBody = document.body.style.overflow
-    html.style.overflow = 'hidden'
-    document.body.style.overflow = 'hidden'
+    const prevBody = body.style.overflow
+
+    const mq = window.matchMedia('(max-width: 1023px)')
+    const applyScrollLock = () => {
+      if (mq.matches) {
+        html.style.overflow = 'hidden'
+        body.style.overflow = 'hidden'
+      } else {
+        html.style.overflow = prevHtml
+        body.style.overflow = prevBody
+      }
+    }
+    applyScrollLock()
+    mq.addEventListener('change', applyScrollLock)
+
     return () => {
       window.removeEventListener('keydown', onKey)
+      mq.removeEventListener('change', applyScrollLock)
       html.style.overflow = prevHtml
-      document.body.style.overflow = prevBody
+      body.style.overflow = prevBody
     }
-  }, [mobileOpen])
+  }, [workspaceNavOpen])
 
   return (
     <div className="flex min-h-screen bg-[#FAF7EE] text-[#0D1B3E]">
-      <DashboardSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
+      <DashboardSidebar
+        open={workspaceNavOpen}
+        onClose={() => setWorkspaceNavOpen(false)}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <DashboardTopBar
           pathname={pathname}
-          onMenuOpen={() => setMobileOpen(true)}
+          onMenuOpen={() => setWorkspaceNavOpen(true)}
           title={title}
+          menuOpen={workspaceNavOpen}
         />
         <main id="dashboard-content" className="flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10 lg:py-10">
           {children}
