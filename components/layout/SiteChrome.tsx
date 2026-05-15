@@ -5,40 +5,15 @@ import { ReactNode } from 'react';
 import { AppToaster } from '@/components/AppToaster';
 import { CookieConsentBanner } from '@/components/cookies/CookieConsentBanner';
 import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
+import { NexusShellGate } from '@/components/layout/NexusShellGate';
 import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
-
-const STANDALONE_PATH_PREFIXES = [
-  '/sign-in',
-  '/sign-up',
-  '/overview',
-  '/history',
-  '/profile',
-  '/admin',
-  '/design-system',
-  '/moderation',
-];
-
-/**
- * Routes exactes qui fournissent leur **propre chrome marketing complet** (header + footer)
- * et n'attendent du `SiteChrome` que les utilitaires runtime transverses
- * (AppToaster, CookieConsentBanner). L’objectif principal est dans {@link MeridianHomeHeader}.
- *
- * PAGE 01 (MERIDIAN) — `/` rend son propre `MeridianHomeHeader` / `MeridianHomeFooter`
- * et n'a pas besoin du rail latéral `SitePrimaryNavColumn`.
- */
-const MERIDIAN_HOME_PATHS = ['/'];
+import { isAuthPath, isNexusPath, isPublicMarketingPath } from '@/lib/nexus-shell-routes';
 
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { mobileOpen, setMobileOpen, closeMobile } = useSitePrimaryNavState();
 
-  const isStandalone = STANDALONE_PATH_PREFIXES.some((prefix) =>
-    pathname?.startsWith(prefix),
-  );
-
-  const isMeridianHome = pathname != null && MERIDIAN_HOME_PATHS.includes(pathname);
-
-  if (isStandalone) {
+  if (isAuthPath(pathname)) {
     return (
       <div className="flex min-h-screen flex-1 flex-col">
         <AppToaster />
@@ -47,17 +22,21 @@ export function SiteChrome({ children }: { children: ReactNode }) {
     );
   }
 
-  if (isMeridianHome) {
-    /**
-     * Shell home : pas de SiteHeader / SitePrimaryNavColumn / SiteFooter globaux —
-     * `HomeExperience` rend son propre chrome MERIDIAN (header + main + footer).
-     * On garde toutes les utilités runtime (toasts, consent cookies). L’objectif est dans le header MERIDIAN.
-     */
+  if (isNexusPath(pathname)) {
     return (
-      <div className="flex min-h-screen flex-1 flex-col bg-[#FDF8EF]">
+      <div className="flex min-h-screen flex-1 flex-col bg-[#FAF7EE]">
+        <AppToaster />
+        <NexusShellGate>{children}</NexusShellGate>
+        <CookieConsentBanner />
+      </div>
+    );
+  }
+
+  if (!isPublicMarketingPath(pathname)) {
+    return (
+      <div className="flex min-h-screen flex-1 flex-col">
         <AppToaster />
         {children}
-        <CookieConsentBanner />
       </div>
     );
   }

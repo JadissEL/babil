@@ -17,6 +17,7 @@ import {
   Shield,
   SwatchBook,
   History,
+  Home,
 } from 'lucide-react'
 import type { LucideProps } from 'lucide-react'
 import type { ComponentType } from 'react'
@@ -29,6 +30,7 @@ export type DashboardNavItem = {
 }
 
 export const dashboardNav: DashboardNavItem[] = [
+  { label: 'Accueil', href: '/', icon: Home, match: 'exact' },
   { label: 'Aperçu', href: '/overview', icon: LayoutDashboard },
   { label: 'Historique', href: '/history', icon: History },
   { label: 'Moteur de probabilités', href: '/probability', icon: Brain },
@@ -66,7 +68,9 @@ export function hrefDashboardActive(normalizedPathname: string, item: DashboardN
 
 export function getDashboardNavTitle(pathname: string): string {
   const p = normalizeDashboardPath(pathname)
+  if (p === '/') return 'Accueil'
   for (const item of dashboardNav) {
+    if (item.href === '/' && p !== '/') continue
     if (hrefDashboardActive(p, item)) return item.label
   }
   for (const item of explorerNav) {

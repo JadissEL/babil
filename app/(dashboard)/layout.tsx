@@ -1,7 +1,6 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { ReactNode } from 'react'
-import DashboardLayoutClient from '@/components/layout/DashboardLayoutClient'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -17,8 +16,8 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   const { userId } = await auth()
 
   if (!userId) {
-    redirect('/')
+    redirect('/sign-in')
   }
 
-  return <DashboardLayoutClient>{children}</DashboardLayoutClient>
+  return children
 }

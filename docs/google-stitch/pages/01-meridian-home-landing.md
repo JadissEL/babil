@@ -5,7 +5,7 @@
 `01-meridian-home-landing.md`
 
 ### Page Type
-Public
+Authenticated (shell Nexus PAGE 35) — contenu accueil dans le slot `#dashboard-content`
 
 ### Related User Journeys
 - Découverte organique / SEO
@@ -27,7 +27,7 @@ L’accueil **ancre la promesse VisaFlow** : mobilité internationale pour profi
 - **Primaires :** lancer exploration objectif-aware ; ouvrir un pays vitrine ; utiliser filtres rapides du hero.
 - **Secondaires :** lire slides hero ; défiler carrousel monde.
 - **Engagement :** cliquer comparer / Schengen depuis modules secondaires (si présents dans `HomeExperience`).
-- **Conversion :** CTA navbar **Espace perso** → auth Clerk implicite au besoin.
+- **Conversion :** navigation sidebar Nexus (Accueil, Explorer, probabilités) ; auth Clerk requise (`/` protégé middleware).
 
 ---
 

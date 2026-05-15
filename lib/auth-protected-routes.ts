@@ -10,6 +10,8 @@
  * node-testable and importable from the Edge runtime alike.
  */
 
+import { nexusProtectedRoutePatterns } from '@/lib/nexus-shell-routes';
+
 export type ProtectedRouteRequirement = 'auth' | 'auth+rbac';
 export type ProtectedRouteCategory = 'app' | 'api';
 
@@ -29,41 +31,40 @@ export type ProtectedRouteRule = {
   note?: string;
 };
 
+const NEXUS_RBAC_PREFIXES = ['/admin', '/moderation'] as const;
+
+const NEXUS_APP_ROUTE_RULES: readonly ProtectedRouteRule[] = nexusProtectedRoutePatterns()
+  .filter((pattern) => pattern !== '/')
+  .filter(
+    (pattern) =>
+      !NEXUS_RBAC_PREFIXES.some((prefix) => pattern.startsWith(`${prefix}(`)),
+  )
+  .map((pattern) => {
+    const displayPath = pattern.replace('(.*)', '');
+    return {
+      pattern,
+      displayPath,
+      requirement: 'auth' as const,
+      category: 'app' as const,
+      note: 'Espace connecté Nexus (outil produit).',
+    };
+  });
+
 export const PROTECTED_ROUTE_RULES: readonly ProtectedRouteRule[] = [
+  {
+    pattern: '/',
+    displayPath: '/',
+    requirement: 'auth',
+    category: 'app',
+    note: 'Accueil produit — shell Nexus (Mobility Intel).',
+  },
+  ...NEXUS_APP_ROUTE_RULES,
   {
     pattern: '/services/delegated-applications(.*)',
     displayPath: '/services/delegated-applications',
     requirement: 'auth',
     category: 'app',
     note: 'Tunnel application déléguée (intake + suivi).',
-  },
-  {
-    pattern: '/overview(.*)',
-    displayPath: '/overview',
-    requirement: 'auth',
-    category: 'app',
-    note: 'Dashboard overview personnel.',
-  },
-  {
-    pattern: '/history(.*)',
-    displayPath: '/history',
-    requirement: 'auth',
-    category: 'app',
-    note: 'Journal d’activité utilisateur.',
-  },
-  {
-    pattern: '/profile(.*)',
-    displayPath: '/profile',
-    requirement: 'auth',
-    category: 'app',
-    note: 'Profil mobilité + export RGPD.',
-  },
-  {
-    pattern: '/design-system(.*)',
-    displayPath: '/design-system',
-    requirement: 'auth',
-    category: 'app',
-    note: 'Ledger interne — UI specimens.',
   },
   {
     pattern: '/moderation(.*)',

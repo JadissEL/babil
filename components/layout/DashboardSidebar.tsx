@@ -83,10 +83,10 @@ function NavGroup({
 function BrandBlock({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <Link
-      href="/overview"
+      href="/"
       onClick={onNavigate}
       className="block"
-      aria-label="Mobility Intel — retour à l'aperçu"
+      aria-label="Mobility Intel — retour à l'accueil"
     >
       <p className="font-serif text-[22px] font-black leading-tight tracking-tight text-[#0D1B3E]">
         Mobility

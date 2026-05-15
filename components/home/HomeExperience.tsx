@@ -1,17 +1,13 @@
 'use client';
 
-import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import {
   ArrowRight,
   BarChart3,
-  Brain,
   Briefcase,
   Car,
   Compass,
   FileStack,
-  Globe,
   GraduationCap,
-  Heart,
   MessagesSquare,
   Scale,
   ShieldCheck,
@@ -26,13 +22,10 @@ import type { CountryGridItem } from '@/components/country/CountryGrid';
 import GoogleAd from '@/components/GoogleAd';
 import HeroWorldCarousel from '@/components/home/HeroWorldCarousel';
 import HomeQuickFilterEngine from '@/components/home/HomeQuickFilterEngine';
-import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock';
-import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import type { HomeHeroSlide } from '@/lib/home-hero-slides';
-import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate';
 import {
   focusStripForObjective,
   homeFeatureOrderForObjective,
@@ -45,7 +38,6 @@ const INK = '#0D1B3E';
 const INK_60 = 'rgba(13,27,62,0.60)';
 const INK_45 = 'rgba(13,27,62,0.45)';
 const INK_10 = 'rgba(13,27,62,0.10)';
-const CREAM_BG = '#FDF8EF';
 const CREAM_PANEL = '#F5F0E3';
 
 const FEATURE_MAP: Record<
@@ -123,14 +115,6 @@ const TRUST_BADGES = [
   'Mis à jour en continu',
 ];
 
-/** Section-nav items rendered as the floating pill bar overlapping the dark banner. */
-type SectionNavItem = {
-  label: string;
-  href: string;
-  icon: ReactNode;
-  emphasized?: boolean;
-};
-
 export function HomeExperience({
   topCountries,
   heroSlides,
@@ -152,38 +136,6 @@ export function HomeExperience({
   const quickGoal = primaryDefinition?.explorerGoalDefault ?? 'all';
   const exploreCtaHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug]);
   const compareCtaHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug]);
-
-  const sectionNav: SectionNavItem[] = useMemo(
-    () => [
-      {
-        label: 'Explorer',
-        href: exploreCtaHref,
-        icon: <Compass className="h-3.5 w-3.5" aria-hidden />,
-        emphasized: true,
-      },
-      {
-        label: 'Schengen',
-        href: '/schengen',
-        icon: <ShieldCheck className="h-3.5 w-3.5" aria-hidden />,
-      },
-      {
-        label: 'Comparer',
-        href: compareCtaHref,
-        icon: <Scale className="h-3.5 w-3.5" aria-hidden />,
-      },
-      {
-        label: 'Moteur Visa',
-        href: '/probability',
-        icon: <Zap className="h-3.5 w-3.5" aria-hidden />,
-      },
-      {
-        label: 'Intelligence',
-        href: '/intelligence-fieldpaths',
-        icon: <Brain className="h-3.5 w-3.5" aria-hidden />,
-      },
-    ],
-    [compareCtaHref, exploreCtaHref],
-  );
 
   const testimonials = [
     {
@@ -209,7 +161,7 @@ export function HomeExperience({
   const bestPractices = [
     {
       title: 'Commencer par ton objectif réel',
-      text: 'Ton objectif principal pilote l’accueil et les raccourcis. Tu peux le changer depuis l’en-tête à tout moment.',
+      text: 'Ton objectif principal pilote l’accueil et les raccourcis. Tu peux le changer depuis la barre latérale à tout moment.',
     },
     {
       title: 'Comparer au moins 3 pays avant décision',
@@ -226,18 +178,7 @@ export function HomeExperience({
   ];
 
   return (
-    <div
-      className="home-meridian flex min-h-screen flex-col"
-      style={{ backgroundColor: CREAM_BG, color: INK }}
-    >
-      <MeridianHomeHeader />
-
-      <main
-        id="main-content"
-        tabIndex={-1}
-        className="flex-1 px-4 pb-16 pt-6 focus:outline-none sm:px-6 sm:pt-8 lg:px-10"
-      >
-        <div className="mx-auto w-full max-w-6xl space-y-14">
+    <div className="home-nexus mx-auto w-full max-w-6xl space-y-14" style={{ color: INK }}>
           {/* HERO — Stitch alignment: single-column over faded world map */}
           <section
             className="relative overflow-hidden rounded-[2rem] border bg-white shadow-[0_24px_60px_rgba(13,27,62,0.08)]"
@@ -317,10 +258,7 @@ export function HomeExperience({
           </section>
 
           {/* DARK NAVY BANNER + FLOATING SECTION NAV PILL — Stitch architecture */}
-          <div className="relative">
-            <DelegatedApplicationsHomePromo variant="meridianBanner" />
-            <MeridianSectionNav items={sectionNav} />
-          </div>
+          <DelegatedApplicationsHomePromo variant="meridianBanner" />
 
           {/* PRIORITIES STRIP — objective-aware */}
           <section
@@ -553,174 +491,11 @@ export function HomeExperience({
           <div className="pt-2">
             <GoogleAd slot="home_top" />
           </div>
-        </div>
-      </main>
 
-      <MeridianHomeFooter />
     </div>
   );
 }
 
-/* ---------------------------------------------------------------------------
- * MeridianHomeHeader — slim cream sticky header (PAGE 01 Stitch architecture).
- * Replaces the global SiteHeader on the `/` route (see SiteChrome).
- * - Left: VisaFlow logo (primary accent box)
- * - Right: GlobalCountrySearch pill + auth CTA (Espace perso / Tableau de bord)
- * ------------------------------------------------------------------------- */
-function MeridianHomeHeader() {
-  return (
-    <header
-      className="sticky top-0 z-40 overflow-visible border-b backdrop-blur-md"
-      style={{
-        backgroundColor: 'rgba(253,248,239,0.88)',
-        borderColor: INK_10,
-      }}
-    >
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3.5 sm:px-6 lg:px-10">
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 sm:gap-3">
-          <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="VisaFlow — Accueil">
-            <span
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-[0_4px_12px_rgba(13,27,62,0.18)]"
-              style={{ backgroundColor: '#3157d5' }}
-              aria-hidden
-            >
-              <Globe className="h-5 w-5" />
-            </span>
-            <span
-              className="font-serif text-[22px] font-black tracking-tight"
-              style={{ color: '#3157d5' }}
-            >
-              VisaFlow
-            </span>
-          </Link>
-          <ObjectiveDockInline className="min-w-0 max-[480px]:basis-full max-[480px]:max-w-none border-[rgba(13,27,62,0.12)] bg-white/90 sm:max-w-none" />
-        </div>
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          <GlobalCountrySearch />
-          <SignedOut>
-            <SignInButton mode="modal">
-              <button
-                type="button"
-                className="inline-flex items-center rounded-full px-5 py-2.5 font-mono text-[10.5px] font-black uppercase tracking-[0.22em] text-white shadow-[0_6px_18px_rgba(13,27,62,0.20)] transition-[filter,transform] hover:translate-y-[-1px] hover:brightness-110"
-                style={{ backgroundColor: INK }}
-              >
-                Espace perso
-              </button>
-            </SignInButton>
-          </SignedOut>
-          <SignedIn>
-            <Link
-              href="/overview"
-              className="inline-flex items-center rounded-full px-5 py-2.5 font-mono text-[10.5px] font-black uppercase tracking-[0.22em] text-white shadow-[0_6px_18px_rgba(13,27,62,0.20)] transition-[filter,transform] hover:translate-y-[-1px] hover:brightness-110"
-              style={{ backgroundColor: INK }}
-            >
-              Espace perso
-            </Link>
-            <UserButton afterSignOutUrl="/" />
-          </SignedIn>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-/* ---------------------------------------------------------------------------
- * MeridianSectionNav — floating pill bar overlapping the bottom of the dark
- * navy services banner. Emphasised item ("Explorer") gets the dark inset,
- * others are light cream tabs.
- * ------------------------------------------------------------------------- */
-function MeridianSectionNav({ items }: { items: SectionNavItem[] }) {
-  return (
-    <nav
-      aria-label="Sections principales"
-      className="pointer-events-none absolute inset-x-0 -bottom-6 z-10 flex justify-center px-4 sm:-bottom-7"
-    >
-      <ul
-        className="pointer-events-auto flex max-w-full items-center gap-1 overflow-x-auto rounded-full border bg-white px-2 py-1.5 shadow-[0_12px_32px_rgba(13,27,62,0.18)] sm:gap-1.5"
-        style={{ borderColor: INK_10 }}
-      >
-        {items.map((item) => {
-          const isEmphasized = Boolean(item.emphasized);
-          return (
-            <li key={item.label} className="shrink-0">
-              <Link
-                href={item.href}
-                className={
-                  isEmphasized
-                    ? 'inline-flex items-center gap-1.5 rounded-full px-4 py-2 font-mono text-[10.5px] font-black uppercase tracking-[0.22em] text-white transition-[filter] hover:brightness-110'
-                    : 'inline-flex items-center gap-1.5 rounded-full px-4 py-2 font-mono text-[10.5px] font-black uppercase tracking-[0.22em] transition-colors hover:bg-[rgba(13,27,62,0.06)]'
-                }
-                style={{
-                  backgroundColor: isEmphasized ? INK : 'transparent',
-                  color: isEmphasized ? '#ffffff' : INK,
-                }}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-  );
-}
-
-/* ---------------------------------------------------------------------------
- * MeridianHomeFooter — ultra-slim cream footer (PAGE 01 Stitch architecture).
- * - Left: copyright micro-text
- * - Right: PayPal · Don pill (re-uses PAYPAL_DONATE_URL like SiteFooter)
- * ------------------------------------------------------------------------- */
-function MeridianHomeFooter() {
-  const year = new Date().getFullYear();
-  return (
-    <footer
-      className="border-t"
-      style={{
-        backgroundColor: CREAM_BG,
-        borderColor: INK_10,
-        paddingBottom: 'max(1rem, calc(env(safe-area-inset-bottom, 0px) + 0.75rem))',
-      }}
-    >
-      <div className="mx-auto flex w-full max-w-6xl flex-col items-start gap-4 px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5">
-          <p className="font-mono text-[11px] font-black uppercase tracking-[0.22em]" style={{ color: INK_60 }}>
-            © {year} VisaFlow
-          </p>
-          <nav
-            aria-label="Liens légaux"
-            className="flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-[10px] font-black uppercase tracking-[0.22em]"
-            style={{ color: INK_45 }}
-          >
-            <Link href="/legal#mentions" className="hover:underline" style={{ color: INK_60 }}>
-              Mentions
-            </Link>
-            <Link href="/legal#confidentialite" className="hover:underline" style={{ color: INK_60 }}>
-              Confidentialité
-            </Link>
-            <Link href="/community" className="hover:underline" style={{ color: INK_60 }}>
-              Contact
-            </Link>
-          </nav>
-        </div>
-        <a
-          href={PAYPAL_DONATE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 font-mono text-[10.5px] font-black uppercase tracking-[0.22em] shadow-[0_4px_14px_rgba(241,196,15,0.30)] transition-[filter,transform] hover:translate-y-[-1px] hover:brightness-[1.04]"
-          style={{
-            backgroundColor: '#FFF1A8',
-            color: '#5C4806',
-            border: '1px solid rgba(92,72,6,0.18)',
-          }}
-        >
-          <Heart className="h-3.5 w-3.5" style={{ color: '#9C7A07', fill: '#9C7A07' }} aria-hidden />
-          PayPal · Don
-        </a>
-      </div>
-    </footer>
-  );
-}
 
 function Feature({
   href,

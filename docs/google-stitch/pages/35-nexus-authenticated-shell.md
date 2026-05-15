@@ -95,7 +95,7 @@ Contenu plus haut que viewport : seul `main` scroll, pas la sidebar.
 ---
 
 ## 11. User Journey Connections
-Toutes les pages dashboard partagent ce shell ; les pages publiques **hors** `(dashboard)` reviennent au PAGE 34.
+Toutes les routes produit Nexus (`lib/nexus-shell-routes.ts` : `/`, outils workspace, explorer, etc.) partagent ce shell via `NexusShellGate` + `DashboardLayoutClient`. Seules les routes marketing résiduelles (`/countries/*`, `/legal`, …) conservent le shell public PAGE 34. Visiteurs non connectés : redirection Clerk vers `/sign-in?redirect_url=…`.
 
 ---
 
@@ -111,7 +111,7 @@ Fichier repo : `docs/google-stitch/assets/page-35-nexus-stitch-reference.png`
 
 **Architecture livrée (Stitch v1 — Nexus workspace shell exclusif)** : rewrite complet du shell `(dashboard)` pour qu'il **remplace** entièrement le `SiteChrome` public sur les routes connectées (Stitch §11 « les pages publiques hors `(dashboard)` reviennent au PAGE 34 »).
 
-**`SiteChrome` (`components/layout/SiteChrome.tsx`)** : ajout des routes dashboard au `STANDALONE_PATH_PREFIXES` (`/overview`, `/history`, `/profile`, `/admin`, `/design-system`, `/moderation`). Sur ces routes, **aucun** SiteHeader, SitePrimaryNavColumn, SiteObjectiveDock, SiteFooter ; le shell perso prend tout l'écran. Toaster `AppToaster` conservé.
+**`SiteChrome` (`components/layout/SiteChrome.tsx`)** : `isNexusPath()` depuis `lib/nexus-shell-routes.ts` — **aucun** SiteHeader, SitePrimaryNav, SiteFooter sur les routes Nexus ; `NexusShellGate` monte le shell Mobility Intel. Toaster `AppToaster` + cookies conservés.
 
 **`DashboardLayoutClient`** : cream `#FAF7EE` shell flex avec sidebar gauche + main droit, top bar collée en haut (desktop). Mobile : hamburger button ouvre le drawer sidebar avec overlay 45 % navy + ESC + scroll-lock préservés.
 

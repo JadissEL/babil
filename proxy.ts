@@ -31,8 +31,9 @@ function shouldJsonAccessLog(): boolean {
  * Liste centralisée dans `lib/auth-protected-routes.ts` (single source of truth
  * partagée avec le dashboard Rampart — Stitch PAGE 39 §5.2).
  *
- * Routes publiques notables (non listées ici) :
- *   `/probability`, `/recommendations`, `/recommendation-engine`.
+ * Routes publiques notables (hors shell Nexus, non listées ici) :
+ *   `/countries/*`, `/legal`, `/services/delegated-applications` (auth séparé).
+ * Shell Nexus + outils (`/`, `/probability`, `/explorer`, …) : `lib/nexus-shell-routes.ts`.
  */
 const isProtectedRoute = createRouteMatcher([...PROTECTED_ROUTE_PATTERNS]);
 
