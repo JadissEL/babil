@@ -6,6 +6,8 @@ import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
+import { isExplorerNavHrefInPerspective } from '@/lib/user-objectives/perspective-nav';
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 import { cn } from '@/lib/utils';
 
 function pathMatchesExplorer(path: string, explorerHref: string) {
@@ -63,16 +65,22 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
   const { preference } = useObjectivePreference();
   const explorerHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug]);
   const compareHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug]);
+  const primaryDef = useMemo(
+    () => getObjectiveBySlug(preference.primarySlug),
+    [preference.primarySlug],
+  );
 
-  const links = useMemo(
-    () => [
+  const links = useMemo(() => {
+    const staticFiltered = STATIC_LINKS.filter((link) =>
+      isExplorerNavHrefInPerspective(link.href, primaryDef),
+    );
+    return [
       { href: explorerHref, label: 'Explorer' },
       { href: '/schengen', label: 'Schengen' },
       { href: compareHref, label: 'Comparer' },
-      ...STATIC_LINKS.slice(1),
-    ],
-    [compareHref, explorerHref],
-  );
+      ...staticFiltered.slice(1),
+    ];
+  }, [compareHref, explorerHref, primaryDef]);
 
   const closeIfNavigated = useCallback(() => {
     onMobileClose();

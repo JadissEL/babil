@@ -35,6 +35,7 @@ import { englishScoreLevelToFr } from '@/lib/score-level-fr';
 import { appToast } from '@/lib/toast-store';
 import type { ProbabilityApiRow } from '@/lib/types';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
+import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav';
 
 const ORBIT_NAVY = '#0D1B3E';
 
@@ -107,6 +108,13 @@ function ProbabilityPageInner() {
     if (!slug) return undefined;
     return getObjectiveBySlug(slug)?.engineGoal;
   }, [objectivePref?.ready, objectivePref?.preference.primarySlug]);
+  const showPhdBadges = useMemo(
+    () =>
+      isPhdPerspectiveRelevant(
+        getObjectiveBySlug(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
+      ),
+    [objectivePref?.ready, objectivePref?.preference.primarySlug],
+  );
   const emptyCtaExploreHref = useMemo(
     () => ctaExploreHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
     [objectivePref?.ready, objectivePref?.preference.primarySlug],
@@ -556,7 +564,7 @@ function ProbabilityPageInner() {
                           >
                             {englishScoreLevelToFr(r.level) ?? r.level ?? '—'}
                           </div>
-                          {r.hasPhdStudies ? (
+                          {r.hasPhdStudies && showPhdBadges ? (
                             <span className="rounded-full border border-primary/40 bg-primary-soft px-3 py-1 text-[10px] font-black uppercase tracking-widest text-primary">
                               Bloc PhD
                             </span>

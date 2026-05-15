@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { CountryDbInsightsCollapsible } from '@/components/country/CountryDbInsightsCollapsible'
 import CountryFlag from '@/components/country/CountryFlag'
 import { IntelligenceProvenanceCollapsible } from '@/components/country/IntelligenceProvenanceCollapsible'
@@ -33,6 +33,7 @@ import { BlockFeedback } from '@/components/feedback/BlockFeedback'
 import GoogleAd from '@/components/GoogleAd'
 import { DeepReportTeaser } from '@/components/monetization/DeepReportTeaser'
 import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
+import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
 import { filterPublicCountryInsights } from '@/lib/country-db-insights'
 import { buildCountryExperienceContent } from '@/lib/country-experience-content'
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize'
@@ -49,6 +50,8 @@ import { formatIntelDateShortFr, isEconomyIntelFresh, latestMaterializedIsoFromI
 import { parseDataQualityAnomaliesPayload } from '@/lib/intelligence-data-anomalies'
 import { officialSourcesForCountry } from '@/lib/official-sources'
 import { buildCountrySheetSignals, formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
+import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav'
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry'
 import { isSchengenMember } from '@/lib/schengen-members'
 import { SCORE_SCALE_LEGEND_FR } from '@/lib/score-scale-lexicon'
 import { appToast } from '@/lib/toast-store'
@@ -214,6 +217,11 @@ export default function CountryDetailPage() {
   const params = useParams()
   const id = params?.id
   const { user } = useUser()
+  const { preference } = useObjectivePreference()
+  const primaryObjectiveDef = useMemo(
+    () => getObjectiveBySlug(preference.primarySlug),
+    [preference.primarySlug],
+  )
   const [country, setCountry] = useState<CountryDetailLoadState>(null)
   const [loading, setLoading] = useState(true)
   const [comment, setComment] = useState('')
@@ -349,8 +357,9 @@ export default function CountryDetailPage() {
   const visaTourism = visaSystem?.tourism as Record<string, unknown> | undefined
   const visaWork = visaSystem?.work as Record<string, unknown> | undefined
   const experienceContent = buildCountryExperienceContent(country.name, full)
-  const showPhdTeaser = hasCountryPhdStoredData(full as Record<string, unknown>)
-  const phdModel = showPhdTeaser ? buildPhdStudies(country.name, full as Record<string, unknown>) : null
+  const hasPhdStored = hasCountryPhdStoredData(full as Record<string, unknown>)
+  const showPhdSurfaces = hasPhdStored && isPhdPerspectiveRelevant(primaryObjectiveDef)
+  const phdModel = showPhdSurfaces ? buildPhdStudies(country.name, full as Record<string, unknown>) : null
   const row = materializeCountryApiRow(country)
   const enriched = enrichCountryApiRecord(row)
   const tourismScore = enriched._visa.tourism
@@ -491,7 +500,7 @@ export default function CountryDetailPage() {
           <OfficialSourcesCard countryName={country.name} links={officialLinks} className="mb-8" />
         ) : null}
 
-        {showPhdTeaser && phdModel ? (
+        {showPhdSurfaces && phdModel ? (
           <div className="mb-8 flex flex-col gap-4 rounded-2xl border border-[#0D1B3E]/10 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
             <div className="flex min-w-0 items-start gap-3">
               <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]">
@@ -705,7 +714,7 @@ export default function CountryDetailPage() {
               <DrivingRightsIntelSection countryName={country.name} countryId={id as string} intel={drivingIntel} />
             </section>
 
-          {showPhdTeaser && phdModel ? (
+          {showPhdSurfaces && phdModel ? (
             <PhDStudiesCountryTeaser
               countryId={String(Array.isArray(id) ? id[0] ?? '' : id ?? '')}
               countryName={country.name}

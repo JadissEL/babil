@@ -15,8 +15,14 @@ export {
   type HomeFeatureKey,
   homeHeroForObjective,
   homeFeatureOrderForObjective,
+  visibleHomeFeatureKeysForObjective,
   focusStripForObjective,
 } from '@/lib/user-objectives/home-orchestration';
+
+export {
+  isExplorerNavHrefInPerspective,
+  isPhdPerspectiveRelevant,
+} from '@/lib/user-objectives/perspective-nav';
 
 export {
   USER_OBJECTIVE_TO_COMPARE_OBJECTIVE_ID,

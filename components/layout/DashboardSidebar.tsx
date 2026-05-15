@@ -14,6 +14,8 @@ import {
 import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock'
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
+import { isExplorerNavHrefInPerspective } from '@/lib/user-objectives/perspective-nav'
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry'
 import { cn } from '@/lib/utils'
 
 const INK_10 = 'rgba(13,27,62,0.10)'
@@ -156,15 +158,20 @@ export function DashboardSidebar({ mobileOpen = false, onMobileClose }: Dashboar
     () => ctaCompareHref(preference.primarySlug),
     [preference.primarySlug],
   )
-  const explorerItems = useMemo(
-    () =>
-      explorerNav.map((item) => {
+  const primaryDef = useMemo(
+    () => getObjectiveBySlug(preference.primarySlug),
+    [preference.primarySlug],
+  )
+  const explorerItems = useMemo(() => {
+    const mapped = explorerNav
+      .filter((item) => isExplorerNavHrefInPerspective(item.href, primaryDef))
+      .map((item) => {
         if (item.href === '/explorer') return { ...item, href: explorerHref }
         if (item.href === '/compare') return { ...item, href: compareHref }
         return item
-      }),
-    [compareHref, explorerHref],
-  )
+      })
+    return mapped
+  }, [compareHref, explorerHref, primaryDef])
 
   return (
     <>

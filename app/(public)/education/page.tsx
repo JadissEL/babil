@@ -22,6 +22,8 @@ import {
 } from '@/lib/country-full-data-materialize';
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies';
 import { educationHubExplorerHref } from '@/lib/cta-hrefs';
+import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav';
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 import { cn } from '@/lib/utils';
 
 const shellClass =
@@ -57,6 +59,8 @@ function accessPillClass(access: string): string {
 
 export default function EducationPage() {
   const { preference } = useObjectivePreference();
+  const primaryDef = useMemo(() => getObjectiveBySlug(preference.primarySlug), [preference.primarySlug]);
+  const showPhdPerspective = isPhdPerspectiveRelevant(primaryDef);
   const hubExplorerHref = useMemo(
     () => educationHubExplorerHref(preference.primarySlug),
     [preference.primarySlug],
@@ -114,7 +118,12 @@ export default function EducationPage() {
   return (
     <div className={shellClass}>
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
-        <section className="mb-14 grid gap-10 lg:mb-16 lg:grid-cols-2 lg:items-stretch lg:gap-12">
+        <section
+          className={cn(
+            'mb-14 grid gap-10 lg:mb-16 lg:items-stretch lg:gap-12',
+            showPhdPerspective ? 'lg:grid-cols-2' : 'lg:grid-cols-1',
+          )}
+        >
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#0D1B3E]/65">Campus</p>
             <h1 className="mt-3 text-3xl font-black tracking-tight text-[#0D1B3E] sm:text-4xl md:text-[2.75rem]">
@@ -140,6 +149,7 @@ export default function EducationPage() {
             </div>
           </div>
 
+          {showPhdPerspective ? (
           <Link
             href={hubExplorerHref}
             className="group flex min-h-[280px] flex-col justify-between rounded-3xl bg-[#0D1B3E] p-8 text-white shadow-xl transition-transform hover:-translate-y-0.5 sm:p-10"
@@ -162,6 +172,7 @@ export default function EducationPage() {
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
             </span>
           </Link>
+          ) : null}
         </section>
 
         <section className="mb-14 grid gap-5 sm:grid-cols-3 sm:gap-6">
@@ -320,7 +331,7 @@ export default function EducationPage() {
                           Voir la fiche pays
                           <ArrowRight className="h-4 w-4" aria-hidden />
                         </Link>
-                        {hasPhd ? (
+                        {hasPhd && showPhdPerspective ? (
                           <Link
                             href={`/countries/${c.id}/doctorat`}
                             className="inline-flex items-center justify-center gap-2 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#0D1B3E] underline decoration-[#0D1B3E]/25 underline-offset-4 hover:decoration-[#0D1B3E]"

@@ -28,8 +28,8 @@ import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import type { HomeHeroSlide } from '@/lib/home-hero-slides';
 import {
   focusStripForObjective,
-  homeFeatureOrderForObjective,
   homeHeroForObjective,
+  visibleHomeFeatureKeysForObjective,
   type HomeFeatureKey,
 } from '@/lib/user-objectives/home-orchestration';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
@@ -129,7 +129,7 @@ export function HomeExperience({
   );
   const heroCopy = useMemo(() => homeHeroForObjective(preference.primarySlug), [preference.primarySlug]);
   const featureKeys = useMemo(
-    () => homeFeatureOrderForObjective(primaryDefinition),
+    () => visibleHomeFeatureKeysForObjective(primaryDefinition),
     [primaryDefinition],
   );
   const focusStrip = useMemo(() => focusStripForObjective(preference.primarySlug), [preference.primarySlug]);
@@ -374,8 +374,8 @@ export function HomeExperience({
               Une seule plateforme, alignée sur votre objectif.
             </h2>
             <p className="mt-2 max-w-2xl text-[13.5px]" style={{ color: INK_60 }}>
-              L&apos;ordre s&apos;adapte à votre choix dans le dock — les moteurs restent les mêmes, seule la
-              mise en avant change.
+              Les vignettes affichées suivent votre objectif principal (dock) — le reste est masqué tant que vous
+              ne changez pas de perspective.
             </p>
             <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               {featureKeys.map((key) => {
