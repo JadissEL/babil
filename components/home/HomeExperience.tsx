@@ -593,7 +593,7 @@ function MeridianHomeHeader() {
               VisaFlow
             </span>
           </Link>
-          <ObjectiveDockInline className="min-w-0 border-[rgba(13,27,62,0.12)] bg-white/90" />
+          <ObjectiveDockInline className="min-w-0 max-[480px]:basis-full max-[480px]:max-w-none border-[rgba(13,27,62,0.12)] bg-white/90 sm:max-w-none" />
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <GlobalCountrySearch />

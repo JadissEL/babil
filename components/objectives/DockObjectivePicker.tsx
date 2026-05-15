@@ -1,7 +1,15 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import {
@@ -32,6 +40,9 @@ export function DockObjectivePicker({
   );
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const listboxPortalRef = useRef<HTMLDivElement | null>(null);
+  const prevOpenRef = useRef(false);
+  const listboxId = useId();
   const grouped = useMemo(() => listObjectivesGrouped(), []);
 
   const compactHeader = variant === 'compactHeader';
@@ -51,24 +62,31 @@ export function DockObjectivePicker({
       setListboxRect(null);
       return;
     }
-    const update = () => {
+
+    let raf = 0;
+    const measure = () => {
       const btn = buttonRef.current;
-      if (!btn) return;
+      if (!btn || typeof window === 'undefined') return;
       const r = btn.getBoundingClientRect();
-      const width = Math.min(Math.max(r.width, 288), typeof window !== 'undefined' ? window.innerWidth - 16 : 288);
+      const width = Math.min(Math.max(r.width, 288), window.innerWidth - 16);
       let left = r.left;
-      if (typeof window !== 'undefined') {
-        if (left + width > window.innerWidth - 8) left = window.innerWidth - 8 - width;
-        if (left < 8) left = 8;
-      }
+      if (left + width > window.innerWidth - 8) left = window.innerWidth - 8 - width;
+      if (left < 8) left = 8;
       setListboxRect({ top: r.bottom + 6, left, width });
     };
-    update();
-    window.addEventListener('resize', update);
-    window.addEventListener('scroll', update, true);
+
+    const schedule = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener('resize', schedule);
+    window.addEventListener('scroll', schedule, true);
     return () => {
-      window.removeEventListener('resize', update);
-      window.removeEventListener('scroll', update, true);
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', schedule);
+      window.removeEventListener('scroll', schedule, true);
     };
   }, [open, compactHeader]);
 
@@ -86,15 +104,32 @@ export function DockObjectivePicker({
     const onDoc = (e: MouseEvent) => {
       const t = e.target as Node;
       if (rootRef.current?.contains(t)) return;
-      if (compactHeader) {
-        const portal = document.getElementById('vf-objective-listbox-root');
-        if (portal?.contains(t)) return;
-      }
+      if (compactHeader && listboxPortalRef.current?.contains(t)) return;
       setOpen(false);
     };
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
   }, [open, compactHeader]);
+
+  /** Reprise du focus sur le bouton à la fermeture (Escape, clic extérieur, choix). */
+  useEffect(() => {
+    if (prevOpenRef.current && !open) {
+      const id = requestAnimationFrame(() => buttonRef.current?.focus());
+      prevOpenRef.current = open;
+      return () => cancelAnimationFrame(id);
+    }
+    prevOpenRef.current = open;
+    return undefined;
+  }, [open]);
+
+  /** Focus initial sur le panneau porté (lecteurs d’écran, navigation clavier). */
+  useEffect(() => {
+    if (!open || !compactHeader || !listboxRect) return;
+    const id = requestAnimationFrame(() => {
+      listboxPortalRef.current?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [open, compactHeader, listboxRect]);
 
   const onPick = useCallback(
     async (slug: UserObjectiveSlug) => {
@@ -123,15 +158,20 @@ export function DockObjectivePicker({
     );
   }
 
+  const listboxMaxHeightPx =
+    typeof window !== 'undefined' && listboxRect
+      ? Math.max(140, Math.min(Math.floor(window.innerHeight * 0.62), window.innerHeight - listboxRect.top - 12))
+      : undefined;
+
   const listboxClassName =
-    'max-h-[min(60dvh,22rem)] overflow-y-auto overscroll-y-contain rounded-2xl border border-line bg-[#fdf8ef] p-3 shadow-card';
+    'overflow-y-auto overscroll-y-contain rounded-2xl border border-line bg-[#fdf8ef] p-3 shadow-card outline-none focus-visible:ring-2 focus-visible:ring-primary/35';
 
   const listboxInner = (
     <>
-      <p className="mb-2 px-1 text-[11px] font-medium text-muted">
+      <p className="mb-2 px-1 text-[11px] font-medium text-muted" id={`${listboxId}-hint`}>
         L’accueil, l’explorateur et les raccourcis s’alignent sur votre choix.
       </p>
-      <div className="space-y-6">
+      <div className="space-y-6" role="presentation">
         {USER_OBJECTIVE_CATEGORY_ORDER.map((cat) => {
           const items = grouped.get(cat);
           if (!items?.length) return null;
@@ -174,13 +214,17 @@ export function DockObjectivePicker({
       if (!listboxRect || typeof document === 'undefined') return null;
       return createPortal(
         <div
-          id="vf-objective-listbox-root"
+          ref={listboxPortalRef}
+          id={listboxId}
           role="listbox"
+          tabIndex={-1}
+          aria-labelledby={`${listboxId}-hint`}
           className={cn(listboxClassName, 'fixed z-[90]')}
           style={{
             top: listboxRect.top,
             left: listboxRect.left,
             width: listboxRect.width,
+            maxHeight: listboxMaxHeightPx ? `${listboxMaxHeightPx}px` : 'min(60dvh,22rem)',
           }}
         >
           {listboxInner}
@@ -189,7 +233,13 @@ export function DockObjectivePicker({
       );
     }
     return (
-      <div role="listbox" className={cn('absolute left-0 right-0 top-full z-[80] mt-1.5', listboxClassName)}>
+      <div
+        id={listboxId}
+        role="listbox"
+        tabIndex={-1}
+        aria-labelledby={`${listboxId}-hint`}
+        className={cn('absolute left-0 right-0 top-full z-[80] mt-1.5 max-h-[min(60dvh,22rem)]', listboxClassName)}
+      >
         {listboxInner}
       </div>
     );
@@ -210,9 +260,10 @@ export function DockObjectivePicker({
         type="button"
         aria-expanded={open}
         aria-haspopup="listbox"
+        aria-controls={open ? listboxId : undefined}
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          'flex w-full items-center justify-between gap-2 rounded-2xl border border-line bg-surface text-left shadow-soft transition-colors',
+          'flex w-full items-center justify-between gap-2 rounded-2xl border border-line bg-surface text-left shadow-soft transition-colors motion-reduce:transition-none',
           compact ? 'px-2 py-1.5 sm:px-2.5 sm:py-1.5' : 'gap-3 px-4 py-3',
           open ? 'border-primary/40 ring-2 ring-primary/25' : 'hover:border-primary/35 hover:bg-primary-soft/50',
         )}
@@ -237,8 +288,8 @@ export function DockObjectivePicker({
         </span>
         <ChevronDown
           className={cn(
-            'shrink-0 text-muted transition-transform',
-            compact ? 'h-3.5 w-3.5' : 'h-5 w-5',
+            'shrink-0 text-muted motion-reduce:transition-none',
+            compact ? 'h-3.5 w-3.5 transition-transform duration-200' : 'h-5 w-5 transition-transform duration-200',
             open ? 'rotate-180' : '',
           )}
           aria-hidden

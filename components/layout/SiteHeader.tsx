@@ -25,7 +25,7 @@ export function SiteHeader({ onPrimaryNavOpen }: { onPrimaryNavOpen?: () => void
             </div>
             <span className="text-lg font-black tracking-tighter">VisaFlow</span>
           </Link>
-          <ObjectiveDockInline className="min-w-0" />
+          <ObjectiveDockInline className="min-w-0 max-[480px]:basis-full max-[480px]:max-w-none sm:max-w-none" />
         </div>
 
         <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2 sm:w-auto sm:gap-3">
