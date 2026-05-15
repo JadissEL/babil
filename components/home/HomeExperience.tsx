@@ -26,6 +26,7 @@ import type { CountryGridItem } from '@/components/country/CountryGrid';
 import GoogleAd from '@/components/GoogleAd';
 import HeroWorldCarousel from '@/components/home/HeroWorldCarousel';
 import HomeQuickFilterEngine from '@/components/home/HomeQuickFilterEngine';
+import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock';
 import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo';
@@ -569,28 +570,31 @@ export function HomeExperience({
 function MeridianHomeHeader() {
   return (
     <header
-      className="sticky top-0 z-40 border-b backdrop-blur-md"
+      className="sticky top-0 z-40 overflow-visible border-b backdrop-blur-md"
       style={{
         backgroundColor: 'rgba(253,248,239,0.88)',
         borderColor: INK_10,
       }}
     >
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-10">
-        <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="VisaFlow — Accueil">
-          <span
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-[0_4px_12px_rgba(13,27,62,0.18)]"
-            style={{ backgroundColor: '#3157d5' }}
-            aria-hidden
-          >
-            <Globe className="h-5 w-5" />
-          </span>
-          <span
-            className="font-serif text-[22px] font-black tracking-tight"
-            style={{ color: '#3157d5' }}
-          >
-            VisaFlow
-          </span>
-        </Link>
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 py-3.5 sm:px-6 lg:px-10">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 sm:gap-3">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="VisaFlow — Accueil">
+            <span
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-white shadow-[0_4px_12px_rgba(13,27,62,0.18)]"
+              style={{ backgroundColor: '#3157d5' }}
+              aria-hidden
+            >
+              <Globe className="h-5 w-5" />
+            </span>
+            <span
+              className="font-serif text-[22px] font-black tracking-tight"
+              style={{ color: '#3157d5' }}
+            >
+              VisaFlow
+            </span>
+          </Link>
+          <ObjectiveDockInline className="min-w-0 border-[rgba(13,27,62,0.12)] bg-white/90" />
+        </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <GlobalCountrySearch />
           <SignedOut>

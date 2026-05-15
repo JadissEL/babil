@@ -1,5 +1,6 @@
 /**
- * Variable CSS définie sur `document.documentElement` par `SiteObjectiveDock`
+ * Variable CSS définie sur `document.documentElement` par `ObjectiveDockInline`
+ * (`components/layout/SiteObjectiveDock.tsx`).
  * (hauteur mesurée du widget objectif compact en haut d’écran) ; fallback dans
  * `app/globals.css` sur `:root`.
  *

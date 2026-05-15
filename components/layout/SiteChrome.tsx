@@ -5,7 +5,6 @@ import { ReactNode } from 'react';
 import { AppToaster } from '@/components/AppToaster';
 import { CookieConsentBanner } from '@/components/cookies/CookieConsentBanner';
 import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
-import { SiteObjectiveDock } from '@/components/layout/SiteObjectiveDock';
 import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
 
 const STANDALONE_PATH_PREFIXES = [
@@ -22,7 +21,7 @@ const STANDALONE_PATH_PREFIXES = [
 /**
  * Routes exactes qui fournissent leur **propre chrome marketing complet** (header + footer)
  * et n'attendent du `SiteChrome` que les utilitaires runtime transverses
- * (AppToaster, SiteObjectiveDock, CookieConsentBanner).
+ * (AppToaster, CookieConsentBanner). L’objectif principal est dans {@link MeridianHomeHeader}.
  *
  * PAGE 01 (MERIDIAN) — `/` rend son propre `MeridianHomeHeader` / `MeridianHomeFooter`
  * et n'a pas besoin du rail latéral `SitePrimaryNavColumn`.
@@ -52,13 +51,12 @@ export function SiteChrome({ children }: { children: ReactNode }) {
     /**
      * Shell home : pas de SiteHeader / SitePrimaryNavColumn / SiteFooter globaux —
      * `HomeExperience` rend son propre chrome MERIDIAN (header + main + footer).
-     * On garde toutes les utilités runtime (toasts, dock objectif, consent cookies).
+     * On garde toutes les utilités runtime (toasts, consent cookies). L’objectif est dans le header MERIDIAN.
      */
     return (
       <div className="flex min-h-screen flex-1 flex-col bg-[#FDF8EF]">
         <AppToaster />
         {children}
-        <SiteObjectiveDock />
         <CookieConsentBanner />
       </div>
     );
@@ -84,7 +82,6 @@ export function SiteChrome({ children }: { children: ReactNode }) {
           {children}
         </main>
       </div>
-      <SiteObjectiveDock />
       <SiteFooter />
       <CookieConsentBanner />
     </div>

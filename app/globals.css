@@ -23,7 +23,7 @@
   --radius-lg: 1.15rem;
   --shadow-soft: 0 1px 2px rgba(20, 26, 36, 0.06), 0 8px 24px rgba(20, 26, 36, 0.08);
   --shadow-card: 0 2px 6px rgba(20, 26, 36, 0.05), 0 14px 28px rgba(20, 26, 36, 0.08);
-  /** Hauteur du widget objectif (compact, fixé en haut) — mise à jour au runtime par `SiteObjectiveDock`. */
+  /** Hauteur du widget objectif (header inline) — mise à jour au runtime par `ObjectiveDockInline`. */
   --vf-objective-dock-height: 2.75rem;
 }
 

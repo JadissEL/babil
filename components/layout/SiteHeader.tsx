@@ -5,17 +5,19 @@ import { Globe, Heart, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { openCookiePreferences } from '@/components/cookies/CookieConsentBanner';
 import { SiteHeaderMenuButton } from '@/components/layout/SitePrimaryNav';
+import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock';
 import { GlobalCountrySearch } from '@/components/nav/GlobalCountrySearch';
 import { PAYPAL_DONATE_URL } from '@/lib/paypal-donate';
 
 /**
- * En-tête global : logo, recherche pays, auth. La navigation principale est dans {@link SitePrimaryNavColumn}.
+ * En-tête global : menu, logo, **objectif principal** (inline), recherche pays, auth.
+ * La navigation principale est dans {@link SitePrimaryNavColumn}.
  */
 export function SiteHeader({ onPrimaryNavOpen }: { onPrimaryNavOpen?: () => void }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-[#fdf8ef]/90 text-text backdrop-blur">
+    <header className="sticky top-0 z-50 overflow-visible border-b border-line bg-[#fdf8ef]/90 text-text backdrop-blur">
       <div className="mx-auto flex min-h-16 w-full max-w-[1600px] flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-2 sm:px-6 lg:px-8">
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3 sm:gap-4">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 sm:gap-3">
           {onPrimaryNavOpen ? <SiteHeaderMenuButton onClick={onPrimaryNavOpen} /> : null}
           <Link href="/" className="flex shrink-0 items-center gap-2">
             <div className="rounded-lg bg-primary p-1.5 text-white shadow-soft">
@@ -23,6 +25,7 @@ export function SiteHeader({ onPrimaryNavOpen }: { onPrimaryNavOpen?: () => void
             </div>
             <span className="text-lg font-black tracking-tighter">VisaFlow</span>
           </Link>
+          <ObjectiveDockInline className="min-w-0" />
         </div>
 
         <div className="flex w-full shrink-0 flex-wrap items-center justify-end gap-2 sm:w-auto sm:gap-3">
