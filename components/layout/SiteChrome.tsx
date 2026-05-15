@@ -48,10 +48,12 @@ export function SiteChrome({ children }: { children: ReactNode }) {
   }
 
   if (useNexus) {
+    const onSignedInHome = normalizePathname(pathname) === '/'
     return (
       <div className="flex min-h-screen flex-1 flex-col bg-[#FAF7EE]">
         <AppToaster />
         <NexusShellGate>{children}</NexusShellGate>
+        {onSignedInHome ? <SiteFooter /> : null}
         <CookieConsentBanner />
       </div>
     );

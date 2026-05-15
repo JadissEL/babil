@@ -176,7 +176,7 @@ function DashboardTopBar({
             <Bell className="h-4 w-4" />
           </button>
           <UserButton
-            afterSignOutUrl="/sign-in"
+            afterSignOutUrl="/"
             appearance={{
               elements: {
                 avatarBox: 'h-10 w-10 rounded-lg',

@@ -20,7 +20,7 @@ export default function SignInPage({ searchParams }: Props) {
   const redirectTarget =
     typeof searchParams?.redirect_url === 'string' && searchParams.redirect_url.startsWith('/')
       ? searchParams.redirect_url
-      : '/overview'
+      : '/'
 
   return (
     <div
