@@ -69,7 +69,8 @@ export function isAuthPath(pathname: string | null | undefined): boolean {
 export function isNexusPath(pathname: string | null | undefined): boolean {
   const p = normalizePathname(pathname);
   if (isAuthPath(p)) return false;
-  if (p === '/') return true;
+  /** `/` uses marketing shell when signed out; Nexus shell when signed in (SiteChrome). */
+  if (p === '/') return false;
   return NEXUS_PATH_PREFIXES.some(
     (prefix) => prefix !== '/' && (p === prefix || p.startsWith(`${prefix}/`)),
   );
@@ -82,10 +83,9 @@ export function isPublicMarketingPath(pathname: string | null | undefined): bool
   return true;
 }
 
-/** Clerk `createRouteMatcher` patterns for Nexus app routes requiring sign-in. */
+/** Clerk `createRouteMatcher` patterns for Nexus app routes requiring sign-in (excludes `/`). */
 export function nexusProtectedRoutePatterns(): string[] {
   const patterns = new Set<string>();
-  patterns.add('/');
   for (const prefix of NEXUS_PATH_PREFIXES) {
     if (prefix === '/') continue;
     patterns.add(`${prefix}(.*)`);

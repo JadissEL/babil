@@ -47,24 +47,14 @@ Documenter **où** la session est imposée côté serveur Edge : liste des préf
 - **Ordre :** header projet `BABIL_REQUEST_ID_HEADER` → `x-request-id` → `x-vercel-id` → `crypto.randomUUID()`.
 
 ### 5.2 `isProtectedRoute` — préfixes protégés
-À maintenir **strictement alignés** sur `createRouteMatcher([...])` dans le repo :
+La source de vérité est **`lib/auth-protected-routes.ts`** → `PROTECTED_ROUTE_PATTERNS` consommé par `createRouteMatcher([...])` dans `proxy.ts`. Ne pas dupliquer une liste exhaustive ici : elle dérive des routes produit Nexus + API user/admin (voir module + tests `lib/auth-protected-routes.test.ts`).
 
-- `/services/delegated-applications(.*)`
-- `/overview(.*)`
-- `/history(.*)`
-- `/profile(.*)`
-- `/design-system(.*)`
-- `/moderation(.*)`
-- `/admin(.*)`
-- `/api/admin(.*)`
-- `/api/comments(.*)`
-- `/api/user/profile(.*)`
-- `/api/user/favorites(.*)`
-- `/api/user/history(.*)`
-- `/api/user/data-export(.*)`
-- `/api/delegated-application-requests(.*)`
+Points clés produit :
 
-**Publics (non listés ici) :** notamment `/probability`, `/recommendations`, `/recommendation-engine` — voir commentaire dans le fichier source.
+- **`/` (accueil)** : **non protégé** au Edge — anonymes chargent l’accueil marketing ; après session Clerk, le shell Mobility Intel sur `/` est choisi **côté client** (`SiteChrome` — **PAGE 35** §11).
+- **Outils workspace / explorer** (`/overview`, `/probability`, `/explorer`, `/recommendations`, etc.) : **protégés** — `auth.protect()` → flux Clerk avec retour sur l’URL demandée.
+
+**Publics (exemples, hors matcher produit)** : notamment `/`, `/countries/*`, `/legal`, `/sign-in`, `/sign-up` (et tout chemin volontairement absent de `PROTECTED_ROUTE_RULES`).
 
 ### 5.3 `auth.protect()`
 - **Purpose :** session Clerk requise pour les chemins §5.2 ; comportement redirect / modal selon config Clerk + Next.
@@ -107,7 +97,7 @@ Les pages d’erreur / auth héritées de Clerk doivent respecter **PAGE 33** §
 ---
 
 ## 11. User Journey Connections
-Protège délégation services (**PAGE 20–21**), espace perso (**PAGE 22–24**), modération (**PAGE 25**), admin (**PAGE 26**), design system interne (**PAGE 27**), endpoints user & comments listés en §5.2.
+Protège les outils produit (même accueil **non forcé** : **`/`** reste public au Edge) et, entre autres, délégation services (**PAGE 20–21**), espace perso (**PAGE 22–24**), modération (**PAGE 25**), admin (**PAGE 26**), design system interne (**PAGE 27**), endpoints user & comments — détail dans `PROTECTED_ROUTE_RULES`.
 
 ---
 

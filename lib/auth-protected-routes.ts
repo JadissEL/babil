@@ -41,31 +41,21 @@ const NEXUS_APP_ROUTE_RULES: readonly ProtectedRouteRule[] = nexusProtectedRoute
   )
   .map((pattern) => {
     const displayPath = pattern.replace('(.*)', '');
+    const note =
+      displayPath === '/services/delegated-applications'
+        ? 'Tunnel application déléguée (intake + suivi).'
+        : 'Espace connecté Nexus (outil produit).';
     return {
       pattern,
       displayPath,
       requirement: 'auth' as const,
       category: 'app' as const,
-      note: 'Espace connecté Nexus (outil produit).',
+      note,
     };
   });
 
 export const PROTECTED_ROUTE_RULES: readonly ProtectedRouteRule[] = [
-  {
-    pattern: '/',
-    displayPath: '/',
-    requirement: 'auth',
-    category: 'app',
-    note: 'Accueil produit — shell Nexus (Mobility Intel).',
-  },
   ...NEXUS_APP_ROUTE_RULES,
-  {
-    pattern: '/services/delegated-applications(.*)',
-    displayPath: '/services/delegated-applications',
-    requirement: 'auth',
-    category: 'app',
-    note: 'Tunnel application déléguée (intake + suivi).',
-  },
   {
     pattern: '/moderation(.*)',
     displayPath: '/moderation',

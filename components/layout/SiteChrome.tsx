@@ -22,9 +22,10 @@ function shouldUseNexusShell(
   isLoaded: boolean,
 ): boolean {
   if (!pathname || isAuthPath(pathname)) return false;
+  const p = normalizePathname(pathname);
+  if (p === '/' && isLoaded && isSignedIn) return true;
   if (isNexusPath(pathname)) return true;
   if (!isLoaded || !isSignedIn) return false;
-  const p = normalizePathname(pathname);
   return (
     p === NEXUS_COUNTRIES_PREFIX || p.startsWith(`${NEXUS_COUNTRIES_PREFIX}/`)
   );

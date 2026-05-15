@@ -95,7 +95,7 @@ Contenu plus haut que viewport : seul `main` scroll, pas la sidebar.
 ---
 
 ## 11. User Journey Connections
-Toutes les routes produit Nexus (`lib/nexus-shell-routes.ts` : `/`, outils workspace, explorer, glossaire intelligence, assist candidatures, etc.) partagent ce shell via `NexusShellGate` + `DashboardLayoutClient`. **Connectés** sur `/countries/[id]` : même shell Nexus (sans auth forcée sur l’URL). **Anonymes** sur pays / legal : shell public PAGE 34. Visiteurs non connectés sur routes produit : `/sign-in?redirect_url=…`.
+**Accueil `/`** : anonymes → shell **public** PAGE 34 (Harbor / Quay) ; connectés → ce shell Mobility Intel via `NexusShellGate` + `DashboardLayoutClient` (pas de `auth.protect` sur `/` côté Edge — **PAGE 39**). Les autres routes produit Nexus (`lib/nexus-shell-routes.ts` : outils workspace, explorer, glossaire intelligence, assist candidatures, etc.) partagent ce shell **lorsque** l’utilisateur est connecté. **Connectés** sur `/countries/[id]` : même shell Nexus (sans auth forcée sur l’URL). **Anonymes** sur pays / legal : shell public PAGE 34. Visiteurs non connectés sur routes produit (hors `/`) : `/sign-in?redirect_url=…`.
 
 ---
 
@@ -111,7 +111,7 @@ Fichier repo : `docs/google-stitch/assets/page-35-nexus-stitch-reference.png`
 
 **Architecture livrée (Stitch v1 — Nexus workspace shell exclusif)** : rewrite complet du shell `(dashboard)` pour qu'il **remplace** entièrement le `SiteChrome` public sur les routes connectées (Stitch §11 « les pages publiques hors `(dashboard)` reviennent au PAGE 34 »).
 
-**`SiteChrome` (`components/layout/SiteChrome.tsx`)** : `isNexusPath()` depuis `lib/nexus-shell-routes.ts` — **aucun** SiteHeader, SitePrimaryNav, SiteFooter sur les routes Nexus ; `NexusShellGate` monte le shell Mobility Intel. Toaster `AppToaster` + cookies conservés.
+**`SiteChrome` (`components/layout/SiteChrome.tsx`)** : `isNexusPath()` depuis `lib/nexus-shell-routes.ts` — **aucun** SiteHeader, SitePrimaryNav, SiteFooter sur les routes Nexus (hors **`/`** anonyme, qui reste marketing public). Sur **`/`** connecté, `shouldUseNexusShell` force le shell Nexus ; `NexusShellGate` monte Mobility Intel. Toaster `AppToaster` + cookies conservés.
 
 **`DashboardLayoutClient`** : cream `#FAF7EE` shell flex avec sidebar gauche + main droit, top bar collée en haut (desktop). Mobile : hamburger button ouvre le drawer sidebar avec overlay 45 % navy + ESC + scroll-lock préservés.
 
