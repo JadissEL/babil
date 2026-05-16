@@ -48,6 +48,24 @@ describe('wbBatchRowsToDatumMap', () => {
     assert.equal(m.has('abc'), false)
   })
 
+  it('skips leading null values for the same country (WB provisional latest year)', () => {
+    const m = wbBatchRowsToDatumMap([
+      { country: { id: 'AF' }, date: '2024', value: null },
+      { country: { id: 'AF' }, date: '2023', value: 17152234636.8715 },
+      { country: { id: 'AF' }, date: '2022', value: 14_000_000 },
+    ])
+    assert.equal(m.get('af')?.value, 17152234636.8715)
+    assert.equal(m.get('af')?.date, '2023')
+  })
+
+  it('omits country when no numeric observation exists', () => {
+    const m = wbBatchRowsToDatumMap([
+      { country: { id: 'AF' }, date: '2024', value: null },
+      { country: { id: 'AF' }, date: '2023', value: null },
+    ])
+    assert.equal(m.has('af'), false)
+  })
+
   it('ignores rows without a 2-letter country id', () => {
     const m = wbBatchRowsToDatumMap([
       { country: { id: 'WORLD' }, date: '2020', value: 1 },

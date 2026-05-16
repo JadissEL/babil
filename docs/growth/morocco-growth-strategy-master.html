@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Babil — Morocco Growth & Marketing Master Strategy</title>
+  <meta name="description" content="Complete growth playbook: Morocco market, acquisition, monetization, institutions, calendar." />
+  <style>
+    :root {
+      --ink: #0a0f1a;
+      --muted: #4a5568;
+      --line: #e2e8f0;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --accent: #1e3a5f;
+      --accent-light: #2c5282;
+      --accent-soft: #ebf2f9;
+      --ok: #0f766e;
+      --warn: #b45309;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+    header.doc-head {
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 1.75rem;
+      margin-bottom: 2.5rem;
+    }
+    .kicker {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: clamp(1.65rem, 4vw, 2.15rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.75rem;
+      line-height: 1.15;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 46rem;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 1rem;
+    }
+    .pill {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.35rem 0.65rem;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 2.5rem 0 1rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--line);
+      color: var(--ink);
+    }
+    h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 1.5rem 0 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    p { margin: 0 0 0.85rem; color: var(--ink); }
+    ul { margin: 0 0 1rem; padding-left: 1.2rem; }
+    li { margin-bottom: 0.35rem; }
+    .lead {
+      font-size: 1.05rem;
+      color: var(--muted);
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+      margin: 1.25rem 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 1rem 0 1.5rem;
+      background: var(--surface);
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 0.65rem 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--ink);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tr:nth-child(even) td { background: #fafbfc; }
+    details.category {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-bottom: 0.65rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    details.category summary {
+      cursor: pointer;
+      padding: 1rem 1.1rem;
+      font-weight: 700;
+      font-size: 0.92rem;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      user-select: none;
+    }
+    details.category summary::-webkit-details-marker { display: none; }
+    details.category summary::after {
+      content: "+";
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    details.category[open] summary::after { content: "−"; }
+    details.category .inner {
+      padding: 0 1.1rem 1.15rem;
+      border-top: 1px solid var(--line);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.75rem;
+      margin: 0.75rem 0 1rem;
+    }
+    .card {
+      background: var(--accent-soft);
+      border-radius: 6px;
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+    .card strong {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+    .phase {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    @media (min-width: 700px) {
+      .phase { grid-template-columns: repeat(3, 1fr); }
+    }
+    .phase-box {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 1.1rem;
+      border-top: 4px solid var(--accent);
+    }
+    .phase-box h4 {
+      margin: 0 0 0.5rem;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+    }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .toc {
+      font-size: 0.88rem;
+      margin: 1rem 0 2rem;
+    }
+    .toc a { color: var(--accent-light); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="doc-head">
+      <p class="kicker">Growth playbook · Morocco focus · 2026 · v1.2</p>
+      <h1>Morocco Growth &amp; Marketing<br />Master Strategy</h1>
+      <p class="sub">
+        Free-for-users mobility intelligence platform: acquisition, retention, indirect monetization,
+        institutional credibility — execution-oriented calendar and cost ranges in MAD.
+      </p>
+      <div class="pill-row">
+        <span class="pill">100% free users</span>
+        <span class="pill">Affiliate + B2B revenue</span>
+        <span class="pill">Trust-first</span>
+        <span class="pill">Mobile + social Morocco</span>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Table of contents">
+      <strong>Navigate</strong> —
+      <a href="#exec">Executive</a> ·
+      <a href="#market">Market</a> ·
+      <a href="#strategies">Strategies</a> ·
+      <a href="#calendar">Master calendar</a> ·
+      <a href="#roadmap">Roadmap</a> ·
+      <a href="#matrix">Cost matrix</a> ·
+      <a href="#measurement">Measurement</a> ·
+      <a href="#templates">Templates</a> ·
+      <a href="#risks">Risks</a>
+    </nav>
+
+    <section id="exec">
+      <h2>1. Executive summary</h2>
+      <p class="lead">
+        Become Morocco’s default <strong>honest layer</strong> on visas, studies abroad, and travel prep —
+        replacing rumor with sourced, Morocco-specific clarity while earning through aligned affiliates and partners.
+      </p>
+      <h3>North-star levers</h3>
+      <div class="grid-3">
+        <div class="card"><strong>Trust</strong> Disclaimers, freshness, official links — never guarantee outcomes.</div>
+        <div class="card"><strong>Distribution</strong> SEO + TikTok/Reels + student depth + QR from offline.</div>
+        <div class="card"><strong>Monetization</strong> Flights, insurance, tests, remittance — contextual only.</div>
+      </div>
+    </section>
+
+    <section id="market">
+      <h2>2. Morocco market snapshot</h2>
+      <ul>
+        <li><strong>Mobile-first</strong> discovery; peak anxiety before TLS/consulate and exam results.</li>
+        <li><strong>French</strong> for formal search and education; <strong>Darija/MSA hooks</strong> for video — always subtitle FR.</li>
+        <li><strong>Trust gap:</strong> scams and exaggerated TikTok claims — differentiate with institutional tone + transparency.</li>
+        <li><strong>Social:</strong> Facebook groups for “avis”; short video for explainers; Google for troubleshooting.</li>
+      </ul>
+    </section>
+
+    <section id="strategies">
+      <h2>3. Strategy architecture (expand)</h2>
+      <p>Each block: tactics, steps, impact, cost tiers (low / medium / high MAD). ROI = qualitative (trust, compounding, revenue proximity).</p>
+
+      <details class="category" open>
+        <summary>3.1 Digital acquisition</summary>
+        <div class="inner">
+          <p><strong>Tactics:</strong> Intent clusters (Schengen MA, études par pays, RDV platforms); retargeting with educational only.</p>
+          <p><strong>Steps:</strong> 30–50 intents → templates → Search Console → weekly query mining → A/B first screen.</p>
+          <div class="grid-3">
+            <div class="card"><strong>Low</strong> 3k–8k MAD/mo · internal SEO</div>
+            <div class="card"><strong>Medium</strong> 15k–40k MAD/mo · + content + light paid</div>
+            <div class="card"><strong>High</strong> 50k–120k MAD/mo · + agency creative</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="category">
+        <summary>3.2 Paid ads — Google, Meta, TikTok</summary>
+        <div class="inner">
+          <p><strong>Google:</strong> Search RSA (pinned trust headlines); YouTube 15–45s; PMax small after hygiene.</p>
+          <p><strong>Meta:</strong> Carousel “erreurs fréquentes / pièces”; FR vs Darija ad sets; CAPI.</p>
+          <p><strong>TikTok:</strong> Spark Ads on organic winners; hook in 2s “3 erreurs avant TLS…”</p>
+          <table>
+            <thead><tr><th>Channel</th><th>Low</th><th>Medium</th><th>High</th></tr></thead>
+            <tbody>
+              <tr><td>Google Search</td><td>5k–15k</td><td>20k–60k</td><td>80k–250k</td></tr>
+              <tr><td>YouTube</td><td>3k–10k</td><td>15k–40k</td><td>50k–120k</td></tr>
+              <tr><td>Meta</td><td>5k–15k</td><td>20k–70k</td><td>80k–150k</td></tr>
+              <tr><td>TikTok</td><td>3k–10k</td><td>15k–45k</td><td>60k–150k</td></tr>
+            </tbody>
+          </table>
+          <p><em>ROI logic:</em> Search = intent; video = assisted conversions + remarketing pools.</p>
+        </div>
+      </details>
+
+      <details class="category">
+        <summary>3.3 Organic — SEO + social</summary>
+        <div class="inner">
+          <p><strong>SEO:</strong> Hub &amp; spoke “depuis le Maroc”; FAQ schema where truthful; monthly refresh top URLs.</p>
+          <p><strong>Social:</strong> Facebook groups value posts; IG Réels; LinkedIn FR for B2B credibility.</p>
+          <div class="grid-3">
+            <div class="card"><strong>Low</strong> Internal writers</div>
+            <div class="card"><strong>Medium</strong> 8k–25k MAD/mo writers+editor</div>
+            <div class="card"><strong>High</strong> + digital PR retainer</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="category">
+        <summary>3.4 Viral loops — TikTok, influencers, ambassadors, referrals</summary>
+        <div class="inner">
+          <ul>
+            <li>Shareable checklists; “ce que personne ne dit” factual series.</li>
+            <li><strong>Ambassadors:</strong> 1 lead / faculty + city lead; certificate + partner perks.</li>
+            <li><strong>Influencers:</strong> micro 10k–80k; flat + affiliate; #publicité.</li>
+            <li><strong>Referral:</strong> optional post-success; partner-funded office hours.</li>
+          </ul>
+          <div class="grid-3">
+            <div class="card"><strong>Low</strong> 2k–5k MAD/mo</div>
+            <div class="card"><strong>Medium</strong> 10k–25k MAD/mo</div>
+            <div class="card"><strong>High</strong> 40k–100k MAD/mo</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="category">
+        <summary>3.5 Offline education</summary>
+        <div class="inner">
+          <p>Lycée orientation; universités (BDE); incubateurs; seminars gratuits (études, carrière, voyager, anti-arnaque).</p>
+          <p><strong>Steps:</strong> Deck institutionnel → script FAQ → QR PDF → feedback → testimonial consent.</p>
+          <div class="grid-3">
+            <div class="card"><strong>Low / quarter</strong> 5k–15k MAD</div>
+            <div class="card"><strong>Medium</strong> 20k–50k MAD</div>
+            <div class="card"><strong>High</strong> 60k–150k MAD</div>
+          </div>
+        </div>
+      </details>
+
+      <details class="category">
+        <summary>3.6 Institutional partnerships</summary>
+        <div class="inner">
+          <table>
+            <thead><tr><th>Ministry / angle</th><th>Entry</th><th>Ask</th></tr></thead>
+            <tbody>
+              <tr><td>Éducation / enseignement sup.</td><td>Orientation + anti-fraude numérique</td><td>Événements étudiants, liens .gov</td></tr>
+              <tr><td>Tourisme</td><td>Littératie voyage, assurances, arnaques</td><td>Portails saisonniers</td></tr>
+              <tr><td>Transition numérique</td><td>Innovation, transparence données</td><td>Écosystème, badges conférence</td></tr>
+            </tbody>
+          </table>
+          <p><strong>Budget:</strong> Low 10k–30k MAD/year (print, travel); High 150k–400k MAD/year with advisor + events.</p>
+        </div>
+      </details>
+
+      <details class="category">
+        <summary>3.7 Community</summary>
+        <div class="inner">
+          <p>WhatsApp thématique (rules strict); monthly AMA; ambassador Slack for content calendar.</p>
+          <p><strong>Cost:</strong> Low 2k–8k MAD/mo · Medium 10k–20k MAD/mo moderation lead.</p>
+        </div>
+      </details>
+
+      <details class="category">
+        <summary>3.8 Affiliate monetization (no subscription)</summary>
+        <div class="inner">
+          <p>Flights/hotels, travel insurance, language tests, SIMs, remittance — <strong>clear disclosure</strong> on every widget.</p>
+          <p><strong>Steps:</strong> Policy page → track EPV by intent → prune low-trust programs.</p>
+        </div>
+      </details>
+
+      <details class="category">
+        <summary>3.9 Airline / travel ecosystem</summary>
+        <div class="inner">
+          <p>Start OTA/insurance affiliates; co-marketing with carriers is P2–P3 after proof. Airport QR “préparez votre voyage”.</p>
+          <p><strong>Cost:</strong> Affiliate near zero OPEX; paid co-marketing 20k–200k MAD/campaign.</p>
+        </div>
+      </details>
+    </section>
+
+    <section id="calendar">
+      <h2>4. Integrated master calendar (cross-strategy)</h2>
+      <p>Content fuels paid creative; offline supplies QR traffic and testimonials; ambassadors supply UGC.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Week block</th>
+            <th>SEO / content</th>
+            <th>Paid</th>
+            <th>Organic / social</th>
+            <th>Offline</th>
+            <th>Institutional</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>W1–2</td>
+            <td>TLS hub refresh + FAQ</td>
+            <td>Search test 5k MAD</td>
+            <td>Film 3 TikTok scripts</td>
+            <td>—</td>
+            <td>Pilot one-pager ministry</td>
+          </tr>
+          <tr>
+            <td>W3–4</td>
+            <td>Top 3 destination spokes</td>
+            <td>Meta carousel test</td>
+            <td>Ambassador onboarding</td>
+            <td>1 university workshop</td>
+            <td>Regional education contact</td>
+          </tr>
+          <tr>
+            <td>W5–6</td>
+            <td>1 AR long article</td>
+            <td>YT retarget 15s</td>
+            <td>UGC repost</td>
+            <td>Lycée orientation</td>
+            <td>Follow-up dossier</td>
+          </tr>
+          <tr>
+            <td>W7–8</td>
+            <td>Flight+insurance module copy</td>
+            <td>Scale +20% winning KW</td>
+            <td>Micro-influencer #1</td>
+            <td>Public seminar Rabat</td>
+            <td>Tourism deck V1</td>
+          </tr>
+          <tr>
+            <td>Q2–Q3</td>
+            <td colspan="5">BAC peak: double short video; +30–50% search budget Jul–Aug flight push; Sep campus blitz</td>
+          </tr>
+          <tr>
+            <td>Q4</td>
+            <td colspan="5">Christmas routes, insurance, Schengen anxiety; annual transparency report</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="roadmap">
+      <h2>5. Phased roadmap</h2>
+      <div class="phase">
+        <div class="phase-box">
+          <h4>Phase 1 · 0–3 mo</h4>
+          <p><strong>Goals:</strong> Channel-product fit; 10k–50k MAU band; affiliate baseline.</p>
+          <p><strong>Actions:</strong> 15 SEO spokes; 3 TikTok/wk; small Google; 2 lycées + 2 univ; 10 ambassadors.</p>
+          <p><strong>Budget:</strong> L 25k–50k · M 60k–120k · H 150k–300k MAD/mo</p>
+        </div>
+        <div class="phase-box">
+          <h4>Phase 2 · 3–9 mo</h4>
+          <p><strong>Goals:</strong> National student recognition; partnership pipeline; SEO moat.</p>
+          <p><strong>Actions:</strong> Video factory; scale Meta/TikTok; 5–10 city tour; 50–150 ambassadors; B2B deck.</p>
+          <p><strong>Budget:</strong> L 40k–80k · M 100k–200k · H 250k–450k MAD/mo</p>
+        </div>
+        <div class="phase-box">
+          <h4>Phase 3 · 9–24 mo</h4>
+          <p><strong>Goals:</strong> Category leadership; flagship institutional win; organic majority.</p>
+          <p><strong>Actions:</strong> Reports &amp; conferences; airline/OTA depth; diaspora SEO.</p>
+          <p><strong>Budget:</strong> M 150k–350k · H 500k+ MAD/mo</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="matrix">
+      <h2>6. Cost &amp; impact matrix</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Strategy</th>
+            <th>Cost (MAD/mo*)</th>
+            <th>Effort</th>
+            <th>Impact</th>
+            <th>Scale 1–5</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>SEO hubs</td><td>L 5k / M 20k / H 60k</td><td>M</td><td>H</td><td>5</td><td>P0</td></tr>
+          <tr><td>Google Search</td><td>L 5k / M 40k / H 120k</td><td>L</td><td>H</td><td>4</td><td>P0</td></tr>
+          <tr><td>YT / TikTok ads</td><td>L 5k / M 30k / H 100k</td><td>M</td><td>M–H</td><td>4</td><td>P1</td></tr>
+          <tr><td>Meta ads</td><td>L 5k / M 35k / H 120k</td><td>M</td><td>M</td><td>4</td><td>P1</td></tr>
+          <tr><td>Organic short video</td><td>L 3k / M 15k / H 50k</td><td>H</td><td>H</td><td>5</td><td>P0</td></tr>
+          <tr><td>Ambassadors</td><td>L 3k / M 12k / H 40k</td><td>H</td><td>H</td><td>5</td><td>P0</td></tr>
+          <tr><td>Offline workshops</td><td>Per quarter L–H</td><td>H</td><td>M</td><td>3</td><td>P1</td></tr>
+          <tr><td>Institutional</td><td>Spread annual</td><td>H</td><td>H (long)</td><td>2</td><td>P2 early</td></tr>
+          <tr><td>Community</td><td>L 2k / M 10k / H 25k</td><td>M</td><td>M</td><td>4</td><td>P1</td></tr>
+          <tr><td>Affiliate stack</td><td>L 1k / M 5k / H 15k tech</td><td>M</td><td>M–H</td><td>5</td><td>P0</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.82rem;color:var(--muted);">* Unless noted per quarter or campaign.</p>
+    </section>
+
+    <section id="measurement">
+      <h2>7. Measurement, KPIs &amp; weekly cadence (v1.1)</h2>
+      <table>
+        <thead>
+          <tr><th>Cluster</th><th>Examples</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Attention quality</td><td>Scroll depth, tool usage, 7d return</td><td>Scale paid only after lift</td></tr>
+          <tr><td>Acquisition</td><td>Organic MA+FR, branded search</td><td>UTM on every link</td></tr>
+          <tr><td>Activation</td><td>Official link click, checklist save</td><td>GA4 / privacy-first alt.</td></tr>
+          <tr><td>Indirect revenue</td><td>Affiliate CTR, EPC by intent</td><td>Prune toxic partners fast</td></tr>
+          <tr><td>Trust</td><td>Correction SLA, workshop NPS</td><td>Ops metric, not vanity</td></tr>
+        </tbody>
+      </table>
+      <h3>Weekly rhythm</h3>
+      <ul>
+        <li><strong>Mon</strong> — KPI review; scale/kill one test</li>
+        <li><strong>Tue</strong> — 1 SEO ship + 2 video scripts</li>
+        <li><strong>Wed</strong> — Paid creative / LP parity</li>
+        <li><strong>Thu</strong> — Partnership + offline pipeline</li>
+        <li><strong>Fri</strong> — Ambassador async sync</li>
+        <li><strong>Monthly</strong> — Retro + compliance sweep</li>
+      </ul>
+      <details class="category">
+        <summary>Keyword &amp; hook seeds (Morocco)</summary>
+        <div class="inner">
+          <p><strong>FR search examples:</strong> visa France Maroc, TLScontact Maroc, études en France depuis le Maroc, visa Schengen Maroc, assurance voyage Schengen.</p>
+          <p><strong>Video:</strong> Darija hook + FR subtitles; debunk “garanti accepté” without naming people.</p>
+          <p><strong>Groups:</strong> one value post template — official screenshot + 3 bullets + link in comment after mod OK.</p>
+        </div>
+      </details>
+      <details class="category">
+        <summary>Compliance quick checks</summary>
+        <div class="inner">
+          <ul>
+            <li>No visa outcome promises in ads or UGC contracts.</li>
+            <li>#publicité on paid influencer posts; clear affiliate disclosure.</li>
+            <li>Testimonials with consent; institutional decks non-political.</li>
+            <li>Explicit WhatsApp/email opt-in.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <section id="templates">
+      <h2>8. Execution templates (sections 13–15 · v1.2)</h2>
+      <details class="category" open>
+        <summary>UTM &amp; naming</summary>
+        <div class="inner">
+          <p><code>utm_source</code> (google, meta, tiktok, offline) · <code>utm_medium</code> (cpc, paid_social, qr) · <code>utm_campaign</code> (e.g. <code>2026-06_schengen_ma</code>) · <code>utm_content</code> (creative id).</p>
+          <p>Offline QR: <code>utm_source=offline&utm_medium=qr</code>. Ambassadors: <code>utm_content=amb_slug</code>. Lowercase ASCII, underscores.</p>
+        </div>
+      </details>
+      <details class="category">
+        <summary>Influencer / ambassador brief</summary>
+        <div class="inner">
+          <ul>
+            <li>Deliverables: 1 Reel or TikTok + stories <em>or</em> 1 Short; FR subtitles if Darija.</li>
+            <li>No “visa garanti”; no impersonation; <strong>#publicité</strong> in caption.</li>
+            <li>Pinned comment: one <strong>official</strong> link. Contract includes creative guardrails.</li>
+          </ul>
+        </div>
+      </details>
+      <details class="category">
+        <summary>90 min workshop runbook</summary>
+        <div class="inner">
+          <p><strong>Prep:</strong> UTM QR, printed checklist, consent forms, deck legal review.</p>
+          <p><strong>Flow:</strong> 10 min disclaimers → 25 min official sources → 20 min erreurs fréquentes → 20 min Q&amp;A → 15 min signup/sponsors (labeled).</p>
+          <p><strong>Post:</strong> thank-you + recap; log questions → content backlog.</p>
+        </div>
+      </details>
+    </section>
+
+    <section id="risks">
+      <h2>9. Risks, mitigation &amp; final recommendation</h2>
+      <table>
+        <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>Trust / visa claims</td><td>No guarantees; sourced copy; rapid correction protocol</td></tr>
+          <tr><td>Gov relations</td><td>Public-benefit framing; pilots before national asks</td></tr>
+          <tr><td>Affiliate harm</td><td>Few partners; kill noisy programs; above-fold disclosure</td></tr>
+          <tr><td>Execution overload</td><td>Weekly single metric; kill low-impact channels</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Final recommendation</h3>
+      <p><strong>80% effort:</strong> SEO + systematized short video + ambassadors + contextual affiliate + 2–3 city offline proof.</p>
+      <p><strong>Avoid early:</strong> visa outcome promises; spam in groups; wide PMax without maturity; chasing logos without pilot data.</p>
+    </section>
+
+    <footer>
+      Playbook v1.2 — Markdown: <code>morocco-growth-strategy-master.md</code> (sections 9–12: measurement and compliance; 13–15: UTM, influencer brief, workshop runbook) ·
+      Index: <code>docs/growth/README.md</code>.
+      Costs indicative in MAD — validate with finance before commitment.
+    </footer>
+  </div>
+</body>
+</html>

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { type ReactNode, useMemo } from 'react';
+import { ConsultantsAndDelegatedHomeSection } from '@/components/consultants/ConsultantsAndDelegatedHomeSection';
 import CountryGrid from '@/components/country/CountryGrid';
 import type { CountryGridItem } from '@/components/country/CountryGrid';
 import GoogleAd from '@/components/GoogleAd';
@@ -272,6 +273,8 @@ export function HomeExperience({
 
           {/* DARK NAVY BANNER + FLOATING SECTION NAV PILL — Stitch architecture */}
           <DelegatedApplicationsHomePromo variant="meridianBanner" />
+
+          <ConsultantsAndDelegatedHomeSection />
 
           {/* PRIORITIES STRIP — objective-aware */}
           <section

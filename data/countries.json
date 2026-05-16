@@ -7742,6 +7742,38 @@
         "barriers": "Règles d'hygiène et sécurité incendie très strictes.",
         "demand": "Forte pour la gastronomie marocaine authentique."
       },
+      "education_mobility": {
+        "language_study": {
+          "access": "Moyen à élevé",
+          "bac_required": "Souvent requis pour l’université publique",
+          "cost": "Variable (frais + coût de la vie)",
+          "visa": "Étudiant long séjour",
+          "insight": "Parcours Campus France ; vérifier l’établissement et le visa étudiant."
+        },
+        "technical_training": {
+          "access": "Moyen",
+          "bac_required": "Selon cursus (CAP, BTS, licences pro)",
+          "cost": "Variable",
+          "visa": "Étudiant / stagiaire",
+          "insight": "CFA et centres agréés ; conditions selon convention."
+        },
+        "short_courses": {
+          "access": "Moyen",
+          "bac_required": "Non requis pour courts modules",
+          "cost": "Variable",
+          "visa": "Schengen ou visa court séjour selon durée",
+          "insight": "Vérifier la durée maximale et les règles d’entrée."
+        }
+      },
+      "driving_license": {
+        "status": "Permis marocain souvent admis pour un séjour limité ; vérifier préfecture",
+        "international_required": false,
+        "duration": "En pratique jusqu’à 1 an dans plusieurs cas — confirmer sur service-public / ANTS",
+        "conversion_possible": true,
+        "conversion_process": "Échange ou reconnaissance possible sous conditions (résidence, motifs, visites médicales).",
+        "cost": "Variable",
+        "restrictions": "Consulter les textes en vigueur ; règles susceptibles d’évoluer."
+      },
       "cbi_program": null,
       "morocco_insights": {
         "darija_note": "RDV fih ghir l-haz",

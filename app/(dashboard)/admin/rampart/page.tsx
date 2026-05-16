@@ -393,19 +393,36 @@ export default async function RampartPage() {
       <LiveAccessLogStreamCard enabled={accessLogEnabled} />
 
       <footer
-        className="flex flex-wrap items-center justify-between gap-3 border-t pt-5 text-[12px] text-[#0D1B3E]/55"
+        className="flex flex-col gap-4 border-t pt-5 text-[12px] text-[#0D1B3E]/55 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between"
         style={{ borderColor: INK_10 }}
       >
-        <p>
-          {PROTECTED_ROUTE_RULES.length} règles actives · Source :{' '}
-          <code className="rounded bg-white px-1.5 py-0.5 font-mono">proxy.ts</code> ·{' '}
-          <code className="rounded bg-white px-1.5 py-0.5 font-mono">
-            lib/auth-protected-routes.ts
-          </code>
-        </p>
+        <div className="min-w-0 flex-1 space-y-2">
+          <p>
+            {PROTECTED_ROUTE_RULES.length} règles actives · Source :{' '}
+            <code className="rounded bg-white px-1.5 py-0.5 font-mono">proxy.ts</code> ·{' '}
+            <code className="rounded bg-white px-1.5 py-0.5 font-mono">
+              lib/auth-protected-routes.ts
+            </code>
+          </p>
+          <p className="text-[11px] leading-relaxed">
+            Webhooks publics volontairement hors matcher Clerk :{' '}
+            <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">
+              /api/webhooks/stripe
+            </code>
+            ,{' '}
+            <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">
+              /api/webhooks/ingest
+            </code>{' '}
+            — authentification par signature / secret dans le route handler (voir commentaire en tête de{' '}
+            <code className="rounded bg-white px-1 py-0.5 font-mono text-[11px]">
+              lib/auth-protected-routes.ts
+            </code>
+            ).
+          </p>
+        </div>
         <Link
           href="/admin"
-          className="font-mono text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65 transition-colors hover:text-[#0D1B3E]"
+          className="inline-flex shrink-0 font-mono text-[11px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65 transition-colors hover:text-[#0D1B3E]"
         >
           ← Citadel Admin Console
         </Link>

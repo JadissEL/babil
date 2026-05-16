@@ -3,44 +3,53 @@
  * Used by the supervisor runner and the child enrichment shadow path.
  */
 
-import { createHash } from 'node:crypto'
-import { promises as fs } from 'node:fs'
-import path from 'node:path'
-import { fetchWithAgentRetry } from '@/lib/agent-http-retry'
-import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel'
-import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot'
+import { createHash } from 'node:crypto';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { fetchWithAgentRetry } from '@/lib/agent-http-retry';
+import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers';
+import { syncDrivingRightsIntelIntoFullData } from '@/lib/driving-rights-intel';
+import {
+  EXPLICIT_UNKNOWN_ACCEPTANCE_FR,
+  MOROCCO_DARIJA_NOTE_FALLBACK_FR,
+  MOROCCO_PRO_TIP_FALLBACK_FR,
+  MOROCCO_REALITY_FALLBACK_FR,
+} from '@/lib/morocco-content-constants';
+import { ensureMoroccoResearchPackScaffold } from '@/lib/morocco-research-pack-scaffold';
+import { prismaVisaScalarsFromFullData } from '@/lib/scoring/prisma-visa-snapshot';
+import { travelAmbienceImageForSeed } from '@/lib/travel-fallback-images';
 
-export type QuoteSentiment = 'positive' | 'neutral' | 'negative'
+export type QuoteSentiment = 'positive' | 'neutral' | 'negative';
 
 export type TravelerQuote = {
-  id: string
-  text: string
-  sentiment: QuoteSentiment
-  sourceName: string
-  sourceUrl: string
-  author?: string
-}
+  id: string;
+  text: string;
+  sentiment: QuoteSentiment;
+  sourceName: string;
+  sourceUrl: string;
+  author?: string;
+};
 
 export type VisitReason = {
-  id: string
-  title: string
-  description: string
-  imageUrl: string
-  imageAlt: string
-}
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  imageAlt: string;
+};
 
 export type CountrySnapshot = {
-  fullData: Record<string, unknown>
+  fullData: Record<string, unknown>;
   scalar: {
-    tourist_visa_score: number
-    study_visa_score: number
-    work_visa_score: number
-    business_visa_score: number
-    appointment_difficulty: string
-  }
-}
+    tourist_visa_score: number;
+    study_visa_score: number;
+    work_visa_score: number;
+    business_visa_score: number;
+    appointment_difficulty: string;
+  };
+};
 
-const QUOTES_DIR = path.join(process.cwd(), 'data', 'traveler-quotes')
+const QUOTES_DIR = path.join(process.cwd(), 'data', 'traveler-quotes');
 
 export function slugifyCountry(country: string) {
   return country
@@ -48,32 +57,62 @@ export function slugifyCountry(country: string) {
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
+    .replace(/(^-|-$)/g, '');
 }
 
 export async function fetchWikipediaSummary(country: string) {
-  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(country)}`
-  const res = await fetchWithAgentRetry(url)
-  if (!res.ok) return null
-  const data = (await res.json()) as Record<string, unknown>
+  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(country)}`;
+  const res = await fetchWithAgentRetry(url);
+  if (!res.ok) return null;
+  const data = (await res.json()) as Record<string, unknown>;
   return {
     title: data.title,
     extract: data.extract,
     lastUpdated: data.timestamp || new Date().toISOString(),
     source: 'wikipedia',
-  }
+  };
 }
 
+function firstNumericGdpFromWorldBankPayload(payload: unknown): { gdp_usd: number; year: string } | null {
+  const rows = Array.isArray((payload as unknown[])?.[1])
+    ? ((payload as unknown[])[1] as Array<Record<string, unknown>>)
+    : [];
+  const first = rows.find((r) => typeof r.value === 'number');
+  const y = first?.date;
+  if (!first || typeof y !== 'string') return null;
+  return { gdp_usd: first.value as number, year: y };
+}
+
+/** World Bank WDI NY.GDP.MKTP.CD — tries ISO2 first (reliable), then country name (API-dependent). */
 export async function fetchWorldBankGdp(country: string) {
-  const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(
-    country,
-  )}/indicator/NY.GDP.MKTP.CD?format=json&per_page=5`
-  const res = await fetchWithAgentRetry(url)
-  if (!res.ok) return null
-  const payload = (await res.json()) as unknown[]
-  const rows = Array.isArray(payload?.[1]) ? (payload[1] as Array<Record<string, unknown>>) : []
-  const first = rows.find((r) => typeof r.value === 'number')
-  return first ? { gdp_usd: first.value, year: first.date, source: 'worldbank' } : null
+  const trimmed = country.normalize('NFC').trim();
+  if (!trimmed) return null;
+  const iso2 = iso2ForCountryNameOrEmpty(trimmed);
+  const keys = iso2 ? [iso2, trimmed] : [trimmed];
+  for (const key of keys) {
+    const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(
+      key,
+    )}/indicator/NY.GDP.MKTP.CD?format=json&per_page=25`;
+    const res = await fetchWithAgentRetry(url);
+    if (!res.ok) continue;
+    const row = firstNumericGdpFromWorldBankPayload(await res.json());
+    if (row) return { ...row, source: 'worldbank' };
+  }
+  return null;
+}
+
+function mergeEconomyBlocks(
+  existing: unknown,
+  gdp: { gdp_usd: number; year: string; source: string } | null,
+): Record<string, unknown> | null {
+  const base =
+    existing !== null && typeof existing === 'object' && !Array.isArray(existing)
+      ? { ...(existing as Record<string, unknown>) }
+      : {};
+  if (gdp) {
+    return { ...base, ...gdp };
+  }
+  return Object.keys(base).length > 0 ? base : null;
 }
 
 function pickReasonTitle(country: string, idx: number) {
@@ -88,44 +127,47 @@ function pickReasonTitle(country: string, idx: number) {
     'Nature routes and outdoor activities',
     'Creative districts and modern city energy',
     'Seasonal events and festival experiences',
-  ]
-  return `${templates[idx % templates.length]} in ${country}`
+  ];
+  return `${templates[idx % templates.length]} in ${country}`;
 }
 
-export function buildTravelReasons(country: string, region: string, wikiExtract?: string | null): VisitReason[] {
-  const extract = String(wikiExtract || '').trim()
+export function buildTravelReasons(
+  country: string,
+  region: string,
+  wikiExtract?: string | null,
+): VisitReason[] {
+  const extract = String(wikiExtract || '').trim();
   const baseDescription = extract
     ? `${extract.slice(0, 180)}...`
-    : `${country} in ${region} combines cultural highlights, local daily life, and diverse travel experiences for different trip styles.`
+    : `${country} in ${region} combines cultural highlights, local daily life, and diverse travel experiences for different trip styles.`;
 
   return Array.from({ length: 30 }, (_, i) => {
-    const n = i + 1
-    const query = encodeURIComponent(`${country} travel landscape culture food city`)
+    const n = i + 1;
     return {
       id: `reason_${n}`,
       title: pickReasonTitle(country, i),
       description: baseDescription,
-      imageUrl: `https://source.unsplash.com/900x600/?${query}&sig=${n}`,
+      imageUrl: travelAmbienceImageForSeed(`${country}:${n}`),
       imageAlt: `${country} travel highlight ${n}`,
-    }
-  })
+    };
+  });
 }
 
 function normalizeQuotes(raw: unknown): TravelerQuote[] {
-  if (!Array.isArray(raw)) return []
-  const out: TravelerQuote[] = []
+  if (!Array.isArray(raw)) return [];
+  const out: TravelerQuote[] = [];
   raw.forEach((item, idx) => {
-    if (!item || typeof item !== 'object') return
-    const i = item as Record<string, unknown>
-    const text = String(i.text || '').trim()
-    const sourceName = String(i.sourceName || '').trim()
-    const sourceUrl = String(i.sourceUrl || '').trim()
+    if (!item || typeof item !== 'object') return;
+    const i = item as Record<string, unknown>;
+    const text = String(i.text || '').trim();
+    const sourceName = String(i.sourceName || '').trim();
+    const sourceUrl = String(i.sourceUrl || '').trim();
     const sentiment = String(i.sentiment || '')
       .trim()
-      .toLowerCase() as QuoteSentiment
-    const author = String(i.author || '').trim()
-    if (!text || !sourceName || !sourceUrl) return
-    if (sentiment !== 'positive' && sentiment !== 'neutral' && sentiment !== 'negative') return
+      .toLowerCase() as QuoteSentiment;
+    const author = String(i.author || '').trim();
+    if (!text || !sourceName || !sourceUrl) return;
+    if (sentiment !== 'positive' && sentiment !== 'neutral' && sentiment !== 'negative') return;
     out.push({
       id: String(i.id || `quote_${idx + 1}`),
       text,
@@ -133,32 +175,62 @@ function normalizeQuotes(raw: unknown): TravelerQuote[] {
       sourceUrl,
       sentiment,
       author: author || undefined,
-    })
-  })
-  return out
+    });
+  });
+  return out;
 }
 
 function hasRequiredQuoteDistribution(quotes: TravelerQuote[]) {
-  if (quotes.length !== 10) return false
-  const positive = quotes.filter((q) => q.sentiment === 'positive').length
-  const neutral = quotes.filter((q) => q.sentiment === 'neutral').length
-  const negative = quotes.filter((q) => q.sentiment === 'negative').length
-  return positive === 5 && neutral === 3 && negative === 2
+  if (quotes.length !== 10) return false;
+  const positive = quotes.filter((q) => q.sentiment === 'positive').length;
+  const neutral = quotes.filter((q) => q.sentiment === 'neutral').length;
+  const negative = quotes.filter((q) => q.sentiment === 'negative').length;
+  return positive === 5 && neutral === 3 && negative === 2;
 }
 
 export async function loadVerifiedTravelerQuotes(country: string) {
-  const slug = slugifyCountry(country)
-  const filePath = path.join(QUOTES_DIR, `${slug}.json`)
+  const slug = slugifyCountry(country);
+  const filePath = path.join(QUOTES_DIR, `${slug}.json`);
   try {
-    const raw = await fs.readFile(filePath, 'utf8')
-    const parsed = JSON.parse(raw) as unknown
-    const quotes = normalizeQuotes(parsed)
+    const raw = await fs.readFile(filePath, 'utf8');
+    const parsed = JSON.parse(raw) as unknown;
+    const quotes = normalizeQuotes(parsed);
     if (!hasRequiredQuoteDistribution(quotes))
-      return { quotes: [], status: 'invalid_distribution_or_format' as const }
-    return { quotes, status: 'verified' as const }
+      return { quotes: [], status: 'invalid_distribution_or_format' as const };
+    return { quotes, status: 'verified' as const };
   } catch {
-    return { quotes: [], status: 'collecting' as const }
+    return { quotes: [], status: 'collecting' as const };
   }
+}
+
+function normalizeAcceptanceRateMorocco(raw: unknown): string {
+  if (typeof raw === 'string' && raw.trim()) {
+    const t = raw.trim();
+    if (t === '60%') return EXPLICIT_UNKNOWN_ACCEPTANCE_FR;
+    return t;
+  }
+  return EXPLICIT_UNKNOWN_ACCEPTANCE_FR;
+}
+
+function defaultMoroccoInsights(
+  existing: Record<string, unknown> | undefined,
+): Record<string, string> {
+  const mi = existing && typeof existing === 'object' && !Array.isArray(existing) ? existing : {};
+  const cur = mi as Record<string, unknown>;
+  return {
+    reality:
+      typeof cur.reality === 'string' && cur.reality.trim()
+        ? cur.reality.trim()
+        : MOROCCO_REALITY_FALLBACK_FR,
+    pro_tip:
+      typeof cur.pro_tip === 'string' && cur.pro_tip.trim()
+        ? cur.pro_tip.trim()
+        : MOROCCO_PRO_TIP_FALLBACK_FR,
+    darija_note:
+      typeof cur.darija_note === 'string' && cur.darija_note.trim()
+        ? cur.darija_note.trim()
+        : MOROCCO_DARIJA_NOTE_FALLBACK_FR,
+  };
 }
 
 export function mergeCountryData(
@@ -174,39 +246,41 @@ export function mergeCountryData(
     ...existing,
     country,
     region,
-    official_score:
-      typeof existing.official_score === 'number' ? existing.official_score : 5.5,
-    friction_score:
-      typeof existing.friction_score === 'number' ? existing.friction_score : 55,
-    acceptance_rate_morocco:
-      typeof existing.acceptance_rate_morocco === 'string'
-        ? existing.acceptance_rate_morocco
-        : '60%',
+    official_score: typeof existing.official_score === 'number' ? existing.official_score : 5.5,
+    friction_score: typeof existing.friction_score === 'number' ? existing.friction_score : 55,
+    acceptance_rate_morocco: normalizeAcceptanceRateMorocco(existing.acceptance_rate_morocco),
+    morocco_insights: defaultMoroccoInsights(
+      existing.morocco_insights as Record<string, unknown> | undefined,
+    ),
     overview: wiki ?? existing.overview ?? null,
-    economy: gdp ?? existing.economy ?? null,
+    economy: mergeEconomyBlocks(existing.economy, gdp),
     travel_reasons: Array.isArray(existing.travel_reasons)
       ? existing.travel_reasons
-      : buildTravelReasons(country, region, typeof wiki?.extract === 'string' ? wiki.extract : null),
-    traveler_quotes: quotes.quotes.length > 0 ? quotes.quotes : existing.traveler_quotes ?? [],
+      : buildTravelReasons(
+          country,
+          region,
+          typeof wiki?.extract === 'string' ? wiki.extract : null,
+        ),
+    traveler_quotes: quotes.quotes.length > 0 ? quotes.quotes : (existing.traveler_quotes ?? []),
     traveler_quotes_meta: {
       status: quotes.status,
       required_distribution: '5_positive_3_neutral_2_negative',
       updatedAt: new Date().toISOString(),
       source:
-        quotes.status === 'verified'
-          ? `file:${slugifyCountry(country)}.json`
-          : 'pending_pipeline',
+        quotes.status === 'verified' ? `file:${slugifyCountry(country)}.json` : 'pending_pipeline',
     },
-  } as Record<string, unknown>
+  } as Record<string, unknown>;
 
-  const mergedWithDriving = syncDrivingRightsIntelIntoFullData(merged)
+  merged.morocco_research_pack = ensureMoroccoResearchPackScaffold(merged.morocco_research_pack);
+
+  const mergedWithDriving = syncDrivingRightsIntelIntoFullData(merged);
 
   const appointment_difficulty =
     preserveScalar &&
     typeof preserveScalar.appointment_difficulty === 'string' &&
     preserveScalar.appointment_difficulty.trim()
       ? preserveScalar.appointment_difficulty.trim()
-      : 'Medium'
+      : 'Medium';
 
   const visaScalars = prismaVisaScalarsFromFullData(mergedWithDriving, {
     tourist_visa_score: preserveScalar?.tourist_visa_score,
@@ -214,7 +288,7 @@ export function mergeCountryData(
     work_visa_score: preserveScalar?.work_visa_score,
     business_visa_score: preserveScalar?.business_visa_score,
     street_food_business_access: mergedWithDriving.street_food_business_access,
-  })
+  });
 
   return {
     fullData: mergedWithDriving,
@@ -222,9 +296,9 @@ export function mergeCountryData(
       ...visaScalars,
       appointment_difficulty,
     },
-  }
+  };
 }
 
 export function hashEnrichmentInputs(value: unknown) {
-  return createHash('sha256').update(JSON.stringify(value)).digest('hex')
+  return createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }

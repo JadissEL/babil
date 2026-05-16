@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
+import { showConsultantMarketplaceNav } from '@/lib/consultant-nav';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import {
   SITE_BACKDROP_TRANSITION,
@@ -37,11 +38,16 @@ function isActivePath(pathname: string, href: string, explorerHref: string, comp
   return p === h || p.startsWith(`${h}/`);
 }
 
-const STATIC_LINKS: { href: string; label: string }[] = [
+const STATIC_LINKS: ({
+  href: string;
+  label: string;
+  consultantsOnly?: boolean;
+})[] = [
   { href: '/schengen', label: 'Schengen' },
   { href: '/recommendations', label: 'Moteur visa' },
   { href: '/recommendation-engine', label: 'Labo reco' },
   { href: '/services/delegated-applications', label: 'Assist' },
+  { href: '/services/consultants', label: 'Experts', consultantsOnly: true },
   { href: '/education', label: 'Éducation' },
   { href: '/community', label: 'Communauté' },
   { href: '/business', label: 'Business' },
@@ -82,9 +88,10 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
   );
 
   const links = useMemo(() => {
-    const staticFiltered = STATIC_LINKS.filter((link) =>
-      isExplorerNavHrefInPerspective(link.href, primaryDef),
-    );
+    const staticFiltered = STATIC_LINKS.filter((link) => {
+      if (link.consultantsOnly && !showConsultantMarketplaceNav(primaryDef)) return false;
+      return isExplorerNavHrefInPerspective(link.href, primaryDef);
+    });
     return [
       { href: explorerHref, label: 'Explorer' },
       { href: '/schengen', label: 'Schengen' },

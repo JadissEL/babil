@@ -21,6 +21,7 @@ export function analyzeEconomyIndicatorsAnomalies(
 ): DataQualityAnomaly[] {
   const out: DataQualityAnomaly[] = []
   if (!economy || typeof economy !== 'object') return out
+  if (economy.gdp_wb_series_unavailable === true) return out
 
   const pop = readFiniteNumber(economy.population_wb)
   const gdp = readFiniteNumber(economy.gdp_usd)

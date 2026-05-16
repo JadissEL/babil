@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
+import Link from 'next/link';
 import {
   useCallback,
   useEffect,
@@ -14,8 +15,10 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
+import { showConsultantMarketplaceNav } from '@/lib/consultant-nav';
 import { NEXUS_FOCUS_VISIBLE } from '@/lib/nexus-chrome';
 import {
+  getObjectiveBySlug,
   listObjectivesGrouped,
   USER_OBJECTIVE_CATEGORY_ORDER,
   type UserObjectiveSlug,
@@ -92,6 +95,11 @@ export function DockObjectivePicker({
     }
     return null;
   }, [grouped, preference.primarySlug]);
+
+  const showConsultantLink = useMemo(
+    () => showConsultantMarketplaceNav(getObjectiveBySlug(preference.primarySlug)),
+    [preference.primarySlug],
+  );
 
   useLayoutEffect(() => {
     if (!open || !compactHeader) {
@@ -329,6 +337,23 @@ export function DockObjectivePicker({
           );
         })}
       </div>
+      {showConsultantLink ? (
+        <div className="mt-4 border-t border-line pt-3">
+          <Link
+            href="/services/consultants"
+            onClick={() => setOpen(false)}
+            className={cn(
+              'flex flex-col gap-1 rounded-xl border border-primary/25 bg-primary-soft/60 px-3 py-2.5 text-left transition-colors hover:bg-primary-soft',
+              NEXUS_FOCUS_VISIBLE,
+            )}
+          >
+            <span className="text-xs font-black uppercase tracking-widest text-primary">Réserver un consultant</span>
+            <span className="text-[11px] font-medium leading-snug text-muted">
+              Visio 30 ou 60 min · Filtres prix & préférences · Paiement sécurisé
+            </span>
+          </Link>
+        </div>
+      ) : null}
     </>
   );
 

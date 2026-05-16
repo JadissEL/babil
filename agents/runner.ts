@@ -33,6 +33,11 @@ import { appendSupervisorMetricEvent } from '../lib/agent-supervisor-metrics';
 import { loadChildKnowledge } from '../lib/agent-child-knowledge';
 import { maybeBuildCanaryChildFullData, runChildShadowCompare } from '../lib/agent-child-runner';
 import { runManifestUrlFetchBatch } from '../lib/agent-manifest-source-fetch';
+import {
+  mergeManifestFetchIntoMoroccoPack,
+  ensureMoroccoResearchPackScaffold,
+} from '../lib/morocco-research-pack-scaffold';
+import { syncCountryEducationProgramsFromFullData } from '../lib/country-education-programs-sync';
 import { loadAgentStateFromDisk, saveAgentStateToDisk } from './runner-persistence';
 import { resolveScheduleSeeds } from './runner-schedule-seeds';
 import type { AgentState, CountryTask, TaskStatus } from './runner-types';
@@ -367,8 +372,20 @@ async function processCountryTask(task: CountryTask) {
     }
   }
 
+  let fullDataBody: Record<string, unknown> = { ...snapshot.fullData };
+  if (manifestFetchSummary) {
+    const pack0 = ensureMoroccoResearchPackScaffold(fullDataBody.morocco_research_pack);
+    fullDataBody = {
+      ...fullDataBody,
+      morocco_research_pack: mergeManifestFetchIntoMoroccoPack(
+        pack0,
+        manifestFetchSummary as Parameters<typeof mergeManifestFetchIntoMoroccoPack>[1],
+      ),
+    };
+  }
+
   const fullDataSupervisor: Record<string, unknown> = {
-    ...snapshot.fullData,
+    ...fullDataBody,
     _agent: {
       ...reportPayload._agent,
       orchestration: orch.orchestration,
@@ -447,6 +464,20 @@ async function processCountryTask(task: CountryTask) {
       full_data: JSON.stringify(fullDataForUpsert),
     },
   });
+
+  const savedRow = await prisma.country.findUnique({
+    where: { name: task.country },
+    select: { id: true },
+  });
+  if (savedRow) {
+    try {
+      await syncCountryEducationProgramsFromFullData(prisma, savedRow.id, fullDataForUpsert, {
+        sourceVersion: 'agent-enrichment',
+      });
+    } catch (e) {
+      logVerbose('education_program_sync_failed', { error: String((e as Error)?.message || e) });
+    }
+  }
 
   return {
     score: reportPayload.report.score,

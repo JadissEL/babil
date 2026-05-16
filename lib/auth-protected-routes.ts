@@ -8,6 +8,11 @@
  *
  * Keep this file free of Prisma, React or Next runtime imports so it stays
  * node-testable and importable from the Edge runtime alike.
+ *
+ * **Public webhooks (intentionally absent here):** routes such as
+ * `POST /api/webhooks/stripe` and `POST /api/webhooks/ingest` authenticate via
+ * provider signatures / shared secrets in the route handler — do not add them
+ * to `PROTECTED_ROUTE_RULES` or Clerk will block legitimate callbacks.
  */
 
 import { nexusProtectedRoutePatterns } from '@/lib/nexus-shell-routes';
@@ -144,6 +149,13 @@ export const PROTECTED_ROUTE_RULES: readonly ProtectedRouteRule[] = [
     requirement: 'auth',
     category: 'api',
     note: 'CRUD demandes services délégués.',
+  },
+  {
+    pattern: '/api/consultants/bookings/checkout(.*)',
+    displayPath: '/api/consultants/bookings/checkout',
+    requirement: 'auth',
+    category: 'api',
+    note: 'Création session Stripe pour réservation consultant.',
   },
 ];
 

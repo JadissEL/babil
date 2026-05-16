@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { COUNTRY_HIGHLIGHTS } from '@/lib/country-highlights'
 import { ATLAS_NAVY } from '@/lib/explorer-atlas-ui'
+import { travelAmbienceImageForSeed } from '@/lib/travel-fallback-images'
 import { cn } from '@/lib/utils'
 
 export type MobilityTier = 'Strong' | 'Medium' | 'Weak'
@@ -44,8 +45,7 @@ function frictionStripClass(friction: CountryCardProps['friction']) {
 }
 
 function fallbackCountryImageUrl(countryName: string) {
-  const q = encodeURIComponent(`${countryName} landmark travel photography`)
-  return `https://source.unsplash.com/1600x900/?${q}`
+  return travelAmbienceImageForSeed(countryName.toLowerCase().trim())
 }
 
 function guaranteedImageUrl(countryName: string) {

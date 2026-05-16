@@ -21,6 +21,16 @@ describe('intelligence-data-anomalies (B.32)', () => {
     assert.equal(analyzeEconomyIndicatorsAnomalies(undefined).length, 0)
   })
 
+  it('skips heuristics when World Bank GDP series is explicitly unavailable', () => {
+    const a = analyzeEconomyIndicatorsAnomalies({
+      gdp_wb_series_unavailable: true,
+      population_wb: 100,
+      gdp_usd: 1e12,
+      gdp_per_capita_usd: 50_000,
+    })
+    assert.equal(a.length, 0)
+  })
+
   it('detectSharpNumericJump respects threshold', () => {
     assert.equal(detectSharpNumericJump(100, 40, 2.4), true)
     assert.equal(detectSharpNumericJump(100, 50, 2.4), false)

@@ -14,6 +14,7 @@ import {
 } from '@/components/layout/dashboard-nav-config'
 import { ObjectiveDockInline } from '@/components/layout/SiteObjectiveDock'
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider'
+import { showConsultantMarketplaceNav } from '@/lib/consultant-nav'
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
 import {
   NEXUS_BACKDROP_TRANSITION,
@@ -210,7 +211,10 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
   )
   const explorerItems = useMemo(() => {
     const mapped = explorerNav
-      .filter((item) => isExplorerNavHrefInPerspective(item.href, primaryDef))
+      .filter((item) => {
+        if (item.consultantsOnly && !showConsultantMarketplaceNav(primaryDef)) return false
+        return isExplorerNavHrefInPerspective(item.href, primaryDef)
+      })
       .map((item) => {
         if (item.href === '/explorer') return { ...item, href: explorerHref }
         if (item.href === '/compare') return { ...item, href: compareHref }

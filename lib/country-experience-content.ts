@@ -1,3 +1,5 @@
+import { travelAmbienceImageForSeed } from '@/lib/travel-fallback-images'
+
 export type VisitReason = {
   id: string
   title: string
@@ -113,12 +115,11 @@ function hasRequiredQuoteDistribution(quotes: TravelerQuote[]) {
 function fallbackReasons(countryName: string): VisitReason[] {
   return REASON_TEMPLATES.map((title, idx) => {
     const n = idx + 1
-    const query = encodeURIComponent(`${countryName} travel landscape city food culture experience`)
     return {
       id: `reason_${n}`,
       title,
       description: `${countryName} offers a strong blend of culture, daily life, and memorable experiences around this theme. This is designed to help users discover practical, enjoyable ideas while planning a trip.`,
-      imageUrl: `https://source.unsplash.com/900x600/?${query}&sig=${n}`,
+      imageUrl: travelAmbienceImageForSeed(`${countryName}:${n}`),
       imageAlt: `${countryName} travel experience ${n}`,
     }
   })

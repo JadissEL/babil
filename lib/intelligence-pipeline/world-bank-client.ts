@@ -71,19 +71,28 @@ type WbIndicatorObservationRow = {
   value: number | null
 }
 
-/** Parse la liste d’observations WB (multi-pays) en carte ISO2 minuscule → dernière valeur. */
+/** Parse la liste d’observations WB (multi-pays) en carte ISO2 minuscule → dernière valeur **numérique**. */
 export function wbBatchRowsToDatumMap(rows: WbIndicatorObservationRow[]): Map<string, WbDatum> {
-  const out = new Map<string, WbDatum>()
+  const byId = new Map<string, WbIndicatorObservationRow[]>()
   for (const row of rows) {
     const id = row.country?.id?.trim().toLowerCase()
     if (!id || id.length !== 2) continue
-    if (!out.has(id)) out.set(id, { value: row.value, date: row.date })
+    const list = byId.get(id) ?? []
+    list.push(row)
+    byId.set(id, list)
+  }
+  const out = new Map<string, WbDatum>()
+  for (const [id, list] of Array.from(byId.entries())) {
+    const withValue = list.find((r) => typeof r.value === 'number' && Number.isFinite(r.value))
+    if (withValue) {
+      out.set(id, { value: withValue.value, date: withValue.date })
+    }
   }
   return out
 }
 
 /**
- * Une requête pour plusieurs pays (codes ISO2) et un indicateur — `MRV=1` (dernière année dispo par pays).
+ * Une requête pour plusieurs pays (codes ISO2) et un indicateur — `MRV=n` (n dernières années par pays ; voir {@link wbBatchRowsToDatumMap} pour sauter les valeurs nulles provisionnelles).
  * @see https://datahelpdesk.worldbank.org/knowledgebase/articles/898581
  */
 export async function fetchWorldBankLatestDataForCountriesBatch(
@@ -92,7 +101,8 @@ export async function fetchWorldBankLatestDataForCountriesBatch(
 ): Promise<Map<string, WbDatum>> {
   if (iso2LowercaseList.length === 0) return new Map()
   const codes = iso2LowercaseList.map((c) => c.trim().toUpperCase()).join(';')
-  const url = `https://api.worldbank.org/v2/country/${codes}/indicator/${encodeURIComponent(indicator)}?format=json&per_page=20000&MRV=1`
+  const mrv = 20
+  const url = `https://api.worldbank.org/v2/country/${codes}/indicator/${encodeURIComponent(indicator)}?format=json&per_page=20000&MRV=${mrv}`
   const res = await intelligencePipelineFetch(url)
   if (!res.ok) throw new Error(`World Bank batch ${indicator} HTTP ${res.status}`)
   const data = (await res.json()) as [unknown, WbIndicatorObservationRow[] | null]
@@ -108,22 +118,27 @@ export function chunkIso2ForWorldBank(iso2List: readonly string[], maxPerChunk =
   return chunks
 }
 
-/** Dernière valeur disponible pour un indicateur (MRV = most recent values). */
+/** Dernière valeur **numérique** disponible (la série WB peut avoir une année récente avec `value: null` provisionnel). */
 export async function fetchWorldBankLatestDatum(
   iso2: string,
   indicator: string,
 ): Promise<WbDatum | null> {
   const cc = iso2.trim().toLowerCase()
-  const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(cc)}/indicator/${encodeURIComponent(indicator)}?format=json&per_page=1&MRV=1`
+  const perPage = 40
+  const url = `https://api.worldbank.org/v2/country/${encodeURIComponent(cc)}/indicator/${encodeURIComponent(indicator)}?format=json&per_page=${perPage}`
   const res = await intelligencePipelineFetch(url)
   if (!res.ok) return null
   const data = (await res.json()) as [
     { page: number; pages: number },
     Array<{ value: number | null; date: string; indicator?: { id: string; value: string } }> | null,
   ]
-  const row = data[1]?.[0]
-  if (!row) return null
-  return { value: row.value, date: row.date }
+  const rows = data[1] ?? []
+  for (const row of rows) {
+    if (typeof row.value === 'number' && Number.isFinite(row.value)) {
+      return { value: row.value, date: row.date }
+    }
+  }
+  return null
 }
 
 export { normalizeCountryMatchKey } from './country-match-key'

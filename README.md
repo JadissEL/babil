@@ -30,6 +30,12 @@ npm run dev
 | `npm run format:check` | Prettier sur `app/api/**`, `app/error.tsx`, `app/global-error.tsx`, dashboard `error.tsx`, `agents/**`, `lib/types/**`, `lib/api-schemas/**`, `lib/api-route-latency.ts`, `lib/pipeline-external-budget.ts`, `lib/request-id*.ts`, `lib/structured-log.ts`, `lib/*.vitest.ts`, `vitest.config.ts` |
 | `npm run format` | Applique Prettier sur les mêmes chemins |
 | `npm run check` | `test:lib` + `test:vitest` + `validate:schengen-keys` + `format:check` + `lint` |
+| `npm run launch:gate:public:ci` | Public launch bar (static `countries.json` merge + Morocco hydrate, same as CI after migrate + seed) |
+| `npm run ci:db-launch-gate` | Local: `migrate deploy` + `seed` + `launch:gate:public:ci` (reproduit l’étape DB du CI) |
+
+Sur **GitHub Actions** (push / PR vers `main`) : Postgres en service, `prisma migrate deploy`, `npm run seed`, puis **`npm run launch:gate:public:ci`** avant audit, lint et tests — voir [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+
+**Parité locale (DB + barre publique)** : avec `DATABASE_URL` pointant vers une base accessible, `npm run ci:db-launch-gate` enchaîne migrations, seed pays et la même vérification que le job CI.
 
 ## Variables d’environnement
 
@@ -95,6 +101,7 @@ Voir **[`.env.example`](.env.example)** : `DATABASE_URL`, Clerk, `CRON_SECRET`, 
 ## Autres docs utiles
 
 - Backlog produit : [`docs/enhancements-backlog-100.md`](docs/enhancements-backlog-100.md)
+- Stratégie croissance Maroc (playbook v1.2) : [`docs/growth/README.md`](docs/growth/README.md)
 - Sécurité (catalogue E) : [`docs/catalogue-e-security.md`](docs/catalogue-e-security.md)
 - Agents locaux : [`agents/README.md`](agents/README.md) — garde-fous H.97 : [`docs/agent-safeguards-h97.md`](docs/agent-safeguards-h97.md)
 

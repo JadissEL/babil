@@ -20,6 +20,7 @@ import {
   Home,
   FileStack,
   Sparkles,
+  CalendarClock,
 } from 'lucide-react'
 import type { LucideProps } from 'lucide-react'
 import type { ComponentType } from 'react'
@@ -32,6 +33,8 @@ export type DashboardNavItem = {
   match?: 'exact' | 'prefix'
   /** When true, link is shown only if `getAdminUser` / Prisma role ADMIN. */
   requiresAdmin?: boolean
+  /** Hidden when primary objective category is Tourisme. */
+  consultantsOnly?: boolean
 }
 
 export const dashboardNav: DashboardNavItem[] = [
@@ -56,6 +59,13 @@ export const explorerNav: DashboardNavItem[] = [
   { label: 'Explorer global', href: '/explorer', icon: Globe, match: 'prefix' },
   { label: 'Vue Schengen', href: '/schengen', icon: ShieldCheck },
   { label: 'Comparer pays', href: '/compare', icon: Scale },
+  {
+    label: 'Experts & réservations',
+    href: '/services/consultants',
+    icon: CalendarClock,
+    match: 'prefix',
+    consultantsOnly: true,
+  },
   { label: 'Communauté', href: '/community', icon: MessagesSquare },
   { label: 'Business & investissement', href: '/business', icon: Briefcase },
   { label: 'Investissement / CBI', href: '/investment', icon: CreditCard },
@@ -93,6 +103,7 @@ export function getDashboardNavTitle(pathname: string): string {
   const p = normalizeDashboardPath(pathname)
   if (p === '/') return 'Accueil'
   if (p.startsWith('/countries/')) return 'Fiche pays'
+  if (p.startsWith('/services/consultants')) return 'Experts & réservations'
   for (const item of dashboardNav) {
     if (item.href === '/' && p !== '/') continue
     if (hrefDashboardActive(p, item)) return item.label

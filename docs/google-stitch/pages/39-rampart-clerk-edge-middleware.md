@@ -54,7 +54,7 @@ Points clés produit :
 - **`/` (accueil)** : **non protégé** au Edge — anonymes chargent l’accueil marketing ; après session Clerk, le shell Mobility Intel sur `/` est choisi **côté client** (`SiteChrome` — **PAGE 35** §11).
 - **Outils workspace / explorer** (`/overview`, `/probability`, `/explorer`, `/recommendations`, etc.) : **protégés** — `auth.protect()` → flux Clerk avec retour sur l’URL demandée.
 
-**Publics (exemples, hors matcher produit)** : notamment `/`, `/countries/*`, `/legal`, `/sign-in`, `/sign-up` (et tout chemin volontairement absent de `PROTECTED_ROUTE_RULES`).
+**Publics (exemples, hors matcher produit)** : notamment `/`, `/countries/*`, `/legal`, `/sign-in`, `/sign-up`, **`/api/webhooks/stripe`** (Stripe Checkout — vérif. signature côté handler), **`/api/webhooks/ingest`** (intégrations signées Babil) — et tout chemin volontairement absent de `PROTECTED_ROUTE_RULES`.
 
 ### 5.3 `auth.protect()`
 - **Purpose :** session Clerk requise pour les chemins §5.2 ; comportement redirect / modal selon config Clerk + Next.
