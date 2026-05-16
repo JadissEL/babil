@@ -71,19 +71,29 @@ function isExpectedMoroccoPackVersion(v: string): boolean {
 
 export function evaluateLaunchGate(
   row: Parameters<typeof buildCountryPayloadForLaunchGate>[0] & { id?: number },
-  options: { minCompleteness?: number; requireAgentProvenance?: boolean } = {},
+  options: {
+    minCompleteness?: number;
+    requireAgentProvenance?: boolean;
+    /**
+     * When true (e.g. `--as-public` / static seed CI), completeness score + Morocco pack
+     * still gate quality; `criticalMissing` is reported on the result but does not fail the
+     * run — seeded JSON rows rarely satisfy every intelligence-contract critical key.
+     */
+    ignoreCriticalMissing?: boolean;
+  } = {},
 ): LaunchGateResult {
   const payload = buildCountryPayloadForLaunchGate(row);
   const report = buildCompletenessReport(payload);
   const minScore = options.minCompleteness ?? LAUNCH_GATE_DEFAULT_MIN_COMPLETENESS;
   const requireAgentProvenance = options.requireAgentProvenance !== false;
+  const ignoreCriticalMissing = options.ignoreCriticalMissing === true;
   const reasons: string[] = [];
 
   if (report.score < minScore) {
     reasons.push(`completeness_score_below_${minScore}:actual=${report.score}`);
   }
 
-  if (report.criticalMissing.length > 0) {
+  if (!ignoreCriticalMissing && report.criticalMissing.length > 0) {
     reasons.push(`critical_missing:${report.criticalMissing.join(',')}`);
   }
 

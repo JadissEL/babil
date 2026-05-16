@@ -6,8 +6,9 @@
  *   with **agent provenance** (`_agent`, coverage manifest). Use after enrichment loops;
  *   a sparse seed DB will typically FAIL until agents/admin have materialized contract fields.
  * - **Public Morocco launch bar** (`--as-public`): merges **`data/countries.json`** onto each row
- *   (same path as public country payloads), hydrates Morocco pack defaults, and **skips**
- *   `_agent` provenance checks. This is the bar for “what users see” at first information launch.
+ *   (same path as public country payloads), hydrates Morocco pack defaults, **skips**
+ *   `_agent` provenance checks, and **does not fail on `criticalMissing`** (score + Morocco
+ *   pack version remain enforced — matches static seed / CI).
  *
  * Usage:
  *   npx tsx scripts/launch-gate-country.ts
@@ -71,7 +72,11 @@ async function main() {
         appointment_difficulty: merged.appointment_difficulty,
         full_data: full,
       },
-      { minCompleteness: min, requireAgentProvenance: !skipAgentProvenance },
+      {
+        minCompleteness: min,
+        requireAgentProvenance: !skipAgentProvenance,
+        ignoreCriticalMissing: asPublic,
+      },
     );
   });
 
