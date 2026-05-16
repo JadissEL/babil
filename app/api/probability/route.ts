@@ -162,7 +162,7 @@ export async function POST(req: Request) {
           if (String(p.marital_status ?? '').toLowerCase() === 'married') socialScore += 10;
           if (Boolean(p.family_in_europe)) {
             // Double effect: credibility network vs suspicion
-            if (['Italie', 'France', 'Espagne', 'Grèce'].includes(c.name)) {
+            if (['Italy', 'France', 'Spain', 'Greece'].includes(c.name)) {
               socialScore += 20; // Stronger network
             } else {
               socialScore -= 5; // Suspicion risk
