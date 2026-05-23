@@ -71,5 +71,16 @@ Set `AGENT_LLM_TOKEN_BUDGET_PER_TASK` > 0 to enable **heuristic** excerpt scan o
 ## Production secrets
 
 - `DATABASE_URL`, `ALLOW_PROD_WRITES=1` (GHA enqueue only)
+- `CRON_SECRET` (Vercel cron + `/api/metrics/intelligence`)
+
+## Legacy database (migrate history empty)
+
+If `prisma migrate deploy` fails with **P3005** and `CountryObservation` is missing but core `Country` rows exist:
+
+1. `npx prisma db push` — sync schema to match `schema.prisma`
+2. `npx prisma migrate resolve --applied` for each migration through `20260520140000_observation_provenance`
+3. Confirm with `npx prisma migrate status` → “Database schema is up to date!”
+
+Do **not** mark migrations as applied without `db push` when intelligence tables are absent.
 - `INTELLIGENCE_JOB_MAX_ATTEMPTS` (default 3)
 - `INTELLIGENCE_MAX_JOBS_PER_DAY` — daily enqueue cap
