@@ -30,8 +30,10 @@ npm run dev
 | `npm run format:check` | Prettier sur `app/api/**`, `app/error.tsx`, `app/global-error.tsx`, dashboard `error.tsx`, `agents/**`, `lib/types/**`, `lib/api-schemas/**`, `lib/api-route-latency.ts`, `lib/pipeline-external-budget.ts`, `lib/request-id*.ts`, `lib/structured-log.ts`, `lib/*.vitest.ts`, `vitest.config.ts` |
 | `npm run format` | Applique Prettier sur les mêmes chemins |
 | `npm run check` | `test:lib` + `test:vitest` + `validate:schengen-keys` + `format:check` + `lint` |
+| `npm run ci:local` | `check` + manifest build/validate + `intelligence:validate-taxonomy` + `build` (aligné sur CI hors Postgres) |
 | `npm run launch:gate:public:ci` | Public launch bar (static `countries.json` merge + Morocco hydrate, same as CI after migrate + seed) |
 | `npm run ci:db-launch-gate` | Local: `migrate deploy` + `seed` + `launch:gate:public:ci` (reproduit l’étape DB du CI) |
+| `npm run ci:local:db` | Alias de `ci:db-launch-gate` |
 
 Sur **GitHub Actions** (push / PR vers `main`) : Postgres en service, `prisma migrate deploy`, `npm run seed`, puis **`npm run launch:gate:public:ci`** avant audit, lint et tests — voir [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 

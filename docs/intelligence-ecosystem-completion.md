@@ -54,3 +54,15 @@ Use this as the operator “definition of done” for the autonomous enrichment 
 | Stitch smoke | Manual: `/`, `/explorer`, `/compare`, `/schengen`, `/probability`, `/recommendations`, `/recommendation-engine`, `/business`, `/investment`, `/education` after deploy |
 
 **Operator follow-ups:** configure `CRON_SECRET` on Vercel; GitHub secrets for intelligence workflows; trigger **Intelligence validate and materialize** workflow once `gh` is authenticated.
+
+### Continuation (2026-05-23)
+
+| Step | Result |
+|------|--------|
+| `intelligence:seed-sources` | 149 sources upserted |
+| `intelligence:enqueue-stale --limit 5` | 5 `manifest_fetch` jobs |
+| `intelligence:worker-once` × 4 | 4 succeeded; **51** pending observations |
+| GitHub CI run [#229](https://github.com/JadissEL/babil/actions/runs/26324865351) | **Failed** at `test:lib` — mitigated locally with `--test-concurrency=1` |
+| Production DB | Schema synced; pipeline queue operational |
+
+**Note:** `GET /api/health?intelligence=1` returns **503** while freshness SLO is critical (expected). Use `GET /api/health` for DB liveness only until materialize catches up.
