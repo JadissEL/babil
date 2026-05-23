@@ -6,6 +6,10 @@ import {
   FAILED_ENRICHMENT_LOOKBACK_MS,
   STALE_ENRICHMENT_RUN_MS,
 } from '@/lib/enrichment-run-alerts';
+import {
+  collectIntelligenceQueueMetrics,
+  evaluateQueueAlertLevel,
+} from '@/lib/intelligence-pipeline/queue-metrics';
 import prisma from '@/lib/prisma';
 
 function parseStatsJson(raw: string | null | undefined): unknown {
@@ -39,6 +43,7 @@ export async function GET() {
       recentRuns,
       pendingPipelineJobs,
       runningPipelineJobs,
+      disputedObservationCount,
     ] = await Promise.all([
       prisma.enrichmentRun.findFirst({ orderBy: { startedAt: 'desc' } }),
       prisma.enrichmentRun.findMany({
@@ -103,6 +108,7 @@ export async function GET() {
       }),
       prisma.intelligencePipelineJob.count({ where: { status: 'PENDING' } }),
       prisma.intelligencePipelineJob.count({ where: { status: 'RUNNING' } }),
+      prisma.countryObservation.count({ where: { verificationStatus: 'disputed' } }),
     ]);
 
     const fieldPathBreakdown = observationsByField.map((r) => ({
@@ -186,6 +192,9 @@ export async function GET() {
       })),
     };
 
+    const queueMetrics = await collectIntelligenceQueueMetrics();
+    const queueAlertLevel = evaluateQueueAlertLevel(queueMetrics);
+
     return NextResponse.json({
       lastRun: lastRunParsed,
       sourceCount,
@@ -199,6 +208,17 @@ export async function GET() {
       pipelineJobQueue: {
         pending: pendingPipelineJobs,
         running: runningPipelineJobs,
+        metrics: queueMetrics,
+        alertLevel: queueAlertLevel,
+      },
+      observationVerification: {
+        disputedCount: disputedObservationCount,
+        pendingCount: queueMetrics.pendingObservations,
+        verifiedCount: queueMetrics.verifiedObservations,
+        reviewQueuePath: '/api/admin/intelligence/review-queue',
+        deadLetterJobsPath: '/api/admin/intelligence/dead-letter-jobs',
+        deadLetterLast24h: queueMetrics.deadLetterLast24h,
+        metricsPath: '/api/admin/intelligence/metrics',
       },
     });
   } catch (e) {

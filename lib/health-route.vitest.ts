@@ -9,6 +9,10 @@ vi.mock('@/lib/prisma', () => ({
   },
 }));
 
+function healthRequest(path = '/api/health') {
+  return new Request(`http://localhost${path}`);
+}
+
 describe('GET /api/health', () => {
   beforeEach(() => {
     queryRaw.mockReset();
@@ -20,7 +24,7 @@ describe('GET /api/health', () => {
 
   it('returns 200 when database responds', async () => {
     queryRaw.mockResolvedValueOnce([1]);
-    const res = await getHealth();
+    const res = await getHealth(healthRequest());
     expect(res.status).toBe(200);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.ok).toBe(true);
@@ -30,7 +34,7 @@ describe('GET /api/health', () => {
 
   it('returns 503 with database down when error looks like unavailable', async () => {
     queryRaw.mockRejectedValueOnce(new Error("Can't reach database server"));
-    const res = await getHealth();
+    const res = await getHealth(healthRequest());
     expect(res.status).toBe(503);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.ok).toBe(false);
@@ -39,7 +43,7 @@ describe('GET /api/health', () => {
 
   it('returns 503 with database error for unexpected failures', async () => {
     queryRaw.mockRejectedValueOnce(new Error('unexpected prisma failure'));
-    const res = await getHealth();
+    const res = await getHealth(healthRequest());
     expect(res.status).toBe(503);
     const body = (await res.json()) as Record<string, unknown>;
     expect(body.ok).toBe(false);

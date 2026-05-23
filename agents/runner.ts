@@ -32,7 +32,10 @@ import { validateAgentFullDataForPersist } from '../lib/agent-full-data-persist-
 import { appendSupervisorMetricEvent } from '../lib/agent-supervisor-metrics';
 import { loadChildKnowledge } from '../lib/agent-child-knowledge';
 import { maybeBuildCanaryChildFullData, runChildShadowCompare } from '../lib/agent-child-runner';
+import { stageAgentEconomyFromFullData } from '../lib/agent-observation-staging';
 import { runManifestUrlFetchBatch } from '../lib/agent-manifest-source-fetch';
+import { drainIntelligencePipelineJobs } from '../lib/intelligence-pipeline/worker-drain';
+import { validateAndTagObservationsForCountry } from '../lib/intelligence-validation';
 import {
   mergeManifestFetchIntoMoroccoPack,
   ensureMoroccoResearchPackScaffold,
@@ -471,6 +474,25 @@ async function processCountryTask(task: CountryTask) {
   });
   if (savedRow) {
     try {
+      await stageAgentEconomyFromFullData({
+        countryId: savedRow.id,
+        fullData: fullDataForUpsert,
+        sourceLabel: 'World Bank',
+      });
+      const { disputedPaths } = await validateAndTagObservationsForCountry(savedRow.id);
+      if (disputedPaths.length > 0) {
+        const intel = (fullDataForUpsert._intelligence ?? {}) as Record<string, unknown>;
+        intel.disputed_field_paths = disputedPaths;
+        fullDataForUpsert._intelligence = intel;
+        await prisma.country.update({
+          where: { id: savedRow.id },
+          data: { full_data: JSON.stringify(fullDataForUpsert) },
+        });
+      }
+    } catch (e) {
+      logVerbose('observation_staging_failed', { error: String((e as Error)?.message || e) });
+    }
+    try {
       await syncCountryEducationProgramsFromFullData(prisma, savedRow.id, fullDataForUpsert, {
         sourceVersion: 'agent-enrichment',
       });
@@ -490,7 +512,24 @@ async function processCountryTask(task: CountryTask) {
   };
 }
 
+async function drainPipelineQueueIfEnabled() {
+  const max = Math.max(0, Math.floor(Number(process.env.INTELLIGENCE_QUEUE_DRAIN_PER_TICK || 2)));
+  if (max <= 0) return;
+  try {
+    const { processed, failed } = await drainIntelligencePipelineJobs({
+      maxJobs: max,
+      sleepMs: 500,
+    });
+    if (processed > 0) {
+      logVerbose('intelligence_queue_drained', { processed, failed });
+    }
+  } catch (e) {
+    console.warn('[agents] intelligence queue drain failed', e);
+  }
+}
+
 async function runWorkerBatch() {
+  await drainPipelineQueueIfEnabled();
   const now = Date.now();
   const ttlCutoff = now - TASK_TTL_HOURS * 60 * 60 * 1000;
   dedupeCountryTasks();

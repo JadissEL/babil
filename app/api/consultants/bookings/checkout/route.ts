@@ -62,8 +62,7 @@ export async function POST(req: Request) {
     return Response.json({ error: 'Expert introuvable' }, { status: 404 });
   }
 
-  const amountCents =
-    durationMinutes === 30 ? expert.price30MinCents : expert.price60MinCents;
+  const amountCents = durationMinutes === 30 ? expert.price30MinCents : expert.price60MinCents;
 
   const user = await currentUser();
   const customerEmail =

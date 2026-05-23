@@ -11,6 +11,7 @@ import { runEnrichmentPipeline } from '@/lib/intelligence-pipeline/run-enrichmen
  * Query :
  * - `mode=full` (défaut) : collecte WB + matérialisation
  * - `mode=materialize` : matérialisation seule (rapide, utile si la collecte tourne ailleurs)
+ * - `mode=queue` : draine jusqu'à 5 jobs `IntelligencePipelineJob` (worker léger côté Vercel)
  *
  * Sur Vercel, les exécutions longues peuvent time-out selon le plan ; pour une collecte
  * complète, préférer un job GitHub Actions ou un worker Render avec `npm run intelligence:world-bank:materialize`.
@@ -35,6 +36,22 @@ export async function GET(req: NextRequest) {
   }
 
   const mode = req.nextUrl.searchParams.get('mode') ?? 'full';
+
+  if (mode === 'queue') {
+    try {
+      const { drainIntelligencePipelineJobs } = await import(
+        '@/lib/intelligence-pipeline/worker-drain'
+      );
+      const out = await drainIntelligencePipelineJobs({ maxJobs: 5, sleepMs: 200 });
+      return NextResponse.json({ mode: 'queue', ...out });
+    } catch (e) {
+      return NextResponse.json(
+        { error: publicApiErrorMessage(e, 'Queue drain failed') },
+        { status: 500 },
+      );
+    }
+  }
+
   const worldBank = mode !== 'materialize';
   const materializeEconomy = true;
 

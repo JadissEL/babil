@@ -7,6 +7,7 @@ import { materializePublicFullData } from '@/lib/country-full-data-materialize';
 import { hasCuratedHighlightByCountryName } from '@/lib/country-highlights';
 import { hasCountryPhdStoredData } from '@/lib/country-phd-studies';
 import { isDbUnavailable } from '@/lib/db-resilience';
+import { buildIntelligenceSloReport } from '@/lib/intelligence-pipeline/slo-report';
 import prisma from '@/lib/prisma';
 
 /** G.96 — metadata for operators; see docs/healthcheck-g96.md */
@@ -184,6 +185,13 @@ export async function GET() {
       }
     }
 
+    let intelligencePipeline: Awaited<ReturnType<typeof buildIntelligenceSloReport>> | null = null;
+    try {
+      intelligencePipeline = await buildIntelligenceSloReport();
+    } catch {
+      intelligencePipeline = null;
+    }
+
     return NextResponse.json({
       healthcheck: AGENTS_HEALTH_PROBE,
       stateStatus,
@@ -204,6 +212,7 @@ export async function GET() {
       educationPhd: {
         countriesWithStructuredPhdStudies: withPhdStudiesData,
       },
+      intelligencePipeline,
     });
   } catch (error: unknown) {
     if (isDbUnavailable(error)) {

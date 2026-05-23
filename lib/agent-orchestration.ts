@@ -88,12 +88,19 @@ function hasStructuredValue(value: unknown, expectedType: CountryFieldSpec['expe
  * - hybrid: partial triangulation potential
  * - scraping / generated: insufficient_evidence (strict quality gate can block)
  */
-export function buildQualityManifestForCritical(countryPayload: Record<string, unknown>): {
+export function buildQualityManifestForCritical(
+  countryPayload: Record<string, unknown>,
+  opts?: { disputedFieldPaths?: string[] },
+): {
   byKey: Record<string, QualityManifestEntry>
   conflicts: string[]
 } {
   const byKey: Record<string, QualityManifestEntry> = {}
   const conflicts: string[] = []
+
+  for (const fieldPath of opts?.disputedFieldPaths ?? []) {
+    conflicts.push(`observation_dispute:${fieldPath}`)
+  }
 
   const criticalSpecs = ALL_COUNTRY_FIELD_SPECS.filter((s) => s.critical)
 
@@ -167,6 +174,29 @@ export function buildQualityManifestForCritical(countryPayload: Record<string, u
       reliabilityScore,
       completenessScore,
       coherenceFlag,
+    }
+  }
+
+  if (opts?.disputedFieldPaths?.length) {
+    for (const spec of criticalSpecs) {
+      if (
+        spec.key === 'economy_gdp_usd' &&
+        opts.disputedFieldPaths.some((p) => p.includes('gdp'))
+      ) {
+        const entry = byKey[spec.key]
+        if (entry) entry.coherenceFlag = 'conflict'
+      }
+    }
+  }
+
+  const intel = (countryPayload.full_data || {}) as Record<string, unknown>
+  const intelBlock = intel._intelligence as Record<string, unknown> | undefined
+  const storedDisputes = intelBlock?.disputed_field_paths
+  if (Array.isArray(storedDisputes)) {
+    for (const p of storedDisputes) {
+      if (typeof p === 'string' && !conflicts.includes(`observation_dispute:${p}`)) {
+        conflicts.push(`observation_dispute:${p}`)
+      }
     }
   }
 
