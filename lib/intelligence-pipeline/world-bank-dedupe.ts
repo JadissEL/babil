@@ -7,7 +7,7 @@ export function worldBankObservationDedupeKey(
   iso2: string,
   observationYear: string | number,
 ): string {
-  const y = String(observationYear).trim()
-  const iso = iso2.trim().toUpperCase()
-  return `wb:v1:${wbIndicatorId}:${iso}:${y}`
+  const y = String(observationYear).trim();
+  const iso = iso2.trim().toUpperCase();
+  return `wb:v1:${wbIndicatorId}:${iso}:${y}`;
 }

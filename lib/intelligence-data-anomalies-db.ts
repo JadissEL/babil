@@ -1,14 +1,14 @@
 import {
   observationPairToJumpAnomaly,
   type DataQualityAnomaly,
-} from '@/lib/intelligence-data-anomalies'
+} from '@/lib/intelligence-data-anomalies';
 import {
   FIELD_ECONOMY_GDP_USD_CURRENT,
   FIELD_GENERAL_POPULATION_TOTAL,
-} from '@/lib/intelligence-pipeline/taxonomy-v1'
-import prisma from '@/lib/prisma'
+} from '@/lib/intelligence-pipeline/taxonomy-v1';
+import prisma from '@/lib/prisma';
 
-const TAKE = 2
+const TAKE = 2;
 
 export async function fetchObservationJumpAnomaliesForCountry(
   countryId: number,
@@ -26,20 +26,20 @@ export async function fetchObservationJumpAnomaliesForCountry(
       take: TAKE,
       select: { valueNumeric: true, valueJson: true },
     }),
-  ])
+  ]);
 
-  const out: DataQualityAnomaly[] = []
+  const out: DataQualityAnomaly[] = [];
   const gdpAnom = observationPairToJumpAnomaly(
     FIELD_ECONOMY_GDP_USD_CURRENT,
     'PIB nominal (USD)',
     gdpRows,
-  )
-  if (gdpAnom) out.push(gdpAnom)
+  );
+  if (gdpAnom) out.push(gdpAnom);
   const popAnom = observationPairToJumpAnomaly(
     FIELD_GENERAL_POPULATION_TOTAL,
     'population totale',
     popRows,
-  )
-  if (popAnom) out.push(popAnom)
-  return out
+  );
+  if (popAnom) out.push(popAnom);
+  return out;
 }

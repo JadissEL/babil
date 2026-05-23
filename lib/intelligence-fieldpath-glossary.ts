@@ -9,19 +9,43 @@
  *  - `updatedAtFr` : étiquette courte de fraîcheur (ex. "2024-Q1", "Live", "2023").
  */
 
-export type FieldPathSourceKind = 'publique' | 'institutionnelle' | 'agent'
+export type FieldPathSourceKind = 'publique' | 'institutionnelle' | 'agent';
 
 export type FieldPathGlossaryEntry = {
-  fieldPath: string
-  labelFr: string
-  descriptionFr: string
+  fieldPath: string;
+  labelFr: string;
+  descriptionFr: string;
   /** Chemin dans `full_data` après matérialisation, si applicable */
-  materializedPathFr?: string
-  sourceKind?: FieldPathSourceKind
-  exampleFr?: string
-  sourceLabelFr?: string
-  updatedAtFr?: string
-}
+  materializedPathFr?: string;
+  sourceKind?: FieldPathSourceKind;
+  exampleFr?: string;
+  sourceLabelFr?: string;
+  updatedAtFr?: string;
+};
+
+/** Meta paths on golden record (not materialized economy stats). */
+const META_GLOSSARY_ENTRIES: FieldPathGlossaryEntry[] = [
+  {
+    fieldPath: '_intelligence.field_lineage',
+    labelFr: 'Lignée par champ (golden record)',
+    descriptionFr:
+      'Carte observationId → source, confiance et statut pour chaque champ promu dans full_data.',
+    sourceKind: 'agent',
+    exampleFr: 'world_bank · 91%',
+    sourceLabelFr: 'Pipeline',
+    updatedAtFr: 'Live',
+  },
+  {
+    fieldPath: '_intelligence.disputed_field_paths',
+    labelFr: 'Champs en litige',
+    descriptionFr:
+      'Liste des fieldPath taxonomy non promus tant qu’une contradiction n’est pas résolue (revue admin).',
+    sourceKind: 'agent',
+    exampleFr: 'economy.gdp_usd_current',
+    sourceLabelFr: 'Contradiction pass',
+    updatedAtFr: 'Live',
+  },
+];
 
 export const INTELLIGENCE_FIELDPATH_GLOSSARY: FieldPathGlossaryEntry[] = [
   {
@@ -67,7 +91,8 @@ export const INTELLIGENCE_FIELDPATH_GLOSSARY: FieldPathGlossaryEntry[] = [
   {
     fieldPath: 'work.unemployment_rate_pct',
     labelFr: 'Chômage (% population active)',
-    descriptionFr: 'Part de la population active sans emploi, en % (série modélisée OIT / World Bank WDI).',
+    descriptionFr:
+      'Part de la population active sans emploi, en % (série modélisée OIT / World Bank WDI).',
     materializedPathFr: 'work.unemployment_rate_pct',
     sourceKind: 'institutionnelle',
     exampleFr: '7.3 %',
@@ -75,19 +100,70 @@ export const INTELLIGENCE_FIELDPATH_GLOSSARY: FieldPathGlossaryEntry[] = [
     updatedAtFr: 'Live',
   },
   {
+    fieldPath: 'provenance.world_bank.iso2',
+    labelFr: 'Code ISO2 (World Bank)',
+    descriptionFr: 'Identifiant pays ISO2 extrait de l’API World Bank v2 (métadonnées corridor).',
+    sourceKind: 'institutionnelle',
+    exampleFr: 'MA',
+    sourceLabelFr: 'World Bank API',
+    updatedAtFr: 'Live',
+  },
+  {
+    fieldPath: 'geography.capital_coordinates_approx',
+    labelFr: 'Coordonnées capitale (approx.)',
+    descriptionFr:
+      'Latitude/longitude approximatives depuis métadonnées World Bank (non substitut carte officielle).',
+    sourceKind: 'institutionnelle',
+    exampleFr: '33.97°N',
+    sourceLabelFr: 'World Bank API',
+    updatedAtFr: 'Live',
+  },
+  {
     fieldPath: 'demographics.urban_population_pct',
     labelFr: 'Population urbaine (% du total)',
-    descriptionFr: 'Part de la population vivant en zones urbaines (World Bank WDI, série SP.URB.TOTL.IN.ZS).',
+    descriptionFr:
+      'Part de la population vivant en zones urbaines (World Bank WDI, série SP.URB.TOTL.IN.ZS).',
     materializedPathFr: 'demographics.urban_population_wb_pct',
     sourceKind: 'institutionnelle',
     exampleFr: '81.5 %',
     sourceLabelFr: 'UN DESA',
     updatedAtFr: '2023',
   },
-]
+  ...META_GLOSSARY_ENTRIES,
+];
 
-const byPath = new Map(INTELLIGENCE_FIELDPATH_GLOSSARY.map((e) => [e.fieldPath, e]))
+const byPath = new Map(INTELLIGENCE_FIELDPATH_GLOSSARY.map((e) => [e.fieldPath, e]));
 
-export function getIntelligenceFieldPathGlossaryEntry(fieldPath: string): FieldPathGlossaryEntry | undefined {
-  return byPath.get(fieldPath)
+const MANIFEST_PROVENANCE_FALLBACK: FieldPathGlossaryEntry = {
+  fieldPath: 'provenance.manifest.*',
+  labelFr: 'Extrait source (manifeste HTTP)',
+  descriptionFr:
+    'Instantané allowlisté d’une source du manifeste agents (bronze). Non matérialisé automatiquement dans les indicateurs pays.',
+  sourceKind: 'institutionnelle',
+  exampleFr: 'HTTP 200',
+  sourceLabelFr: 'Manifest',
+  updatedAtFr: 'Live',
+};
+
+export function getIntelligenceFieldPathGlossaryEntry(
+  fieldPath: string,
+): FieldPathGlossaryEntry | undefined {
+  const direct = byPath.get(fieldPath);
+  if (direct) return direct;
+  if (fieldPath.startsWith('provenance.manifest.')) {
+    return { ...MANIFEST_PROVENANCE_FALLBACK, fieldPath };
+  }
+  return undefined;
+}
+
+/** All glossary rows including dynamic manifest provenance pattern label. */
+export function listIntelligenceFieldPathGlossaryEntries(): FieldPathGlossaryEntry[] {
+  const seen = new Set<string>();
+  const rows: FieldPathGlossaryEntry[] = [];
+  for (const e of [...INTELLIGENCE_FIELDPATH_GLOSSARY, MANIFEST_PROVENANCE_FALLBACK]) {
+    if (seen.has(e.fieldPath)) continue;
+    seen.add(e.fieldPath);
+    rows.push(e);
+  }
+  return rows;
 }

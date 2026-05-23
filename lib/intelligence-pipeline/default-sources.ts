@@ -1,12 +1,12 @@
-import type { IntelligenceSourceTier } from '@prisma/client'
+import type { IntelligenceSourceTier } from '@prisma/client';
 
 export type DefaultSourceSeed = {
-  slug: string
-  name: string
-  tier: IntelligenceSourceTier
-  baseUrl: string | null
-  licenseNote: string | null
-}
+  slug: string;
+  name: string;
+  tier: IntelligenceSourceTier;
+  baseUrl: string | null;
+  licenseNote: string | null;
+};
 
 /**
  * Registre initial de sources **fiables** — à étendre (OECD, FMI, banques centrales, etc.).
@@ -53,6 +53,7 @@ export const DEFAULT_INTELLIGENCE_SOURCES: DefaultSourceSeed[] = [
     name: 'Babil curated research (human-reviewed)',
     tier: 'TIER_C_CURATED',
     baseUrl: null,
-    licenseNote: 'Internal editorial / verified research — lower default trust than official statistics.',
+    licenseNote:
+      'Internal editorial / verified research — lower default trust than official statistics.',
   },
-]
+];

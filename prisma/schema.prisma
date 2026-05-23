@@ -139,6 +139,13 @@ enum IntelligenceSourceTier {
   TIER_C_CURATED
 }
 
+enum ObservationVerificationStatus {
+  pending
+  verified
+  estimated
+  disputed
+}
+
 /** Registre des sources fiables (APIs officielles, organisations internationales, jeux curatés). */
 model IntelligenceSource {
   id           String                 @id @default(cuid())
@@ -184,15 +191,21 @@ model CountryObservation {
   rawPayload   String?
   /** C.43 — clé stable par point de données (ex. World Bank indicateur×pays×année) pour upsert / reprises. */
   dedupeKey    String?  @unique
+  verificationStatus ObservationVerificationStatus @default(pending)
+  sourcesConfirmed   Int @default(1)
+  sourceUrl          String?
+  rawExcerpt         String?
 
   country Country            @relation(fields: [countryId], references: [id], onDelete: Cascade)
   source  IntelligenceSource @relation(fields: [sourceId], references: [id], onDelete: Restrict)
   run     EnrichmentRun?     @relation(fields: [runId], references: [id], onDelete: SetNull)
 
   @@index([countryId, fieldPath])
+  @@index([countryId, fieldPath, verificationStatus])
   @@index([sourceId])
   @@index([runId])
   @@index([observedAt])
+  @@index([verificationStatus, observedAt])
 }
 
 /** C.45 — file d’attente pour exécuter le pipeline hors timeout serverless (worker long-running). */

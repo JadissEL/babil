@@ -1,0 +1,2187 @@
+{
+  "version": "1-committed-policy",
+  "_comment": "Versioned map for CI parity. Fill urlTemplate for rows with pending_manual_url_template; or set skipped with reason. Override locally via data/agent-manifest-url-map.json (gitignored).",
+  "entries": [
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "World Bank",
+      "method": "GET",
+      "urlTemplate": "https://data.worldbank.org/country/{slug}",
+      "responseKind": "json"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "International Monetary Fund (IMF)",
+      "method": "GET",
+      "urlTemplate": "https://www.imf.org/en/Countries/{slug}",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "OECD",
+      "method": "GET",
+      "urlTemplate": "https://www.oecd.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "United Nations",
+      "method": "GET",
+      "urlTemplate": "https://data.un.org",
+      "responseKind": "json"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "UNESCO",
+      "method": "GET",
+      "urlTemplate": "https://www.unesco.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "UNICEF",
+      "method": "GET",
+      "urlTemplate": "https://data.unicef.org",
+      "responseKind": "json"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "UNHCR",
+      "method": "GET",
+      "urlTemplate": "https://www.unhcr.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "World Health Organization (WHO)",
+      "method": "GET",
+      "urlTemplate": "https://www.who.int",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "International Labour Organization (ILO)",
+      "method": "GET",
+      "urlTemplate": "https://ilostat.ilo.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "official_global",
+      "sourceLabel": "World Trade Organization (WTO)",
+      "method": "GET",
+      "urlTemplate": "https://www.wto.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "Eurostat",
+      "method": "GET",
+      "urlTemplate": "https://ec.europa.eu/eurostat",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "Numbeo",
+      "method": "GET",
+      "urlTemplate": "https://www.numbeo.com/cost-of-living/country_result.jsp?country={encodedCountry}",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "Statista",
+      "method": "GET",
+      "urlTemplate": "https://www.statista.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "Trading Economics",
+      "method": "GET",
+      "urlTemplate": "https://tradingeconomics.com/country-list",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "Global Economy",
+      "method": "GET",
+      "urlTemplate": "https://www.global-economy.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "NationMaster",
+      "method": "GET",
+      "urlTemplate": "https://www.nationmaster.com/country-info/stats/{encodedCountry}",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "Data.world",
+      "method": "GET",
+      "urlTemplate": "https://data.world",
+      "responseKind": "json"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "European Union Open Data Portal",
+      "method": "GET",
+      "urlTemplate": "https://data.europa.eu",
+      "responseKind": "json"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "Our World in Data",
+      "method": "GET",
+      "urlTemplate": "https://ourworldindata.org",
+      "responseKind": "json"
+    },
+    {
+      "categoryId": "statistics_data",
+      "sourceLabel": "Gapminder",
+      "method": "GET",
+      "urlTemplate": "https://www.gapminder.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "Skyscanner",
+      "method": "GET",
+      "urlTemplate": "https://www.skyscanner.net",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "Google Flights",
+      "method": "GET",
+      "urlTemplate": "https://www.google.com/travel/flights",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "Kayak",
+      "method": "GET",
+      "urlTemplate": "https://www.kayak.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "Momondo",
+      "method": "GET",
+      "urlTemplate": "https://www.momondo.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "Expedia",
+      "method": "GET",
+      "urlTemplate": "https://www.expedia.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "Trip.com",
+      "method": "GET",
+      "urlTemplate": "https://www.trip.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "Kiwi.com",
+      "method": "GET",
+      "urlTemplate": "https://www.kiwi.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "CheapOair",
+      "method": "GET",
+      "urlTemplate": "https://www.cheapoair.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "Opodo",
+      "method": "GET",
+      "urlTemplate": "https://www.opodo.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "flights_transport",
+      "sourceLabel": "eDreams",
+      "method": "GET",
+      "urlTemplate": "https://www.edreams.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "Airbnb",
+      "method": "GET",
+      "urlTemplate": "https://www.airbnb.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "Booking.com",
+      "method": "GET",
+      "urlTemplate": "https://www.booking.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "Zillow",
+      "method": "GET",
+      "urlTemplate": "https://www.zillow.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "Realtor.com",
+      "method": "GET",
+      "urlTemplate": "https://www.realtor.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "Rightmove",
+      "method": "GET",
+      "urlTemplate": "https://www.rightmove.co.uk",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "Idealista",
+      "method": "GET",
+      "urlTemplate": "https://www.idealista.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "Immowelt",
+      "method": "GET",
+      "urlTemplate": "https://www.immowelt.de",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "SeLoger",
+      "method": "GET",
+      "urlTemplate": "https://www.seloger.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "PropertyFinder",
+      "method": "GET",
+      "urlTemplate": "https://www.propertyfinder.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "housing_cost_of_living",
+      "sourceLabel": "Nestpick",
+      "method": "GET",
+      "urlTemplate": "https://www.nestpick.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "Campus France",
+      "method": "GET",
+      "urlTemplate": "https://www.campusfrance.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "DAAD",
+      "method": "GET",
+      "urlTemplate": "https://www.daad.de",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "Study in Canada",
+      "method": "GET",
+      "urlTemplate": "https://www.educanada.ca",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "Education USA",
+      "method": "GET",
+      "urlTemplate": "https://educationusa.state.gov",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "UCAS",
+      "method": "GET",
+      "urlTemplate": "https://www.ucas.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "Erasmus+",
+      "method": "GET",
+      "urlTemplate": "https://erasmus-plus.ec.europa.eu",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "Scholarships.com",
+      "method": "GET",
+      "urlTemplate": "https://www.scholarships.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "Mastersportal",
+      "method": "GET",
+      "urlTemplate": "https://www.mastersportal.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "PhDportal",
+      "method": "GET",
+      "urlTemplate": "https://www.phdportal.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "study_universities",
+      "sourceLabel": "QS Top Universities (TopUniversities)",
+      "method": "GET",
+      "urlTemplate": "https://www.topuniversities.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "LinkedIn",
+      "method": "GET",
+      "urlTemplate": "https://www.linkedin.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "Indeed",
+      "method": "GET",
+      "urlTemplate": "https://www.indeed.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "Glassdoor",
+      "method": "GET",
+      "urlTemplate": "https://www.glassdoor.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "Monster",
+      "method": "GET",
+      "urlTemplate": "https://www.monster.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "ZipRecruiter",
+      "method": "GET",
+      "urlTemplate": "https://www.ziprecruiter.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "AngelList",
+      "method": "GET",
+      "urlTemplate": "https://wellfound.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "Welcome to the Jungle",
+      "method": "GET",
+      "urlTemplate": "https://www.welcometothejungle.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "StepStone",
+      "method": "GET",
+      "urlTemplate": "https://www.stepstone.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "JobStreet",
+      "method": "GET",
+      "urlTemplate": "https://www.jobstreet.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "employment_labour_market",
+      "sourceLabel": "Bayt",
+      "method": "GET",
+      "urlTemplate": "https://www.bayt.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "IATA Travel Centre",
+      "method": "GET",
+      "urlTemplate": "https://www.iatatravelcentre.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "VisaHQ",
+      "method": "GET",
+      "urlTemplate": "https://www.visahq.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "VFS Global",
+      "method": "GET",
+      "urlTemplate": "https://www.vfsglobal.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "Schengen Visa Info",
+      "method": "GET",
+      "urlTemplate": "https://www.schengenvisainfo.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "UK Home Office",
+      "method": "GET",
+      "urlTemplate": "https://www.gov.uk/browse/visas-immigration",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "USCIS",
+      "method": "GET",
+      "urlTemplate": "https://www.uscis.gov",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "IRCC (Canada)",
+      "method": "GET",
+      "urlTemplate": "https://www.canada.ca/en/immigration-refugees-citizenship.html",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "Australian Government Immigration",
+      "method": "GET",
+      "urlTemplate": "https://immi.homeaffairs.gov.au",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "New Zealand Immigration",
+      "method": "GET",
+      "urlTemplate": "https://www.immigration.govt.nz",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "France-Visas",
+      "method": "GET",
+      "urlTemplate": "https://france-visas.gouv.fr",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "Reddit",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "YouTube",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "Quora",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "Expat.com",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "InterNations",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "Nomad List",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "Couchsurfing",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "TripAdvisor",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "Lonely Planet",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "expat_real_world",
+      "sourceLabel": "Culture Trip",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_expat_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "health_quality_of_life",
+      "sourceLabel": "World Health Organization (WHO)",
+      "method": "GET",
+      "urlTemplate": "https://www.who.int",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "health_quality_of_life",
+      "sourceLabel": "US CDC",
+      "method": "GET",
+      "urlTemplate": "https://www.cdc.gov",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "health_quality_of_life",
+      "sourceLabel": "World Population Review",
+      "method": "GET",
+      "urlTemplate": "https://worldpopulationreview.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "health_quality_of_life",
+      "sourceLabel": "Global Peace Index",
+      "method": "GET",
+      "urlTemplate": "https://www.visionofhumanity.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "health_quality_of_life",
+      "sourceLabel": "Transparency International",
+      "method": "GET",
+      "urlTemplate": "https://www.transparency.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "finance_economics_news",
+      "sourceLabel": "XE",
+      "method": "GET",
+      "urlTemplate": "https://www.xe.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "finance_economics_news",
+      "sourceLabel": "OANDA",
+      "method": "GET",
+      "urlTemplate": "https://www.oanda.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "finance_economics_news",
+      "sourceLabel": "Bloomberg",
+      "method": "GET",
+      "urlTemplate": "https://www.bloomberg.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "finance_economics_news",
+      "sourceLabel": "Reuters",
+      "method": "GET",
+      "urlTemplate": "https://www.reuters.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "finance_economics_news",
+      "sourceLabel": "Financial Times",
+      "method": "GET",
+      "urlTemplate": "https://www.ft.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Official embassy websites (origin ↔ destination corridors)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Consulate announcements and visa section PDFs",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Local ministry of labour / workforce portals",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Ministry / department of education or higher-ed regulator",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Ministry of interior / immigration procedural guides",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Foreign affairs ministry travel advisories (host countries)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Official university registrar and admissions PDFs",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "National accreditation or quality assurance agencies for HE",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Recognised doctoral school directories (country-specific)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Specialised expatriate blogs (single corridor or niche topic)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Country subreddits / language-specific forums",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "National open-government data catalogues",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Regional statistical offices (sub-national)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Bilateral chambers of commerce publications",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Host-country investment promotion agencies",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Tourism ministry practical guides (beyond marketing copy)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "National rail / ferry / transit operator timetable APIs or PDFs",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Civil aviation authority passenger rights pages",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Consumer protection agencies (landlord–tenant summaries)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "National tax authority residency definitions",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Social security bilateral agreement texts",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Central bank FX / inflation bulletins",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "National public health traveller notices",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Professional licensing boards (medicine, engineering, law)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Bar association referral pages for foreigners",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "National tenancy law plain-language summaries (NGOs or bar)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Local telecom regulator coverage maps",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Utility provider price calculators (regulated tariffs)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "School fee transparency portals (government or watchdog)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Scholarship aggregators mirrored by embassy confirmation",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "National scholarship agency (Fulbright equivalents, etc.)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "PhD vacancy aggregators mirrored by supervisor lab sites",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Employer federation wage survey summaries",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Trade union federation sector briefings",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "National minimum wage gazettes",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Safety & hygiene regulator workplace pages",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Road traffic authority licence exchange FAQs",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Automobile club international driving permit guidance",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Insurance regulator policy comparability notices",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Banking supervisor expat account rule summaries",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Charity commissioners or NGO registers (volunteering)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Youth mobility scheme official pages (WHY equivalents)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Seasonal agricultural work programme portals",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Artist / entertainer visa category FAQs",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Startup founder visa incubator partner lists",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Digital nomad visa official criteria pages",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Refugee / complementary protection procedural portals",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Stateless-person travel document guidance",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Family reunification policy circulars",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Same-sex partnership recognition summaries (official only)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Custody-aware relocation legal primers (bar associations)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Pet import veterinary service portals",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Customs traveller declaration value thresholds",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Import VAT / duties on personal effects guidance",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Firearms / controlled goods traveller prohibitions",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Maritime arriving passenger border steps",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Port health or yellow-fever vaccination points",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Language test provider official band descriptors",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Recognised translators for certified document lists",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "supplemental_types_91_150",
+      "sourceLabel": "Apostille / legalisation authority index pages",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_supplemental_types_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Ministère des Affaires Étrangères, de la Coopération Africaine et des Marocains Résidant à l’Étranger (MAECME)",
+      "method": "GET",
+      "urlTemplate": "https://www.diplomatie.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Portail Consulat.ma / services consulaires Royaume du Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.consulat.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Direction Générale de la Sûreté Nationale (DGSN) — pièces d’identité & formalités",
+      "method": "GET",
+      "urlTemplate": "https://www.dgsn.gov.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Office des Changes — transferts et réglementation devise",
+      "method": "GET",
+      "urlTemplate": "https://www.oc.gov.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "ANAPEC — emploi & formation au Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.anapec.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Ministère du Travail et de l’Insertion Professionnelle (Maroc)",
+      "method": "GET",
+      "urlTemplate": "https://www.emploi.gov.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Ministère de l’Éducation Nationale, du Préscolaire et des Sports (Maroc)",
+      "method": "GET",
+      "urlTemplate": "https://www.education.gov.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Portail national du Maroc (services publics numériques agrégés)",
+      "method": "GET",
+      "urlTemplate": "https://www.service-public.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Plateforme e-visa Maroc / procédures d’entrée (voyageurs)",
+      "method": "GET",
+      "urlTemplate": "https://www.acces-maroc.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Réseau des ambassades et consulats du Maroc à l’étranger — sites officiels par pays",
+      "method": "GET",
+      "urlTemplate": "https://www.diplomatie.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_official",
+      "sourceLabel": "Important: faire valider visas et quotas par autorités officielles (MAE destination + représentations au Maroc)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "procedural_guidance_no_fetch"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade de France au Maroc — section visas & services",
+      "method": "GET",
+      "urlTemplate": "https://ma.ambafrance.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade d’Espagne au Maroc — section visas",
+      "method": "GET",
+      "urlTemplate": "https://www.exteriores.gob.es/Embajadas/marruecos/es/Paginas/inicio.aspx",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade du Canada au Maroc — visas & immigration",
+      "method": "GET",
+      "urlTemplate": "https://www.canada.ca/en/immigration-refugees-citizenship.html",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade d’Allemagne au Maroc — visas Schengen national",
+      "method": "GET",
+      "urlTemplate": "https://rabat.diplo.de",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade des États-Unis au Maroc — visas non-immigrant / immigrant",
+      "method": "GET",
+      "urlTemplate": "https://ma.usembassy.gov",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade de Türkiye au Maroc — visas & formalités",
+      "method": "GET",
+      "urlTemplate": "https://rabat.emb.mfa.gov.tr",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade des Émirats arabes unis au Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.uae-embassy.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade de Chine au Maroc — visas & formalités",
+      "method": "GET",
+      "urlTemplate": "https://ma.china-embassy.gov.cn/eng/",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade de Russie au Maroc — visas & formalités",
+      "method": "GET",
+      "urlTemplate": "https://morocco.mid.ru",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Ambassade du Royaume-Uni au Maroc — visas",
+      "method": "GET",
+      "urlTemplate": "https://www.gov.uk/world/organisations/british-embassy-rabat",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Pattern: cartographier toutes les ambassades / consulats du pays destination accrédités au Maroc pour le dossier utilisateur",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "procedural_guidance_no_fetch"
+    },
+    {
+      "categoryId": "ma_embassies_in_morocco",
+      "sourceLabel": "Important: réglementations bilatérales — uniquement via communiqués consulaires officiels ou portails États",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "procedural_guidance_no_fetch"
+    },
+    {
+      "categoryId": "ma_visa_corridor_services",
+      "sourceLabel": "TLScontact — centres visas (rendez-vous dépôt depuis Maroc, selon corridor)",
+      "method": "GET",
+      "urlTemplate": "https://www.tlscontact.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_visa_corridor_services",
+      "sourceLabel": "BLS International — prestations visa hors Schengen depuis Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.blsinternational.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_visa_corridor_services",
+      "sourceLabel": "VFS Global — agendas & check-lists locales (toujours recouper avec ambassade)",
+      "method": "GET",
+      "urlTemplate": "https://www.vfsglobal.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_visa_corridor_services",
+      "sourceLabel": "France-Visas — formulaires & dossier théorique pour dépôt Maroc/Rabat/Casablanca",
+      "method": "GET",
+      "urlTemplate": "https://france-visas.gouv.fr",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_visa_corridor_services",
+      "sourceLabel": "Schengen Visa Info — vulgarisation uniquement tant que corroborée par pays émetteur",
+      "method": "GET",
+      "urlTemplate": "https://www.schengenvisainfo.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_visa_corridor_services",
+      "sourceLabel": "IATA Travel Centre — conseils santé/documentation voyage à confirmer avec compagnie & immigration",
+      "method": "GET",
+      "urlTemplate": "https://www.iatatravelcentre.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_visa_corridor_services",
+      "sourceLabel": "Important: changements fréquents — vérifier systématiquement avec consulat compétent la veille du dépôt",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "procedural_guidance_no_fetch"
+    },
+    {
+      "categoryId": "ma_communities",
+      "sourceLabel": "Facebook groups thématiques (ex.: Marocains au Canada — refus visas, emploi, logement)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_community_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_communities",
+      "sourceLabel": "Facebook groups thématiques (ex.: Marocains en France / Espagne / USA / Türkiye)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_community_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_communities",
+      "sourceLabel": "Facebook groups MRE orientation & expatriation",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_community_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_communities",
+      "sourceLabel": "Reddit — fils Morocco ↔ destination pour retours vécu moderés",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_community_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_communities",
+      "sourceLabel": "YouTube — chaînes Maroc/expatriation (attribuer titre, chaîne, date)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_community_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_communities",
+      "sourceLabel": "TikTok — micro-témoignages (toujours tertiaires; trianguler avant conclusion)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_community_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_communities",
+      "sourceLabel": "Important: signal vécu discrimination / refus visas — corroboration obligatoire (stats officielles / jurisprudence / ONG reconnues)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "procedural_guidance_no_fetch"
+    },
+    {
+      "categoryId": "ma_forums",
+      "sourceLabel": "Expat.com — discussions Maroc pays cible",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_forums_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_forums",
+      "sourceLabel": "InterNations — clubs Maroc & pays destination",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_forums_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_forums",
+      "sourceLabel": "Quora — Q/R migration Maroc ↔ pays cible (dates & profils utilisateurs)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_forums_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_forums",
+      "sourceLabel": "TripAdvisor — retours voyages résidents Maroc vers destination temporaire",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_forums_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_forums",
+      "sourceLabel": "Lonely Planet / guides — contexte général puis validation officielle",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_forums_qualitative_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_air_transport",
+      "sourceLabel": "Royal Air Maroc — hubs & corridors internationaux",
+      "method": "GET",
+      "urlTemplate": "https://www.royalairmaroc.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_air_transport",
+      "sourceLabel": "Air Arabia Maroc — destinations low-cost depuis Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.airarabia.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_air_transport",
+      "sourceLabel": "Ryanair — liaisons EU ↔ Maroc (saisonnalité, bagages)",
+      "method": "GET",
+      "urlTemplate": "https://www.ryanair.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_air_transport",
+      "sourceLabel": "easyJet — liaisons ponctuelles EU ↔ Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.easyjet.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_air_transport",
+      "sourceLabel": "Skyscanner — comparaison vols (vérif prix final sur site compagnie)",
+      "method": "GET",
+      "urlTemplate": "https://www.skyscanner.net",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_housing_listings",
+      "sourceLabel": "Avito Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.avito.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_housing_listings",
+      "sourceLabel": "Mubawab Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.mubawab.ma",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_housing_listings",
+      "sourceLabel": "Le bon coin (France) — scouting avant relocation",
+      "method": "GET",
+      "urlTemplate": "https://www.leboncoin.fr",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_housing_listings",
+      "sourceLabel": "Idealista — Espagne logement hors résidence étudiante",
+      "method": "GET",
+      "urlTemplate": "https://www.idealista.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_housing_listings",
+      "sourceLabel": "Rightmove — UK scouting hypothétique puis validation légal résidence",
+      "method": "GET",
+      "urlTemplate": "https://www.rightmove.co.uk",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_education_corridor",
+      "sourceLabel": "Campus France — parcours candidats depuis Maroc",
+      "method": "GET",
+      "urlTemplate": "https://www.campusfrance.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_education_corridor",
+      "sourceLabel": "DAAD — licences Allemagne & critères APS post-diplôme",
+      "method": "GET",
+      "urlTemplate": "https://www.daad.de",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_education_corridor",
+      "sourceLabel": "Erasmus+ mobilités documentées depuis établissements marocains partenaires",
+      "method": "GET",
+      "urlTemplate": "https://erasmus-plus.ec.europa.eu",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_education_corridor",
+      "sourceLabel": "Education USA — Admissions & financements USA pour candidats Maroc",
+      "method": "GET",
+      "urlTemplate": "https://educationusa.state.gov",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_education_corridor",
+      "sourceLabel": "Study in Canada — guides fédération & programmes provinciaux",
+      "method": "GET",
+      "urlTemplate": "https://www.educanada.ca",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_education_corridor",
+      "sourceLabel": "Universités officielles du pays destination — brochures admission internationale",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "procedural_guidance_no_fetch"
+    },
+    {
+      "categoryId": "ma_employment_corridor",
+      "sourceLabel": "LinkedIn — offres compatibles télétravail depuis Maroc / relocation sponsorisée",
+      "method": "GET",
+      "urlTemplate": "https://www.linkedin.com/jobs",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_employment_corridor",
+      "sourceLabel": "Indeed pays destination",
+      "method": "GET",
+      "urlTemplate": "https://www.indeed.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_employment_corridor",
+      "sourceLabel": "Glassdoor insights salaires (à calibrer officiel)",
+      "method": "GET",
+      "urlTemplate": "https://www.glassdoor.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_employment_corridor",
+      "sourceLabel": "Bayt pour bassin MENA puis pays EU/NA",
+      "method": "GET",
+      "urlTemplate": "https://www.bayt.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_employment_corridor",
+      "sourceLabel": "Welcome to the Jungle — startups EU recrutant internationaux",
+      "method": "GET",
+      "urlTemplate": "https://www.welcometothejungle.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_employment_corridor",
+      "sourceLabel": "Contrats/CDI: toujours valider conditions légales travail & visa associé (ministère destination)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "procedural_guidance_no_fetch"
+    },
+    {
+      "categoryId": "ma_cost_of_living",
+      "sourceLabel": "Numbeo — indices comparatifs (qualité donnée variable: recouper OCDE / banques centrales)",
+      "method": "GET",
+      "urlTemplate": "https://www.numbeo.com/cost-of-living/country_result.jsp?country={encodedCountry}",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_cost_of_living",
+      "sourceLabel": "Expatistan — budgets expatriés indicatifs",
+      "method": "GET",
+      "urlTemplate": "https://www.expatistan.com",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_cost_of_living",
+      "sourceLabel": "World Bank — indicateurs macro & parité pouvoir",
+      "method": "GET",
+      "urlTemplate": "https://api.worldbank.org/v2/country/{encodedCountry}?format=json",
+      "responseKind": "json"
+    },
+    {
+      "categoryId": "ma_cost_of_living",
+      "sourceLabel": "OECD — données revenus & fiscalité quand pays membre",
+      "method": "GET",
+      "urlTemplate": "https://www.oecd.org",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_cost_of_living",
+      "sourceLabel": "Trading Economics — séries publiques synchronisées (vérifier source primaire citée)",
+      "method": "GET",
+      "urlTemplate": "https://tradingeconomics.com/country-list",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Blogs personnels « immigrer au Canada depuis le Maroc »",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Blogs « visa France Maroc — refus / acceptations » avec pièces jointes anonymisées",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Sites « expat Maroc Europe » regroupant check-lists (valider chaque point)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Plateformes freelancing & portage salarial mentionnant relocation Maroc → EU/NA",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Chaînes YouTube marocaines immigration (sponsorings, publicités = biais déclaré)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Influenceurs marocains expatriés — stories « comment j’ai obtenu mon visa » (preuve documentaire requise)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Forums étudiants marocains (bac+ mobilité, logement, bourses)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Groupes Telegram immigration (modération faible — triangulation renforcée)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Sites d’avocats spécialisés mobilité internationale (interprétation juridique, pas substitut texte loi)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Agences visa locales au Maroc — procédures commerciales vs obligations officielles",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Sites d’orientation scolaire et universitaire Maroc (office public, académies — vérifier reconnaissance)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Portails diaspora & MRE (programmes de retour, financement PME)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Journaux marocains économie & immigration (Le Desk, TelQuel, etc. — date & auteur)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Plateformes témoignages vidéo migration (transcription + métadonnées)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Comparateurs assurance voyage & assurance santé expatriation",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Sites d’aide visa étudiants (check-lists — recouper université + consulat)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Portails ONG migration & droits humains (rapports datés)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Bases open data nationales du pays destination liées à l’emploi des étrangers",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Plateformes volontariat international (conditions visa « volontaire » légales)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Sites bourses niche (STEM, islamic finance, coopération Sud-Sud)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Webinaires CCI France-Maroc / GIZ / banques partenaires (supports PDF officiels)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Programmes Talent passport / equivalents EU — pages ministères destinataires",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Associations étudiants MAR à l’étranger — guides d’accueil",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Carnets diplomatiques locales (consultations mobiles consulaires)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "APIs cours de change officielles Bank Al-Maghrib vs banques commerciales",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Rapports HCP (Haut Commissariat au Plan Maroc) sur démobilité potentielle",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Enquêtes ONDH / instances droits locales sur discriminations signalées",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Guides CCI export & mobilité professionnelle (version PDF certifiée)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Coworking labels remote-work friendly au Maroc (signal marché freelances)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Marketplaces cours en ligne MAR → clients EU (compliance fiscal transfrontière)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Podcasts diaspora MAR (citations avec timestamp)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Newsletters avocats spécialisés corridor Schengen/US/CA",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Google Scholar — articles migrations Maghreb↔EU pour contexte socio-économique",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Statistiques consulaires françaises sur délivrance visas (datasets annuels)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Eurostat mig démographie — stocks migrants origine MAGHREB",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "OCDE migration outlook chapitres Maroc lorsque disponibles",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Plateformes logement courte durée scout avant CDI sponsorisé",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "simulateurs fiscalité inversion résidence MAR ↔ EU",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Cartes zones tension logement ville destination (plans urbanisme officiels)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Watchlists médias indépendants sur refus quotas visa étudiants",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Synthèses syndicats étudiants internationaux (UNEF, ESU — versions officielles)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Répertoire traducteurs assermentés Maroc pays destination",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Guides santé vaccination voyage IAMAT / santé voyage MAE UE",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Check-lists apostille/Legalisation Hague pour diplômes marocains",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "FAQ transport animaux domestiques depuis Maroc (ministères agriculture bilateral)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Données climat saisonnières impact coûts billets (sources météo nationales)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Cartographie escales Visa Transit aéroports EU pour résidents MAR",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Ressources FEMISE / ECDPM corridor EU-Méditerranée",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Papers Carnegie / Brookings région MENA mobility (contexte géopolitique)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Rapports Transparency Maroc corrélés perception corruption mobilité",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Briefings ambassades UE publiques sur mobilité circulaire",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Synthèses UN DESA migrations internationales (extraits tableau par corridor)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Guides handicap & accessibilité transport Maroc pays destination",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Portails aides familiales transfert fonds officiel vs informal channels risks",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Simulateurs aides CAF equivalents pays EU pour anciens résidents MAR",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Guides création SCI / holding relocation patrimoine (conseiller fiscal agréé)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "FAQ double imposition MAR–France/Espagne/US (conventions officielles PDF)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Archives médias télévision publique MAR reportages migration légale",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Stories LinkedIn recruiter insights mobilité Maghreb (biais marché)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Données start-up nation programmes remote visa (Emirats, Estonie…) vs résidence MAR",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Catalogues aides micro-finance Diaspora cofinancées institutions MAR",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Synthèses GRECO / GRETA anti-corruption documents voyage",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Ressources santé mentale migrants — ONG reconnues (pas conseil médical)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Référentiels éthiques collecte témoignages migration (protection données RGPD où applicable)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Crowdfunding études & passeports talents — conditions légales pays hôte uniquement via source primaire",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Répertoires officiels médiateurs consommation voyage & transport aérien MAR/UE",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Guides primes relocation employeur versus impôt sur traitement frontalier",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Tableaux quotas étudiants par établissement (brochures officielles vs rumeurs réseaux)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Synthèses think tanks européens sur mobilité circulaire Maroc UE (notes de politiques publiques)",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "ma_migration_supplemental_81_150",
+      "sourceLabel": "Plateformes comparateurs contrats mobiles EU pour résidents longue durée issus MAR",
+      "method": "GET",
+      "urlTemplate": "",
+      "skipped": true,
+      "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    }
+  ]
+}

@@ -6,36 +6,39 @@
  *   npm run intelligence:world-bank:materialize
  *   npm run intelligence:pipeline -- --stub-collectors
  */
-import 'dotenv/config'
+import 'dotenv/config';
 
-import prisma from '../lib/prisma'
-import { runEnrichmentPipeline, seedIntelligenceSources } from '../lib/intelligence-pipeline/run-enrichment-stub'
+import prisma from '../lib/prisma';
+import {
+  runEnrichmentPipeline,
+  seedIntelligenceSources,
+} from '../lib/intelligence-pipeline/run-enrichment-stub';
 
 function argFlag(name: string): boolean {
-  return process.argv.includes(name)
+  return process.argv.includes(name);
 }
 
 function argNumber(name: string): number | undefined {
-  const i = process.argv.indexOf(name)
-  if (i === -1 || i + 1 >= process.argv.length) return undefined
-  const n = Number(process.argv[i + 1])
-  return Number.isFinite(n) ? n : undefined
+  const i = process.argv.indexOf(name);
+  if (i === -1 || i + 1 >= process.argv.length) return undefined;
+  const n = Number(process.argv[i + 1]);
+  return Number.isFinite(n) ? n : undefined;
 }
 
 async function main() {
   if (argFlag('--seed-sources-only')) {
-    const n = await seedIntelligenceSources()
-    console.log(`Intelligence sources upserted: ${n}`)
-    return
+    const n = await seedIntelligenceSources();
+    console.log(`Intelligence sources upserted: ${n}`);
+    return;
   }
 
-  const worldBank = argFlag('--world-bank')
-  const materialize = argFlag('--materialize')
-  const stubCollectors = argFlag('--stub-collectors')
+  const worldBank = argFlag('--world-bank');
+  const materialize = argFlag('--materialize');
+  const stubCollectors = argFlag('--stub-collectors');
   if (!worldBank && !materialize && !stubCollectors) {
-    const r = await runEnrichmentPipeline({ trigger: argFlag('--cron') ? 'cron' : 'manual' })
-    console.log(JSON.stringify(r, null, 2))
-    return
+    const r = await runEnrichmentPipeline({ trigger: argFlag('--cron') ? 'cron' : 'manual' });
+    console.log(JSON.stringify(r, null, 2));
+    return;
   }
 
   const r = await runEnrichmentPipeline({
@@ -44,15 +47,15 @@ async function main() {
     materializeEconomy: materialize,
     worldBankLimit: argNumber('--limit'),
     stubMultilateralCollectors: stubCollectors,
-  })
-  console.log(JSON.stringify(r, null, 2))
+  });
+  console.log(JSON.stringify(r, null, 2));
 }
 
 main()
   .catch((e) => {
-    console.error(e)
-    process.exit(1)
+    console.error(e);
+    process.exit(1);
   })
   .finally(async () => {
-    await prisma.$disconnect()
-  })
+    await prisma.$disconnect();
+  });

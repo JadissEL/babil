@@ -1,4 +1,4 @@
-import { normalizeCountryMatchKey } from './country-match-key'
+import { normalizeCountryMatchKey } from './country-match-key';
 
 /**
  * Quand le nom en base / JSON ne correspond pas au libellé anglais World Bank.
@@ -53,9 +53,9 @@ export const COUNTRY_ISO2_OVERRIDES: Record<string, string> = {
   'saint vincent and the grenadines': 'vc',
   niue: 'nu',
   'puerto rico': 'pr',
-}
+};
 
 export function iso2FromIntelligenceOverride(name: string): string | null {
-  const iso = COUNTRY_ISO2_OVERRIDES[normalizeCountryMatchKey(name)]
-  return iso ? iso.toLowerCase() : null
+  const iso = COUNTRY_ISO2_OVERRIDES[normalizeCountryMatchKey(name)];
+  return iso ? iso.toLowerCase() : null;
 }
