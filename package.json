@@ -79,7 +79,7 @@
     "db:prune-observations": "tsx scripts/prune-country-observations.ts --older-than-days=730",
     "db:compact-observations:dry": "tsx scripts/compact-country-observations.ts --dry-run",
     "db:compact-observations": "tsx scripts/compact-country-observations.ts",
-    "test:lib": "tsx --test --test-concurrency=1 \"lib/**/*.test.ts\"",
+    "test:lib": "tsx scripts/run-lib-tests.ts",
     "test:vitest": "vitest run",
     "audit:ci": "npm audit --omit=dev --audit-level=critical"
   },
