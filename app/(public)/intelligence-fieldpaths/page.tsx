@@ -15,7 +15,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks'
 import {
-  INTELLIGENCE_FIELDPATH_GLOSSARY,
+  listIntelligenceFieldPathGlossaryEntries,
   type FieldPathGlossaryEntry,
   type FieldPathSourceKind,
 } from '@/lib/intelligence-fieldpath-glossary'
@@ -56,6 +56,12 @@ export default function IntelligenceFieldPathsPage() {
     agent: true,
   })
   const [copiedPath, setCopiedPath] = useState<string | null>(null)
+  const [eco, setEco] = useState<{
+    taxonomyVersion?: string
+    dataContractVersion?: string
+    glossaryEntryCount?: number
+    manifest?: { fetchable?: number; total?: number }
+  } | null>(null)
 
   useEffect(() => {
     if (!copiedPath) return
@@ -63,16 +69,25 @@ export default function IntelligenceFieldPathsPage() {
     return () => clearTimeout(t)
   }, [copiedPath])
 
+  useEffect(() => {
+    void fetch('/api/intelligence/ecosystem-status')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => setEco(j))
+      .catch(() => setEco(null))
+  }, [])
+
+  const allRows = useMemo(() => listIntelligenceFieldPathGlossaryEntries(), [])
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return INTELLIGENCE_FIELDPATH_GLOSSARY.filter((row) => {
+    return allRows.filter((row) => {
       const kind = row.sourceKind ?? 'institutionnelle'
       if (!enabled[kind]) return false
       if (!q) return true
       const blob = `${row.fieldPath}\n${row.labelFr}\n${row.descriptionFr}\n${row.sourceLabelFr ?? ''}`.toLowerCase()
       return blob.includes(q)
     })
-  }, [query, enabled])
+  }, [query, enabled, allRows])
 
   const toggleKind = (kind: FieldPathSourceKind) => {
     setEnabled((prev) => ({ ...prev, [kind]: !prev[kind] }))
@@ -109,6 +124,13 @@ export default function IntelligenceFieldPathsPage() {
             nos agents d’intelligence. Ces définitions garantissent la transparence et la
             traçabilité des métriques d’immigration.
           </p>
+          {eco ? (
+            <p className="mt-4 font-mono text-[11px] font-medium text-[#0D1B3E]/55">
+              Taxonomie {eco.taxonomyVersion ?? '—'} · Contrat {eco.dataContractVersion ?? '—'} ·{' '}
+              {eco.glossaryEntryCount ?? filtered.length} entrées glossaire · Manifeste{' '}
+              {eco.manifest?.fetchable ?? '—'}/{eco.manifest?.total ?? '—'} fetchable
+            </p>
+          ) : null}
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] font-medium text-[#0D1B3E]/65">
             <ObjectiveAwareExplorerLink

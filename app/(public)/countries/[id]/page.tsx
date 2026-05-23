@@ -27,6 +27,9 @@ import { MoroccoFirstDisclaimer } from '@/components/content/MoroccoFirstDisclai
 import { CountryDbInsightsCollapsible } from '@/components/country/CountryDbInsightsCollapsible';
 import CountryFlag from '@/components/country/CountryFlag';
 import { IntelligenceProvenanceCollapsible } from '@/components/country/IntelligenceProvenanceCollapsible';
+import { CountryIntelligenceCoverageBadge } from '@/components/intelligence/CountryIntelligenceCoverageBadge';
+import { CountryIntelligenceSemanticStrip } from '@/components/intelligence/CountryIntelligenceSemanticStrip';
+import { IntelligenceDisputedFieldsAlert } from '@/components/intelligence/IntelligenceDisputedFieldsAlert';
 import { MoroccoResearchPackSection } from '@/components/country/MoroccoResearchPackSection';
 import { OfficialSourcesCard } from '@/components/country/OfficialSourcesCard';
 import { PhDStudiesCountryTeaser } from '@/components/country/PhDStudiesCountryTeaser';
@@ -51,6 +54,10 @@ import {
 import { buildPhdStudies, hasCountryPhdStoredData } from '@/lib/country-phd-studies';
 import { materializeDrivingRightsIntel } from '@/lib/driving-rights-intel';
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api';
+import {
+  buildCountryIntelligenceSemanticItems,
+  disputedFieldPathsFromFull,
+} from '@/lib/intelligence-lineage-display';
 import {
   formatIntelDateShortFr,
   isEconomyIntelFresh,
@@ -433,6 +440,17 @@ export default function CountryDetailPage() {
     country.observationConfidenceAggregate,
   );
 
+  const fullRecord = full as Record<string, unknown>;
+  const disputedIntelPaths = disputedFieldPathsFromFull(fullRecord);
+  const semanticStripItems = [
+    ...buildCountryIntelligenceSemanticItems(fullRecord),
+    {
+      path: 'friction_score',
+      value: frictionScore,
+      meta: { label: 'Friction administrative' },
+    },
+  ];
+
   const iso2 = iso2ForCountryNameOrEmpty(country.name);
   const isSchengen = isSchengenMember(String(country.name ?? ''));
   const strapline = orientationStrapline(studyScore, tourismScore, workScore);
@@ -502,6 +520,7 @@ export default function CountryDetailPage() {
                     {isSchengen ? 'Schengen' : 'Non-Schengen'}
                   </p>
                 </div>
+                <CountryIntelligenceCoverageBadge full={fullRecord} />
                 {economyIntelFresh && intelLatest ? (
                   <span
                     className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-emerald-700"
@@ -678,6 +697,10 @@ export default function CountryDetailPage() {
                     {formatObservationConfidenceSidebarFr(observationConfidenceAggregate)}
                   </p>
                 ) : null}
+
+                <IntelligenceDisputedFieldsAlert fieldPaths={disputedIntelPaths} />
+
+                <CountryIntelligenceSemanticStrip items={semanticStripItems} />
 
                 {showWbBlock ? (
                   <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">

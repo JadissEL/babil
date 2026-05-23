@@ -9,6 +9,9 @@ type ProvenanceRow = {
   observedAt: string
   confidence: number
   source: { slug: string; name: string; tier: string }
+  goldenRecord?: boolean
+  materializedAt?: string
+  verificationStatus?: string
 }
 
 /** Chargement paresseux : `GET /api/countries/[id]?intelligence=1` */
@@ -44,6 +47,15 @@ export function IntelligenceProvenanceCollapsible({ countryId }: { countryId: st
                   name: String(o.source?.name ?? ''),
                   tier: String(o.source?.tier ?? ''),
                 },
+                goldenRecord: Boolean((o as ProvenanceRow).goldenRecord),
+                materializedAt:
+                  typeof (o as ProvenanceRow).materializedAt === 'string'
+                    ? (o as ProvenanceRow).materializedAt
+                    : undefined,
+                verificationStatus:
+                  typeof (o as ProvenanceRow).verificationStatus === 'string'
+                    ? (o as ProvenanceRow).verificationStatus
+                    : undefined,
               }
             }),
           )
@@ -122,6 +134,7 @@ export function IntelligenceProvenanceCollapsible({ countryId }: { countryId: st
                   <tr key={`${r.fieldPath}-${i}`} className="border-b border-line/80 font-medium text-text">
                     <td className="py-2 pr-3 font-mono text-[10px] text-muted">{r.fieldPath}</td>
                     <td className="py-2 pr-3">{r.source.name || r.source.slug}</td>
+                    <td className="py-2 pr-3 text-muted">{r.goldenRecord ? 'oui' : '—'}</td>
                     <td className="py-2 pr-3 text-muted">{r.source.tier}</td>
                     <td className="py-2 pr-3 text-muted">
                       {r.observedAt

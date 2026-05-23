@@ -11,6 +11,10 @@ import {
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CountryEditor, type CountryEditorModel } from '@/components/admin/CountryEditor'
+import { IntelligenceDeadLetterPanel } from '@/components/admin/IntelligenceDeadLetterPanel'
+import { IntelligenceReviewQueuePanel } from '@/components/admin/IntelligenceReviewQueuePanel'
+import { IntelligenceCompletenessPanel } from '@/components/admin/IntelligenceCompletenessPanel'
+import { IntelligenceSloPanel } from '@/components/admin/IntelligenceSloPanel'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -84,7 +88,25 @@ type IntelligenceSummary = {
       errorSummary: string | null
     }>
   }
-  pipelineJobQueue: { pending: number; running: number }
+  pipelineJobQueue: {
+    pending: number
+    running: number
+    alertLevel?: 'ok' | 'warning' | 'critical'
+    metrics?: {
+      disputedObservations: number
+      pendingObservations: number
+      verifiedObservations: number
+      oldestPendingAgeMinutes: number | null
+      retrySaturationRatio: number
+      deadLetterLast24h?: number
+    }
+  }
+  observationVerification?: {
+    disputedCount: number
+    pendingCount?: number
+    verifiedCount?: number
+    reviewQueuePath: string
+  }
 }
 
 type AssistQueueRow = {
@@ -826,7 +848,7 @@ export default function AdminPage() {
               <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-[#0D1B3E]/55">
                 Pipeline Health
               </p>
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
                 <div
                   className="rounded-xl border bg-white p-4"
                   style={{ borderColor: 'rgba(13,27,62,0.10)' }}
@@ -875,7 +897,40 @@ export default function AdminPage() {
                     <span className="text-[11px] font-bold text-[#0D1B3E]/45">queued</span>
                   </p>
                 </div>
+                <div
+                  className="rounded-xl border bg-white p-4"
+                  style={{ borderColor: 'rgba(13,27,62,0.10)' }}
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                    Litiges
+                  </p>
+                  <p className="mt-2 flex items-baseline gap-2 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl">
+                    {intelligence.observationVerification?.disputedCount ??
+                      intelligence.pipelineJobQueue.metrics?.disputedObservations ??
+                      0}
+                    <span className="text-[11px] font-bold text-[#0D1B3E]/45">disputed</span>
+                  </p>
+                </div>
               </div>
+              {intelligence.pipelineJobQueue.alertLevel &&
+              intelligence.pipelineJobQueue.alertLevel !== 'ok' ? (
+                <p
+                  className={`mt-3 text-xs font-bold ${
+                    intelligence.pipelineJobQueue.alertLevel === 'critical'
+                      ? 'text-danger'
+                      : 'text-amber-700'
+                  }`}
+                >
+                  File pipeline : {intelligence.pipelineJobQueue.alertLevel.toUpperCase()}
+                  {intelligence.pipelineJobQueue.metrics?.oldestPendingAgeMinutes != null
+                    ? ` · plus ancien job en attente ${intelligence.pipelineJobQueue.metrics.oldestPendingAgeMinutes} min`
+                    : ''}
+                  {intelligence.pipelineJobQueue.metrics?.deadLetterLast24h != null &&
+                  intelligence.pipelineJobQueue.metrics.deadLetterLast24h > 0
+                    ? ` · dead-letter 24h: ${intelligence.pipelineJobQueue.metrics.deadLetterLast24h}`
+                    : ''}
+                </p>
+              ) : null}
             </div>
           ) : null}
 
@@ -1046,7 +1101,12 @@ export default function AdminPage() {
 
           {intelligence ? (
             <>
-              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-6">
+              <IntelligenceSloPanel />
+              <IntelligenceCompletenessPanel />
+              <IntelligenceReviewQueuePanel />
+              <IntelligenceDeadLetterPanel />
+
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4 lg:grid-cols-4">
                 <div className="rounded-xl border border-line bg-[#f8f2e8] p-3">
                   <p className="text-[10px] font-black uppercase tracking-wider text-muted">Sources (registre)</p>
                   <p className="text-lg font-black text-text">{intelligence.sourceCount}</p>
@@ -1070,6 +1130,22 @@ export default function AdminPage() {
                 <div className="rounded-xl border border-line bg-[#e8f4ff] p-3">
                   <p className="text-[10px] font-black uppercase tracking-wider text-muted">Jobs RUNNING</p>
                   <p className="text-lg font-black text-text">{intelligence.pipelineJobQueue.running}</p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#fff0f0] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Disputed</p>
+                  <p className="text-lg font-black text-danger">
+                    {intelligence.observationVerification?.disputedCount ??
+                      intelligence.pipelineJobQueue.metrics?.disputedObservations ??
+                      0}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-line bg-[#f0fff4] p-3">
+                  <p className="text-[10px] font-black uppercase tracking-wider text-muted">Verified</p>
+                  <p className="text-lg font-black text-text">
+                    {intelligence.observationVerification?.verifiedCount ??
+                      intelligence.pipelineJobQueue.metrics?.verifiedObservations ??
+                      0}
+                  </p>
                 </div>
               </div>
 
