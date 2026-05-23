@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useObjectiveChangeFlow } from '@/components/objectives/ObjectiveChangeFlow';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import {
   isUserObjectiveSlug,
@@ -9,7 +10,8 @@ import {
 } from '@/lib/user-objectives/registry';
 
 export function HeaderObjectiveSelector({ className }: { className?: string }) {
-  const { preference, ready, setPrimaryObjective } = useObjectivePreference();
+  const { preference, ready } = useObjectivePreference();
+  const { requestChange } = useObjectiveChangeFlow();
   const grouped = useMemo(() => listObjectivesGrouped(), []);
 
   if (!ready) {
@@ -33,7 +35,7 @@ export function HeaderObjectiveSelector({ className }: { className?: string }) {
         onChange={(e) => {
           const v = e.target.value;
           if (!v || !isUserObjectiveSlug(v)) return;
-          void setPrimaryObjective(v, { completeWizard: true });
+          requestChange(v);
         }}
         className="max-w-full cursor-pointer truncate rounded-xl border border-line bg-[#f8f2e8] px-2.5 py-1.5 text-[11px] font-bold text-text shadow-sm transition-colors hover:border-primary/35 hover:bg-primary-soft focus:outline-none focus:ring-2 focus:ring-primary/30 sm:max-w-[14rem] sm:px-3 sm:text-xs"
         title="Objectif principal — personnalise l'accueil et les raccourcis"

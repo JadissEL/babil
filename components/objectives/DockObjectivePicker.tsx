@@ -14,6 +14,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { useObjectiveChangeFlow } from '@/components/objectives/ObjectiveChangeFlow';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { showConsultantMarketplaceNav } from '@/lib/consultant-nav';
 import { NEXUS_FOCUS_VISIBLE } from '@/lib/nexus-chrome';
@@ -59,7 +60,8 @@ export function DockObjectivePicker({
   /** Nexus header: fixed row height with squared caps (compactHeader only). */
   toolbarRhythm?: boolean;
 }) {
-  const { preference, ready, setPrimaryObjective } = useObjectivePreference();
+  const { preference, ready } = useObjectivePreference();
+  const { requestChange } = useObjectiveChangeFlow();
   const [open, setOpen] = useState(false);
   const [busySlug, setBusySlug] = useState<string | null>(null);
   const [listboxLayout, setListboxLayout] = useState<ListboxLayout | null>(null);
@@ -216,13 +218,13 @@ export function DockObjectivePicker({
     async (slug: UserObjectiveSlug) => {
       setBusySlug(slug);
       try {
-        await setPrimaryObjective(slug, { completeWizard: true });
-        setOpen(false);
+        const started = requestChange(slug);
+        if (started) setOpen(false);
       } finally {
         setBusySlug(null);
       }
     },
-    [setPrimaryObjective],
+    [requestChange],
   );
 
   const onListKeyDown = useCallback(

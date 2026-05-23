@@ -2,6 +2,7 @@
 
 import { Sparkles, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useObjectiveChangeFlow } from '@/components/objectives/ObjectiveChangeFlow';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import {
   listObjectivesGrouped,
@@ -10,11 +11,12 @@ import {
 } from '@/lib/user-objectives/registry';
 
 export function FirstVisitObjectiveWizard() {
-  const { ready, preference, setPrimaryObjective, dismissObjectiveWizard } = useObjectivePreference();
+  const { ready, preference, dismissObjectiveWizard } = useObjectivePreference();
+  const { requestChange, phase } = useObjectiveChangeFlow();
   const [busySlug, setBusySlug] = useState<string | null>(null);
   const grouped = useMemo(() => listObjectivesGrouped(), []);
 
-  const visible = ready && !preference.wizardCompletedAt;
+  const visible = ready && !preference.wizardCompletedAt && phase === 'idle';
 
   useEffect(() => {
     if (!visible || typeof document === 'undefined') return;
@@ -34,12 +36,12 @@ export function FirstVisitObjectiveWizard() {
     async (slug: UserObjectiveSlug) => {
       setBusySlug(slug);
       try {
-        await setPrimaryObjective(slug, { completeWizard: true });
+        requestChange(slug);
       } finally {
         setBusySlug(null);
       }
     },
-    [setPrimaryObjective],
+    [requestChange],
   );
 
   const onSkip = useCallback(async () => {
