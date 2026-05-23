@@ -73,6 +73,7 @@
     "intelligence:enqueue-specialized": "tsx scripts/intelligence-enqueue-specialized.ts",
     "intelligence:validate": "tsx scripts/intelligence-validate.ts",
     "intelligence:materialize-approved": "tsx scripts/intelligence-materialize-approved.ts",
+    "intelligence:materialize-no-gate": "tsx scripts/intelligence-materialize-no-gate.ts",
     "intelligence:enqueue-freshness": "tsx scripts/intelligence-enqueue-freshness.ts",
     "intelligence:recover-stale-jobs": "tsx scripts/intelligence-recover-stale-jobs.ts",
     "db:prune-observations:dry": "tsx scripts/prune-country-observations.ts --dry-run --older-than-days=730",
@@ -82,6 +83,7 @@
     "test:lib": "tsx scripts/run-lib-tests.ts",
     "test:vitest": "vitest run",
     "test:smoke:objectives": "node scripts/smoke-objective-change.mjs",
+    "test:smoke:stitch": "node scripts/smoke-stitch-routes.mjs",
     "vercel:set-cron-secret": "node scripts/vercel-set-cron-secret.mjs",
     "audit:ci": "npm audit --omit=dev --audit-level=critical"
   },

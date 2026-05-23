@@ -60,9 +60,27 @@ Use this as the operator “definition of done” for the autonomous enrichment 
 | Step | Result |
 |------|--------|
 | `intelligence:seed-sources` | 149 sources upserted |
-| `intelligence:enqueue-stale --limit 5` | 5 `manifest_fetch` jobs |
-| `intelligence:worker-once` × 4 | 4 succeeded; **51** pending observations |
-| GitHub CI run [#229](https://github.com/JadissEL/babil/actions/runs/26324865351) | **Failed** at `test:lib` — mitigated locally with `--test-concurrency=1` |
-| Production DB | Schema synced; pipeline queue operational |
+| `intelligence:enqueue-stale --limit 15` | 15 `manifest_fetch` jobs enqueued |
+| `intelligence:worker-once` | 15/15 succeeded; **~200** pending observations |
+| GitHub CI [#229](https://github.com/JadissEL/babil/actions/runs/26324865351) / [#230](https://github.com/JadissEL/babil/actions/runs/26325415449) | Failed: Node 20 does not expand `lib/**/*.test.ts` glob → fixed in `40e9783` (`scripts/run-lib-tests.ts`) |
+| Vercel production | **https://babil-amber.vercel.app** — deploy `40e9783`; queue cron **daily** (`0 6 * * *`) for Hobby plan |
+| `CRON_SECRET` | Set via CLI had trailing newline (blocks build). **Removed** — add in [Vercel → babil → Settings → Environment Variables](https://vercel.com/jadissels-projects/babil/settings/environment-variables) (Production), paste hex with no spaces/newlines, then redeploy |
+| `gh auth login` | Still required to dispatch **Intelligence validate and materialize** |
 
-**Note:** `GET /api/health?intelligence=1` returns **503** while freshness SLO is critical (expected). Use `GET /api/health` for DB liveness only until materialize catches up.
+**Note:** `GET /api/health?intelligence=1` may return **503** while `materialized_fresh_ratio` is below SLO threshold. Liveness: `GET /api/health` → **200**.
+
+### Full ops run (2026-05-23 — do-everything)
+
+| Step | Result |
+|------|--------|
+| Enqueue stale + low-completeness + freshness + visa_friction | 54 jobs created |
+| Drain queue (3 rounds) | 54/54 succeeded; `pending=0` |
+| `intelligence:world-bank` | 231 observations; 221 countries matched |
+| `intelligence:validate` | 231 promotable fields |
+| `intelligence:materialize-no-gate` | 40 countries materialized (`economy_materialized_at` stamped) |
+| `intelligence:status` | Queue **ok**; freshness **critical** (`materialized_fresh_ratio=0.2`, target ≥0.7) |
+| `GET /api/health` (prod) | **200** |
+| `GET /api/health?intelligence=1` (prod) | **503** (freshness SLI; expected until more countries materialize) |
+| `test:smoke:objectives` (prod) | Pass |
+| `test:smoke:stitch` (prod) | Pass (9 routes) |
+| `quotes:import --dry-run` | 0 verified quotes (skip apply) |

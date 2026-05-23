@@ -1,10 +1,12 @@
 'use client';
 
-import { FirstVisitObjectiveWizard } from '@/components/objectives/FirstVisitObjectiveWizard';
-import { ObjectiveChangeDisclaimer } from '@/components/objectives/ObjectiveChangeDisclaimer';
-import { ObjectiveChangeFlow } from '@/components/objectives/ObjectiveChangeFlow';
-import { ObjectivePreferenceProvider } from '@/components/objectives/ObjectivePreferenceProvider';
-import { ObjectiveTransitionOverlay } from '@/components/objectives/ObjectiveTransitionOverlay';
+import {
+  FirstVisitObjectiveWizard,
+  ObjectiveChangeDisclaimer,
+  ObjectiveChangeFlow,
+  ObjectivePreferenceProvider,
+  ObjectiveTransitionOverlay,
+} from '@/components/objectives';
 
 export function AppObjectiveRoot({ children }: { children: React.ReactNode }) {
   return (
