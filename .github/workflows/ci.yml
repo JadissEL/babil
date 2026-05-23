@@ -56,6 +56,15 @@ jobs:
       - name: Prettier (check — API + types)
         run: npm run format:check
 
+      - name: Build committed agent manifest URL map
+        run: npm run agent:manifest-build-committed
+
+      - name: Validate agent manifest URL map parity
+        run: npm run agent:manifest-validate
+
+      - name: Validate intelligence taxonomy ↔ glossary
+        run: npm run intelligence:validate-taxonomy
+
       - name: Unit tests (lib, tsx)
         run: npm run test:lib
 

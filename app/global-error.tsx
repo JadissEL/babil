@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import * as Sentry from '@sentry/nextjs'
-import { AlertTriangle, Headphones, Home, RotateCw } from 'lucide-react'
-import Link from 'next/link'
-import { useEffect, useMemo } from 'react'
+import * as Sentry from '@sentry/nextjs';
+import { AlertTriangle, Headphones, Home, RotateCw } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect, useMemo } from 'react';
 
 /**
  * Root layout failures (G.90 / F.86) — must define html/body; reports to Sentry when configured.
@@ -13,28 +13,28 @@ export default function GlobalError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error)
-    Sentry.captureException(error)
-  }, [error])
+    console.error(error);
+    Sentry.captureException(error);
+  }, [error]);
 
   const errorCodeSuffix = useMemo(() => {
     if (error.digest && /^[A-Za-z0-9]+$/.test(error.digest)) {
-      return error.digest.slice(0, 4).toUpperCase()
+      return error.digest.slice(0, 4).toUpperCase();
     }
-    return null
-  }, [error])
+    return null;
+  }, [error]);
 
   const handleReload = () => {
     try {
-      reset()
+      reset();
     } catch {
-      if (typeof window !== 'undefined') window.location.reload()
+      if (typeof window !== 'undefined') window.location.reload();
     }
-  }
+  };
 
   return (
     <html lang="fr">
@@ -74,8 +74,7 @@ export default function GlobalError({
               style={{
                 fontSize: 'clamp(1.875rem, 4.5vw, 2.75rem)',
                 lineHeight: 1.05,
-                fontFamily:
-                  'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+                fontFamily: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
               }}
             >
               Une erreur critique
@@ -88,8 +87,8 @@ export default function GlobalError({
             className="relative mt-6 max-w-xl font-medium leading-[1.7] text-[#0D1B3E]/65"
             style={{ fontSize: '15px' }}
           >
-            L’application a rencontré un problème majeur. Vous pouvez tenter de recharger la page
-            ou retourner à l’accueil pour réinitialiser votre session.
+            L’application a rencontré un problème majeur. Vous pouvez tenter de recharger la page ou
+            retourner à l’accueil pour réinitialiser votre session.
           </p>
 
           <button
@@ -145,5 +144,5 @@ export default function GlobalError({
         </main>
       </body>
     </html>
-  )
+  );
 }

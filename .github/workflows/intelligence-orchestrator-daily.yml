@@ -1,0 +1,57 @@
+# Enqueue stale-country manifest fetch jobs (scheduler only — Render worker drains queue).
+
+name: Intelligence orchestrator (daily)
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  enqueue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Apply Prisma migrations
+        run: npm run db:migrate-deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Seed intelligence sources
+        run: npm run intelligence:seed-sources
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Enqueue stale countries
+        run: npm run intelligence:enqueue-stale -- --limit 25
+      - name: Enqueue low-completeness countries
+        run: npm run intelligence:enqueue-low-completeness -- --limit 12
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+      - name: Enqueue freshness refresh (stale materialization)
+        run: npm run intelligence:enqueue-freshness -- 15
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+      - name: Enqueue World Bank weekly materialize
+        run: npm run intelligence:enqueue-job -- --kind=world_bank_materialize --world-bank --materialize --priority=50
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+      - name: Enqueue visa-friction specialized (stale corridors)
+        run: npm run intelligence:enqueue-specialized -- --kind visa_friction --limit 12 --priority 38
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+      - name: Enqueue contradiction extract batch (when LLM budget configured)
+        if: ${{ vars.INTELLIGENCE_LLM_ORCHESTRATOR_ENABLED == '1' }}
+        run: npm run intelligence:enqueue-job -- --kind=extract_manifest_batch --priority=25
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+          AGENT_LLM_TOKEN_BUDGET_PER_TASK: ${{ vars.AGENT_LLM_TOKEN_BUDGET_PER_TASK || '2000' }}

@@ -1,28 +1,25 @@
-'use client'
+'use client';
 
-import * as Sentry from '@sentry/nextjs'
-import { Archive, BarChart3, FileWarning, Map, ShieldCheck } from 'lucide-react'
-import Link from 'next/link'
-import { useEffect } from 'react'
+import * as Sentry from '@sentry/nextjs';
+import { Archive, BarChart3, FileWarning, Map, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect } from 'react';
 
 /** Error boundary pour l'espace connecté — F.86 / G.90. */
 export default function DashboardError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error)
-    Sentry.captureException(error)
-  }, [error])
+    console.error(error);
+    Sentry.captureException(error);
+  }, [error]);
 
   return (
-    <div
-      className="relative min-h-screen overflow-hidden"
-      style={{ backgroundColor: '#FAF7EE' }}
-    >
+    <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: '#FAF7EE' }}>
       <div className="mx-auto grid min-h-screen max-w-[1280px] grid-cols-1 lg:grid-cols-[220px_1fr]">
         <aside
           aria-hidden
@@ -123,5 +120,5 @@ export default function DashboardError({
         </main>
       </div>
     </div>
-  )
+  );
 }

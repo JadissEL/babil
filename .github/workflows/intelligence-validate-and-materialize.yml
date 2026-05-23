@@ -1,0 +1,70 @@
+# Validate observation consensus and materialize approved fields to Country.full_data.
+
+name: Intelligence validate and materialize
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Intelligence offline self-check
+        run: npm run intelligence:self-check
+      - run: npm run db:migrate-deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - run: npm run intelligence:seed-sources
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Validate observations
+        run: npm run intelligence:validate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+      - name: Materialize approved
+        run: npm run intelligence:materialize-approved
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+      - name: Recover stale pipeline jobs
+        run: npm run intelligence:recover-stale-jobs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Pipeline queue SLO check
+        run: npm run intelligence:check-queue-alerts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Data quality freshness SLI
+        run: npm run intelligence:check-data-quality
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        continue-on-error: true
+      - name: Data contract audit (sample)
+        run: npm run intelligence:audit-contracts
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        continue-on-error: true
+      - name: DLQ canary redrive (transient only, max 2)
+        run: npm run intelligence:dlq-canary-redrive -- --limit=2
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        continue-on-error: true
+      - name: Intelligence SLO report (non-blocking log)
+        run: npm run intelligence:slo-report
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        continue-on-error: true
+      - name: Public launch gate
+        run: npm run launch:gate:public:ci
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

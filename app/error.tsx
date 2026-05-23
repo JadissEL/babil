@@ -1,9 +1,9 @@
-'use client'
+'use client';
 
-import * as Sentry from '@sentry/nextjs'
-import { RefreshCcw } from 'lucide-react'
-import Link from 'next/link'
-import { useEffect, useMemo } from 'react'
+import * as Sentry from '@sentry/nextjs';
+import { RefreshCcw } from 'lucide-react';
+import Link from 'next/link';
+import { useEffect, useMemo } from 'react';
 
 /**
  * Error boundary segment (App Router) — F.86 / G.90.
@@ -13,15 +13,15 @@ export default function AppError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error)
-    Sentry.captureException(error)
-  }, [error])
+    console.error(error);
+    Sentry.captureException(error);
+  }, [error]);
 
-  const referenceCode = useMemo(() => buildReferenceCode(error), [error])
+  const referenceCode = useMemo(() => buildReferenceCode(error), [error]);
 
   return (
     <div
@@ -87,33 +87,52 @@ export default function AppError({
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 function GlitchMark({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 120 32"
-      role="presentation"
-      aria-hidden
-      className={className}
-    >
-      <line x1="14" y1="10" x2="78" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="22" y1="18" x2="98" y2="18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <line x1="34" y1="26" x2="86" y2="26" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <svg viewBox="0 0 120 32" role="presentation" aria-hidden className={className}>
+      <line
+        x1="14"
+        y1="10"
+        x2="78"
+        y2="10"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <line
+        x1="22"
+        y1="18"
+        x2="98"
+        y2="18"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <line
+        x1="34"
+        y1="26"
+        x2="86"
+        y2="26"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
-  )
+  );
 }
 
 function buildReferenceCode(error: Error & { digest?: string }): string {
   if (error.digest && /^[A-Za-z0-9]+$/.test(error.digest)) {
-    return error.digest.slice(0, 4).toUpperCase()
+    return error.digest.slice(0, 4).toUpperCase();
   }
-  const seed = `${error.name ?? ''}|${error.message ?? ''}`
-  let hash = 0
+  const seed = `${error.name ?? ''}|${error.message ?? ''}`;
+  let hash = 0;
   for (let i = 0; i < seed.length; i++) {
-    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
   }
-  const code = hash.toString(16).toUpperCase().padStart(4, '0').slice(-4)
-  return code || 'XXXX'
+  const code = hash.toString(16).toUpperCase().padStart(4, '0').slice(-4);
+  return code || 'XXXX';
 }

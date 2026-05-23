@@ -1,0 +1,27 @@
+# Enqueue manifest_fetch batches for high-priority countries.
+
+name: Agent manifest fetch (daily)
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  enqueue:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run db:migrate-deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - run: npm run intelligence:enqueue-stale -- --limit 40
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'

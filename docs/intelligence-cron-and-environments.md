@@ -10,6 +10,9 @@ Ce document complète [country-intelligence-system.md](country-intelligence-syst
 | **GitHub Actions** | [`.github/workflows/intelligence-pipeline-weekly.yml`](../.github/workflows/intelligence-pipeline-weekly.yml) | Secret repo **`DATABASE_URL`** | Jusqu’à 45 min |
 | **Webhook signé** | `POST /api/webhooks/ingest` avec `event: intelligence.pipeline.run` (secret **`BABIL_WEBHOOK_INGEST_SECRET`**, signature HMAC — voir [catalogue-e-security.md](catalogue-e-security.md) §E.76) | Même `DATABASE_URL` que l’app qui reçoit le POST | `maxDuration` 300 s sur la route ingest |
 | **Manuel / Render** | `npm run intelligence:world-bank:materialize`, worker, etc. | `DATABASE_URL` de l’environnement shell | Selon machine |
+| **GHA orchestrator** | [`.github/workflows/intelligence-orchestrator-daily.yml`](../.github/workflows/intelligence-orchestrator-daily.yml) (enqueue stale + WB job) | Secret **`DATABASE_URL`** + **`ALLOW_PROD_WRITES=1`** | Minutes (enqueue only) |
+| **GHA validate** | [`.github/workflows/intelligence-validate-and-materialize.yml`](../.github/workflows/intelligence-validate-and-materialize.yml) | Idem | Jusqu’à 45 min |
+| **Render worker** | `babil-agents` (`agents/runner.ts`) draine la queue via `INTELLIGENCE_QUEUE_DRAIN_PER_TICK` | `DATABASE_URL` Render | Continu |
 
 **Preview Vercel** : les crons Vercel ciblent en général la **production**. Les previews n’ont souvent pas les mêmes secrets ; ne pas supposer que le cron preview écrit sur la même base que la prod.
 

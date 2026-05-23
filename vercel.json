@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/intelligence-pipeline",
       "schedule": "0 4 * * 0"
+    },
+    {
+      "path": "/api/cron/intelligence-pipeline?mode=queue",
+      "schedule": "0 */6 * * *"
     }
   ]
 }

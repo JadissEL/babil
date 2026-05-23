@@ -43,7 +43,7 @@ function makeFileReference(seed: string): string {
   for (let i = 0; i < seed.length; i++) {
     h = (h * 31 + seed.charCodeAt(i)) >>> 0;
   }
-  const digits = String(h % 9000 + 1000);
+  const digits = String((h % 9000) + 1000);
   const suffix = String.fromCharCode(65 + (h % 26));
   return `TX-${digits}-${suffix}`;
 }
@@ -108,10 +108,7 @@ function FormSection({
   children: ReactNode;
 }) {
   return (
-    <section
-      className="rounded-xl border bg-white p-6 sm:p-7"
-      style={{ borderColor: INK_10 }}
-    >
+    <section className="rounded-xl border bg-white p-6 sm:p-7" style={{ borderColor: INK_10 }}>
       <header className="mb-5 flex items-center gap-2.5">
         <span className="text-[#0D1B3E]/75" aria-hidden>
           {icon}
@@ -261,7 +258,8 @@ export default function DelegatedApplicationApplyClient() {
     return false;
   }, [category, job, university]);
 
-  const currentStep = doneId !== null ? 3 : guaranteeAck ? 3 : projectReady ? 2 : contactReady ? 1 : 0;
+  const currentStep =
+    doneId !== null ? 3 : guaranteeAck ? 3 : projectReady ? 2 : contactReady ? 1 : 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -669,7 +667,11 @@ export default function DelegatedApplicationApplyClient() {
             {error ? (
               <p
                 className="rounded-md border px-4 py-3 text-sm font-bold"
-                style={{ borderColor: 'rgba(220,38,38,0.25)', color: '#B91C1C', backgroundColor: 'rgba(254,242,242,0.7)' }}
+                style={{
+                  borderColor: 'rgba(220,38,38,0.25)',
+                  color: '#B91C1C',
+                  backgroundColor: 'rgba(254,242,242,0.7)',
+                }}
                 role="alert"
               >
                 {error}

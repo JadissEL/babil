@@ -96,13 +96,7 @@ function PackageCard({
   );
 }
 
-function TrustItem({
-  icon: Icon,
-  label,
-}: {
-  icon: typeof Clock;
-  label: string;
-}) {
+function TrustItem({ icon: Icon, label }: { icon: typeof Clock; label: string }) {
   return (
     <span className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.26em] text-white/55">
       <Icon className="h-3.5 w-3.5" style={{ color: GOLD_SOFT }} aria-hidden />
@@ -261,10 +255,7 @@ export function DelegatedServiceCatalog({ applyQuerySuffix = '' }: { applyQueryS
           >
             ← Mes demandes (tableau de bord)
           </Link>
-          <Link
-            href="/overview"
-            className="text-white/35 transition-colors hover:text-[#D4A857]"
-          >
+          <Link href="/overview" className="text-white/35 transition-colors hover:text-[#D4A857]">
             Tableau de bord
           </Link>
         </div>

@@ -653,7 +653,11 @@ function ProbabilityPageInner() {
                           NEXUS_TRANSITION,
                           comparisonList.includes(r.country)
                             ? cn('bg-primary text-white shadow-soft', SITE_FOCUS_VISIBLE_ON_PRIMARY)
-                            : cn('bg-inset text-muted hover:bg-primary-soft', NEXUS_FOCUS_VISIBLE, SITE_FOCUS_VISIBLE_SOFT),
+                            : cn(
+                                'bg-inset text-muted hover:bg-primary-soft',
+                                NEXUS_FOCUS_VISIBLE,
+                                SITE_FOCUS_VISIBLE_SOFT,
+                              ),
                         )}
                       >
                         {comparisonList.includes(r.country) ? 'Sélectionné' : 'Comparer'}
