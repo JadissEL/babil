@@ -32,7 +32,10 @@ type ObjectivePreferenceContextValue = {
   ready: boolean;
   preference: StoredObjectivePreferenceV1;
   primaryDefinition: ReturnType<typeof getObjectiveBySlug>;
-  setPrimaryObjective: (slug: UserObjectiveSlug, options?: { completeWizard?: boolean }) => Promise<void>;
+  setPrimaryObjective: (
+    slug: UserObjectiveSlug,
+    options?: { completeWizard?: boolean },
+  ) => Promise<boolean>;
   setSecondaryObjectives: (slugs: UserObjectiveSlug[]) => void;
   /** Mark onboarding finished without choosing a primary (local + server when signed in). */
   dismissObjectiveWizard: () => Promise<void>;
@@ -115,7 +118,7 @@ export function ObjectivePreferenceProvider({ children }: { children: React.Reac
   );
 
   const setPrimaryObjective = useCallback(
-    async (slug: UserObjectiveSlug, options?: { completeWizard?: boolean }) => {
+    async (slug: UserObjectiveSlug, options?: { completeWizard?: boolean }): Promise<boolean> => {
       const patch: Partial<StoredObjectivePreferenceV1> = { primarySlug: slug };
       if (options?.completeWizard) {
         patch.wizardCompletedAt = new Date().toISOString();
@@ -123,19 +126,20 @@ export function ObjectivePreferenceProvider({ children }: { children: React.Reac
       writeObjectivePreference(patch);
       hydrateLocal();
 
-      if (user) {
-        try {
-          await fetch('/api/user/objectives', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              primary_objective_slug: slug,
-              secondary_objective_slugs: readObjectivePreference().secondarySlugs,
-            }),
-          });
-        } catch {
-          /* offline — local state still applies */
-        }
+      if (!user) return true;
+
+      try {
+        const res = await fetch('/api/user/objectives', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            primary_objective_slug: slug,
+            secondary_objective_slugs: readObjectivePreference().secondarySlugs,
+          }),
+        });
+        return res.ok;
+      } catch {
+        return false;
       }
     },
     [user, hydrateLocal],

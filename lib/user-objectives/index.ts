@@ -35,6 +35,12 @@ export {
   withResolvedGoalTypeOnProfileRecord,
 } from '@/lib/user-objectives/profile-goal-coalesce';
 
+export {
+  objectiveChangeCopy,
+  objectiveTransitionPhaseLabel,
+  type ObjectiveChangeCopy,
+} from '@/lib/user-objectives/change-copy';
+
 /** Liens Explorer / Comparer (objectif + hubs verticaux) — réexport pratique depuis le module objectifs. */
 export {
   BUSINESS_HUB_EXPLORER_HREF,

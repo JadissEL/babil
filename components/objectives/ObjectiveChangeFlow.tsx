@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
+import { appToast } from '@/lib/toast-store';
 import { objectiveChangeCopy, type ObjectiveChangeCopy } from '@/lib/user-objectives/change-copy';
 import { type UserObjectiveSlug } from '@/lib/user-objectives/registry';
 
@@ -29,7 +30,6 @@ type ObjectiveChangeFlowContextValue = {
   phase: ObjectiveChangePhase;
   pending: PendingObjectiveChange | null;
   transitionProgress: number;
-  error: string | null;
   requestChange: (toSlug: UserObjectiveSlug) => boolean;
   confirmChange: () => Promise<void>;
   cancelChange: () => void;
@@ -47,7 +47,6 @@ export function ObjectiveChangeFlow({ children }: { children: ReactNode }) {
   const [phase, setPhase] = useState<ObjectiveChangePhase>('idle');
   const [pending, setPending] = useState<PendingObjectiveChange | null>(null);
   const [transitionProgress, setTransitionProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
   const runIdRef = useRef(0);
 
   const requestChange = useCallback(
@@ -55,7 +54,6 @@ export function ObjectiveChangeFlow({ children }: { children: ReactNode }) {
       const fromSlug = preference.primarySlug;
       if (fromSlug === toSlug) return false;
 
-      setError(null);
       setPending({
         fromSlug,
         toSlug,
@@ -72,20 +70,19 @@ export function ObjectiveChangeFlow({ children }: { children: ReactNode }) {
     setPhase('idle');
     setPending(null);
     setTransitionProgress(0);
-    setError(null);
   }, []);
 
   const confirmChange = useCallback(async () => {
     if (!pending || phase !== 'disclaimer') return;
 
     const runId = ++runIdRef.current;
-    const { toSlug } = pending;
+    const { toSlug, copy } = pending;
     setPhase('transitioning');
     setTransitionProgress(0);
-    setError(null);
 
     const started = Date.now();
     let persistError: string | null = null;
+    let saved = false;
 
     const progressTimer = window.setInterval(() => {
       const elapsed = Date.now() - started;
@@ -93,23 +90,22 @@ export function ObjectiveChangeFlow({ children }: { children: ReactNode }) {
       setTransitionProgress(raw);
     }, 32);
 
-    try {
-      await Promise.all([
-        setPrimaryObjective(toSlug, { completeWizard: true }),
-        delay(MIN_TRANSITION_MS),
-      ]);
-    } catch {
-      persistError =
-        'La sauvegarde a échoué. Vérifiez votre connexion et réessayez depuis le menu objectif.';
-    }
+    const [syncOk] = await Promise.all([
+      setPrimaryObjective(toSlug, { completeWizard: true }),
+      delay(MIN_TRANSITION_MS),
+    ]);
+    saved = syncOk;
 
     window.clearInterval(progressTimer);
 
     if (runId !== runIdRef.current) return;
 
     const elapsed = Date.now() - started;
-    if (elapsed > MAX_TRANSITION_MS) {
-      persistError = persistError ?? 'La transition a pris trop de temps. Réessayez.';
+    if (!saved) {
+      persistError =
+        'La sauvegarde a échoué. Vérifiez votre connexion et réessayez depuis le menu objectif.';
+    } else if (elapsed > MAX_TRANSITION_MS) {
+      persistError = 'La transition a pris trop de temps. Réessayez.';
     }
 
     setTransitionProgress(1);
@@ -118,7 +114,7 @@ export function ObjectiveChangeFlow({ children }: { children: ReactNode }) {
     if (runId !== runIdRef.current) return;
 
     if (persistError) {
-      setError(persistError);
+      appToast.error(persistError);
       setPhase('idle');
       setPending(null);
       setTransitionProgress(0);
@@ -131,6 +127,8 @@ export function ObjectiveChangeFlow({ children }: { children: ReactNode }) {
       /* non-blocking */
     }
 
+    appToast.success(`Parcours aligné sur ${copy.toLabel}.`);
+
     setPhase('idle');
     setPending(null);
     setTransitionProgress(0);
@@ -141,12 +139,11 @@ export function ObjectiveChangeFlow({ children }: { children: ReactNode }) {
       phase,
       pending,
       transitionProgress,
-      error,
       requestChange,
       confirmChange,
       cancelChange,
     }),
-    [phase, pending, transitionProgress, error, requestChange, confirmChange, cancelChange],
+    [phase, pending, transitionProgress, requestChange, confirmChange, cancelChange],
   );
 
   return (
