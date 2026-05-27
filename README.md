@@ -37,6 +37,19 @@ npm run dev
 
 Sur **GitHub Actions** (push / PR vers `main`) : Postgres en service, `prisma migrate deploy`, `npm run seed`, puis **`npm run launch:gate:public:ci`** avant audit, lint et tests — voir [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
+### Smokes Playwright (E2E légers)
+
+Après `npm run start` (ou contre une URL déployée) :
+
+| Commande | Rôle |
+|----------|------|
+| `npm run test:smoke` | Objectifs + perspective + routes clés |
+| `npm run test:smoke:objectives [url]` | Flux changement d’objectif |
+| `npm run test:smoke:perspective [url]` | Lentille perspective (accueil ; Nexus si `SMOKE_CLERK_*`) |
+| `npm run test:smoke:stitch [url]` | HTTP 200 sur routes statiques |
+
+Détails et secrets CI : [`docs/smoke-tests.md`](docs/smoke-tests.md).
+
 **Parité locale (DB + barre publique)** : avec `DATABASE_URL` pointant vers une base accessible, `npm run ci:db-launch-gate` enchaîne migrations, seed pays et la même vérification que le job CI.
 
 ## Variables d’environnement

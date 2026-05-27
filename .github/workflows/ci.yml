@@ -81,6 +81,9 @@ jobs:
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci?schema=public
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_babil_ci_placeholder
       CLERK_SECRET_KEY: sk_test_babil_ci_placeholder
+      # Optional — full perspective smoke (explorer/compare/education) when set with real Clerk keys
+      SMOKE_CLERK_EMAIL: ${{ secrets.SMOKE_CLERK_EMAIL }}
+      SMOKE_CLERK_PASSWORD: ${{ secrets.SMOKE_CLERK_PASSWORD }}
     services:
       postgres:
         image: postgres:16-alpine
