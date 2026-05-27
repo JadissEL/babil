@@ -115,6 +115,11 @@ export function CountryPerspectiveSummaryStrip({
         >
           <Scale className="h-3.5 w-3.5" aria-hidden />
           Comparer
+          {isGuest ? (
+            <span className="text-[9px] font-black normal-case tracking-normal text-[#0D1B3E]/55">
+              (connexion)
+            </span>
+          ) : null}
         </Link>
         <Link
           href="/probability"
@@ -128,6 +133,12 @@ export function CountryPerspectiveSummaryStrip({
           Probabilités
         </Link>
       </div>
+      {isGuest ? (
+        <p className="mt-4 text-xs font-medium leading-relaxed text-[#0D1B3E]/65">
+          La comparaison multi-pays et les favoris nécessitent un compte gratuit — l&apos;exploration
+          reste ouverte sans inscription.
+        </p>
+      ) : null}
     </section>
   )
 }

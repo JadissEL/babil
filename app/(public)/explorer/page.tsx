@@ -409,6 +409,12 @@ function ExplorerPageInner() {
               Connectez-vous
             </Link>{' '}
             pour comparer des pays côte à côte et mémoriser vos vues sur tous vos appareils.
+            {isGuest ? (
+              <>
+                {' '}
+                Un compte gratuit débloque la comparaison multi-pays et la sauvegarde de vos filtres.
+              </>
+            ) : null}
           </p>
         ) : null}
 
@@ -485,24 +491,31 @@ function ExplorerPageInner() {
               </button>
             </div>
 
-            <Link
-              href={compareLinkHref}
-              onClick={() => markExplorerOnboardingEngaged()}
-              className={cn(
-                'inline-flex items-center gap-2 rounded-xl border border-[#0D1B3E]/20 bg-white px-3 py-2 text-xs font-black uppercase tracking-wider text-[#0D1B3E] hover:border-[#0D1B3E]/35 hover:bg-[#FDFBF4]',
-                NEXUS_FOCUS_VISIBLE,
-                NEXUS_TRANSITION,
-              )}
-              title={isGuest ? 'Connexion requise pour comparer' : undefined}
-            >
-              <Scale className="h-4 w-4 shrink-0" aria-hidden />
-              Comparer
+            <div className="flex flex-col gap-1">
+              <Link
+                href={compareLinkHref}
+                onClick={() => markExplorerOnboardingEngaged()}
+                className={cn(
+                  'inline-flex items-center gap-2 rounded-xl border border-[#0D1B3E]/20 bg-white px-3 py-2 text-xs font-black uppercase tracking-wider text-[#0D1B3E] hover:border-[#0D1B3E]/35 hover:bg-[#FDFBF4]',
+                  NEXUS_FOCUS_VISIBLE,
+                  NEXUS_TRANSITION,
+                )}
+                title={isGuest ? 'Connexion requise pour comparer' : undefined}
+              >
+                <Scale className="h-4 w-4 shrink-0" aria-hidden />
+                Comparer
+                {isGuest ? (
+                  <span className="text-[9px] font-black normal-case tracking-normal text-[#0D1B3E]/55">
+                    (connexion)
+                  </span>
+                ) : null}
+              </Link>
               {isGuest ? (
-                <span className="text-[9px] font-black normal-case tracking-normal text-[#0D1B3E]/55">
-                  (connexion)
-                </span>
+                <p className="max-w-[14rem] text-[10px] font-medium leading-snug text-[#0D1B3E]/55">
+                  Compte gratuit — comparez jusqu&apos;à plusieurs pays avec les mêmes filtres.
+                </p>
               ) : null}
-            </Link>
+            </div>
 
             <select
               className={cn(

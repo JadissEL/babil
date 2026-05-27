@@ -156,6 +156,7 @@ export function HomeExperience({
     () => compareHrefForGuest(isGuest, preference.primarySlug),
     [isGuest, preference.primarySlug],
   );
+  const isTourismPrimary = primaryDefinition?.categoryId === 'tourism';
 
   const testimonialsAll = [
     {
@@ -301,10 +302,12 @@ export function HomeExperience({
             </div>
           </section>
 
-          {/* DARK NAVY BANNER + FLOATING SECTION NAV PILL — Stitch architecture */}
-          <DelegatedApplicationsHomePromo variant="meridianBanner" />
-
-          <ConsultantsAndDelegatedHomeSection />
+          {!isTourismPrimary ? (
+            <>
+              <DelegatedApplicationsHomePromo variant="meridianBanner" />
+              <ConsultantsAndDelegatedHomeSection />
+            </>
+          ) : null}
 
           {/* PRIORITIES STRIP — objective-aware */}
           <section
@@ -513,6 +516,24 @@ export function HomeExperience({
               ))}
             </div>
           </section>
+
+          {isTourismPrimary ? (
+            <details
+              className="rounded-2xl border bg-white p-5 sm:p-6"
+              style={{ borderColor: INK_10 }}
+            >
+              <summary
+                className="cursor-pointer list-none font-mono text-[11px] font-black uppercase tracking-[0.22em] [&::-webkit-details-marker]:hidden"
+                style={{ color: INK_60 }}
+              >
+                Accompagnement dossier & experts (hors tourisme)
+              </summary>
+              <div className="mt-5 space-y-4 border-t pt-5" style={{ borderColor: INK_10 }}>
+                <DelegatedApplicationsHomePromo variant="meridianBanner" />
+                <ConsultantsAndDelegatedHomeSection />
+              </div>
+            </details>
+          ) : null}
 
           {/* BEST PRACTICES */}
           <section

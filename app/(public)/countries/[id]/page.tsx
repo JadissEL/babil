@@ -259,6 +259,7 @@ export default function CountryDetailPage() {
   const showExpertsMarketplaceCta = showConsultantMarketplaceNav(primaryObjectiveDef);
   const [showOffPerspectiveScores, setShowOffPerspectiveScores] = useState(false);
   const [showOffPerspectiveModules, setShowOffPerspectiveModules] = useState(false);
+  const [showTourismExtendedFiche, setShowTourismExtendedFiche] = useState(false);
   const [country, setCountry] = useState<CountryDetailLoadState>(null);
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState('');
@@ -491,6 +492,7 @@ export default function CountryDetailPage() {
   const isStrictTourism = /(strict|élev|high|difficile|difficult)/i.test(tourismDifficulty);
   const isStructuredWork = /(structur|limit|moder|modér|moy)/i.test(workAvailability);
   const isTourismPrimary = perspectiveContract?.primaryScoreFocus === 'tourism';
+  const tourismCompact = isTourismPrimary && !showTourismExtendedFiche;
   const tourismProcessHint =
     typeof visaTourism?.process === 'string' && visaTourism.process.trim()
       ? visaTourism.process.trim()
@@ -514,6 +516,21 @@ export default function CountryDetailPage() {
 
           <MoroccoFirstDisclaimer className="mb-6" />
 
+          {perspectiveContract ? (
+            <CountryPerspectiveSummaryStrip
+              contract={perspectiveContract}
+              countryName={country.name}
+              primarySlug={preference.primarySlug}
+              tourismScore={tourismScore}
+              tourismDifficulty={tourismDifficulty}
+              isSchengen={isSchengen}
+              isGuest={isGuest}
+              processHint={tourismProcessHint}
+              costHint={tourismCostHint}
+            />
+          ) : null}
+
+          {!tourismCompact ? (
           <section
             aria-label="Hub intelligence"
             className="relative mb-6 overflow-hidden rounded-2xl border border-[#0D1B3E]/10 bg-white pl-1.5 pr-5 py-5 shadow-sm sm:py-6"
@@ -579,19 +596,6 @@ export default function CountryDetailPage() {
               </div>
             </div>
           </section>
-
-          {perspectiveContract ? (
-            <CountryPerspectiveSummaryStrip
-              contract={perspectiveContract}
-              countryName={country.name}
-              primarySlug={preference.primarySlug}
-              tourismScore={tourismScore}
-              tourismDifficulty={tourismDifficulty}
-              isSchengen={isSchengen}
-              isGuest={isGuest}
-              processHint={tourismProcessHint}
-              costHint={tourismCostHint}
-            />
           ) : null}
 
           <section className="mb-8 flex flex-wrap items-center justify-between gap-3">
@@ -631,6 +635,28 @@ export default function CountryDetailPage() {
             )}
           </section>
 
+          {tourismCompact ? (
+            <div className="mb-8 rounded-2xl border border-[#0D1B3E]/12 bg-white p-5 shadow-sm sm:p-6">
+              <p className="font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/75">
+                Les indicateurs ci-dessus suffisent pour une première shortlist. Le détail couvre
+                rendez-vous, terrain Maroc, inspirations voyage et retours communauté.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowTourismExtendedFiche(true)}
+                className={cn(
+                  'mt-4 inline-flex items-center justify-center rounded-xl bg-[#0D1B3E] px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-sm hover:-translate-y-0.5 hover:shadow-md motion-reduce:hover:translate-y-0',
+                  NEXUS_TRANSITION,
+                  NEXUS_FOCUS_VISIBLE_ON_INK_SOLID,
+                )}
+              >
+                Approfondir la fiche pays
+              </button>
+            </div>
+          ) : null}
+
+          {!tourismCompact ? (
+          <>
           <MoroccoResearchPackSection countryName={country.name} pack={moroccoPack} />
 
           {officialLinks.length ? (
@@ -1226,6 +1252,8 @@ export default function CountryDetailPage() {
               </div>
             </aside>
           </div>
+          </>
+          ) : null}
         </div>
       </div>
 
