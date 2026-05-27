@@ -26,7 +26,7 @@ import HeroWorldCarousel from '@/components/home/HeroWorldCarousel';
 import HomeQuickFilterEngine from '@/components/home/HomeQuickFilterEngine';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo';
-import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
+import { compareHrefForGuest, ctaExploreHref } from '@/lib/cta-hrefs';
 import { applyPerspectiveToShowcaseItems } from '@/lib/home-showcase-perspective';
 import type { HomeHeroSlide } from '@/lib/home-hero-slides';
 import {
@@ -152,15 +152,10 @@ export function HomeExperience({
     [topCountries, preference.primarySlug],
   );
   const exploreCtaHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug]);
-  const compareCtaHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug]);
-  const compareFeatureHref = useMemo(() => {
-    if (!isGuest) return compareCtaHref;
-    if (typeof window === 'undefined') {
-      return `/sign-in?redirect_url=${encodeURIComponent(compareCtaHref)}`;
-    }
-    const absolute = `${window.location.origin}${compareCtaHref.startsWith('/') ? compareCtaHref : `/${compareCtaHref}`}`;
-    return `/sign-in?redirect_url=${encodeURIComponent(absolute)}`;
-  }, [isGuest, compareCtaHref]);
+  const compareFeatureHref = useMemo(
+    () => compareHrefForGuest(isGuest, preference.primarySlug),
+    [isGuest, preference.primarySlug],
+  );
 
   const testimonialsAll = [
     {

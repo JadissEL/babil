@@ -2,7 +2,7 @@
 
 import { ArrowRight, Scale, ShieldCheck, Sparkles } from 'lucide-react'
 import Link from 'next/link'
-import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
+import { compareHrefForGuest, ctaExploreHref } from '@/lib/cta-hrefs'
 import {
   NEXUS_FOCUS_VISIBLE,
   NEXUS_TRANSITION,
@@ -23,16 +23,6 @@ export type CountryPerspectiveSummaryStripProps = {
   costHint?: string | null
 }
 
-function signInHrefForCompareTarget(comparePath: string): string {
-  if (typeof window === 'undefined') {
-    return `/sign-in?redirect_url=${encodeURIComponent(comparePath)}`
-  }
-  const absolute = comparePath.startsWith('http')
-    ? comparePath
-    : `${window.location.origin}${comparePath.startsWith('/') ? comparePath : `/${comparePath}`}`
-  return `/sign-in?redirect_url=${encodeURIComponent(absolute)}`
-}
-
 export function CountryPerspectiveSummaryStrip({
   contract,
   countryName,
@@ -49,8 +39,7 @@ export function CountryPerspectiveSummaryStrip({
   }
 
   const exploreHref = ctaExploreHref(primarySlug)
-  const compareProductHref = ctaCompareHref(primarySlug)
-  const compareHref = isGuest ? signInHrefForCompareTarget(compareProductHref) : compareProductHref
+  const compareHref = compareHrefForGuest(isGuest, primarySlug)
 
   return (
     <section

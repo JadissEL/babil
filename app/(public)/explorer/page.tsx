@@ -30,7 +30,7 @@ import {
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
 import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-objective'
-import { ctaCompareHref } from '@/lib/cta-hrefs'
+import { ctaCompareHref, signInRedirectHref } from '@/lib/cta-hrefs'
 import { buildExplorerRegionScoreBuckets } from '@/lib/explorer-region-score-buckets'
 import {
   buildExplorerQueryStringFromSaved,
@@ -95,16 +95,6 @@ type UrlCommitSlice = Partial<{
   mode: Mode
 }>
 
-function signInHrefForCompareTarget(comparePath: string): string {
-  if (typeof window === 'undefined') {
-    return `/sign-in?redirect_url=${encodeURIComponent(comparePath)}`
-  }
-  const absolute = comparePath.startsWith('http')
-    ? comparePath
-    : `${window.location.origin}${comparePath.startsWith('/') ? comparePath : `/${comparePath}`}`
-  return `/sign-in?redirect_url=${encodeURIComponent(absolute)}`
-}
-
 function ExplorerPageInner() {
   const pathname = usePathname()
   const router = useRouter()
@@ -158,7 +148,7 @@ function ExplorerPageInner() {
   ])
 
   const compareLinkHref = useMemo(
-    () => (isGuest ? signInHrefForCompareTarget(compareProductHref) : compareProductHref),
+    () => (isGuest ? signInRedirectHref(compareProductHref) : compareProductHref),
     [isGuest, compareProductHref],
   )
 
@@ -413,7 +403,7 @@ function ExplorerPageInner() {
           >
             Parcours en lecture seule — explorez et filtrez sans compte.{' '}
             <Link
-              href={signInHrefForCompareTarget(compareProductHref)}
+              href={signInRedirectHref(compareProductHref)}
               className="font-bold text-[#0D1B3E] underline underline-offset-2"
             >
               Connectez-vous

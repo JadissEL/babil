@@ -8,6 +8,7 @@ import BudgetFilter from '@/components/filters/BudgetFilter'
 import GoalFilter from '@/components/filters/GoalFilter'
 import RegionFilter from '@/components/filters/RegionFilter'
 import RiskFilter from '@/components/filters/RiskFilter'
+import { signInRedirectHref } from '@/lib/cta-hrefs'
 import { compareHrefForHomeQuickFilters } from '@/lib/explorer-goal-to-compare-objective'
 import {
   SITE_FOCUS_HOME_CTA_GHOST,
@@ -30,16 +31,6 @@ function buildExplorerHref(goal: string, budget: string, region: string, risk: s
   }
   const q = params.toString()
   return q ? `/explorer?${q}` : '/explorer'
-}
-
-function signInHrefForCompareTarget(comparePath: string): string {
-  if (typeof window === 'undefined') {
-    return `/sign-in?redirect_url=${encodeURIComponent(comparePath)}`
-  }
-  const absolute = comparePath.startsWith('http')
-    ? comparePath
-    : `${window.location.origin}${comparePath.startsWith('/') ? comparePath : `/${comparePath}`}`
-  return `/sign-in?redirect_url=${encodeURIComponent(absolute)}`
 }
 
 export default function HomeQuickFilterEngine({
@@ -70,7 +61,7 @@ export default function HomeQuickFilterEngine({
   )
 
   const compareHref = useMemo(
-    () => (isGuest ? signInHrefForCompareTarget(compareProductHref) : compareProductHref),
+    () => (isGuest ? signInRedirectHref(compareProductHref) : compareProductHref),
     [isGuest, compareProductHref],
   )
 
