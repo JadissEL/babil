@@ -278,7 +278,8 @@ function ExplorerPageInner() {
       const urlObjective = searchParams.get('objective')?.trim()
       const urlGoal = searchParams.get('goal')?.trim().toLowerCase()
       if (
-        (urlObjective && urlObjective !== lockedObjectiveSlug) ||
+        !urlObjective ||
+        urlObjective !== lockedObjectiveSlug ||
         (urlGoal && lockedGoal && urlGoal !== lockedGoal)
       ) {
         const params = new URLSearchParams(searchParams.toString())
