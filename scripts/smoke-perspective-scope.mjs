@@ -91,7 +91,7 @@ async function assertGuestExplorerReadable(page) {
   const match = countText.match(/(\d+)\s/);
   if (match) {
     const n = Number(match[1]);
-    if (n >= 240) {
+    if (n >= 200) {
       throw new Error(
         `Tourism parcours filter should narrow results (got ${n} in: ${countText})`,
       );

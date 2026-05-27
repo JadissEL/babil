@@ -41,6 +41,8 @@ export type ExplorerFilterProfile = {
   primaryScoreMin: number;
   /** When set, raise `primaryScoreMin` to at least this percentile of DB scalars in the current list. */
   primaryGatePercentile?: number;
+  /** Cap results to this share of the catalog (by DB primary scalar) after other gates — tourism DB scores cluster. */
+  primaryGateMaxCatalogShare?: number;
   /** Optional extra gate on a compare signal (e.g. phdPresence). */
   moduleAccessSignal?: CompareSignalId;
   moduleAccessMin: number;
@@ -77,8 +79,9 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
       return {
         ...base,
         primaryGateSource: 'dbScalar',
-        primaryScoreMin: 50,
-        primaryGatePercentile: 38,
+        primaryScoreMin: 56,
+        primaryGatePercentile: 55,
+        primaryGateMaxCatalogShare: 0.62,
         dimensions: ['region', 'schengen', 'difficulty', 'budgetBand'],
         labels: {
           primaryScore: 'Score visa tourisme',

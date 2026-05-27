@@ -139,7 +139,7 @@ export function resolveEffectivePrimaryScoreMin(
 ): number {
   const floor = profile.primaryScoreMin;
   const pct = profile.primaryGatePercentile;
-  if (pct == null || pct <= 0 || list.length === 0) return floor;
+  if (pct == null || pct <= 0 || list.length < 15) return floor;
 
   const scores = list
     .map((c) => dbVisaScalar100(c, profile.primaryScoreFocus))
@@ -262,6 +262,22 @@ export function sortExplorerCountries(
   return copy;
 }
 
+function capExplorerResultsByCatalogShare(
+  list: EnrichedCountryApi[],
+  filtered: EnrichedCountryApi[],
+  profile: ExplorerFilterProfile,
+): EnrichedCountryApi[] {
+  const share = profile.primaryGateMaxCatalogShare;
+  if (share == null || share <= 0 || share >= 1 || list.length < 10) return filtered;
+  const maxCount = Math.max(1, Math.floor(list.length * share));
+  if (filtered.length <= maxCount) return filtered;
+  const ranked = [...filtered].sort(
+    (a, b) =>
+      dbVisaScalar100(b, profile.primaryScoreFocus) - dbVisaScalar100(a, profile.primaryScoreFocus),
+  );
+  return ranked.slice(0, maxCount);
+}
+
 export function applyExplorerFiltersAndSort(
   list: EnrichedCountryApi[],
   state: ExplorerFilterState,
@@ -269,9 +285,13 @@ export function applyExplorerFiltersAndSort(
 ): { filtered: EnrichedCountryApi[]; profile: ExplorerFilterProfile } {
   const profile = resolveExplorerFilterProfile(state, preferenceSlug);
   const effectivePrimaryMin = resolveEffectivePrimaryScoreMin(list, profile);
-  const filtered = sortExplorerCountries(
-    filterExplorerCountries(list, state, profile, effectivePrimaryMin),
-    state,
+  const filtered = capExplorerResultsByCatalogShare(
+    list,
+    sortExplorerCountries(
+      filterExplorerCountries(list, state, profile, effectivePrimaryMin),
+      state,
+      profile,
+    ),
     profile,
   );
   return { filtered, profile };
