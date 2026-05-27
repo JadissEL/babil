@@ -72,7 +72,12 @@ async function assertGuestExplorerReadable(page) {
     state: 'visible',
     timeout: 15_000,
   });
-  await page.getByLabel(/Parcours verrouillé/i).waitFor({ state: 'visible', timeout: 20_000 });
+  const locked = page.getByLabel(/Parcours verrouillé/i);
+  await locked.waitFor({ state: 'visible', timeout: 20_000 });
+  const lockedText = await locked.innerText();
+  if (!/tourisme/i.test(lockedText)) {
+    throw new Error(`Explorer locked goal should mention Tourisme, got: ${lockedText}`);
+  }
 }
 
 async function assertProtectedPerspectiveRoutes(page) {
@@ -105,10 +110,10 @@ async function assertProtectedPerspectiveRoutes(page) {
 async function main() {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
-  await context.addInitScript(() => {
-    localStorage.removeItem('babil_objective_pref_v1');
-  });
   const page = await context.newPage();
+  // Clear once before the wizard — avoid addInitScript (runs on every navigation and wipes the pick).
+  await page.goto(`${base}/`, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+  await page.evaluate(() => localStorage.removeItem('babil_objective_pref_v1'));
 
   await pickTourismeObjective(page);
   await assertHomeTestimonialsScopedToTourism(page);
