@@ -26,3 +26,5 @@ export {
   useObjectivePreferenceOptional,
 } from './ObjectivePreferenceProvider';
 export { ObjectiveTransitionOverlay } from './ObjectiveTransitionOverlay';
+export { PerspectiveHubPageGate, PerspectiveHubGatePanel } from './PerspectiveHubGate';
+export { PerspectiveRemountShell } from './PerspectiveRemountShell';

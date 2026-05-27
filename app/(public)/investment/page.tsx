@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import GoogleAd from '@/components/GoogleAd';
 import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLinks';
+import { PerspectiveHubPageGate } from '@/components/objectives/PerspectiveHubGate';
 import {
   Select,
   SelectContent,
@@ -159,6 +160,7 @@ export default function InvestmentPage() {
   }, [programs, search, budgetFilter, regionFilter]);
 
   return (
+    <PerspectiveHubPageGate hubPath="/investment">
     <div className={shellClass}>
       <div className="mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 sm:pt-10">
         <header className="mb-10 text-center sm:mb-12">
@@ -360,5 +362,6 @@ export default function InvestmentPage() {
         </div>
       </div>
     </div>
+    </PerspectiveHubPageGate>
   );
 }

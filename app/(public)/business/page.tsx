@@ -15,6 +15,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import GoogleAd from '@/components/GoogleAd';
+import { PerspectiveHubPageGate } from '@/components/objectives/PerspectiveHubGate';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import {
   normalizeCountriesApiListResponse,
@@ -68,6 +69,7 @@ export default function BusinessPage() {
   );
 
   return (
+    <PerspectiveHubPageGate hubPath="/business">
     <div className={shellClass}>
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
         <section className="relative mb-14 overflow-hidden rounded-3xl border border-[#0D1B3E]/8 bg-[#FDFBF4] shadow-sm sm:mb-16 sm:rounded-[2rem]">
@@ -321,5 +323,6 @@ export default function BusinessPage() {
         </p>
       </div>
     </div>
+    </PerspectiveHubPageGate>
   );
 }

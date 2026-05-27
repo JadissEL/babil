@@ -79,7 +79,13 @@ import {
 import { isSchengenMember } from '@/lib/schengen-members';
 import { SCORE_SCALE_LEGEND_FR } from '@/lib/score-scale-lexicon';
 import { appToast } from '@/lib/toast-store';
-import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav';
+import {
+  countryScoreVisible,
+  isPhdPerspectiveRelevant,
+  orientationStraplineForPerspective,
+  perspectiveContractFromDefinition,
+  type CountryScoreFocus,
+} from '@/lib/user-objectives/perspective-contract';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 import { cn } from '@/lib/utils';
 
@@ -199,13 +205,6 @@ function scoreToneStitch(score: number): string {
   return 'text-[#0D1B3E]';
 }
 
-function orientationStrapline(studyScore: number, tourismScore: number, workScore: number): string {
-  if (studyScore >= 70) return 'Excellence Études & Mobilité';
-  if (workScore >= 70) return 'Talents & Carrière Internationale';
-  if (tourismScore >= 70) return 'Découverte & Tourisme';
-  return 'Mobilité Internationale';
-}
-
 function clampPercent(v: unknown): number {
   const n = Number(v);
   if (!Number.isFinite(n)) return 0;
@@ -251,7 +250,12 @@ export default function CountryDetailPage() {
     () => getObjectiveBySlug(preference.primarySlug),
     [preference.primarySlug],
   );
+  const perspectiveContract = useMemo(
+    () => perspectiveContractFromDefinition(primaryObjectiveDef),
+    [primaryObjectiveDef],
+  );
   const showExpertsMarketplaceCta = showConsultantMarketplaceNav(primaryObjectiveDef);
+  const [showOffPerspectiveScores, setShowOffPerspectiveScores] = useState(false);
   const [country, setCountry] = useState<CountryDetailLoadState>(null);
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState('');
@@ -396,7 +400,7 @@ export default function CountryDetailPage() {
   const visaWork = visaSystem?.work as Record<string, unknown> | undefined;
   const experienceContent = buildCountryExperienceContent(country.name, full);
   const hasPhdStored = hasCountryPhdStoredData(full as Record<string, unknown>);
-  const showPhdSurfaces = hasPhdStored && isPhdPerspectiveRelevant(primaryObjectiveDef);
+  const showPhdSurfaces = hasPhdStored && isPhdPerspectiveRelevant(perspectiveContract);
   const phdModel = showPhdSurfaces
     ? buildPhdStudies(country.name, full as Record<string, unknown>)
     : null;
@@ -453,7 +457,24 @@ export default function CountryDetailPage() {
 
   const iso2 = iso2ForCountryNameOrEmpty(country.name);
   const isSchengen = isSchengenMember(String(country.name ?? ''));
-  const strapline = orientationStrapline(studyScore, tourismScore, workScore);
+  const strapline = orientationStraplineForPerspective(perspectiveContract, {
+    tourism: tourismScore,
+    study: studyScore,
+    work: workScore,
+  });
+
+  const visaScoreBars: { focus: CountryScoreFocus; label: string; value: number }[] = [
+    { focus: 'tourism', label: 'Visa tourisme', value: tourismScore },
+    { focus: 'study', label: 'Visa études', value: studyScore },
+    { focus: 'work', label: 'Visa travail', value: workScore },
+    { focus: 'business', label: 'Visa affaires', value: businessScore },
+  ];
+  const primaryVisaBars = visaScoreBars.filter(
+    (b) => countryScoreVisible(b.focus, perspectiveContract) === 'primary',
+  );
+  const secondaryVisaBars = visaScoreBars.filter(
+    (b) => countryScoreVisible(b.focus, perspectiveContract) === 'secondary',
+  );
   const accessPct = brutalRealityToPercent(full.brutal_reality_score);
   const acceptancePct = acceptanceToPercent(full.acceptance_rate_morocco);
   const frictionPct = clampPercent(full.friction_score);
@@ -747,11 +768,31 @@ export default function CountryDetailPage() {
                   {SCORE_SCALE_LEGEND_FR.visaBarsSubtitle}
                 </p>
                 <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <ScoreBar label="Visa tourisme" value={tourismScore} />
-                  <ScoreBar label="Visa études" value={studyScore} />
-                  <ScoreBar label="Visa travail" value={workScore} />
-                  <ScoreBar label="Visa affaires" value={businessScore} />
+                  {primaryVisaBars.map((b) => (
+                    <ScoreBar key={b.focus} label={b.label} value={b.value} />
+                  ))}
                 </div>
+                {secondaryVisaBars.length > 0 ? (
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowOffPerspectiveScores((v) => !v)}
+                      className="text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/60 underline-offset-2 hover:underline"
+                      aria-expanded={showOffPerspectiveScores}
+                    >
+                      {showOffPerspectiveScores
+                        ? 'Masquer les autres dimensions (hors parcours)'
+                        : `Autres dimensions (hors parcours) · ${secondaryVisaBars.length}`}
+                    </button>
+                    {showOffPerspectiveScores ? (
+                      <div className="mt-3 grid grid-cols-1 gap-4 opacity-80 md:grid-cols-2">
+                        {secondaryVisaBars.map((b) => (
+                          <ScoreBar key={b.focus} label={b.label} value={b.value} />
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
 
                 <BlockFeedback blockId="country-reality" countryId={countryPageId} />
               </section>

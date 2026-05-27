@@ -72,8 +72,21 @@ export function CompareExperience() {
   const [selectedIds, setSelectedIds] = useState<number[]>([])
   const [loading, setLoading] = useState(true)
 
+  const lockedCompareId = useMemo(() => {
+    if (!objectivePref?.ready || !objectivePref.preference.primarySlug) return null
+    return userObjectiveSlugToCompareObjectiveId(objectivePref.preference.primarySlug)
+  }, [objectivePref?.ready, objectivePref?.preference.primarySlug])
+
   const objectiveParam = searchParams?.get('objective')
-  const objective = useMemo(() => getObjectiveDefinition(objectiveParam), [objectiveParam])
+  const effectiveObjectiveParam = useMemo(() => {
+    if (lockedCompareId) return lockedCompareId
+    return objectiveParam
+  }, [lockedCompareId, objectiveParam])
+
+  const objective = useMemo(
+    () => getObjectiveDefinition(effectiveObjectiveParam),
+    [effectiveObjectiveParam],
+  )
 
   const emptyTableExploreHref = useMemo(
     () => ctaExploreHref(objectivePref?.ready ? objectivePref.preference.primarySlug : null),
@@ -105,14 +118,13 @@ export function CompareExperience() {
 
     const urlObj = parseValidCompareObjectiveParam(searchParams.get('objective'))
     const prefReady = objectivePref?.ready === true
-    const prefObj =
-      !urlObj && objectivePref?.preference.primarySlug
-        ? userObjectiveSlugToCompareObjectiveId(objectivePref.preference.primarySlug)
-        : null
+    const prefObj = objectivePref?.preference.primarySlug
+      ? userObjectiveSlugToCompareObjectiveId(objectivePref.preference.primarySlug)
+      : null
 
     if (!urlObj && !prefReady) return
 
-    const effective = urlObj ?? prefObj
+    const effective = lockedCompareId ?? urlObj ?? prefObj
     if (!effective) return
 
     didInitialStepHydrate.current = true
@@ -121,6 +133,24 @@ export function CompareExperience() {
     setCategoryId(def.categoryId)
 
     const hasCountries = parseCompareCountryParam(searchParams.get('countries'), MAX).length > 0
+
+    if (lockedCompareId) {
+      setStep(hasCountries ? 'countries' : 'countries')
+      if (urlObj && urlObj !== lockedCompareId) {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('objective', lockedCompareId)
+        const path = pathname ?? '/compare'
+        const qs = params.toString()
+        router.replace(qs ? `${path}?${qs}` : path, { scroll: false })
+      } else if (!urlObj) {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('objective', lockedCompareId)
+        const path = pathname ?? '/compare'
+        const qs = params.toString()
+        router.replace(qs ? `${path}?${qs}` : path, { scroll: false })
+      }
+      return
+    }
 
     if (urlObj && hasCountries) {
       setStep('countries')
@@ -135,7 +165,14 @@ export function CompareExperience() {
       const qs = params.toString()
       router.replace(qs ? `${path}?${qs}` : path, { scroll: false })
     }
-  }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug, pathname, router])
+  }, [
+    searchParams,
+    objectivePref?.ready,
+    objectivePref?.preference.primarySlug,
+    lockedCompareId,
+    pathname,
+    router,
+  ])
 
   const goToCategoryStep = useCallback(() => {
     didInitialStepHydrate.current = false
@@ -336,11 +373,20 @@ export function CompareExperience() {
   }
 
   const prismChrome = step === 'countries'
+  const perspectiveLocked = Boolean(lockedCompareId)
 
   return (
     <div className="min-w-0 space-y-8 pb-[max(6rem,calc(4rem+env(safe-area-inset-bottom,0px)))] sm:space-y-10">
       <ComparePrismHeader step={step} objective={objective} />
 
+      {perspectiveLocked ? (
+        <p className="rounded-full border border-[#0D1B3E]/15 bg-[#FDFBF4] px-4 py-2 text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/70">
+          Parcours verrouillé · {objective.label} — changez d’objectif principal pour comparer sous un autre
+          intérêt
+        </p>
+      ) : null}
+
+      {!perspectiveLocked ? (
       <nav
         aria-label="Étapes"
         className={cn(
@@ -370,8 +416,9 @@ export function CompareExperience() {
           </span>
         ))}
       </nav>
+      ) : null}
 
-      {step === 'category' && (
+      {!perspectiveLocked && step === 'category' && (
         <div className="space-y-4">
           <h2 className="text-lg font-black text-[#0D1B3E] sm:text-xl">1. Quel est votre domaine ?</h2>
           <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -400,7 +447,7 @@ export function CompareExperience() {
         </div>
       )}
 
-      {step === 'objective' && categoryId && (
+      {!perspectiveLocked && step === 'objective' && categoryId && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
             <Button type="button" variant="outline" className="gap-1 text-sm" onClick={goToCategoryStep}>
@@ -434,17 +481,19 @@ export function CompareExperience() {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="gap-1 text-sm"
-                  onClick={() => {
-                    setStep('objective')
-                    if (objective.categoryId) setCategoryId(objective.categoryId)
-                  }}
-                >
-                  <ArrowLeft className="h-4 w-4" /> Objectif
-                </Button>
+                {!perspectiveLocked ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="gap-1 text-sm"
+                    onClick={() => {
+                      setStep('objective')
+                      if (objective.categoryId) setCategoryId(objective.categoryId)
+                    }}
+                  >
+                    <ArrowLeft className="h-4 w-4" /> Objectif
+                  </Button>
+                ) : null}
                 <span className="rounded-full border border-[#0D1B3E]/15 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]">
                   {objective.shortLabel}
                 </span>

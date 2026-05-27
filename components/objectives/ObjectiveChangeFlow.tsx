@@ -121,6 +121,10 @@ export function ObjectiveChangeFlow({ children }: { children: ReactNode }) {
       return;
     }
 
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+
     try {
       router.refresh();
     } catch {

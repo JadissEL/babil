@@ -83,6 +83,7 @@
     "test:lib": "tsx scripts/run-lib-tests.ts",
     "test:vitest": "vitest run",
     "test:smoke:objectives": "node scripts/smoke-objective-change.mjs",
+    "test:smoke:perspective": "node scripts/smoke-perspective-scope.mjs",
     "test:smoke:stitch": "node scripts/smoke-stitch-routes.mjs",
     "vercel:set-cron-secret": "node scripts/vercel-set-cron-secret.mjs",
     "audit:ci": "npm audit --omit=dev --audit-level=critical"

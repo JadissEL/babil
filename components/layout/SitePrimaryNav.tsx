@@ -14,7 +14,10 @@ import {
   SITE_INTERACTION_TRANSITION,
   SITE_RAIL_TRANSITION,
 } from '@/lib/site-chrome-tokens';
-import { isExplorerNavHrefInPerspective } from '@/lib/user-objectives/perspective-nav';
+import {
+  isNavHrefActionable,
+  perspectiveContractFromDefinition,
+} from '@/lib/user-objectives/perspective-contract';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
 import { cn } from '@/lib/utils';
 
@@ -86,19 +89,27 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
     () => getObjectiveBySlug(preference.primarySlug),
     [preference.primarySlug],
   );
+  const contract = useMemo(
+    () => perspectiveContractFromDefinition(primaryDef),
+    [primaryDef],
+  );
 
   const links = useMemo(() => {
-    const staticFiltered = STATIC_LINKS.filter((link) => {
+    const staticVisible = STATIC_LINKS.filter((link) => {
       if (link.consultantsOnly && !showConsultantMarketplaceNav(primaryDef)) return false;
-      return isExplorerNavHrefInPerspective(link.href, primaryDef);
+      return true;
     });
     return [
-      { href: explorerHref, label: 'Explorer' },
-      { href: '/schengen', label: 'Schengen' },
-      { href: compareHref, label: 'Comparer' },
-      ...staticFiltered.slice(1),
+      { href: explorerHref, label: 'Explorer', actionable: true },
+      { href: '/schengen', label: 'Schengen', actionable: isNavHrefActionable('/schengen', contract) },
+      { href: compareHref, label: 'Comparer', actionable: true },
+      ...staticVisible.slice(1).map((link) => ({
+        href: link.href,
+        label: link.label,
+        actionable: isNavHrefActionable(link.href, contract),
+      })),
     ];
-  }, [compareHref, explorerHref, primaryDef]);
+  }, [compareHref, explorerHref, primaryDef, contract]);
 
   const closeIfNavigated = useCallback(() => {
     onMobileClose();
@@ -115,7 +126,7 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
 
   const navBody = (
     <nav className="flex flex-col gap-0.5 px-2 py-3" aria-label="Navigation principale">
-      {links.map(({ href, label }) => {
+      {links.map(({ href, label, actionable }) => {
         const active = isActivePath(pathname, href, explorerHref, compareHref);
         return (
           <Link
@@ -124,15 +135,22 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
             onClick={closeIfNavigated}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'rounded-xl px-3 py-2.5 text-sm font-black tracking-tight text-text',
+              'flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-black tracking-tight text-text',
               SITE_INTERACTION_TRANSITION,
               SITE_FOCUS_VISIBLE,
               active
                 ? 'bg-primary-soft text-primary ring-1 ring-primary/25'
-                : 'text-muted hover:bg-primary-soft/70 hover:text-primary',
+                : actionable
+                  ? 'text-muted hover:bg-primary-soft/70 hover:text-primary'
+                  : 'text-muted/70 hover:bg-primary-soft/40 hover:text-primary/80',
             )}
           >
-            {label}
+            <span>{label}</span>
+            {!actionable ? (
+              <span className="shrink-0 text-[9px] font-black uppercase tracking-wider text-muted/80">
+                hors parcours
+              </span>
+            ) : null}
           </Link>
         );
       })}

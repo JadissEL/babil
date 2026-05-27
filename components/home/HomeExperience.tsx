@@ -144,26 +144,43 @@ export function HomeExperience({
   const exploreCtaHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug]);
   const compareCtaHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug]);
 
-  const testimonials = [
+  const testimonialsAll = [
     {
+      categoryId: 'work' as const,
       name: 'Yassine A.',
       role: 'Profil travail · Casablanca',
       quote:
         'J’ai réduit mon shortlist de 12 pays à 3 en une soirée. Les scores de friction m’ont évité des pistes trop compliquées pour mon profil.',
     },
     {
+      categoryId: 'studies' as const,
       name: 'Salma M.',
       role: 'Objectif études · Rabat',
       quote:
         'La comparaison Schengen + les modules education m’ont aidée à comprendre où mes chances étaient réalistes, pas seulement « populaires ».',
     },
     {
+      categoryId: 'business' as const,
       name: 'Imane K.',
       role: 'Projet business · Tanger',
       quote:
         'Le croisement visa, business et terrain m’a donné un plan concret. J’ai pu prioriser un pays avec moins de risque opérationnel.',
     },
+    {
+      categoryId: 'tourism' as const,
+      name: 'Karim B.',
+      role: 'Voyage Schengen · Marrakech',
+      quote:
+        'En partant du tourisme, j’ai ciblé les pays où le visa visiteur et les délais étaient cohérents avec mon calendrier — sans me perdre dans les parcours études.',
+    },
   ];
+
+  const testimonials = useMemo(() => {
+    const cat = primaryDefinition?.categoryId;
+    if (!cat) return testimonialsAll;
+    const matched = testimonialsAll.filter((t) => t.categoryId === cat);
+    return matched.length > 0 ? matched : testimonialsAll.slice(0, 2);
+  }, [primaryDefinition?.categoryId]);
 
   const bestPractices = [
     {

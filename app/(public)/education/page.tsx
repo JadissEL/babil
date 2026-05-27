@@ -15,6 +15,7 @@ import {
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import GoogleAd from '@/components/GoogleAd';
+import { PerspectiveHubPageGate } from '@/components/objectives/PerspectiveHubGate';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import {
   normalizeCountriesApiListResponse,
@@ -121,6 +122,7 @@ export default function EducationPage() {
   };
 
   return (
+    <PerspectiveHubPageGate hubPath="/education">
     <div className={shellClass}>
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
         <section
@@ -386,5 +388,6 @@ export default function EducationPage() {
         </p>
       </div>
     </div>
+    </PerspectiveHubPageGate>
   );
 }

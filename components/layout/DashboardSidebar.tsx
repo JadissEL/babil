@@ -25,16 +25,21 @@ import {
   NEXUS_TRANSITION,
   NEXUS_TW,
 } from '@/lib/nexus-chrome'
-import { isExplorerNavHrefInPerspective } from '@/lib/user-objectives/perspective-nav'
+import {
+  isNavHrefActionable,
+  perspectiveContractFromDefinition,
+} from '@/lib/user-objectives/perspective-contract'
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry'
 import { cn } from '@/lib/utils'
+
+type ExplorerNavRow = DashboardNavItem & { offPerspective?: boolean }
 
 function NavLinkRow({
   item,
   active,
   onNavigate,
 }: {
-  item: DashboardNavItem
+  item: ExplorerNavRow
   active: boolean
   onNavigate?: () => void
 }) {
@@ -49,14 +54,23 @@ function NavLinkRow({
         NEXUS_FOCUS_VISIBLE,
         active
           ? cn('bg-white font-semibold', NEXUS_TW.ink, NEXUS_TW.navRowActiveShadow)
-          : cn('font-medium', NEXUS_TW.ink65, 'hover:bg-white/60 hover:text-[#0D1B3E]'),
+          : cn(
+              'font-medium',
+              item.offPerspective ? NEXUS_TW.ink45 : NEXUS_TW.ink65,
+              'hover:bg-white/60 hover:text-[#0D1B3E]',
+            ),
       )}
     >
       <item.icon
         className={cn('h-4 w-4 shrink-0', active ? NEXUS_TW.ink : NEXUS_TW.ink55)}
         aria-hidden
       />
-      <span className="truncate">{item.label}</span>
+      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+      {item.offPerspective ? (
+        <span className="shrink-0 text-[8px] font-black uppercase tracking-wider opacity-70">
+          hors
+        </span>
+      ) : null}
     </Link>
   )
 }
@@ -68,7 +82,7 @@ function NavGroup({
   onNavigate,
 }: {
   label: string
-  items: DashboardNavItem[]
+  items: ExplorerNavRow[]
   pathname: string
   onNavigate?: () => void
 }) {
@@ -209,19 +223,31 @@ export function DashboardSidebar({ open, onClose }: DashboardSidebarProps) {
     () => filterNavItemsByRole(dashboardNav, isAdmin),
     [isAdmin],
   )
+  const contract = useMemo(
+    () => perspectiveContractFromDefinition(primaryDef),
+    [primaryDef],
+  )
   const explorerItems = useMemo(() => {
     const mapped = explorerNav
       .filter((item) => {
         if (item.consultantsOnly && !showConsultantMarketplaceNav(primaryDef)) return false
-        return isExplorerNavHrefInPerspective(item.href, primaryDef)
+        return true
       })
       .map((item) => {
-        if (item.href === '/explorer') return { ...item, href: explorerHref }
-        if (item.href === '/compare') return { ...item, href: compareHref }
-        return item
+        const href =
+          item.href === '/explorer'
+            ? explorerHref
+            : item.href === '/compare'
+              ? compareHref
+              : item.href
+        return {
+          ...item,
+          href,
+          offPerspective: contract ? !isNavHrefActionable(item.href, contract) : false,
+        }
       })
     return filterNavItemsByRole(mapped, isAdmin)
-  }, [compareHref, explorerHref, primaryDef, isAdmin])
+  }, [compareHref, explorerHref, primaryDef, contract, isAdmin])
 
   return (
     <>

@@ -16,6 +16,10 @@ import {
   type StoredObjectivePreferenceV1,
 } from '@/lib/objective-preference-storage';
 import {
+  perspectiveContractFromDefinition,
+  type PerspectiveContract,
+} from '@/lib/user-objectives/perspective-contract';
+import {
   getObjectiveBySlug,
   isUserObjectiveSlug,
   type UserObjectiveSlug,
@@ -32,6 +36,9 @@ type ObjectivePreferenceContextValue = {
   ready: boolean;
   preference: StoredObjectivePreferenceV1;
   primaryDefinition: ReturnType<typeof getObjectiveBySlug>;
+  perspectiveContract: PerspectiveContract | null;
+  /** Bumped when primary slug changes — use as React `key` to remount perspective-scoped UI. */
+  perspectiveEpoch: number;
   setPrimaryObjective: (
     slug: UserObjectiveSlug,
     options?: { completeWizard?: boolean },
@@ -57,6 +64,7 @@ export function ObjectivePreferenceProvider({ children }: { children: React.Reac
   const { user, isLoaded } = useUser();
   const [preference, setPreference] = useState<StoredObjectivePreferenceV1>(EMPTY);
   const [ready, setReady] = useState(false);
+  const [perspectiveEpoch, setPerspectiveEpoch] = useState(0);
 
   const hydrateLocal = useCallback(() => {
     setPreference(readObjectivePreference());
@@ -117,14 +125,23 @@ export function ObjectivePreferenceProvider({ children }: { children: React.Reac
     [preference.primarySlug],
   );
 
+  const perspectiveContract = useMemo(
+    () => perspectiveContractFromDefinition(primaryDefinition),
+    [primaryDefinition],
+  );
+
   const setPrimaryObjective = useCallback(
     async (slug: UserObjectiveSlug, options?: { completeWizard?: boolean }): Promise<boolean> => {
+      const prevSlug = readObjectivePreference().primarySlug;
       const patch: Partial<StoredObjectivePreferenceV1> = { primarySlug: slug };
       if (options?.completeWizard) {
         patch.wizardCompletedAt = new Date().toISOString();
       }
       writeObjectivePreference(patch);
       hydrateLocal();
+      if (prevSlug !== slug) {
+        setPerspectiveEpoch((e) => e + 1);
+      }
 
       if (!user) return true;
 
@@ -191,6 +208,8 @@ export function ObjectivePreferenceProvider({ children }: { children: React.Reac
       ready,
       preference,
       primaryDefinition,
+      perspectiveContract,
+      perspectiveEpoch,
       setPrimaryObjective,
       setSecondaryObjectives,
       dismissObjectiveWizard,
@@ -200,6 +219,8 @@ export function ObjectivePreferenceProvider({ children }: { children: React.Reac
       ready,
       preference,
       primaryDefinition,
+      perspectiveContract,
+      perspectiveEpoch,
       setPrimaryObjective,
       setSecondaryObjectives,
       dismissObjectiveWizard,

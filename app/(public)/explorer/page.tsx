@@ -29,6 +29,7 @@ import {
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
 import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-objective'
+import { ctaCompareHref } from '@/lib/cta-hrefs'
 import { buildExplorerRegionScoreBuckets } from '@/lib/explorer-region-score-buckets'
 import {
   buildExplorerQueryStringFromSaved,
@@ -45,7 +46,17 @@ import {
 import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
 import { appToast } from '@/lib/toast-store'
 import { explorerFilterGoalFromObjectiveSlug } from '@/lib/user-objectives/explorer-filter-goal'
+import { getObjectiveBySlug } from '@/lib/user-objectives/registry'
 import { cn } from '@/lib/utils'
+
+const GOAL_FILTER_LABELS: Record<Exclude<Goal, 'all'>, string> = {
+  tourism: 'Tourisme',
+  study: 'Études longues',
+  education: 'Éducation',
+  work: 'Travail',
+  business: 'Affaires',
+  short_course: 'Formation courte',
+}
 
 type Mode = 'explorer' | 'recommendation'
 type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
@@ -98,6 +109,19 @@ function ExplorerPageInner() {
   const [schengenOnly, setSchengenOnly] = useState(false)
   const [loading, setLoading] = useState(true)
   const [hasSavedView, setHasSavedView] = useState(false)
+
+  const lockedGoal = useMemo((): Exclude<Goal, 'all'> | null => {
+    if (!objectivePref?.ready || !objectivePref.preference.primarySlug) return null
+    const g = explorerFilterGoalFromObjectiveSlug(objectivePref.preference.primarySlug)
+    if (g === 'all') return null
+    return g as Exclude<Goal, 'all'>
+  }, [objectivePref?.ready, objectivePref?.preference.primarySlug])
+
+  const goalLockedLabel = useMemo(() => {
+    if (!lockedGoal) return undefined
+    const def = getObjectiveBySlug(objectivePref?.preference.primarySlug)
+    return def?.labelFr ?? GOAL_FILTER_LABELS[lockedGoal]
+  }, [lockedGoal, objectivePref?.preference.primarySlug])
 
   useEffect(() => {
     setHasSavedView(Boolean(readExplorerSavedFilters()))
@@ -164,13 +188,25 @@ function ExplorerPageInner() {
     const reg = searchParams.get('region')
     setRegion(reg?.trim() ? parseExplorerRegionFilter(reg.trim()) : 'all')
 
-    const goalParam = searchParams.get('goal')
-    if (goalParam != null && String(goalParam).trim() !== '') {
-      setGoal(filterGoalFromSelect(String(goalParam).trim().toLowerCase()))
-    } else if (objectivePref?.ready) {
-      setGoal(explorerFilterGoalFromObjectiveSlug(objectivePref.preference.primarySlug))
+    if (lockedGoal) {
+      setGoal(lockedGoal)
+      const urlGoal = searchParams.get('goal')?.trim().toLowerCase()
+      if (urlGoal && urlGoal !== lockedGoal) {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set('goal', lockedGoal)
+        const basePath = pathname ?? '/explorer'
+        const qs = params.toString()
+        router.replace(qs ? `${basePath}?${qs}` : basePath, { scroll: false })
+      }
     } else {
-      setGoal('all')
+      const goalParam = searchParams.get('goal')
+      if (goalParam != null && String(goalParam).trim() !== '') {
+        setGoal(filterGoalFromSelect(String(goalParam).trim().toLowerCase()))
+      } else if (objectivePref?.ready) {
+        setGoal(explorerFilterGoalFromObjectiveSlug(objectivePref.preference.primarySlug) as Goal)
+      } else {
+        setGoal('all')
+      }
     }
 
     const bud = searchParams.get('budget')
@@ -184,7 +220,7 @@ function ExplorerPageInner() {
 
     const modeParam = searchParams.get('mode')
     setMode(modeParam === 'recommendation' ? 'recommendation' : 'explorer')
-  }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug])
+  }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug, lockedGoal, pathname, router])
 
   /** Liens partagés avec filtres / recherche = parcours explorateur utile sans clic supplémentaire. */
   useEffect(() => {
@@ -337,7 +373,10 @@ function ExplorerPageInner() {
               className="mb-0 min-w-0 flex-1 border-0 bg-transparent p-0 shadow-none"
               goalValue={explorerGoalToFilterValue(goal)}
               regionValue={explorerRegionToFilterBarValue(region)}
+              goalLocked={Boolean(lockedGoal)}
+              goalLockedLabel={goalLockedLabel}
               onGoalChange={(v) => {
+                if (lockedGoal) return
                 const g = filterGoalFromSelect(v)
                 setGoal(g)
                 commitExplorerUrl({ goal: g })
@@ -402,13 +441,17 @@ function ExplorerPageInner() {
             </div>
 
             <Link
-              href={compareHrefForExplorerPageState({
-                goal,
-                budget,
-                region,
-                difficulty,
-                schengenOnly,
-              })}
+              href={
+                lockedGoal && objectivePref?.preference.primarySlug
+                  ? ctaCompareHref(objectivePref.preference.primarySlug)
+                  : compareHrefForExplorerPageState({
+                      goal,
+                      budget,
+                      region,
+                      difficulty,
+                      schengenOnly,
+                    })
+              }
               onClick={() => markExplorerOnboardingEngaged()}
               className={cn(
                 'inline-flex items-center gap-2 rounded-xl border border-[#0D1B3E]/20 bg-white px-3 py-2 text-xs font-black uppercase tracking-wider text-[#0D1B3E] hover:border-[#0D1B3E]/35 hover:bg-[#FDFBF4]',

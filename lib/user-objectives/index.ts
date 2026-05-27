@@ -20,9 +20,19 @@ export {
 } from '@/lib/user-objectives/home-orchestration';
 
 export {
+  hubGateForPath,
   isExplorerNavHrefInPerspective,
+  isNavHrefActionable,
+  isNavHrefVisible,
   isPhdPerspectiveRelevant,
-} from '@/lib/user-objectives/perspective-nav';
+  perspectiveContractFromDefinition,
+  perspectiveContractFromSlug,
+  orientationStraplineForPerspective,
+  countryScoreVisible,
+  type PerspectiveContract,
+  type PerspectiveHubGateInfo,
+  type CountryScoreFocus,
+} from '@/lib/user-objectives/perspective-contract';
 
 export {
   USER_OBJECTIVE_TO_COMPARE_OBJECTIVE_ID,
