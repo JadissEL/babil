@@ -12,5 +12,7 @@ tsconfig.tsbuildinfo
 
 .vercel
 
+.tmp-user-audit/
+
 # Optional URL map for agent manifest fetches (may contain internal endpoints)
 data/agent-manifest-url-map.json

@@ -52,3 +52,13 @@ For **signed-in** perspective checks in CI you need:
 2. Repository secrets `SMOKE_CLERK_EMAIL` and `SMOKE_CLERK_PASSWORD` for a dedicated test user.
 
 Until then, CI intentionally runs the public perspective subset only.
+
+## User-journey audit (optional, manual)
+
+Captures screenshots + `report.json` under `.tmp-user-audit/` (gitignored) for product review:
+
+```bash
+npm run test:audit:journey -- https://babil-amber.vercel.app
+```
+
+Related one-offs: `scripts/user-journey-country.mjs`, `scripts/user-journey-cta.mjs`.

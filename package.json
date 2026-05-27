@@ -86,6 +86,7 @@
     "test:smoke:objectives": "node scripts/smoke-objective-change.mjs",
     "test:smoke:perspective": "node scripts/smoke-perspective-scope.mjs",
     "test:smoke:stitch": "node scripts/smoke-stitch-routes.mjs",
+    "test:audit:journey": "node scripts/user-journey-audit.mjs",
     "vercel:set-cron-secret": "node scripts/vercel-set-cron-secret.mjs",
     "audit:ci": "npm audit --omit=dev --audit-level=critical"
   },
