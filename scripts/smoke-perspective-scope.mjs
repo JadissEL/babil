@@ -85,8 +85,16 @@ async function assertGuestExplorerReadable(page) {
       `Guest Explorer URL should include objective=tourism or goal=tourism, got: ${explorerUrl}`,
     );
   }
+  await page.waitForFunction(
+    () => {
+      const t = document.body.innerText;
+      const m = t.match(/(\d+)\s+destination[s]?\s+alignée/i);
+      return m && Number(m[1]) >= 40;
+    },
+    null,
+    { timeout: 60_000 },
+  );
   const countLine = page.getByText(/alignée.*Tourisme|correspondent à vos critères/i).first();
-  await countLine.waitFor({ state: 'visible', timeout: 15_000 });
   const countText = await countLine.innerText();
   const match = countText.match(/(\d+)\s/);
   if (match) {

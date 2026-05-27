@@ -53,6 +53,13 @@ describe('resolveExplorerFilterProfile', () => {
 });
 
 describe('countryMatchesExplorerFilters', () => {
+  it('tourism dbScalar treats missing scalar as neutral 50', () => {
+    const profile = getExplorerFilterProfileForSlug('tourism')!;
+    const missing = mockCountry({ tourist_visa_score: null });
+    const state = baseState({ objectiveSlug: 'tourism' });
+    expect(countryMatchesExplorerFilters(missing, state, profile, 50)).toBe(true);
+  });
+
   it('tourism dbScalar gate rejects low stored tourism score', () => {
     const profile = {
       ...getExplorerFilterProfileForSlug('tourism')!,

@@ -129,7 +129,9 @@ export function dbVisaScalar100(c: EnrichedCountryApi, focus: CountryScoreFocus)
           ? c.business_visa_score
           : c.study_visa_score;
   const n = Number(raw);
-  if (!Number.isFinite(n)) return 0;
+  if (!Number.isFinite(n) || n <= 0) {
+    return 50;
+  }
   return n > 10 ? Math.min(100, n) : Math.min(100, Math.max(0, n * 10));
 }
 
@@ -271,10 +273,12 @@ function capExplorerResultsByCatalogShare(
   if (share == null || share <= 0 || share >= 1 || list.length < 10) return filtered;
   const maxCount = Math.max(1, Math.floor(list.length * share));
   if (filtered.length <= maxCount) return filtered;
-  const ranked = [...filtered].sort(
-    (a, b) =>
-      dbVisaScalar100(b, profile.primaryScoreFocus) - dbVisaScalar100(a, profile.primaryScoreFocus),
-  );
+  const ranked = [...filtered].sort((a, b) => {
+    const dbDiff =
+      dbVisaScalar100(b, profile.primaryScoreFocus) - dbVisaScalar100(a, profile.primaryScoreFocus);
+    if (dbDiff !== 0) return dbDiff;
+    return primaryVisaScore(b, profile.primaryScoreFocus) - primaryVisaScore(a, profile.primaryScoreFocus);
+  });
   return ranked.slice(0, maxCount);
 }
 
