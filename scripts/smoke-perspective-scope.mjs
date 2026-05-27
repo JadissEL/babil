@@ -6,6 +6,7 @@
  *   SMOKE_CLERK_EMAIL, SMOKE_CLERK_PASSWORD
  */
 import { chromium } from 'playwright';
+import { tryClerkSignIn } from './smoke-clerk-sign-in.mjs';
 
 const base = (process.argv[2] ?? process.env.SMOKE_BASE_URL ?? 'http://localhost:3000').replace(
   /\/$/,
@@ -53,27 +54,6 @@ async function assertHomeTestimonialsScopedToTourism(page) {
   }
 }
 
-async function tryClerkSignIn(page) {
-  const email = process.env.SMOKE_CLERK_EMAIL?.trim();
-  const password = process.env.SMOKE_CLERK_PASSWORD?.trim();
-  if (!email || !password) return false;
-
-  await page.goto(`${base}/sign-in`, { waitUntil: 'networkidle', timeout: 60_000 });
-
-  const identifier = page.locator('input[name="identifier"], input[type="email"]').first();
-  await identifier.waitFor({ state: 'visible', timeout: 20_000 });
-  await identifier.fill(email);
-  await page.getByRole('button', { name: /continue|continuer/i }).first().click();
-
-  const pwd = page.locator('input[name="password"], input[type="password"]').first();
-  await pwd.waitFor({ state: 'visible', timeout: 20_000 });
-  await pwd.fill(password);
-  await page.getByRole('button', { name: /continue|continuer|sign in|se connecter/i }).first().click();
-
-  await page.waitForURL((url) => !url.pathname.startsWith('/sign-in'), { timeout: 45_000 });
-  return true;
-}
-
 async function assertProtectedPerspectiveRoutes(page) {
   await page.goto(`${base}/explorer`, { waitUntil: 'networkidle', timeout: 60_000 });
   if ((await page.title()).toLowerCase().includes('account')) {
@@ -115,7 +95,7 @@ async function main() {
   await pickTourismeObjective(page);
   await assertHomeTestimonialsScopedToTourism(page);
 
-  const signedIn = await tryClerkSignIn(page);
+  const signedIn = await tryClerkSignIn(page, base);
   if (signedIn) {
     await assertProtectedPerspectiveRoutes(page);
     console.log(`OK smoke-perspective-scope (public + signed-in) @ ${base}`);
