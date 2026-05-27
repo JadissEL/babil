@@ -116,4 +116,5 @@ jobs:
           done
           curl -sf http://127.0.0.1:3000/api/health
           npm run test:smoke:objectives -- http://127.0.0.1:3000
+          npm run test:smoke:perspective -- http://127.0.0.1:3000
           npm run test:smoke:stitch -- http://127.0.0.1:3000
