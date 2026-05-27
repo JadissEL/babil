@@ -28,6 +28,7 @@ import {
   getExplorerFilterProfileForSlug,
   type ExplorerFilterProfile,
 } from '@/lib/explorer-filter-profiles';
+import type { CountryScoreFocus } from '@/lib/user-objectives/perspective-contract';
 import { isUserObjectiveSlug, type UserObjectiveSlug } from '@/lib/user-objectives/registry';
 
 export type ExplorerExplorerGoal =
@@ -117,6 +118,62 @@ function primaryVisaScore(c: EnrichedCountryApi, focus: ExplorerFilterProfile['p
   }
 }
 
+/** DB visa scalar on 0–100 (Prisma stores 1–10; some API rows already use 0–100). */
+export function dbVisaScalar100(c: EnrichedCountryApi, focus: CountryScoreFocus): number {
+  const raw =
+    focus === 'tourism'
+      ? c.tourist_visa_score
+      : focus === 'work'
+        ? c.work_visa_score
+        : focus === 'business'
+          ? c.business_visa_score
+          : c.study_visa_score;
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return 0;
+  return n > 10 ? Math.min(100, n) : Math.min(100, Math.max(0, n * 10));
+}
+
+export function resolveEffectivePrimaryScoreMin(
+  list: EnrichedCountryApi[],
+  profile: ExplorerFilterProfile,
+): number {
+  const floor = profile.primaryScoreMin;
+  const pct = profile.primaryGatePercentile;
+  if (pct == null || pct <= 0 || list.length === 0) return floor;
+
+  const scores = list
+    .map((c) => dbVisaScalar100(c, profile.primaryScoreFocus))
+    .sort((a, b) => a - b);
+  const idx = Math.min(
+    scores.length - 1,
+    Math.max(0, Math.floor((scores.length * pct) / 100)),
+  );
+  const atPercentile = scores[idx] ?? floor;
+  return Math.max(floor, atPercentile);
+}
+
+function primaryGateSource(profile: ExplorerFilterProfile): ExplorerFilterProfile['primaryGateSource'] {
+  if (profile.primaryGateSource) return profile.primaryGateSource;
+  return profile.slug ? 'weighted' : 'enrichedVisa';
+}
+
+function meetsPrimaryScoreGate(
+  c: EnrichedCountryApi,
+  profile: ExplorerFilterProfile,
+  effectiveMin: number,
+): boolean {
+  if (effectiveMin <= 0) return true;
+  const source = primaryGateSource(profile);
+  if (source === 'dbScalar') {
+    return dbVisaScalar100(c, profile.primaryScoreFocus) >= effectiveMin;
+  }
+  if (source === 'weighted' && profile.slug) {
+    const def = getObjectiveDefinition(profile.compareObjectiveId);
+    return objectiveWeightedScore(c, def) >= effectiveMin;
+  }
+  return primaryVisaScore(c, profile.primaryScoreFocus) >= effectiveMin;
+}
+
 function matchesFrictionBand(frictionSignal: number, band: ExplorerFrictionBand): boolean {
   if (band === 'all') return true;
   // Higher _friction = easier admin (100 - friction_score)
@@ -134,6 +191,7 @@ export function countryMatchesExplorerFilters(
   c: EnrichedCountryApi,
   state: ExplorerFilterState,
   profile: ExplorerFilterProfile,
+  effectivePrimaryMin?: number,
 ): boolean {
   const nameStr = String(c.name ?? '');
 
@@ -156,9 +214,8 @@ export function countryMatchesExplorerFilters(
     if (!matchesExplorerSchengenOnlyToggle(true, { name: nameStr })) return false;
   }
 
-  if (profile.primaryScoreMin > 0) {
-    if (primaryVisaScore(c, profile.primaryScoreFocus) < profile.primaryScoreMin) return false;
-  }
+  const primaryMin = effectivePrimaryMin ?? profile.primaryScoreMin;
+  if (!meetsPrimaryScoreGate(c, profile, primaryMin)) return false;
 
   if (profile.moduleAccessSignal && profile.moduleAccessMin > 0) {
     const signals = extractCompareSignals(c);
@@ -184,8 +241,10 @@ export function filterExplorerCountries(
   list: EnrichedCountryApi[],
   state: ExplorerFilterState,
   profile: ExplorerFilterProfile,
+  effectivePrimaryMin?: number,
 ): EnrichedCountryApi[] {
-  return list.filter((c) => countryMatchesExplorerFilters(c, state, profile));
+  const primaryMin = effectivePrimaryMin ?? resolveEffectivePrimaryScoreMin(list, profile);
+  return list.filter((c) => countryMatchesExplorerFilters(c, state, profile, primaryMin));
 }
 
 export function sortExplorerCountries(
@@ -209,7 +268,12 @@ export function applyExplorerFiltersAndSort(
   preferenceSlug: string | null | undefined,
 ): { filtered: EnrichedCountryApi[]; profile: ExplorerFilterProfile } {
   const profile = resolveExplorerFilterProfile(state, preferenceSlug);
-  const filtered = sortExplorerCountries(filterExplorerCountries(list, state, profile), state, profile);
+  const effectivePrimaryMin = resolveEffectivePrimaryScoreMin(list, profile);
+  const filtered = sortExplorerCountries(
+    filterExplorerCountries(list, state, profile, effectivePrimaryMin),
+    state,
+    profile,
+  );
   return { filtered, profile };
 }
 

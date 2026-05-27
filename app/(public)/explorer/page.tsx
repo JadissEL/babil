@@ -284,6 +284,7 @@ function ExplorerPageInner() {
         const params = new URLSearchParams(searchParams.toString())
         params.set('objective', lockedObjectiveSlug)
         if (lockedGoal) params.set('goal', lockedGoal)
+        if (!params.get('mode')) params.set('mode', 'recommendation')
         const basePath = pathname ?? '/explorer'
         const qs = params.toString()
         router.replace(qs ? `${basePath}?${qs}` : basePath, { scroll: false })
@@ -314,7 +315,13 @@ function ExplorerPageInner() {
     setSchengenOnly(sch === '1' || sch === 'true' || sch === 'yes')
 
     const modeParam = searchParams.get('mode')
-    setMode(modeParam === 'recommendation' ? 'recommendation' : 'explorer')
+    if (modeParam === 'recommendation') {
+      setMode('recommendation')
+    } else if (lockedObjectiveSlug && !modeParam) {
+      setMode('recommendation')
+    } else {
+      setMode('explorer')
+    }
   }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug, lockedGoal, lockedObjectiveSlug, pathname, router])
 
   /** Liens partagés avec filtres / recherche = parcours explorateur utile sans clic supplémentaire. */
@@ -657,7 +664,13 @@ function ExplorerPageInner() {
 
         {!loading ? (
           <p className="text-sm font-semibold text-[#0D1B3E]" aria-live="polite">
-            {filtered.length} pays correspondent à vos critères
+            {filtered.length}
+            {activeFilterProfile.slug
+              ? ` destination${filtered.length > 1 ? 's' : ''} alignée${filtered.length > 1 ? 's' : ''} sur ${activeFilterProfile.parcoursLabelFr}`
+              : ' pays correspondent à vos critères'}
+            {activeFilterProfile.slug && filtered.length < normalized.length
+              ? ` (sur ${normalized.length} au catalogue)`
+              : null}
           </p>
         ) : null}
 

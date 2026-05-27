@@ -29,12 +29,18 @@ export type ExplorerFilterProfileLabels = {
   moduleAccess?: string;
 };
 
+export type ExplorerPrimaryGateSource = 'enrichedVisa' | 'dbScalar' | 'weighted';
+
 export type ExplorerFilterProfile = {
   slug: UserObjectiveSlug | null;
   compareObjectiveId: CompareObjectiveId;
   primaryScoreFocus: CountryScoreFocus;
+  /** How the primary gate score is read (tourism uses DB scalar — model merge is too flat). */
+  primaryGateSource?: ExplorerPrimaryGateSource;
   /** Minimum primary visa/signal score (0 = no gate). */
   primaryScoreMin: number;
+  /** When set, raise `primaryScoreMin` to at least this percentile of DB scalars in the current list. */
+  primaryGatePercentile?: number;
   /** Optional extra gate on a compare signal (e.g. phdPresence). */
   moduleAccessSignal?: CompareSignalId;
   moduleAccessMin: number;
@@ -70,6 +76,9 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
     case 'tourism':
       return {
         ...base,
+        primaryGateSource: 'dbScalar',
+        primaryScoreMin: 50,
+        primaryGatePercentile: 38,
         dimensions: ['region', 'schengen', 'difficulty', 'budgetBand'],
         labels: {
           primaryScore: 'Score visa tourisme',

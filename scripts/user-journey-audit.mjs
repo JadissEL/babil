@@ -20,10 +20,29 @@ async function snapshot(page, label) {
     .locator('#site-primary-nav a, #dashboard-workspace-nav a')
     .allTextContents()
     .catch(() => []);
+  const navSections = await page
+    .locator('#site-primary-nav p')
+    .allTextContents()
+    .catch(() => []);
+  const explorerCount = await page
+    .getByText(/alignée.*Tourisme|correspondent à vos critères/i)
+    .first()
+    .innerText()
+    .catch(() => '');
   const body = await page.locator('body').innerText();
   const snippet = body.replace(/\s+/g, ' ').slice(0, 2500);
 
-  report.push({ label, url, title, h1, headings: headings.slice(0, 12), navLabels: navLabels.slice(0, 20), snippet });
+  report.push({
+    label,
+    url,
+    title,
+    h1,
+    headings: headings.slice(0, 12),
+    navLabels: navLabels.slice(0, 20),
+    navSections: navSections.filter((s) => /décider|outils|services|communauté/i.test(s)).slice(0, 8),
+    explorerCount,
+    snippet,
+  });
 
   await page.screenshot({ path: resolve(outDir, `${label.replace(/\W+/g, '-')}.png`), fullPage: false });
 }

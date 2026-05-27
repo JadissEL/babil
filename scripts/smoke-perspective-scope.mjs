@@ -78,6 +78,24 @@ async function assertGuestExplorerReadable(page) {
   if (!/tourisme/i.test(lockedText)) {
     throw new Error(`Explorer locked goal should mention Tourisme, got: ${lockedText}`);
   }
+  const explorerUrl = page.url();
+  if (!/[?&]objective=tourism/i.test(explorerUrl) && !/[?&]goal=tourism/i.test(explorerUrl)) {
+    throw new Error(
+      `Guest Explorer URL should include objective=tourism or goal=tourism, got: ${explorerUrl}`,
+    );
+  }
+  const countLine = page.getByText(/alignée.*Tourisme|correspondent à vos critères/i).first();
+  await countLine.waitFor({ state: 'visible', timeout: 15_000 });
+  const countText = await countLine.innerText();
+  const match = countText.match(/(\d+)\s/);
+  if (match) {
+    const n = Number(match[1]);
+    if (n >= 240) {
+      throw new Error(
+        `Tourism parcours filter should narrow results (got ${n} in: ${countText})`,
+      );
+    }
+  }
 }
 
 async function assertProtectedPerspectiveRoutes(page) {

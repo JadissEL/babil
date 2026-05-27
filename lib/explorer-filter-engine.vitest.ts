@@ -53,16 +53,30 @@ describe('resolveExplorerFilterProfile', () => {
 });
 
 describe('countryMatchesExplorerFilters', () => {
-  it('tourism profile rejects when primary visa below threshold', () => {
-    const base = getExplorerFilterProfileForSlug('tourism')!;
-    const profile = { ...base, primaryScoreMin: 55 };
-    const weak = mockCountry({ tourist_visa_score: 5 });
-    const strong = mockCountry({ tourist_visa_score: 85 });
+  it('tourism dbScalar gate rejects low stored tourism score', () => {
+    const profile = {
+      ...getExplorerFilterProfileForSlug('tourism')!,
+      primaryGatePercentile: undefined,
+      primaryScoreMin: 55,
+    };
+    const weak = mockCountry({ tourist_visa_score: 4 });
+    const strong = mockCountry({ tourist_visa_score: 7 });
     const state = baseState({ objectiveSlug: 'tourism' });
-    expect(weak._visa.tourism).toBeLessThan(55);
-    expect(strong._visa.tourism).toBeGreaterThanOrEqual(55);
-    expect(countryMatchesExplorerFilters(weak, state, profile)).toBe(false);
-    expect(countryMatchesExplorerFilters(strong, state, profile)).toBe(true);
+    expect(countryMatchesExplorerFilters(weak, state, profile, 55)).toBe(false);
+    expect(countryMatchesExplorerFilters(strong, state, profile, 55)).toBe(true);
+  });
+
+  it('tourism profile filters a strict subset of a mixed list', () => {
+    const list = [
+      mockCountry({ id: 1, name: 'Strong', tourist_visa_score: 8 }),
+      mockCountry({ id: 2, name: 'Weak', tourist_visa_score: 4 }),
+      mockCountry({ id: 3, name: 'Mid', tourist_visa_score: 5 }),
+    ];
+    const state = baseState({ objectiveSlug: 'tourism' });
+    const { filtered } = applyExplorerFiltersAndSort(list, state, 'tourism');
+    expect(filtered.length).toBeLessThan(list.length);
+    expect(filtered.some((c) => c.name === 'Strong')).toBe(true);
+    expect(filtered.some((c) => c.name === 'Weak')).toBe(false);
   });
 
   it('studies_phd requires phd signal', () => {
@@ -94,8 +108,8 @@ describe('countryMatchesExplorerFilters', () => {
 
 describe('sortExplorerCountries via applyExplorerFiltersAndSort', () => {
   it('recommendation mode sorts by objective-weighted score for tourism', () => {
-    const a = mockCountry({ id: 1, name: 'Alpha', tourist_visa_score: 92, work_visa_score: 15 });
-    const b = mockCountry({ id: 2, name: 'Beta', tourist_visa_score: 48, work_visa_score: 92 });
+    const a = mockCountry({ id: 1, name: 'Alpha', tourist_visa_score: 9, work_visa_score: 15 });
+    const b = mockCountry({ id: 2, name: 'Beta', tourist_visa_score: 7, work_visa_score: 92 });
     const state = baseState({ objectiveSlug: 'tourism', mode: 'recommendation' });
     const { filtered } = applyExplorerFiltersAndSort([a, b], state, 'tourism');
     expect(filtered.map((c) => c.name)).toEqual(['Alpha', 'Beta']);
