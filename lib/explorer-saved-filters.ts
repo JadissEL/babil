@@ -8,8 +8,11 @@ export type ExplorerSavedFiltersV1 = {
   /** Param URL région (ex. schengen, europe) ou vide */
   region: string
   goal: string
+  /** Primary objective slug when parcours locked */
+  objective?: string
   budget: string
   difficulty: string
+  friction?: string
   schengenOnly: boolean
   mode: 'explorer' | 'recommendation'
   savedAt: string
@@ -29,6 +32,8 @@ export function readExplorerSavedFilters(): ExplorerSavedFiltersV1 | null {
     if (typeof o.difficulty !== 'string') return null
     if (typeof o.schengenOnly !== 'boolean') return null
     if (o.mode !== 'explorer' && o.mode !== 'recommendation') return null
+    if (o.objective !== undefined && typeof o.objective !== 'string') return null
+    if (o.friction !== undefined && typeof o.friction !== 'string') return null
     return o
   } catch {
     return null
@@ -64,11 +69,15 @@ export function buildExplorerQueryStringFromSaved(s: ExplorerSavedFiltersV1): st
   const q = s.q.trim()
   if (q) params.set('q', q)
   if (s.region.trim()) params.set('region', s.region.trim())
+  if (s.objective?.trim()) params.set('objective', s.objective.trim())
   const goalNorm = s.goal?.trim() ? s.goal.trim() : 'all'
-  params.set('goal', goalNorm)
+  if (goalNorm !== 'all') params.set('goal', goalNorm)
   if (s.budget && s.budget !== 'all') params.set('budget', s.budget)
   if (s.difficulty && s.difficulty !== 'all' && ['Low', 'Medium', 'High', 'Extreme'].includes(s.difficulty)) {
     params.set('difficulty', s.difficulty)
+  }
+  if (s.friction && s.friction !== 'all' && ['low', 'medium', 'high'].includes(s.friction)) {
+    params.set('friction', s.friction)
   }
   if (s.schengenOnly) params.set('schengen', '1')
   if (s.mode === 'recommendation') params.set('mode', 'recommendation')

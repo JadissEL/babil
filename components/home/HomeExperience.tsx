@@ -344,6 +344,7 @@ export function HomeExperience({
           {/* QUICK FILTER ENGINE */}
           <HomeQuickFilterEngine
             initialExplorerGoal={quickGoal}
+            initialObjectiveSlug={goalLocked ? preference.primarySlug : null}
             goalLocked={goalLocked}
             goalLockedLabel={goalLockedLabel}
           />

@@ -1,5 +1,7 @@
 import type { CompareObjectiveId } from '@/lib/compare-objectives'
 import { explorerRegionToUrlParam, parseExplorerRegionFilter, type ExplorerRegionFilter } from '@/lib/explorer-filters'
+import { compareObjectiveIdForExplorerState, type ExplorerFilterState } from '@/lib/explorer-filter-engine'
+import { isUserObjectiveSlug } from '@/lib/user-objectives/registry'
 
 /**
  * Maps Explorer “goal” filter to a sensible default compare objective for deep links.
@@ -35,10 +37,24 @@ export function compareHrefForExplorerPageState(args: {
   /** Explorer difficulty: `all` or `Low` | `Medium` | `High` | `Extreme` */
   difficulty: string
   schengenOnly: boolean
+  /** Registry slug — preferred over coarse goal mapping */
+  objectiveSlug?: string | null
+  friction?: string
 }): string {
-  const { goal, budget, region, difficulty, schengenOnly } = args
+  const { goal, budget, region, difficulty, schengenOnly, objectiveSlug, friction } = args
   const params = new URLSearchParams()
-  const obj = explorerGoalToCompareObjectiveId(goal)
+  const state: ExplorerFilterState = {
+    objectiveSlug: objectiveSlug && isUserObjectiveSlug(objectiveSlug) ? objectiveSlug : null,
+    goal: goal === 'all' ? 'all' : (goal as ExplorerFilterState['goal']),
+    region,
+    budget: budget === 'all' ? 'all' : budget,
+    difficulty,
+    friction: friction === 'low' || friction === 'medium' || friction === 'high' ? friction : 'all',
+    schengenOnly,
+    q: '',
+    mode: 'explorer',
+  }
+  const obj = compareObjectiveIdForExplorerState(state, objectiveSlug) as CompareObjectiveId
   if (obj) params.set('objective', obj)
   if (budget !== 'all') params.set('budget', budget)
   if (region !== 'all') params.set('region', explorerRegionToUrlParam(region))

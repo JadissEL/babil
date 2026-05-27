@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import CountryGrid from '@/components/country/CountryGrid'
 import { ExplorerRegionScoreStrip } from '@/components/explorer/ExplorerRegionScoreStrip'
+import { ExplorerFilterPanel } from '@/components/filters/ExplorerFilterPanel'
 import { FilterBar } from '@/components/filters/FilterBar'
 import GoogleAd from '@/components/GoogleAd'
 import { useObjectivePreferenceOptional } from '@/components/objectives/ObjectivePreferenceProvider'
@@ -24,11 +25,19 @@ import { atlasCategoryLabel, atlasVisaDelayDays, explorerRegionToAtlasScoreBucke
 import {
   explorerRegionToFilterBarValue,
   explorerRegionToUrlParam,
-  matchesExplorerRegionFilter,
-  matchesExplorerSchengenOnlyToggle,
   parseExplorerRegionFilter,
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
+import {
+  applyExplorerFiltersAndSort,
+  buildExplorerQueryString,
+  isExplorerBudget,
+  parseObjectiveSlugParam,
+  type ExplorerBudget,
+  type ExplorerExplorerGoal,
+  type ExplorerFilterState,
+  type ExplorerFrictionBand,
+} from '@/lib/explorer-filter-engine'
 import { compareHrefForExplorerPageState } from '@/lib/explorer-goal-to-compare-objective'
 import { ctaCompareHref, signInRedirectHref } from '@/lib/cta-hrefs'
 import { buildExplorerRegionScoreBuckets } from '@/lib/explorer-region-score-buckets'
@@ -47,7 +56,7 @@ import {
 import { markExplorerOnboardingEngaged } from '@/lib/onboarding-storage'
 import { appToast } from '@/lib/toast-store'
 import { explorerFilterGoalFromObjectiveSlug } from '@/lib/user-objectives/explorer-filter-goal'
-import { getObjectiveBySlug } from '@/lib/user-objectives/registry'
+import { getObjectiveBySlug, isUserObjectiveSlug } from '@/lib/user-objectives/registry'
 import { cn } from '@/lib/utils'
 
 const GOAL_FILTER_LABELS: Record<Exclude<Goal, 'all'>, string> = {
@@ -60,8 +69,8 @@ const GOAL_FILTER_LABELS: Record<Exclude<Goal, 'all'>, string> = {
 }
 
 type Mode = 'explorer' | 'recommendation'
-type Goal = 'all' | 'tourism' | 'study' | 'work' | 'business' | 'education' | 'short_course'
-type Budget = 'all' | 'low' | 'medium' | 'high'
+type Goal = ExplorerExplorerGoal
+type Budget = ExplorerBudget
 
 function filterGoalFromSelect(v: string): Goal {
   if (!v || v === 'all') return 'all'
@@ -81,18 +90,16 @@ function explorerGoalToFilterValue(goal: Goal): string {
   return goal === 'all' ? 'all' : goal
 }
 
-function isBudgetParam(v: string | null): v is Exclude<Budget, 'all'> {
-  return v === 'low' || v === 'medium' || v === 'high'
-}
-
 type UrlCommitSlice = Partial<{
   search: string
   region: ExplorerRegionFilter
   difficulty: string
+  friction: ExplorerFrictionBand
   goal: Goal
   budget: Budget
   schengenOnly: boolean
   mode: Mode
+  objectiveSlug: string | null
 }>
 
 function ExplorerPageInner() {
@@ -109,16 +116,24 @@ function ExplorerPageInner() {
   const [difficulty, setDifficulty] = useState('all')
   const [goal, setGoal] = useState<Goal>('all')
   const [budget, setBudget] = useState<Budget>('all')
+  const [friction, setFriction] = useState<ExplorerFrictionBand>('all')
+  const [objectiveSlug, setObjectiveSlug] = useState<string | null>(null)
   const [schengenOnly, setSchengenOnly] = useState(false)
   const [loading, setLoading] = useState(true)
   const [hasSavedView, setHasSavedView] = useState(false)
 
-  const lockedGoal = useMemo((): Exclude<Goal, 'all'> | null => {
+  const lockedObjectiveSlug = useMemo(() => {
     if (!objectivePref?.ready || !objectivePref.preference.primarySlug) return null
-    const g = explorerFilterGoalFromObjectiveSlug(objectivePref.preference.primarySlug)
+    const s = objectivePref.preference.primarySlug
+    return isUserObjectiveSlug(s) ? s : null
+  }, [objectivePref?.ready, objectivePref?.preference.primarySlug])
+
+  const lockedGoal = useMemo((): Exclude<Goal, 'all'> | null => {
+    if (!lockedObjectiveSlug) return null
+    const g = explorerFilterGoalFromObjectiveSlug(lockedObjectiveSlug)
     if (g === 'all') return null
     return g as Exclude<Goal, 'all'>
-  }, [objectivePref?.ready, objectivePref?.preference.primarySlug])
+  }, [lockedObjectiveSlug])
 
   const goalLockedLabel = useMemo(() => {
     if (!lockedGoal) return undefined
@@ -126,9 +141,35 @@ function ExplorerPageInner() {
     return def?.labelFr ?? GOAL_FILTER_LABELS[lockedGoal]
   }, [lockedGoal, objectivePref?.preference.primarySlug])
 
+  const filterState = useMemo(
+    (): ExplorerFilterState => ({
+      objectiveSlug: lockedObjectiveSlug ?? parseObjectiveSlugParam(objectiveSlug ?? null),
+      goal,
+      region,
+      budget,
+      difficulty,
+      friction,
+      schengenOnly,
+      q: search,
+      mode,
+    }),
+    [
+      lockedObjectiveSlug,
+      objectiveSlug,
+      goal,
+      region,
+      budget,
+      difficulty,
+      friction,
+      schengenOnly,
+      search,
+      mode,
+    ],
+  )
+
   const compareProductHref = useMemo(() => {
-    if (lockedGoal && objectivePref?.preference.primarySlug) {
-      return ctaCompareHref(objectivePref.preference.primarySlug)
+    if (lockedObjectiveSlug) {
+      return ctaCompareHref(lockedObjectiveSlug)
     }
     return compareHrefForExplorerPageState({
       goal,
@@ -136,15 +177,18 @@ function ExplorerPageInner() {
       region,
       difficulty,
       schengenOnly,
+      objectiveSlug: parseObjectiveSlugParam(objectiveSlug),
+      friction,
     })
   }, [
-    lockedGoal,
-    objectivePref?.preference.primarySlug,
+    lockedObjectiveSlug,
     goal,
     budget,
     region,
     difficulty,
     schengenOnly,
+    objectiveSlug,
+    friction,
   ])
 
   const compareLinkHref = useMemo(
@@ -168,28 +212,39 @@ function ExplorerPageInner() {
 
   const commitExplorerUrl = useCallback(
     (patch: UrlCommitSlice = {}) => {
-      const s = patch.search ?? search
-      const r = patch.region ?? region
-      const d = patch.difficulty ?? difficulty
-      const g = patch.goal ?? goal
-      const b = patch.budget ?? budget
-      const sch = patch.schengenOnly ?? schengenOnly
-      const m = patch.mode ?? mode
-
-      const params = new URLSearchParams()
-      if (s.trim()) params.set('q', s.trim())
-      if (r !== 'all') params.set('region', explorerRegionToUrlParam(r))
-      params.set('goal', g)
-      if (b !== 'all') params.set('budget', b)
-      if (d !== 'all' && ['Low', 'Medium', 'High', 'Extreme'].includes(d)) params.set('difficulty', d)
-      if (sch) params.set('schengen', '1')
-      if (m === 'recommendation') params.set('mode', 'recommendation')
-      const qs = params.toString()
+      const next: ExplorerFilterState = {
+        objectiveSlug:
+          patch.objectiveSlug !== undefined
+            ? parseObjectiveSlugParam(patch.objectiveSlug)
+            : lockedObjectiveSlug ?? parseObjectiveSlugParam(objectiveSlug),
+        goal: patch.goal ?? goal,
+        region: patch.region ?? region,
+        budget: patch.budget ?? budget,
+        difficulty: patch.difficulty ?? difficulty,
+        friction: patch.friction ?? friction,
+        schengenOnly: patch.schengenOnly ?? schengenOnly,
+        q: patch.search ?? search,
+        mode: patch.mode ?? mode,
+      }
+      const qs = buildExplorerQueryString(next)
       const basePath = pathname ?? '/explorer'
       router.replace(qs ? `${basePath}?${qs}` : basePath, { scroll: false })
       markExplorerOnboardingEngaged()
     },
-    [search, region, difficulty, goal, budget, schengenOnly, mode, pathname, router],
+    [
+      search,
+      region,
+      difficulty,
+      friction,
+      goal,
+      budget,
+      schengenOnly,
+      mode,
+      pathname,
+      router,
+      lockedObjectiveSlug,
+      objectiveSlug,
+    ],
   )
 
   const copyExplorerShareLink = useCallback(async () => {
@@ -217,17 +272,25 @@ function ExplorerPageInner() {
     const reg = searchParams.get('region')
     setRegion(reg?.trim() ? parseExplorerRegionFilter(reg.trim()) : 'all')
 
-    if (lockedGoal) {
-      setGoal(lockedGoal)
+    if (lockedObjectiveSlug) {
+      setObjectiveSlug(lockedObjectiveSlug)
+      setGoal(lockedGoal ?? 'all')
+      const urlObjective = searchParams.get('objective')?.trim()
       const urlGoal = searchParams.get('goal')?.trim().toLowerCase()
-      if (urlGoal && urlGoal !== lockedGoal) {
+      if (
+        (urlObjective && urlObjective !== lockedObjectiveSlug) ||
+        (urlGoal && lockedGoal && urlGoal !== lockedGoal)
+      ) {
         const params = new URLSearchParams(searchParams.toString())
-        params.set('goal', lockedGoal)
+        params.set('objective', lockedObjectiveSlug)
+        if (lockedGoal) params.set('goal', lockedGoal)
         const basePath = pathname ?? '/explorer'
         const qs = params.toString()
         router.replace(qs ? `${basePath}?${qs}` : basePath, { scroll: false })
       }
     } else {
+      const objParam = searchParams.get('objective')
+      setObjectiveSlug(parseObjectiveSlugParam(objParam))
       const goalParam = searchParams.get('goal')
       if (goalParam != null && String(goalParam).trim() !== '') {
         setGoal(filterGoalFromSelect(String(goalParam).trim().toLowerCase()))
@@ -239,17 +302,20 @@ function ExplorerPageInner() {
     }
 
     const bud = searchParams.get('budget')
-    setBudget(isBudgetParam(bud) ? bud : 'all')
+    setBudget(isExplorerBudget(bud) ? bud : 'all')
 
     const diff = searchParams.get('difficulty')
     setDifficulty(diff && ['Low', 'Medium', 'High', 'Extreme'].includes(diff) ? diff : 'all')
+
+    const fr = searchParams.get('friction')
+    setFriction(fr === 'low' || fr === 'medium' || fr === 'high' ? fr : 'all')
 
     const sch = searchParams.get('schengen')
     setSchengenOnly(sch === '1' || sch === 'true' || sch === 'yes')
 
     const modeParam = searchParams.get('mode')
     setMode(modeParam === 'recommendation' ? 'recommendation' : 'explorer')
-  }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug, lockedGoal, pathname, router])
+  }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug, lockedGoal, lockedObjectiveSlug, pathname, router])
 
   /** Liens partagés avec filtres / recherche = parcours explorateur utile sans clic supplémentaire. */
   useEffect(() => {
@@ -267,7 +333,7 @@ function ExplorerPageInner() {
       qDecoded.length > 0 ||
       Boolean(searchParams.get('region')?.trim()) ||
       Boolean(searchParams.get('goal')?.trim()) ||
-      isBudgetParam(bud) ||
+      isExplorerBudget(bud) ||
       Boolean(searchParams.get('difficulty')?.trim()) ||
       sch === '1' ||
       sch === 'true' ||
@@ -303,37 +369,15 @@ function ExplorerPageInner() {
 
   const atlasActiveBucketKey = useMemo(() => explorerRegionToAtlasScoreBucketKey(region), [region])
 
-  const filtered = normalized
-    .filter((c: EnrichedCountryApi) => {
-      const nameStr = String(c.name ?? '')
-      const matchesSearch = nameStr.toLowerCase().includes(search.toLowerCase())
-      const matchesRegion = matchesExplorerRegionFilter(region, {
-        name: nameStr,
-        region: String(c.region ?? ''),
-      })
-      const matchesDifficulty = difficulty === 'all' || String(c._difficultyLabel).toLowerCase() === difficulty.toLowerCase()
-      const eduMob = c._full?.education_mobility
-      const hasShortCourseModule =
-        eduMob &&
-        typeof eduMob === 'object' &&
-        eduMob !== null &&
-        Object.prototype.hasOwnProperty.call(eduMob, 'short_courses') &&
-        !!(eduMob as Record<string, unknown>).short_courses
-      const matchesGoal =
-        goal === 'all' ||
-        (goal === 'tourism' && c._visa.tourism >= 50) ||
-        (goal === 'study' && c._visa.study >= 50) ||
-        (goal === 'work' && c._visa.work >= 50) ||
-        (goal === 'business' && c._visa.business >= 50) ||
-        (goal === 'education' && c._education >= 50) ||
-        (goal === 'short_course' && (hasShortCourseModule || c._visa.study >= 50 || c._education >= 50))
-      const matchesBudget = budget === 'all' || c._budgetLevel === budget
-      const matchesSchengen = matchesExplorerSchengenOnlyToggle(schengenOnly, { name: nameStr })
-      return matchesSearch && matchesRegion && matchesDifficulty && matchesGoal && matchesBudget && matchesSchengen
-    })
-    .sort((a: EnrichedCountryApi, b: EnrichedCountryApi) =>
-      mode === 'recommendation' ? b._finalScore - a._finalScore : a.name.localeCompare(b.name)
-    )
+  const { filtered, profile: activeFilterProfile } = useMemo(
+    () =>
+      applyExplorerFiltersAndSort(
+        normalized,
+        filterState,
+        lockedObjectiveSlug ?? objectivePref?.preference.primarySlug,
+      ),
+    [normalized, filterState, lockedObjectiveSlug, objectivePref?.preference.primarySlug],
+  )
 
   const gridCountries = filtered.map((c: EnrichedCountryApi) => ({
     id: String(c.id),
@@ -426,16 +470,12 @@ function ExplorerPageInner() {
               regionValue={explorerRegionToFilterBarValue(region)}
               goalLocked={Boolean(lockedGoal)}
               goalLockedLabel={goalLockedLabel}
+              hideRegion
               onGoalChange={(v) => {
                 if (lockedGoal) return
                 const g = filterGoalFromSelect(v)
                 setGoal(g)
                 commitExplorerUrl({ goal: g })
-              }}
-              onRegionChange={(v) => {
-                const nextR = parseExplorerRegionFilter(v)
-                setRegion(nextR)
-                commitExplorerUrl({ region: nextR })
               }}
             />
             <label className="inline-flex cursor-pointer items-center gap-3 self-stretch rounded-2xl border border-[#0D1B3E]/12 bg-[#FDFBF4] px-4 py-3 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#0D1B3E]/25 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-white xl:self-center">
@@ -517,44 +557,30 @@ function ExplorerPageInner() {
               ) : null}
             </div>
 
-            <select
-              className={cn(
-                'rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2.5 text-sm font-bold text-[#0D1B3E] outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-                NEXUS_TRANSITION,
-              )}
-              value={difficulty}
-              onChange={(e) => {
-                const v = e.target.value
-                setDifficulty(v)
-                commitExplorerUrl({ difficulty: v })
-              }}
-              aria-label="Difficulté"
-            >
-              <option value="all">Difficulté : toutes</option>
-              <option value="Low">Facile</option>
-              <option value="Medium">Moyenne</option>
-              <option value="High">Difficile</option>
-              <option value="Extreme">Critique</option>
-            </select>
-
-            <select
-              className={cn(
-                'rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2.5 text-sm font-bold text-[#0D1B3E] outline-none focus-visible:ring-2 focus-visible:ring-[#0D1B3E]/25 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-                NEXUS_TRANSITION,
-              )}
-              value={budget}
-              onChange={(e) => {
-                const v = e.target.value as Budget
+            <ExplorerFilterPanel
+              profile={activeFilterProfile}
+              budget={budget}
+              difficulty={difficulty}
+              friction={friction}
+              region={explorerRegionToFilterBarValue(region)}
+              onBudgetChange={(v) => {
                 setBudget(v)
                 commitExplorerUrl({ budget: v })
               }}
-              aria-label="Budget"
-            >
-              <option value="all">Budget : tous</option>
-              <option value="low">Bas</option>
-              <option value="medium">Moyen</option>
-              <option value="high">Élevé</option>
-            </select>
+              onDifficultyChange={(v) => {
+                setDifficulty(v)
+                commitExplorerUrl({ difficulty: v })
+              }}
+              onFrictionChange={(v) => {
+                setFriction(v)
+                commitExplorerUrl({ friction: v })
+              }}
+              onRegionChange={(v) => {
+                const nextR = parseExplorerRegionFilter(v)
+                setRegion(nextR)
+                commitExplorerUrl({ region: nextR })
+              }}
+            />
 
             <div className="ml-auto flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
               {!isGuest ? (
@@ -566,8 +592,10 @@ function ExplorerPageInner() {
                         q: search,
                         region: region === 'all' ? '' : explorerRegionToUrlParam(region),
                         goal,
+                        objective: lockedObjectiveSlug ?? objectiveSlug ?? undefined,
                         budget,
                         difficulty,
+                        friction,
                         schengenOnly,
                         mode,
                       })

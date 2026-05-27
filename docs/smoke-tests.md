@@ -30,6 +30,7 @@ npm run test:smoke -- https://babil-amber.vercel.app
 - Dock shows Tourisme
 - Home testimonials hide off-interest cards (e.g. no “Salma M.” when primary is Tourisme)
 - Guest can open `/explorer` (banner « lecture seule », parcours Tourisme verrouillé) without redirect to Clerk
+- Explorer URL includes `objective=tourism` (or `goal=tourism`) when primary is Tourisme; filters use per-objective profiles (`lib/explorer-filter-engine.ts`)
 
 **Full coverage** — set in the shell or GitHub Actions secrets:
 

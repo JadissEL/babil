@@ -7,7 +7,8 @@ import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { showConsultantMarketplaceNav } from '@/lib/consultant-nav';
-import { compareHrefForGuest, ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
+import { compareHrefForGuest, ctaCompareHref, ctaExploreHref, signInRedirectHref } from '@/lib/cta-hrefs';
+import { navContextStraplineForSlug } from '@/lib/nav-context-copy';
 import {
   SITE_BACKDROP_TRANSITION,
   SITE_FOCUS_VISIBLE,
@@ -42,22 +43,18 @@ function isActivePath(pathname: string, href: string, explorerHref: string, comp
   return p === h || p.startsWith(`${h}/`);
 }
 
-const STATIC_LINKS: ({
+type NavLinkItem = {
   href: string;
   label: string;
-  consultantsOnly?: boolean;
-})[] = [
-  { href: '/schengen', label: 'Schengen' },
-  { href: '/recommendations', label: 'Moteur visa' },
-  { href: '/recommendation-engine', label: 'Labo reco' },
-  { href: '/services/delegated-applications', label: 'Assist' },
-  { href: '/services/consultants', label: 'Experts', consultantsOnly: true },
-  { href: '/education', label: 'Éducation' },
-  { href: '/community', label: 'Communauté' },
-  { href: '/business', label: 'Business' },
-  { href: '/permis', label: 'Permis' },
-  { href: '/investment', label: 'Investissement' },
-];
+  actionable: boolean;
+  title?: string;
+  guestAccountBadge?: boolean;
+};
+
+type NavSection = {
+  title: string;
+  items: NavLinkItem[];
+};
 
 export function SiteHeaderMenuButton({ onClick }: { onClick: () => void }) {
   return (
@@ -95,6 +92,10 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
     () => compareHrefForGuest(isGuest, preference.primarySlug),
     [isGuest, preference.primarySlug],
   );
+  const schengenNavHref = useMemo(
+    () => (isGuest ? signInRedirectHref('/schengen') : '/schengen'),
+    [isGuest],
+  );
   const primaryDef = useMemo(
     () => getObjectiveBySlug(preference.primarySlug),
     [preference.primarySlug],
@@ -103,28 +104,90 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
     () => perspectiveContractFromDefinition(primaryDef),
     [primaryDef],
   );
+  const contextStrapline = useMemo(
+    () => navContextStraplineForSlug(preference.primarySlug),
+    [preference.primarySlug],
+  );
 
-  const links = useMemo(() => {
-    const staticVisible = STATIC_LINKS.filter((link) => {
-      if (link.consultantsOnly && !showConsultantMarketplaceNav(primaryDef)) return false;
-      return true;
-    });
-    return [
+  const sections = useMemo((): NavSection[] => {
+    const showExperts = showConsultantMarketplaceNav(primaryDef);
+    const decider: NavLinkItem[] = [
       { href: explorerHref, label: 'Explorer', actionable: true },
-      { href: '/schengen', label: 'Schengen', actionable: isNavHrefActionable('/schengen', contract) },
       {
         href: compareNavHref,
         label: 'Comparer',
         actionable: true,
         title: isGuest ? 'Connexion requise pour comparer' : undefined,
+        guestAccountBadge: isGuest,
       },
-      ...staticVisible.slice(1).map((link) => ({
-        href: link.href,
-        label: link.label,
-        actionable: isNavHrefActionable(link.href, contract),
-      })),
+      {
+        href: schengenNavHref,
+        label: 'Schengen',
+        actionable: isNavHrefActionable('/schengen', contract),
+        title: isGuest ? 'Connexion requise pour le hub Schengen' : undefined,
+        guestAccountBadge: isGuest,
+      },
     ];
-  }, [compareNavHref, explorerHref, primaryDef, contract, isGuest]);
+    const tools: NavLinkItem[] = [
+      {
+        href: '/probability',
+        label: 'Probabilités',
+        actionable: isNavHrefActionable('/probability', contract),
+      },
+      {
+        href: '/recommendation-engine',
+        label: 'Labo reco',
+        actionable: isNavHrefActionable('/recommendation-engine', contract),
+      },
+    ];
+    const services: NavLinkItem[] = [
+      {
+        href: '/services/delegated-applications',
+        label: 'Assist',
+        actionable: isNavHrefActionable('/services/delegated-applications', contract),
+      },
+    ];
+    if (showExperts) {
+      services.push({
+        href: '/services/consultants',
+        label: 'Experts',
+        actionable: isNavHrefActionable('/services/consultants', contract),
+      });
+    }
+    const community: NavLinkItem[] = [
+      {
+        href: '/community',
+        label: 'Communauté',
+        actionable: isNavHrefActionable('/community', contract),
+      },
+      {
+        href: '/education',
+        label: 'Éducation',
+        actionable: isNavHrefActionable('/education', contract),
+      },
+      {
+        href: '/business',
+        label: 'Business',
+        actionable: isNavHrefActionable('/business', contract),
+      },
+      {
+        href: '/permis',
+        label: 'Permis',
+        actionable: isNavHrefActionable('/permis', contract),
+      },
+      {
+        href: '/investment',
+        label: 'Investissement',
+        actionable: isNavHrefActionable('/investment', contract),
+      },
+    ];
+    return [
+      { title: 'Décider', items: decider },
+      { title: 'Outils', items: tools },
+      { title: 'Services', items: services },
+      { title: 'Communauté & hubs', items: community },
+    ];
+  }, [compareNavHref, contract, explorerHref, isGuest, primaryDef, schengenNavHref]);
 
   const closeIfNavigated = useCallback(() => {
     onMobileClose();
@@ -140,36 +203,57 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
   }, [mobileOpen]);
 
   const navBody = (
-    <nav className="flex flex-col gap-0.5 px-2 py-3" aria-label="Navigation principale">
-      {links.map(({ href, label, actionable, title }) => {
-        const active = isActivePath(pathname, href, explorerHref, compareProductHref);
-        return (
-          <Link
-            key={`${label}-${href}`}
-            href={href}
-            title={title}
-            onClick={closeIfNavigated}
-            aria-current={active ? 'page' : undefined}
-            className={cn(
-              'flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-black tracking-tight text-text',
-              SITE_INTERACTION_TRANSITION,
-              SITE_FOCUS_VISIBLE,
-              active
-                ? 'bg-primary-soft text-primary ring-1 ring-primary/25'
-                : actionable
-                  ? 'text-muted hover:bg-primary-soft/70 hover:text-primary'
-                  : 'text-muted/70 hover:bg-primary-soft/40 hover:text-primary/80',
-            )}
-          >
-            <span>{label}</span>
-            {!actionable ? (
-              <span className="shrink-0 text-[9px] font-black uppercase tracking-wider text-muted/80">
-                hors parcours
-              </span>
-            ) : null}
-          </Link>
-        );
-      })}
+    <nav className="flex flex-col gap-4 px-2 py-3" aria-label="Navigation principale">
+      {contextStrapline ? (
+        <p className="hidden px-2 text-[10px] font-medium leading-snug text-muted lg:block">
+          {contextStrapline}
+        </p>
+      ) : null}
+      {sections.map((section) => (
+        <div key={section.title}>
+          <p className="px-2 pb-1 text-[9px] font-black uppercase tracking-[0.2em] text-muted/80">
+            {section.title}
+          </p>
+          <div className="flex flex-col gap-0.5">
+            {section.items.map(({ href, label, actionable, title, guestAccountBadge }) => {
+              const active = isActivePath(pathname, href, explorerHref, compareProductHref);
+              return (
+                <Link
+                  key={`${section.title}-${label}-${href}`}
+                  href={href}
+                  title={title}
+                  onClick={closeIfNavigated}
+                  aria-current={active ? 'page' : undefined}
+                  className={cn(
+                    'flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm font-black tracking-tight text-text',
+                    SITE_INTERACTION_TRANSITION,
+                    SITE_FOCUS_VISIBLE,
+                    active
+                      ? 'bg-primary-soft text-primary ring-1 ring-primary/25'
+                      : actionable
+                        ? 'text-muted hover:bg-primary-soft/70 hover:text-primary'
+                        : 'text-muted/70 hover:bg-primary-soft/40 hover:text-primary/80',
+                  )}
+                >
+                  <span>{label}</span>
+                  <span className="flex shrink-0 items-center gap-1.5">
+                    {guestAccountBadge ? (
+                      <span className="rounded-md border border-amber-200/90 bg-amber-50 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider text-amber-900">
+                        Compte
+                      </span>
+                    ) : null}
+                    {!actionable ? (
+                      <span className="text-[9px] font-black uppercase tracking-wider text-muted/80">
+                        hors parcours
+                      </span>
+                    ) : null}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </nav>
   );
 

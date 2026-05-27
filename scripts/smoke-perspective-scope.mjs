@@ -88,6 +88,12 @@ async function assertProtectedPerspectiveRoutes(page) {
   if (!/tourisme/i.test(lockedText)) {
     throw new Error(`Explorer locked goal should mention Tourisme, got: ${lockedText}`);
   }
+  const explorerUrl = page.url();
+  if (!/[?&]objective=tourism/i.test(explorerUrl) && !/[?&]goal=tourism/i.test(explorerUrl)) {
+    throw new Error(
+      `Explorer URL should include objective=tourism or goal=tourism, got: ${explorerUrl}`,
+    );
+  }
 
   await page.goto(`${base}/compare`, { waitUntil: 'networkidle', timeout: 60_000 });
   const categoryStep = page.getByRole('navigation', { name: 'Étapes' });

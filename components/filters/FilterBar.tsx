@@ -27,6 +27,8 @@ export type FilterBarProps = {
   /** When set, goal filter is read-only (primary interest locked). */
   goalLocked?: boolean
   goalLockedLabel?: string
+  /** Hide region control (e.g. when ExplorerFilterPanel owns region). */
+  hideRegion?: boolean
   className?: string
 }
 
@@ -37,6 +39,7 @@ export function FilterBar({
   onRegionChange,
   goalLocked = false,
   goalLockedLabel,
+  hideRegion = false,
   className,
 }: FilterBarProps = {}) {
   const goalControlled = goalValue !== undefined
@@ -87,25 +90,27 @@ export function FilterBar({
         </Select>
       )}
 
-      <Select
-        className="w-full min-w-0 sm:w-[190px]"
-        value={regionControlled ? regionValue : undefined}
-        defaultValue={regionControlled ? undefined : 'all'}
-        onValueChange={(v) => onRegionChange?.(v)}
-      >
-        <SelectTrigger className="w-full" aria-label="Filtrer par région">
-          <SelectValue placeholder="Région" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Toutes les régions</SelectItem>
-          <SelectItem value="schengen">Schengen</SelectItem>
-          <SelectItem value="europe">Europe</SelectItem>
-          <SelectItem value="asia">Asie</SelectItem>
-          <SelectItem value="africa">Afrique</SelectItem>
-          <SelectItem value="americas">Amériques</SelectItem>
-          <SelectItem value="oceania">Océanie</SelectItem>
-        </SelectContent>
-      </Select>
+      {!hideRegion ? (
+        <Select
+          className="w-full min-w-0 sm:w-[190px]"
+          value={regionControlled ? regionValue : undefined}
+          defaultValue={regionControlled ? undefined : 'all'}
+          onValueChange={(v) => onRegionChange?.(v)}
+        >
+          <SelectTrigger className="w-full" aria-label="Filtrer par région">
+            <SelectValue placeholder="Région" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Toutes les régions</SelectItem>
+            <SelectItem value="schengen">Schengen</SelectItem>
+            <SelectItem value="europe">Europe</SelectItem>
+            <SelectItem value="asia">Asie</SelectItem>
+            <SelectItem value="africa">Afrique</SelectItem>
+            <SelectItem value="americas">Amériques</SelectItem>
+            <SelectItem value="oceania">Océanie</SelectItem>
+          </SelectContent>
+        </Select>
+      ) : null}
     </div>
   )
 }

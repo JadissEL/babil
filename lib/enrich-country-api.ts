@@ -11,6 +11,7 @@ import { mergeModelWithDbScalar01to100 } from '@/lib/scoring/scalar-override'
 import { computeStudyMobility100 } from '@/lib/scoring/study-mobility'
 import { computeTourismMobility100 } from '@/lib/scoring/tourism-mobility'
 import { computeWorkMobility100 } from '@/lib/scoring/work-mobility'
+import type { CountryScoreFocus } from '@/lib/user-objectives/perspective-contract'
 
 const clamp = (v: number, min = 0, max = 100) => Math.max(min, Math.min(max, v))
 
@@ -26,6 +27,22 @@ function deterministicScoreOffset(id: unknown, name: string): number {
 }
 
 export type BudgetBand = 'low' | 'medium' | 'high'
+
+/** Budget band from the visa score for the active perspective (not generic `_finalScore`). */
+export function perspectiveBudgetBand(
+  c: Pick<EnrichedCountryApi, '_visa'>,
+  focus: CountryScoreFocus,
+): BudgetBand {
+  const score =
+    focus === 'tourism'
+      ? c._visa.tourism
+      : focus === 'work'
+        ? c._visa.work
+        : focus === 'business'
+          ? c._visa.business
+          : c._visa.study
+  return score >= 72 ? 'high' : score >= 52 ? 'medium' : 'low'
+}
 
 export type EnrichedCountryApi = Record<string, unknown> & {
   id: number

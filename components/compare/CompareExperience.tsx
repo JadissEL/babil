@@ -26,11 +26,16 @@ import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 import {
-  matchesExplorerRegionFilter,
-  matchesExplorerSchengenOnlyToggle,
   parseExplorerRegionFilter,
   type ExplorerRegionFilter,
 } from '@/lib/explorer-filters'
+import {
+  countryMatchesExplorerFilters,
+  isExplorerBudget,
+  type ExplorerFilterState,
+  type ExplorerFrictionBand,
+} from '@/lib/explorer-filter-engine'
+import { getExplorerFilterProfileForCompareObjectiveId } from '@/lib/explorer-filter-profiles'
 import { NEXUS_FOCUS_VISIBLE, NEXUS_TRANSITION } from '@/lib/nexus-chrome'
 import { appToast } from '@/lib/toast-store'
 import { userObjectiveSlugToCompareObjectiveId } from '@/lib/user-objectives/compare-bridge'
@@ -200,43 +205,62 @@ export function CompareExperience() {
     [raw],
   )
 
-  const compareExplorerContext = useMemo(() => {
+  const compareExplorerFilterState = useMemo((): ExplorerFilterState | null => {
     const r = searchParams?.get('region')
     const regionFilter: ExplorerRegionFilter = r?.trim() ? parseExplorerRegionFilter(r.trim()) : 'all'
     const bud = searchParams?.get('budget')
-    const budget = bud === 'low' || bud === 'medium' || bud === 'high' ? bud : 'all'
+    const budget = isExplorerBudget(bud) ? bud : 'all'
     const diff = searchParams?.get('difficulty')
     const difficulty =
       diff && ['Low', 'Medium', 'High', 'Extreme'].includes(diff) ? diff : 'all'
+    const fr = searchParams?.get('friction')
+    const friction: ExplorerFrictionBand =
+      fr === 'low' || fr === 'medium' || fr === 'high' ? fr : 'all'
     const sch = searchParams?.get('schengen')
     const schengenOnly = sch === '1' || sch === 'true' || sch === 'yes'
-    return { regionFilter, budget, difficulty, schengenOnly }
+    if (
+      regionFilter === 'all' &&
+      budget === 'all' &&
+      difficulty === 'all' &&
+      friction === 'all' &&
+      !schengenOnly
+    ) {
+      return null
+    }
+    return {
+      objectiveSlug: null,
+      goal: 'all',
+      region: regionFilter,
+      budget,
+      difficulty,
+      friction,
+      schengenOnly,
+      q: '',
+      mode: 'explorer',
+    }
   }, [searchParams])
 
   const { suggestionPool, suggestionPoolSource } = useMemo((): {
     suggestionPool: EnrichedCountryApi[]
     suggestionPoolSource: SuggestionPoolSource
   } => {
-    const { regionFilter, budget, difficulty, schengenOnly } = compareExplorerContext
-    const hasConstraint =
-      regionFilter !== 'all' || budget !== 'all' || difficulty !== 'all' || schengenOnly
-    if (!hasConstraint) return { suggestionPool: enriched, suggestionPoolSource: 'all' }
-    const filtered = enriched.filter((c) => {
-      const name = String(c.name ?? '')
-      const dbRegion = String(c.region ?? '')
-      if (!matchesExplorerRegionFilter(regionFilter, { name, region: dbRegion })) return false
-      if (!matchesExplorerSchengenOnlyToggle(schengenOnly, { name })) return false
-      if (budget !== 'all' && c._budgetLevel !== budget) return false
-      if (
-        difficulty !== 'all' &&
-        String(c._difficultyLabel).toLowerCase() !== difficulty.toLowerCase()
-      )
-        return false
-      return true
-    })
+    if (!compareExplorerFilterState) {
+      return { suggestionPool: enriched, suggestionPoolSource: 'all' }
+    }
+    const resolvedProfile = getExplorerFilterProfileForCompareObjectiveId(objective.id)
+    if (!resolvedProfile) {
+      return { suggestionPool: enriched, suggestionPoolSource: 'all' }
+    }
+    const state: ExplorerFilterState = {
+      ...compareExplorerFilterState,
+      objectiveSlug: resolvedProfile.slug,
+    }
+    const filtered = enriched.filter((c) =>
+      countryMatchesExplorerFilters(c, state, resolvedProfile),
+    )
     if (filtered.length > 0) return { suggestionPool: filtered, suggestionPoolSource: 'filtered' }
     return { suggestionPool: enriched, suggestionPoolSource: 'fallback' }
-  }, [enriched, compareExplorerContext])
+  }, [enriched, compareExplorerFilterState, objective.id])
 
   const options: CountryOption[] = useMemo(
     () => enriched.map((c) => ({ id: c.id, name: c.name })).sort((a, b) => a.name.localeCompare(b.name)),
