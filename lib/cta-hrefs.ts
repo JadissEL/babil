@@ -92,3 +92,21 @@ export function ctaCompareHref(primaryObjectiveSlug: string | null | undefined):
   if (!id) return CTA_COMPARE_TOURISM_HREF;
   return `/compare?objective=${encodeURIComponent(id)}`;
 }
+
+/** Clerk sign-in with return URL (client components — uses `window` when available). */
+export function signInRedirectHref(targetPath: string): string {
+  const path = targetPath.startsWith('/') ? targetPath : `/${targetPath}`;
+  if (typeof window === 'undefined') {
+    return `/sign-in?redirect_url=${encodeURIComponent(path)}`;
+  }
+  return `/sign-in?redirect_url=${encodeURIComponent(`${window.location.origin}${path}`)}`;
+}
+
+/** Compare CTA: product route for signed-in users, sign-in redirect for guests. */
+export function compareHrefForGuest(
+  isGuest: boolean,
+  primaryObjectiveSlug: string | null | undefined,
+): string {
+  const product = ctaCompareHref(primaryObjectiveSlug);
+  return isGuest ? signInRedirectHref(product) : product;
+}

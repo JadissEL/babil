@@ -1,12 +1,13 @@
 'use client';
 
+import { useUser } from '@clerk/nextjs';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { showConsultantMarketplaceNav } from '@/lib/consultant-nav';
-import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
+import { compareHrefForGuest, ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
 import {
   SITE_BACKDROP_TRANSITION,
   SITE_FOCUS_VISIBLE,
@@ -82,9 +83,18 @@ type SitePrimaryNavColumnProps = {
 
 export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryNavColumnProps) {
   const pathname = usePathname() ?? '';
+  const { isSignedIn, isLoaded: userLoaded } = useUser();
+  const isGuest = userLoaded && !isSignedIn;
   const { preference } = useObjectivePreference();
   const explorerHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug]);
-  const compareHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug]);
+  const compareProductHref = useMemo(
+    () => ctaCompareHref(preference.primarySlug),
+    [preference.primarySlug],
+  );
+  const compareNavHref = useMemo(
+    () => compareHrefForGuest(isGuest, preference.primarySlug),
+    [isGuest, preference.primarySlug],
+  );
   const primaryDef = useMemo(
     () => getObjectiveBySlug(preference.primarySlug),
     [preference.primarySlug],
@@ -102,14 +112,19 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
     return [
       { href: explorerHref, label: 'Explorer', actionable: true },
       { href: '/schengen', label: 'Schengen', actionable: isNavHrefActionable('/schengen', contract) },
-      { href: compareHref, label: 'Comparer', actionable: true },
+      {
+        href: compareNavHref,
+        label: 'Comparer',
+        actionable: true,
+        title: isGuest ? 'Connexion requise pour comparer' : undefined,
+      },
       ...staticVisible.slice(1).map((link) => ({
         href: link.href,
         label: link.label,
         actionable: isNavHrefActionable(link.href, contract),
       })),
     ];
-  }, [compareHref, explorerHref, primaryDef, contract]);
+  }, [compareNavHref, explorerHref, primaryDef, contract, isGuest]);
 
   const closeIfNavigated = useCallback(() => {
     onMobileClose();
@@ -126,12 +141,13 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
 
   const navBody = (
     <nav className="flex flex-col gap-0.5 px-2 py-3" aria-label="Navigation principale">
-      {links.map(({ href, label, actionable }) => {
-        const active = isActivePath(pathname, href, explorerHref, compareHref);
+      {links.map(({ href, label, actionable, title }) => {
+        const active = isActivePath(pathname, href, explorerHref, compareProductHref);
         return (
           <Link
             key={`${label}-${href}`}
             href={href}
+            title={title}
             onClick={closeIfNavigated}
             aria-current={active ? 'page' : undefined}
             className={cn(

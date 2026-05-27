@@ -47,6 +47,7 @@ Après `npm run start` (ou contre une URL déployée) :
 | `npm run test:smoke:objectives [url]` | Flux changement d’objectif |
 | `npm run test:smoke:perspective [url]` | Lentille perspective (accueil ; Nexus si `SMOKE_CLERK_*`) |
 | `npm run test:smoke:stitch [url]` | HTTP 200 sur routes statiques |
+| `npm run test:audit:journey [url]` | Capture manuelle (screenshots + JSON dans `.tmp-user-audit/`) |
 
 Détails et secrets CI : [`docs/smoke-tests.md`](docs/smoke-tests.md).
 
