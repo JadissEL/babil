@@ -57,8 +57,15 @@ async function assertHomeTestimonialsScopedToTourism(page) {
 async function assertGuestExplorerReadable(page) {
   await page.goto(`${base}/explorer`, { waitUntil: 'networkidle', timeout: 60_000 });
   const url = page.url();
-  if (url.includes('/sign-in') || (await page.title()).toLowerCase().includes('account')) {
+  if (url.includes('/sign-in')) {
     throw new Error('Guest should reach /explorer without Clerk sign-in');
+  }
+  const title = (await page.title()).toLowerCase();
+  if (title.includes('account') && !title.includes('introuvable')) {
+    throw new Error('Guest should reach /explorer without Clerk sign-in');
+  }
+  if (title.includes('introuvable') || title.includes('not found')) {
+    throw new Error('Guest /explorer returned 404 — deploy or route may be broken');
   }
   await page.getByRole('heading', { name: 'Explorer' }).waitFor({ state: 'visible', timeout: 20_000 });
   await page.getByRole('status').filter({ hasText: /lecture seule/i }).waitFor({

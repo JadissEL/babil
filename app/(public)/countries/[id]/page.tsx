@@ -246,7 +246,7 @@ export default function CountryDetailPage() {
   const params = useParams();
   const id = params?.id;
   const { user, isLoaded: userLoaded } = useUser();
-  const isGuest = userLoaded && !isSignedIn;
+  const isGuest = userLoaded && !user;
   const { preference } = useObjectivePreference();
   const primaryObjectiveDef = useMemo(
     () => getObjectiveBySlug(preference.primarySlug),
