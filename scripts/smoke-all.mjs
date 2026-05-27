@@ -2,7 +2,12 @@
  * Run all Playwright smokes in sequence.
  * Usage: npm run test:smoke [baseUrl]
  */
+import { config } from 'dotenv';
+import { resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
+
+config({ path: resolve(process.cwd(), '.env.local') });
+config({ path: resolve(process.cwd(), '.env') });
 
 const base = process.argv[2] ?? process.env.SMOKE_BASE_URL ?? 'http://localhost:3000';
 

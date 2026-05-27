@@ -11,6 +11,12 @@ export async function tryClerkSignIn(page, base) {
   const password = process.env.SMOKE_CLERK_PASSWORD?.trim();
   if (!email || !password) return false;
 
+  const clerkPk = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.trim() ?? '';
+  if (clerkPk.includes('placeholder')) {
+    console.warn('SKIP Clerk sign-in: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY looks like a CI placeholder');
+    return false;
+  }
+
   await page.goto(`${base}/sign-in`, { waitUntil: 'networkidle', timeout: 60_000 });
 
   const identifier = page.locator('input[name="identifier"], input[type="email"]').first();

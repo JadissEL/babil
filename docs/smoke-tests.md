@@ -30,8 +30,9 @@ Nexus product routes (`/explorer`, `/compare`, `/education`, …) require a sign
 **Full coverage** — set in the shell or GitHub Actions secrets:
 
 ```bash
-export SMOKE_CLERK_EMAIL="e2e@your-domain.test"
-export SMOKE_CLERK_PASSWORD="..."
+# In .env.local (auto-loaded by npm run test:smoke) or export in the shell:
+SMOKE_CLERK_EMAIL=e2e@your-domain.test
+SMOKE_CLERK_PASSWORD=...
 npm run test:smoke:perspective -- http://127.0.0.1:3000
 ```
 
