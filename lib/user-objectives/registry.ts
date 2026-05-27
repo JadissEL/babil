@@ -68,7 +68,7 @@ export const USER_OBJECTIVES: readonly UserObjectiveDefinition[] = [
     categoryLabelFr: 'Tourisme',
     engineGoal: 'tourism',
     explorerGoalDefault: 'tourism',
-    homeFeaturePriority: ['schengen', 'probability', 'compare', 'community', 'permis', 'education', 'business', 'delegated', 'recommendations'],
+    homeFeaturePriority: ['schengen', 'probability', 'compare', 'community', 'permis', 'delegated', 'recommendations'],
     focusTopicsFr: ['Visa tourisme & durée de séjour', 'Saisonnalité & coût de la destination', 'Sécurité & accueil', 'Attractions & mobilité locale'],
   }),
   R({

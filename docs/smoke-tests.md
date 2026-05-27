@@ -7,7 +7,7 @@ Headless Chromium checks against a running app (`npm run dev` or `npm run start`
 | Script | What it checks |
 |--------|----------------|
 | `npm run test:smoke:objectives [baseUrl]` | Wizard → disclaimer → transition → dock shows new objective |
-| `npm run test:smoke:perspective [baseUrl]` | Primary Tourisme → home testimonials filtered; optional signed-in explorer/compare/education |
+| `npm run test:smoke:perspective [baseUrl]` | Primary Tourisme → home lens + **guest** `/explorer` (no sign-in); optional signed-in compare/education |
 | `npm run test:smoke:stitch [baseUrl]` | Key routes return HTTP &lt; 400 |
 | `npm run test:smoke [baseUrl]` | Runs all three in sequence |
 
@@ -19,13 +19,17 @@ npm run test:smoke -- https://babil-amber.vercel.app
 
 ## Perspective smoke and Clerk
 
-Nexus product routes (`/explorer`, `/compare`, `/education`, …) require a signed-in user (`lib/nexus-shell-routes.ts` + Clerk middleware).
+**Hybrid access** (`lib/nexus-shell-routes.ts` + Clerk middleware):
+
+- **`/explorer`** — guests may browse read-only (marketing shell, locked parcours when set).
+- **`/compare`, `/schengen`, `/education`, …** — still require sign-in.
 
 **Without credentials** — `test:smoke:perspective` still validates:
 
 - Objective pick + transition on `/`
 - Dock shows Tourisme
 - Home testimonials hide off-interest cards (e.g. no “Salma M.” when primary is Tourisme)
+- Guest can open `/explorer` (banner « lecture seule », parcours Tourisme verrouillé) without redirect to Clerk
 
 **Full coverage** — set in the shell or GitHub Actions secrets:
 

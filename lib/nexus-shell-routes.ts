@@ -31,7 +31,14 @@ const NEXUS_NAV_HREFS = [
 /** Signed-in users keep the Nexus shell on country detail pages (public URLs). */
 export const NEXUS_COUNTRIES_PREFIX = '/countries';
 
+/** App routes guests may open without Clerk (marketing shell, read-only product). */
+export const GUEST_READABLE_PATH_PREFIXES = ['/explorer'] as const;
+
 const AUTH_PATH_PREFIXES = ['/sign-in', '/sign-up'] as const;
+
+const GUEST_READABLE_PREFIXES_SORTED: readonly string[] = [...GUEST_READABLE_PATH_PREFIXES].sort(
+  (a, b) => b.length - a.length,
+);
 
 function hrefToPathPrefix(href: string): string {
   const pathOnly = href.split('?')[0]?.trim() || href;
@@ -66,6 +73,13 @@ export function isAuthPath(pathname: string | null | undefined): boolean {
   );
 }
 
+export function isGuestReadablePath(pathname: string | null | undefined): boolean {
+  const p = normalizePathname(pathname);
+  return GUEST_READABLE_PREFIXES_SORTED.some(
+    (prefix) => p === prefix || p.startsWith(`${prefix}/`),
+  );
+}
+
 export function isNexusPath(pathname: string | null | undefined): boolean {
   const p = normalizePathname(pathname);
   if (isAuthPath(p)) return false;
@@ -79,7 +93,9 @@ export function isNexusPath(pathname: string | null | undefined): boolean {
 /** Residual marketing shell (Harbor / Quay) — not Nexus product workspace. */
 export function isPublicMarketingPath(pathname: string | null | undefined): boolean {
   const p = normalizePathname(pathname);
-  if (isAuthPath(p) || isNexusPath(p)) return false;
+  if (isAuthPath(p)) return false;
+  if (isGuestReadablePath(p)) return true;
+  if (isNexusPath(p)) return false;
   return true;
 }
 
@@ -88,6 +104,7 @@ export function nexusProtectedRoutePatterns(): string[] {
   const patterns = new Set<string>();
   for (const prefix of NEXUS_PATH_PREFIXES) {
     if (prefix === '/') continue;
+    if (GUEST_READABLE_PATH_PREFIXES.some((g) => g === prefix)) continue;
     patterns.add(`${prefix}(.*)`);
   }
   return Array.from(patterns);

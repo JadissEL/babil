@@ -1,5 +1,6 @@
 'use client'
 
+import { useUser } from '@clerk/nextjs'
 import { Copy, Search, SlidersHorizontal, Target, Scale } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -94,10 +95,22 @@ type UrlCommitSlice = Partial<{
   mode: Mode
 }>
 
+function signInHrefForCompareTarget(comparePath: string): string {
+  if (typeof window === 'undefined') {
+    return `/sign-in?redirect_url=${encodeURIComponent(comparePath)}`
+  }
+  const absolute = comparePath.startsWith('http')
+    ? comparePath
+    : `${window.location.origin}${comparePath.startsWith('/') ? comparePath : `/${comparePath}`}`
+  return `/sign-in?redirect_url=${encodeURIComponent(absolute)}`
+}
+
 function ExplorerPageInner() {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { isSignedIn, isLoaded: userLoaded } = useUser()
+  const isGuest = userLoaded && !isSignedIn
   const objectivePref = useObjectivePreferenceOptional()
   const [countries, setCountries] = useState<CountryApiListRow[]>([])
   const [mode, setMode] = useState<Mode>('explorer')
@@ -122,6 +135,32 @@ function ExplorerPageInner() {
     const def = getObjectiveBySlug(objectivePref?.preference.primarySlug)
     return def?.labelFr ?? GOAL_FILTER_LABELS[lockedGoal]
   }, [lockedGoal, objectivePref?.preference.primarySlug])
+
+  const compareProductHref = useMemo(() => {
+    if (lockedGoal && objectivePref?.preference.primarySlug) {
+      return ctaCompareHref(objectivePref.preference.primarySlug)
+    }
+    return compareHrefForExplorerPageState({
+      goal,
+      budget,
+      region,
+      difficulty,
+      schengenOnly,
+    })
+  }, [
+    lockedGoal,
+    objectivePref?.preference.primarySlug,
+    goal,
+    budget,
+    region,
+    difficulty,
+    schengenOnly,
+  ])
+
+  const compareLinkHref = useMemo(
+    () => (isGuest ? signInHrefForCompareTarget(compareProductHref) : compareProductHref),
+    [isGuest, compareProductHref],
+  )
 
   useEffect(() => {
     setHasSavedView(Boolean(readExplorerSavedFilters()))
@@ -367,6 +406,22 @@ function ExplorerPageInner() {
           </div>
         </header>
 
+        {isGuest ? (
+          <p
+            className="rounded-xl border border-[#0D1B3E]/12 bg-[#FDFBF4] px-4 py-3 text-sm font-medium leading-relaxed text-[#0D1B3E]/80"
+            role="status"
+          >
+            Parcours en lecture seule — explorez et filtrez sans compte.{' '}
+            <Link
+              href={signInHrefForCompareTarget(compareProductHref)}
+              className="font-bold text-[#0D1B3E] underline underline-offset-2"
+            >
+              Connectez-vous
+            </Link>{' '}
+            pour comparer des pays côte à côte et mémoriser vos vues sur tous vos appareils.
+          </p>
+        ) : null}
+
         <div className="sticky top-16 z-30 space-y-4 rounded-2xl border border-[#0D1B3E]/10 bg-white/95 p-4 shadow-lg backdrop-blur-md">
           <div className="flex flex-col gap-4 xl:flex-row xl:flex-wrap xl:items-center">
             <FilterBar
@@ -441,26 +496,22 @@ function ExplorerPageInner() {
             </div>
 
             <Link
-              href={
-                lockedGoal && objectivePref?.preference.primarySlug
-                  ? ctaCompareHref(objectivePref.preference.primarySlug)
-                  : compareHrefForExplorerPageState({
-                      goal,
-                      budget,
-                      region,
-                      difficulty,
-                      schengenOnly,
-                    })
-              }
+              href={compareLinkHref}
               onClick={() => markExplorerOnboardingEngaged()}
               className={cn(
                 'inline-flex items-center gap-2 rounded-xl border border-[#0D1B3E]/20 bg-white px-3 py-2 text-xs font-black uppercase tracking-wider text-[#0D1B3E] hover:border-[#0D1B3E]/35 hover:bg-[#FDFBF4]',
                 NEXUS_FOCUS_VISIBLE,
                 NEXUS_TRANSITION,
               )}
+              title={isGuest ? 'Connexion requise pour comparer' : undefined}
             >
               <Scale className="h-4 w-4 shrink-0" aria-hidden />
               Comparer
+              {isGuest ? (
+                <span className="text-[9px] font-black normal-case tracking-normal text-[#0D1B3E]/55">
+                  (connexion)
+                </span>
+              ) : null}
             </Link>
 
             <select
@@ -503,68 +554,72 @@ function ExplorerPageInner() {
             </select>
 
             <div className="ml-auto flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
-              <button
-                type="button"
-                onClick={() => {
-                  writeExplorerSavedFilters({
-                    q: search,
-                    region: region === 'all' ? '' : explorerRegionToUrlParam(region),
-                    goal,
-                    budget,
-                    difficulty,
-                    schengenOnly,
-                    mode,
-                  })
-                  setHasSavedView(true)
-                  appToast.success('Vue enregistrée — vous pourrez la rouvrir d’un clic.')
-                }}
-                className={cn(
-                  'rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] hover:border-[#0D1B3E]/25 hover:bg-[#FDFBF4]',
-                  NEXUS_FOCUS_VISIBLE,
-                  NEXUS_TRANSITION,
-                )}
-              >
-                Mémoriser la vue
-              </button>
-              <button
-                type="button"
-                disabled={!hasSavedView}
-                onClick={() => {
-                  const s = readExplorerSavedFilters()
-                  if (!s) {
-                    appToast.info('Aucune vue enregistrée.')
-                    return
-                  }
-                  const qs = buildExplorerQueryStringFromSaved(s)
-                  const path = pathname ?? '/explorer'
-                  router.replace(qs ? `${path}?${qs}` : path)
-                  markExplorerOnboardingEngaged()
-                  appToast.success('Vue restaurée.')
-                }}
-                className={cn(
-                  'rounded-xl border border-[#0D1B3E]/20 bg-[#FDFBF4] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] hover:bg-white disabled:cursor-not-allowed disabled:opacity-45',
-                  NEXUS_FOCUS_VISIBLE,
-                  NEXUS_TRANSITION,
-                )}
-              >
-                Restaurer
-              </button>
-              <button
-                type="button"
-                disabled={!hasSavedView}
-                onClick={() => {
-                  clearExplorerSavedFilters()
-                  setHasSavedView(false)
-                  appToast.info('Mémorisation supprimée.')
-                }}
-                className={cn(
-                  'rounded-xl border border-[#0D1B3E]/10 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/60 hover:text-[#0D1B3E] disabled:cursor-not-allowed disabled:opacity-45',
-                  NEXUS_FOCUS_VISIBLE,
-                  NEXUS_TRANSITION,
-                )}
-              >
-                Oublier
-              </button>
+              {!isGuest ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      writeExplorerSavedFilters({
+                        q: search,
+                        region: region === 'all' ? '' : explorerRegionToUrlParam(region),
+                        goal,
+                        budget,
+                        difficulty,
+                        schengenOnly,
+                        mode,
+                      })
+                      setHasSavedView(true)
+                      appToast.success('Vue enregistrée — vous pourrez la rouvrir d’un clic.')
+                    }}
+                    className={cn(
+                      'rounded-xl border border-[#0D1B3E]/12 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] hover:border-[#0D1B3E]/25 hover:bg-[#FDFBF4]',
+                      NEXUS_FOCUS_VISIBLE,
+                      NEXUS_TRANSITION,
+                    )}
+                  >
+                    Mémoriser la vue
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!hasSavedView}
+                    onClick={() => {
+                      const s = readExplorerSavedFilters()
+                      if (!s) {
+                        appToast.info('Aucune vue enregistrée.')
+                        return
+                      }
+                      const qs = buildExplorerQueryStringFromSaved(s)
+                      const path = pathname ?? '/explorer'
+                      router.replace(qs ? `${path}?${qs}` : path)
+                      markExplorerOnboardingEngaged()
+                      appToast.success('Vue restaurée.')
+                    }}
+                    className={cn(
+                      'rounded-xl border border-[#0D1B3E]/20 bg-[#FDFBF4] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E] hover:bg-white disabled:cursor-not-allowed disabled:opacity-45',
+                      NEXUS_FOCUS_VISIBLE,
+                      NEXUS_TRANSITION,
+                    )}
+                  >
+                    Restaurer
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!hasSavedView}
+                    onClick={() => {
+                      clearExplorerSavedFilters()
+                      setHasSavedView(false)
+                      appToast.info('Mémorisation supprimée.')
+                    }}
+                    className={cn(
+                      'rounded-xl border border-[#0D1B3E]/10 bg-transparent px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#0D1B3E]/60 hover:text-[#0D1B3E] disabled:cursor-not-allowed disabled:opacity-45',
+                      NEXUS_FOCUS_VISIBLE,
+                      NEXUS_TRANSITION,
+                    )}
+                  >
+                    Oublier
+                  </button>
+                </>
+              ) : null}
             </div>
           </div>
         </div>

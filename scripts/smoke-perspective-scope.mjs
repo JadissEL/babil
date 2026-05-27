@@ -54,11 +54,22 @@ async function assertHomeTestimonialsScopedToTourism(page) {
   }
 }
 
+async function assertGuestExplorerReadable(page) {
+  await page.goto(`${base}/explorer`, { waitUntil: 'networkidle', timeout: 60_000 });
+  const url = page.url();
+  if (url.includes('/sign-in') || (await page.title()).toLowerCase().includes('account')) {
+    throw new Error('Guest should reach /explorer without Clerk sign-in');
+  }
+  await page.getByRole('heading', { name: 'Explorer' }).waitFor({ state: 'visible', timeout: 20_000 });
+  await page.getByRole('status').filter({ hasText: /lecture seule/i }).waitFor({
+    state: 'visible',
+    timeout: 15_000,
+  });
+  await page.getByLabel(/Parcours verrouillé/i).waitFor({ state: 'visible', timeout: 20_000 });
+}
+
 async function assertProtectedPerspectiveRoutes(page) {
   await page.goto(`${base}/explorer`, { waitUntil: 'networkidle', timeout: 60_000 });
-  if ((await page.title()).toLowerCase().includes('account')) {
-    throw new Error('Explorer still behind auth — set SMOKE_CLERK_EMAIL/PASSWORD for full smoke');
-  }
   await page.getByRole('heading', { name: 'Explorer' }).waitFor({ state: 'visible', timeout: 20_000 });
   await page.getByLabel(/Parcours verrouillé/i).waitFor({ state: 'visible', timeout: 20_000 });
   const lockedText = await page.getByLabel(/Parcours verrouillé/i).innerText();
@@ -94,6 +105,7 @@ async function main() {
 
   await pickTourismeObjective(page);
   await assertHomeTestimonialsScopedToTourism(page);
+  await assertGuestExplorerReadable(page);
 
   const signedIn = await tryClerkSignIn(page, base);
   if (signedIn) {
@@ -101,9 +113,9 @@ async function main() {
     console.log(`OK smoke-perspective-scope (public + signed-in) @ ${base}`);
   } else {
     console.warn(
-      'SKIP protected routes (explorer/compare/education): set SMOKE_CLERK_EMAIL and SMOKE_CLERK_PASSWORD for full smoke',
+      'SKIP signed-in routes (compare/education): set SMOKE_CLERK_EMAIL and SMOKE_CLERK_PASSWORD for full smoke',
     );
-    console.log(`OK smoke-perspective-scope (public home lens only) @ ${base}`);
+    console.log(`OK smoke-perspective-scope (public home + guest explorer) @ ${base}`);
   }
 
   await browser.close();

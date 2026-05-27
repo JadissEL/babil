@@ -10,6 +10,7 @@ import { Progress } from '@/components/ui/progress'
 import { COUNTRY_HIGHLIGHTS } from '@/lib/country-highlights'
 import { ATLAS_NAVY } from '@/lib/explorer-atlas-ui'
 import { travelAmbienceImageForSeed } from '@/lib/travel-fallback-images'
+import type { CountryScoreFocus } from '@/lib/user-objectives/perspective-contract'
 import { cn } from '@/lib/utils'
 
 export type MobilityTier = 'Strong' | 'Medium' | 'Weak'
@@ -25,6 +26,11 @@ export type CountryCardProps = {
   friction: 'Low' | 'Medium' | 'High'
   study: MobilityTier
   business: MobilityTier
+  work?: MobilityTier
+  tourism?: MobilityTier
+  /** When set, progress bar and badges follow primary interest lens */
+  primaryFocus?: CountryScoreFocus
+  showSecondaryMobility?: boolean
   highlightPlace?: string
   highlightImageUrl?: string
   /** Fired when the user follows the link to `/countries/[id]` (analytics / onboarding). */
@@ -62,6 +68,10 @@ export function CountryCard({
   friction,
   study,
   business,
+  work,
+  tourism,
+  primaryFocus,
+  showSecondaryMobility = false,
   highlightPlace,
   highlightImageUrl,
   onNavigate,
@@ -239,7 +249,17 @@ export function CountryCard({
           </div>
 
           <div>
-            <p className="mb-2 text-sm font-medium text-muted">Visa probability</p>
+            <p className="mb-2 text-sm font-medium text-muted">
+              {primaryFocus === 'tourism'
+                ? 'Visa tourisme'
+                : primaryFocus === 'study'
+                  ? 'Visa études'
+                  : primaryFocus === 'work'
+                    ? 'Visa travail'
+                    : primaryFocus === 'business'
+                      ? 'Visa affaires'
+                      : 'Probabilité visa'}
+            </p>
             <Progress value={visaScore} />
           </div>
 
@@ -247,8 +267,18 @@ export function CountryCard({
             <Badge className={cn(frictionStripClass(friction), 'font-semibold')} variant="secondary">
               ⚡ {friction}
             </Badge>
-            <Badge variant="secondary">🎓 Study: {study}</Badge>
-            <Badge variant="secondary">💼 Business: {business}</Badge>
+            {(primaryFocus === 'tourism' || showSecondaryMobility) && tourism ? (
+              <Badge variant="secondary">✈️ Tourisme : {tourism}</Badge>
+            ) : null}
+            {(!primaryFocus || showSecondaryMobility || primaryFocus === 'study') && (
+              <Badge variant="secondary">🎓 Études : {study}</Badge>
+            )}
+            {(!primaryFocus || showSecondaryMobility || primaryFocus === 'business') && (
+              <Badge variant="secondary">💼 Affaires : {business}</Badge>
+            )}
+            {primaryFocus === 'work' && work ? (
+              <Badge variant="secondary">💼 Travail : {work}</Badge>
+            ) : null}
           </div>
         </div>
       </CardContent>

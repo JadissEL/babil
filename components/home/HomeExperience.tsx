@@ -16,6 +16,7 @@ import {
   Zap,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useUser } from '@clerk/nextjs';
 import { type ReactNode, useMemo } from 'react';
 import { ConsultantsAndDelegatedHomeSection } from '@/components/consultants/ConsultantsAndDelegatedHomeSection';
 import CountryGrid from '@/components/country/CountryGrid';
@@ -26,6 +27,7 @@ import HomeQuickFilterEngine from '@/components/home/HomeQuickFilterEngine';
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { DelegatedApplicationsHomePromo } from '@/components/services/DelegatedApplicationsHomePromo';
 import { ctaCompareHref, ctaExploreHref } from '@/lib/cta-hrefs';
+import { applyPerspectiveToShowcaseItems } from '@/lib/home-showcase-perspective';
 import type { HomeHeroSlide } from '@/lib/home-hero-slides';
 import {
   NEXUS_FOCUS_VISIBLE,
@@ -130,6 +132,8 @@ export function HomeExperience({
   heroSlides: HomeHeroSlide[];
 }) {
   const { preference } = useObjectivePreference();
+  const { isSignedIn, isLoaded: userLoaded } = useUser();
+  const isGuest = userLoaded && !isSignedIn;
   const primaryDefinition = useMemo(
     () => getObjectiveBySlug(preference.primarySlug),
     [preference.primarySlug],
@@ -141,8 +145,22 @@ export function HomeExperience({
   );
   const focusStrip = useMemo(() => focusStripForObjective(preference.primarySlug), [preference.primarySlug]);
   const quickGoal = primaryDefinition?.explorerGoalDefault ?? 'all';
+  const goalLocked = Boolean(primaryDefinition && quickGoal !== 'all');
+  const goalLockedLabel = primaryDefinition?.labelFr;
+  const showcaseCountries = useMemo(
+    () => applyPerspectiveToShowcaseItems(topCountries, preference.primarySlug),
+    [topCountries, preference.primarySlug],
+  );
   const exploreCtaHref = useMemo(() => ctaExploreHref(preference.primarySlug), [preference.primarySlug]);
   const compareCtaHref = useMemo(() => ctaCompareHref(preference.primarySlug), [preference.primarySlug]);
+  const compareFeatureHref = useMemo(() => {
+    if (!isGuest) return compareCtaHref;
+    if (typeof window === 'undefined') {
+      return `/sign-in?redirect_url=${encodeURIComponent(compareCtaHref)}`;
+    }
+    const absolute = `${window.location.origin}${compareCtaHref.startsWith('/') ? compareCtaHref : `/${compareCtaHref}`}`;
+    return `/sign-in?redirect_url=${encodeURIComponent(absolute)}`;
+  }, [isGuest, compareCtaHref]);
 
   const testimonialsAll = [
     {
@@ -326,7 +344,11 @@ export function HomeExperience({
           </section>
 
           {/* QUICK FILTER ENGINE */}
-          <HomeQuickFilterEngine initialExplorerGoal={quickGoal} />
+          <HomeQuickFilterEngine
+            initialExplorerGoal={quickGoal}
+            goalLocked={goalLocked}
+            goalLockedLabel={goalLockedLabel}
+          />
 
           {/* DESTINATIONS — vérified slide carousel */}
           <section aria-labelledby="home-destinations-title" className="space-y-4">
@@ -392,7 +414,7 @@ export function HomeExperience({
                 Tout voir
               </Link>
             </header>
-            <CountryGrid countries={topCountries} />
+            <CountryGrid countries={showcaseCountries} />
           </section>
 
           {/* FEATURES — objective-aware */}
@@ -421,9 +443,17 @@ export function HomeExperience({
             <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               {featureKeys.map((key) => {
                 const f = FEATURE_MAP[key];
-                const href = key === 'compare' ? compareCtaHref : f.href;
+                const href = key === 'compare' ? compareFeatureHref : f.href;
+                const compareHint =
+                  key === 'compare' && isGuest ? 'Connexion requise pour comparer.' : undefined;
                 return (
-                  <Feature key={key} href={href} icon={f.icon} title={f.title} description={f.description} />
+                  <Feature
+                    key={key}
+                    href={href}
+                    icon={f.icon}
+                    title={f.title}
+                    description={compareHint ?? f.description}
+                  />
                 );
               })}
             </div>

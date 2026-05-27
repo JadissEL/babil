@@ -25,6 +25,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { DataFreshnessStrap } from '@/components/content/DataFreshnessStrap';
 import { MoroccoFirstDisclaimer } from '@/components/content/MoroccoFirstDisclaimer';
 import { CountryDbInsightsCollapsible } from '@/components/country/CountryDbInsightsCollapsible';
+import { CountryPerspectiveSummaryStrip } from '@/components/country/CountryPerspectiveSummaryStrip';
 import CountryFlag from '@/components/country/CountryFlag';
 import { IntelligenceProvenanceCollapsible } from '@/components/country/IntelligenceProvenanceCollapsible';
 import { CountryIntelligenceCoverageBadge } from '@/components/intelligence/CountryIntelligenceCoverageBadge';
@@ -244,7 +245,8 @@ function barTone(score: number) {
 export default function CountryDetailPage() {
   const params = useParams();
   const id = params?.id;
-  const { user } = useUser();
+  const { user, isLoaded: userLoaded } = useUser();
+  const isGuest = userLoaded && !isSignedIn;
   const { preference } = useObjectivePreference();
   const primaryObjectiveDef = useMemo(
     () => getObjectiveBySlug(preference.primarySlug),
@@ -256,6 +258,7 @@ export default function CountryDetailPage() {
   );
   const showExpertsMarketplaceCta = showConsultantMarketplaceNav(primaryObjectiveDef);
   const [showOffPerspectiveScores, setShowOffPerspectiveScores] = useState(false);
+  const [showOffPerspectiveModules, setShowOffPerspectiveModules] = useState(false);
   const [country, setCountry] = useState<CountryDetailLoadState>(null);
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState('');
@@ -487,6 +490,13 @@ export default function CountryDetailPage() {
     'Limitée';
   const isStrictTourism = /(strict|élev|high|difficile|difficult)/i.test(tourismDifficulty);
   const isStructuredWork = /(structur|limit|moder|modér|moy)/i.test(workAvailability);
+  const isTourismPrimary = perspectiveContract?.primaryScoreFocus === 'tourism';
+  const tourismProcessHint =
+    typeof visaTourism?.process === 'string' && visaTourism.process.trim()
+      ? visaTourism.process.trim()
+      : null;
+  const tourismCostHint =
+    typeof visaTourism?.cost === 'string' && visaTourism.cost.trim() ? visaTourism.cost.trim() : null;
 
   return (
     <>
@@ -499,13 +509,13 @@ export default function CountryDetailPage() {
               NEXUS_FOCUS_VISIBLE,
             )}
           >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Back to Explorer
+            <ArrowLeft className="h-3.5 w-3.5" aria-hidden /> Retour à l&apos;explorateur
           </ObjectiveAwareExplorerLink>
 
           <MoroccoFirstDisclaimer className="mb-6" />
 
           <section
-            aria-label="Intelligence Hub"
+            aria-label="Hub intelligence"
             className="relative mb-6 overflow-hidden rounded-2xl border border-[#0D1B3E]/10 bg-white pl-1.5 pr-5 py-5 shadow-sm sm:py-6"
           >
             <span
@@ -515,7 +525,7 @@ export default function CountryDetailPage() {
             <div className="flex flex-col gap-4 pl-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="text-[10px] font-black uppercase tracking-[0.24em] text-[#0D1B3E]/55">
-                  Intelligence Hub
+                  Hub intelligence
                 </p>
                 <h2 className="mt-1 font-serif text-xl font-black leading-tight tracking-tight text-[#0D1B3E] sm:text-2xl">
                   {country.name} — {strapline}
@@ -569,6 +579,20 @@ export default function CountryDetailPage() {
               </div>
             </div>
           </section>
+
+          {perspectiveContract ? (
+            <CountryPerspectiveSummaryStrip
+              contract={perspectiveContract}
+              countryName={country.name}
+              primarySlug={preference.primarySlug}
+              tourismScore={tourismScore}
+              tourismDifficulty={tourismDifficulty}
+              isSchengen={isSchengen}
+              isGuest={isGuest}
+              processHint={tourismProcessHint}
+              costHint={tourismCostHint}
+            />
+          ) : null}
 
           <section className="mb-8 flex flex-wrap items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
@@ -820,12 +844,28 @@ export default function CountryDetailPage() {
 
               <GoogleAd slot="country_detail_mid" />
 
+              {isTourismPrimary ? (
+                <div className="mb-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowOffPerspectiveModules((v) => !v)}
+                    className="text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/60 underline-offset-2 hover:underline"
+                    aria-expanded={showOffPerspectiveModules}
+                  >
+                    {showOffPerspectiveModules
+                      ? 'Masquer les modules hors parcours'
+                      : 'Modules hors parcours · 2'}
+                  </button>
+                </div>
+              ) : null}
+
+              {(!isTourismPrimary || showOffPerspectiveModules) && (
               <section aria-labelledby="appointment-audit-heading">
                 <h2
                   id="appointment-audit-heading"
                   className="mb-4 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl"
                 >
-                  Appointment Audit
+                  Audit rendez-vous
                 </h2>
                 <div className="rounded-xl border border-[#0D1B3E]/10 bg-white p-5 shadow-sm sm:p-6">
                   <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
@@ -880,13 +920,15 @@ export default function CountryDetailPage() {
                   <BlockFeedback blockId="country-appointment-audit" countryId={countryPageId} />
                 </div>
               </section>
+              )}
 
+              {(!isTourismPrimary || showOffPerspectiveModules) && (
               <section aria-labelledby="driving-mobility-heading">
                 <h2
                   id="driving-mobility-heading"
                   className="mb-4 font-serif text-2xl font-black tracking-tight text-[#0D1B3E] sm:text-3xl"
                 >
-                  Driving &amp; Mobility
+                  Conduite et mobilité
                 </h2>
                 <div className="mb-4 rounded-xl border border-[#0D1B3E]/10 bg-white p-5 shadow-sm sm:p-6">
                   <div className="flex items-start gap-3">
@@ -914,6 +956,7 @@ export default function CountryDetailPage() {
                   intel={drivingIntel}
                 />
               </section>
+              )}
 
               {showPhdSurfaces && phdModel ? (
                 <PhDStudiesCountryTeaser
@@ -1034,10 +1077,10 @@ export default function CountryDetailPage() {
 
                 <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
-                    Embassy Context
+                    Contexte ambassade
                   </p>
                   <h3 className="mt-1 font-serif text-lg font-black tracking-tight text-[#0D1B3E]">
-                    Behavioral Profile
+                    Profil comportemental
                   </h3>
                   <p className="mt-3 font-serif text-sm font-medium leading-relaxed text-[#0D1B3E]/75">
                     {typeof full.embassy_behavior === 'string' && full.embassy_behavior.trim()
@@ -1048,7 +1091,7 @@ export default function CountryDetailPage() {
                   <dl className="mt-5 space-y-3 border-t border-[#0D1B3E]/10 pt-5">
                     <div className="flex items-center justify-between gap-3">
                       <dt className="font-serif text-sm font-medium text-[#0D1B3E]">
-                        Tourism Visa
+                        Visa tourisme
                       </dt>
                       <dd>
                         <span
@@ -1062,22 +1105,24 @@ export default function CountryDetailPage() {
                         </span>
                       </dd>
                     </div>
-                    <div className="flex items-center justify-between gap-3">
-                      <dt className="font-serif text-sm font-medium text-[#0D1B3E]">
-                        Work/Study Permits
-                      </dt>
-                      <dd>
-                        <span
-                          className={`rounded-md border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.18em] ${
-                            isStructuredWork
-                              ? 'border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]/75'
-                              : 'border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]/75'
-                          }`}
-                        >
-                          {isStructuredWork ? 'Structured' : workAvailability}
-                        </span>
-                      </dd>
-                    </div>
+                    {!isTourismPrimary ? (
+                      <div className="flex items-center justify-between gap-3">
+                        <dt className="font-serif text-sm font-medium text-[#0D1B3E]">
+                          Permis travail / études
+                        </dt>
+                        <dd>
+                          <span
+                            className={`rounded-md border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.18em] ${
+                              isStructuredWork
+                                ? 'border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]/75'
+                                : 'border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]/75'
+                            }`}
+                          >
+                            {isStructuredWork ? 'Structuré' : workAvailability}
+                          </span>
+                        </dd>
+                      </div>
+                    ) : null}
                   </dl>
 
                   <div className="mt-5 rounded-xl border border-[#0D1B3E]/10 bg-[#FDFBF4] p-4">
@@ -1095,28 +1140,85 @@ export default function CountryDetailPage() {
                   />
                 </div>
 
-                <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm">
-                  <p className="mb-4 text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
-                    Processing Metrics
-                  </p>
-                  <div className="space-y-4">
-                    <ProcessingMetricBar
-                      label="Processing Speed"
-                      value={100 - frictionScore}
-                      rightLabel={
-                        frictionScore >= 55 ? 'Slow' : frictionScore >= 35 ? 'Moderate' : 'Fast'
-                      }
-                      inverted
-                    />
-                    <ProcessingMetricBar
-                      label="Administrative Friction"
-                      value={frictionScore}
-                      rightLabel={
-                        frictionScore >= 55 ? 'High' : frictionScore >= 35 ? 'Moderate' : 'Low'
-                      }
-                    />
+                {isTourismPrimary ? (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setShowOffPerspectiveModules((v) => !v)}
+                      className="mb-3 text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/60 underline-offset-2 hover:underline"
+                      aria-expanded={showOffPerspectiveModules}
+                    >
+                      {showOffPerspectiveModules
+                        ? 'Masquer autres parcours'
+                        : 'Autres parcours (permis, délais)'}
+                    </button>
+                    {showOffPerspectiveModules ? (
+                      <div className="space-y-6">
+                        <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm">
+                          <p className="mb-3 text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                            Permis travail / études
+                          </p>
+                          <p className="font-serif text-sm font-medium text-[#0D1B3E]/75">
+                            {isStructuredWork ? 'Structuré' : workAvailability}
+                          </p>
+                        </div>
+                        <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm">
+                          <p className="mb-4 text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                            Délais et friction
+                          </p>
+                          <div className="space-y-4">
+                            <ProcessingMetricBar
+                              label="Vitesse de traitement"
+                              value={100 - frictionScore}
+                              rightLabel={
+                                frictionScore >= 55
+                                  ? 'Lent'
+                                  : frictionScore >= 35
+                                    ? 'Modéré'
+                                    : 'Rapide'
+                              }
+                              inverted
+                            />
+                            <ProcessingMetricBar
+                              label="Friction administrative"
+                              value={frictionScore}
+                              rightLabel={
+                                frictionScore >= 55
+                                  ? 'Élevée'
+                                  : frictionScore >= 35
+                                    ? 'Modérée'
+                                    : 'Faible'
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
-                </div>
+                ) : (
+                  <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-6 shadow-sm">
+                    <p className="mb-4 text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
+                      Délais et friction
+                    </p>
+                    <div className="space-y-4">
+                      <ProcessingMetricBar
+                        label="Vitesse de traitement"
+                        value={100 - frictionScore}
+                        rightLabel={
+                          frictionScore >= 55 ? 'Lent' : frictionScore >= 35 ? 'Modéré' : 'Rapide'
+                        }
+                        inverted
+                      />
+                      <ProcessingMetricBar
+                        label="Friction administrative"
+                        value={frictionScore}
+                        rightLabel={
+                          frictionScore >= 55 ? 'Élevée' : frictionScore >= 35 ? 'Modérée' : 'Faible'
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="rounded-2xl border border-[#0D1B3E]/10 bg-white p-4 shadow-sm">
                   <GoogleAd slot="country_detail_sidebar" />

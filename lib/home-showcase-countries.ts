@@ -8,6 +8,12 @@ import { loadFallbackCountries } from '@/lib/countries-fallback'
 import { countryNameMergeKey, getMergedCountriesListCached } from '@/lib/countries-prisma-merge'
 import { frictionTierFromCountry, isoForCountryName, scoreToMobilityTier } from '@/lib/country-card-mappers'
 import { enrichCountryApiRecord } from '@/lib/enrich-country-api'
+import {
+  applyPerspectiveToShowcaseItems,
+  type ShowcaseVisaBreakdown,
+} from '@/lib/home-showcase-perspective'
+
+export { applyPerspectiveToShowcaseItems, type ShowcaseVisaBreakdown } from '@/lib/home-showcase-perspective'
 
 /** Curated spotlight destinations (names must match `data/countries.json` / DB `Country.name`). */
 export const SHOWCASE: { name: string; fallbackCode: string }[] = [
@@ -30,10 +36,14 @@ function fallbackItem(template: (typeof SHOWCASE)[number]): CountryGridItem {
     friction: 'Medium',
     study: 'Medium',
     business: 'Medium',
+    tourism: 'Medium',
+    visaBreakdown: { tourism: 70, study: 70, work: 70, business: 70 },
   }
 }
 
-export async function resolveHomeShowcaseCountries(): Promise<CountryGridItem[]> {
+export async function resolveHomeShowcaseCountries(
+  primarySlug?: string | null,
+): Promise<CountryGridItem[]> {
   let merged: Awaited<ReturnType<typeof getMergedCountriesListCached>> = []
   let staticRows: Awaited<ReturnType<typeof loadFallbackCountries>> = []
   try {
@@ -50,7 +60,7 @@ export async function resolveHomeShowcaseCountries(): Promise<CountryGridItem[]>
   const mergedByName = new Map(merged.map((c) => [countryNameMergeKey(c.name), c]))
   const staticByName = new Map(staticRows.map((c) => [countryNameMergeKey(c.name), c]))
 
-  return SHOWCASE.map((template) => {
+  const items = SHOWCASE.map((template) => {
     const key = countryNameMergeKey(template.name)
     const row = mergedByName.get(key) ?? staticByName.get(key)
     if (!row) return fallbackItem(template)
@@ -60,13 +70,12 @@ export async function resolveHomeShowcaseCountries(): Promise<CountryGridItem[]>
       enriched.appointment_difficulty ?? enriched._difficultyLabel,
       enriched._full.friction_score,
     )
-    const visaAvg = Math.round(
-      (enriched._visa.tourism +
-        enriched._visa.study +
-        enriched._visa.work +
-        enriched._visa.business) /
-        4,
-    )
+    const visaBreakdown: ShowcaseVisaBreakdown = {
+      tourism: enriched._visa.tourism,
+      study: enriched._visa.study,
+      work: enriched._visa.work,
+      business: enriched._visa.business,
+    }
 
     const code = isoForCountryName(enriched.name) || template.fallbackCode
     const routeId = row.id
@@ -77,12 +86,29 @@ export async function resolveHomeShowcaseCountries(): Promise<CountryGridItem[]>
       name: enriched.name,
       code,
       score: enriched._finalScore,
-      visaScore: Math.max(0, Math.min(100, visaAvg)),
+      visaScore: Math.max(
+        0,
+        Math.min(
+          100,
+          Math.round(
+            (visaBreakdown.tourism +
+              visaBreakdown.study +
+              visaBreakdown.work +
+              visaBreakdown.business) /
+              4,
+          ),
+        ),
+      ),
       friction,
-      study: scoreToMobilityTier(enriched._visa.study),
-      business: scoreToMobilityTier(enriched._visa.business),
+      study: scoreToMobilityTier(visaBreakdown.study),
+      business: scoreToMobilityTier(visaBreakdown.business),
+      tourism: scoreToMobilityTier(visaBreakdown.tourism),
+      work: scoreToMobilityTier(visaBreakdown.work),
+      visaBreakdown,
       ...(enriched._highlightPlace ? { highlightPlace: enriched._highlightPlace } : {}),
       ...(enriched._highlightImageUrl ? { highlightImageUrl: enriched._highlightImageUrl } : {}),
     }
   })
+
+  return applyPerspectiveToShowcaseItems(items, primarySlug)
 }

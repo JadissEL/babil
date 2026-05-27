@@ -22,6 +22,17 @@ describe('PROTECTED_ROUTE_RULES', () => {
     }
   });
 
+  it('does not protect guest-readable /explorer (hybrid public read-only)', () => {
+    assert.ok(
+      !PROTECTED_ROUTE_PATTERNS.some((p) => p === '/explorer(.*)'),
+      '/explorer should be open to unsigned visitors',
+    );
+    assert.ok(
+      PROTECTED_ROUTE_PATTERNS.some((p) => p === '/compare(.*)'),
+      '/compare remains protected',
+    );
+  });
+
   it('has unique patterns (no duplicate matcher entries)', () => {
     const seen = new Set<string>();
     for (const rule of PROTECTED_ROUTE_RULES) {

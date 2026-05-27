@@ -10,6 +10,7 @@ import { SiteFooter, SiteHeader } from '@/components/layout/SiteHeader';
 import { SitePrimaryNavColumn, useSitePrimaryNavState } from '@/components/layout/SitePrimaryNav';
 import {
   isAuthPath,
+  isGuestReadablePath,
   isNexusPath,
   isPublicMarketingPath,
   NEXUS_COUNTRIES_PREFIX,
@@ -23,6 +24,7 @@ function shouldUseNexusShell(
 ): boolean {
   if (!pathname || isAuthPath(pathname)) return false;
   const p = normalizePathname(pathname);
+  if (isGuestReadablePath(pathname) && isLoaded && !isSignedIn) return false;
   if (p === '/' && isLoaded && isSignedIn) return true;
   if (isNexusPath(pathname)) return true;
   if (!isLoaded || !isSignedIn) return false;

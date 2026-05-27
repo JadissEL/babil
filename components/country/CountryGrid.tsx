@@ -1,11 +1,14 @@
 import { CountryCard } from '@/components/country/CountryCard'
 import type { CountryCardProps } from '@/components/country/CountryCard'
+import type { ShowcaseVisaBreakdown } from '@/lib/home-showcase-perspective'
 
 /** Pays prêt pour CountryCard + clé liste */
 export type CountryGridItem = {
   id: string
   /** Route cible explicite ; évite d’exiger que `id` soit uniquement numérique (clés type `fr-showcase`). */
   countryRouteId?: string | number
+  /** Raw visa dimensions for home perspective remapping */
+  visaBreakdown?: ShowcaseVisaBreakdown
 } & Omit<CountryCardProps, 'onClick' | 'countryId'>
 
 /**
@@ -24,7 +27,7 @@ export default function CountryGrid({
   return (
     <div className="grid auto-rows-fr grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
       {countries.map((country) => {
-        const { id, countryRouteId, ...rest } = country
+        const { id, countryRouteId, visaBreakdown: _visaBreakdown, ...rest } = country
         const routeTarget =
           countryRouteId != null
             ? String(countryRouteId)
