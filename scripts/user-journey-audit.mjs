@@ -79,6 +79,19 @@ async function main() {
   await snapshot(page, '02-home-after-tourisme');
 
   await page.goto(`${base}/explorer`, { waitUntil: 'networkidle', timeout: 60_000 });
+  await page
+    .getByText(/alignée.*Tourisme|correspondent à vos critères/i)
+    .first()
+    .waitFor({ state: 'visible', timeout: 30_000 });
+  await page.waitForFunction(
+    () => {
+      const t = document.body.innerText;
+      const m = t.match(/(\d+)\s+destination[s]?\s+alignée/i);
+      return m && Number(m[1]) >= 40;
+    },
+    null,
+    { timeout: 60_000 },
+  );
   await snapshot(page, '03-explorer');
 
   await page.goto(`${base}/compare`, { waitUntil: 'networkidle', timeout: 60_000 });

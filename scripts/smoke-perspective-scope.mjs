@@ -91,11 +91,18 @@ async function assertGuestExplorerReadable(page) {
   const match = countText.match(/(\d+)\s/);
   if (match) {
     const n = Number(match[1]);
+    if (n < 40) {
+      throw new Error(
+        `Tourism parcours filter should keep a useful shortlist (got ${n} in: ${countText})`,
+      );
+    }
     if (n >= 200) {
       throw new Error(
         `Tourism parcours filter should narrow results (got ${n} in: ${countText})`,
       );
     }
+  } else {
+    throw new Error(`Could not parse Explorer result count from: ${countText}`);
   }
 }
 

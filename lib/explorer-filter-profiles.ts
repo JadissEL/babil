@@ -79,8 +79,9 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
       return {
         ...base,
         primaryGateSource: 'dbScalar',
-        primaryScoreMin: 56,
-        primaryGatePercentile: 55,
+        /** Floor only — most Prisma rows are ~5/10 (50); stricter cut is `primaryGateMaxCatalogShare`. */
+        primaryScoreMin: 50,
+        primaryGatePercentile: 38,
         primaryGateMaxCatalogShare: 0.62,
         dimensions: ['region', 'schengen', 'difficulty', 'budgetBand'],
         labels: {
