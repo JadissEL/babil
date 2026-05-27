@@ -282,13 +282,11 @@ function ExplorerPageInner() {
         urlObjective !== lockedObjectiveSlug ||
         (urlGoal && lockedGoal && urlGoal !== lockedGoal)
       ) {
-        const params = new URLSearchParams(searchParams.toString())
-        params.set('objective', lockedObjectiveSlug)
-        if (lockedGoal) params.set('goal', lockedGoal)
-        if (!params.get('mode')) params.set('mode', 'recommendation')
-        const basePath = pathname ?? '/explorer'
-        const qs = params.toString()
-        router.replace(qs ? `${basePath}?${qs}` : basePath, { scroll: false })
+        commitExplorerUrl({
+          objectiveSlug: lockedObjectiveSlug,
+          goal: lockedGoal ?? goal,
+          mode: 'recommendation',
+        })
       }
     } else {
       const objParam = searchParams.get('objective')
@@ -323,7 +321,15 @@ function ExplorerPageInner() {
     } else {
       setMode('explorer')
     }
-  }, [searchParams, objectivePref?.ready, objectivePref?.preference.primarySlug, lockedGoal, lockedObjectiveSlug, pathname, router])
+  }, [
+    searchParams,
+    objectivePref?.ready,
+    objectivePref?.preference.primarySlug,
+    lockedGoal,
+    lockedObjectiveSlug,
+    goal,
+    commitExplorerUrl,
+  ])
 
   /** Liens partagés avec filtres / recherche = parcours explorateur utile sans clic supplémentaire. */
   useEffect(() => {

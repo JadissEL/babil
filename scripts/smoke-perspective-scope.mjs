@@ -78,6 +78,7 @@ async function assertGuestExplorerReadable(page) {
   if (!/tourisme/i.test(lockedText)) {
     throw new Error(`Explorer locked goal should mention Tourisme, got: ${lockedText}`);
   }
+  await page.waitForURL(/[?&](objective=tourism|goal=tourism)/i, { timeout: 20_000 });
   const explorerUrl = page.url();
   if (!/[?&]objective=tourism/i.test(explorerUrl) && !/[?&]goal=tourism/i.test(explorerUrl)) {
     throw new Error(
