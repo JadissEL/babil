@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "generatedAt": "2026-05-30T12:29:21.323Z",
+  "generatedAt": "2026-05-30T12:46:14.403Z",
   "sources": [
     {
       "id": "world_bank",
       "name": "World Bank",
-      "baseUrl": null,
+      "baseUrl": "https://data.worldbank.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -23,7 +23,7 @@
     {
       "id": "international_monetary_fund_imf",
       "name": "International Monetary Fund (IMF)",
-      "baseUrl": null,
+      "baseUrl": "https://www.imf.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -41,7 +41,7 @@
     {
       "id": "oecd",
       "name": "OECD",
-      "baseUrl": null,
+      "baseUrl": "https://www.oecd.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -59,7 +59,7 @@
     {
       "id": "united_nations",
       "name": "United Nations",
-      "baseUrl": null,
+      "baseUrl": "https://data.un.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -77,7 +77,7 @@
     {
       "id": "unesco",
       "name": "UNESCO",
-      "baseUrl": null,
+      "baseUrl": "https://www.unesco.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -95,7 +95,7 @@
     {
       "id": "unicef",
       "name": "UNICEF",
-      "baseUrl": null,
+      "baseUrl": "https://data.unicef.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -113,7 +113,7 @@
     {
       "id": "unhcr",
       "name": "UNHCR",
-      "baseUrl": null,
+      "baseUrl": "https://www.unhcr.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -131,7 +131,7 @@
     {
       "id": "world_health_organization_who",
       "name": "World Health Organization (WHO)",
-      "baseUrl": null,
+      "baseUrl": "https://www.who.int",
       "tier": "official",
       "topics": [
         "official_global"
@@ -149,7 +149,7 @@
     {
       "id": "international_labour_organization_ilo",
       "name": "International Labour Organization (ILO)",
-      "baseUrl": null,
+      "baseUrl": "https://ilostat.ilo.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -167,7 +167,7 @@
     {
       "id": "world_trade_organization_wto",
       "name": "World Trade Organization (WTO)",
-      "baseUrl": null,
+      "baseUrl": "https://www.wto.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -185,7 +185,7 @@
     {
       "id": "eurostat",
       "name": "Eurostat",
-      "baseUrl": null,
+      "baseUrl": "https://ec.europa.eu",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -203,7 +203,7 @@
     {
       "id": "numbeo",
       "name": "Numbeo",
-      "baseUrl": null,
+      "baseUrl": "https://www.numbeo.com",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -221,7 +221,7 @@
     {
       "id": "statista",
       "name": "Statista",
-      "baseUrl": null,
+      "baseUrl": "https://www.statista.com",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -239,7 +239,7 @@
     {
       "id": "trading_economics",
       "name": "Trading Economics",
-      "baseUrl": null,
+      "baseUrl": "https://tradingeconomics.com",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -257,7 +257,7 @@
     {
       "id": "global_economy",
       "name": "Global Economy",
-      "baseUrl": null,
+      "baseUrl": "https://www.global-economy.com",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -275,7 +275,7 @@
     {
       "id": "nationmaster",
       "name": "NationMaster",
-      "baseUrl": null,
+      "baseUrl": "https://www.nationmaster.com",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -293,7 +293,7 @@
     {
       "id": "data_world",
       "name": "Data.world",
-      "baseUrl": null,
+      "baseUrl": "https://data.world",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -311,7 +311,7 @@
     {
       "id": "european_union_open_data_portal",
       "name": "European Union Open Data Portal",
-      "baseUrl": null,
+      "baseUrl": "https://data.europa.eu",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -329,7 +329,7 @@
     {
       "id": "our_world_in_data",
       "name": "Our World in Data",
-      "baseUrl": null,
+      "baseUrl": "https://ourworldindata.org",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -347,7 +347,7 @@
     {
       "id": "gapminder",
       "name": "Gapminder",
-      "baseUrl": null,
+      "baseUrl": "https://www.gapminder.org",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -365,7 +365,7 @@
     {
       "id": "skyscanner",
       "name": "Skyscanner",
-      "baseUrl": null,
+      "baseUrl": "https://www.skyscanner.net",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -383,7 +383,7 @@
     {
       "id": "google_flights",
       "name": "Google Flights",
-      "baseUrl": null,
+      "baseUrl": "https://www.google.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -401,7 +401,7 @@
     {
       "id": "kayak",
       "name": "Kayak",
-      "baseUrl": null,
+      "baseUrl": "https://www.kayak.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -419,7 +419,7 @@
     {
       "id": "momondo",
       "name": "Momondo",
-      "baseUrl": null,
+      "baseUrl": "https://www.momondo.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -437,7 +437,7 @@
     {
       "id": "expedia",
       "name": "Expedia",
-      "baseUrl": null,
+      "baseUrl": "https://www.expedia.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -455,7 +455,7 @@
     {
       "id": "trip_com",
       "name": "Trip.com",
-      "baseUrl": null,
+      "baseUrl": "https://www.trip.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -473,7 +473,7 @@
     {
       "id": "kiwi_com",
       "name": "Kiwi.com",
-      "baseUrl": null,
+      "baseUrl": "https://www.kiwi.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -491,7 +491,7 @@
     {
       "id": "cheapoair",
       "name": "CheapOair",
-      "baseUrl": null,
+      "baseUrl": "https://www.cheapoair.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -509,7 +509,7 @@
     {
       "id": "opodo",
       "name": "Opodo",
-      "baseUrl": null,
+      "baseUrl": "https://www.opodo.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -527,7 +527,7 @@
     {
       "id": "edreams",
       "name": "eDreams",
-      "baseUrl": null,
+      "baseUrl": "https://www.edreams.com",
       "tier": "curated",
       "topics": [
         "flights_transport"
@@ -545,7 +545,7 @@
     {
       "id": "airbnb",
       "name": "Airbnb",
-      "baseUrl": null,
+      "baseUrl": "https://www.airbnb.com",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -563,7 +563,7 @@
     {
       "id": "booking_com",
       "name": "Booking.com",
-      "baseUrl": null,
+      "baseUrl": "https://www.booking.com",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -581,7 +581,7 @@
     {
       "id": "zillow",
       "name": "Zillow",
-      "baseUrl": null,
+      "baseUrl": "https://www.zillow.com",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -599,7 +599,7 @@
     {
       "id": "realtor_com",
       "name": "Realtor.com",
-      "baseUrl": null,
+      "baseUrl": "https://www.realtor.com",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -617,7 +617,7 @@
     {
       "id": "rightmove",
       "name": "Rightmove",
-      "baseUrl": null,
+      "baseUrl": "https://www.rightmove.co.uk",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -635,7 +635,7 @@
     {
       "id": "idealista",
       "name": "Idealista",
-      "baseUrl": null,
+      "baseUrl": "https://www.idealista.com",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -653,7 +653,7 @@
     {
       "id": "immowelt",
       "name": "Immowelt",
-      "baseUrl": null,
+      "baseUrl": "https://www.immowelt.de",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -671,7 +671,7 @@
     {
       "id": "seloger",
       "name": "SeLoger",
-      "baseUrl": null,
+      "baseUrl": "https://www.seloger.com",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -689,7 +689,7 @@
     {
       "id": "propertyfinder",
       "name": "PropertyFinder",
-      "baseUrl": null,
+      "baseUrl": "https://www.propertyfinder.com",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -707,7 +707,7 @@
     {
       "id": "nestpick",
       "name": "Nestpick",
-      "baseUrl": null,
+      "baseUrl": "https://www.nestpick.com",
       "tier": "curated",
       "topics": [
         "housing_cost_of_living"
@@ -725,7 +725,7 @@
     {
       "id": "campus_france",
       "name": "Campus France",
-      "baseUrl": null,
+      "baseUrl": "https://www.campusfrance.org",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -743,7 +743,7 @@
     {
       "id": "daad",
       "name": "DAAD",
-      "baseUrl": null,
+      "baseUrl": "https://www.daad.de",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -761,7 +761,7 @@
     {
       "id": "study_in_canada",
       "name": "Study in Canada",
-      "baseUrl": null,
+      "baseUrl": "https://www.educanada.ca",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -779,7 +779,7 @@
     {
       "id": "education_usa",
       "name": "Education USA",
-      "baseUrl": null,
+      "baseUrl": "https://educationusa.state.gov",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -797,7 +797,7 @@
     {
       "id": "ucas",
       "name": "UCAS",
-      "baseUrl": null,
+      "baseUrl": "https://www.ucas.com",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -815,7 +815,7 @@
     {
       "id": "erasmus",
       "name": "Erasmus+",
-      "baseUrl": null,
+      "baseUrl": "https://erasmus-plus.ec.europa.eu",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -833,7 +833,7 @@
     {
       "id": "scholarships_com",
       "name": "Scholarships.com",
-      "baseUrl": null,
+      "baseUrl": "https://www.scholarships.com",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -851,7 +851,7 @@
     {
       "id": "mastersportal",
       "name": "Mastersportal",
-      "baseUrl": null,
+      "baseUrl": "https://www.mastersportal.com",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -869,7 +869,7 @@
     {
       "id": "phdportal",
       "name": "PhDportal",
-      "baseUrl": null,
+      "baseUrl": "https://www.phdportal.com",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -887,7 +887,7 @@
     {
       "id": "qs_top_universities_topuniversities",
       "name": "QS Top Universities (TopUniversities)",
-      "baseUrl": null,
+      "baseUrl": "https://www.topuniversities.com",
       "tier": "multilateral",
       "topics": [
         "study_universities"
@@ -905,7 +905,7 @@
     {
       "id": "linkedin",
       "name": "LinkedIn",
-      "baseUrl": null,
+      "baseUrl": "https://www.linkedin.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -923,7 +923,7 @@
     {
       "id": "indeed",
       "name": "Indeed",
-      "baseUrl": null,
+      "baseUrl": "https://www.indeed.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -941,7 +941,7 @@
     {
       "id": "glassdoor",
       "name": "Glassdoor",
-      "baseUrl": null,
+      "baseUrl": "https://www.glassdoor.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -959,7 +959,7 @@
     {
       "id": "monster",
       "name": "Monster",
-      "baseUrl": null,
+      "baseUrl": "https://www.monster.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -977,7 +977,7 @@
     {
       "id": "ziprecruiter",
       "name": "ZipRecruiter",
-      "baseUrl": null,
+      "baseUrl": "https://www.ziprecruiter.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -995,7 +995,7 @@
     {
       "id": "angellist",
       "name": "AngelList",
-      "baseUrl": null,
+      "baseUrl": "https://wellfound.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -1013,7 +1013,7 @@
     {
       "id": "welcome_to_the_jungle",
       "name": "Welcome to the Jungle",
-      "baseUrl": null,
+      "baseUrl": "https://www.welcometothejungle.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -1031,7 +1031,7 @@
     {
       "id": "stepstone",
       "name": "StepStone",
-      "baseUrl": null,
+      "baseUrl": "https://www.stepstone.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -1049,7 +1049,7 @@
     {
       "id": "jobstreet",
       "name": "JobStreet",
-      "baseUrl": null,
+      "baseUrl": "https://www.jobstreet.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -1067,7 +1067,7 @@
     {
       "id": "bayt",
       "name": "Bayt",
-      "baseUrl": null,
+      "baseUrl": "https://www.bayt.com",
       "tier": "multilateral",
       "topics": [
         "employment_labour_market"
@@ -1085,7 +1085,7 @@
     {
       "id": "iata_travel_centre",
       "name": "IATA Travel Centre",
-      "baseUrl": null,
+      "baseUrl": "https://www.iatatravelcentre.com",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1103,7 +1103,7 @@
     {
       "id": "visahq",
       "name": "VisaHQ",
-      "baseUrl": null,
+      "baseUrl": "https://www.visahq.com",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1121,7 +1121,7 @@
     {
       "id": "vfs_global",
       "name": "VFS Global",
-      "baseUrl": null,
+      "baseUrl": "https://www.vfsglobal.com",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1139,7 +1139,7 @@
     {
       "id": "schengen_visa_info",
       "name": "Schengen Visa Info",
-      "baseUrl": null,
+      "baseUrl": "https://www.schengenvisainfo.com",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1157,7 +1157,7 @@
     {
       "id": "uk_home_office",
       "name": "UK Home Office",
-      "baseUrl": null,
+      "baseUrl": "https://www.gov.uk",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1175,7 +1175,7 @@
     {
       "id": "uscis",
       "name": "USCIS",
-      "baseUrl": null,
+      "baseUrl": "https://www.uscis.gov",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1193,7 +1193,7 @@
     {
       "id": "ircc_canada",
       "name": "IRCC (Canada)",
-      "baseUrl": null,
+      "baseUrl": "https://www.canada.ca",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1211,7 +1211,7 @@
     {
       "id": "australian_government_immigration",
       "name": "Australian Government Immigration",
-      "baseUrl": null,
+      "baseUrl": "https://immi.homeaffairs.gov.au",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1229,7 +1229,7 @@
     {
       "id": "new_zealand_immigration",
       "name": "New Zealand Immigration",
-      "baseUrl": null,
+      "baseUrl": "https://www.immigration.govt.nz",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1247,7 +1247,7 @@
     {
       "id": "france_visas",
       "name": "France-Visas",
-      "baseUrl": null,
+      "baseUrl": "https://france-visas.gouv.fr",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1445,7 +1445,7 @@
     {
       "id": "us_cdc",
       "name": "US CDC",
-      "baseUrl": null,
+      "baseUrl": "https://www.cdc.gov",
       "tier": "curated",
       "topics": [
         "health_quality_of_life"
@@ -1463,7 +1463,7 @@
     {
       "id": "world_population_review",
       "name": "World Population Review",
-      "baseUrl": null,
+      "baseUrl": "https://worldpopulationreview.com",
       "tier": "curated",
       "topics": [
         "health_quality_of_life"
@@ -1481,7 +1481,7 @@
     {
       "id": "global_peace_index",
       "name": "Global Peace Index",
-      "baseUrl": null,
+      "baseUrl": "https://www.visionofhumanity.org",
       "tier": "curated",
       "topics": [
         "health_quality_of_life"
@@ -1499,7 +1499,7 @@
     {
       "id": "transparency_international",
       "name": "Transparency International",
-      "baseUrl": null,
+      "baseUrl": "https://www.transparency.org",
       "tier": "curated",
       "topics": [
         "health_quality_of_life"
@@ -1517,7 +1517,7 @@
     {
       "id": "xe",
       "name": "XE",
-      "baseUrl": null,
+      "baseUrl": "https://www.xe.com",
       "tier": "curated",
       "topics": [
         "finance_economics_news"
@@ -1535,7 +1535,7 @@
     {
       "id": "oanda",
       "name": "OANDA",
-      "baseUrl": null,
+      "baseUrl": "https://www.oanda.com",
       "tier": "curated",
       "topics": [
         "finance_economics_news"
@@ -1553,7 +1553,7 @@
     {
       "id": "bloomberg",
       "name": "Bloomberg",
-      "baseUrl": null,
+      "baseUrl": "https://www.bloomberg.com",
       "tier": "curated",
       "topics": [
         "finance_economics_news"
@@ -1571,7 +1571,7 @@
     {
       "id": "reuters",
       "name": "Reuters",
-      "baseUrl": null,
+      "baseUrl": "https://www.reuters.com",
       "tier": "curated",
       "topics": [
         "finance_economics_news"
@@ -1589,7 +1589,7 @@
     {
       "id": "financial_times",
       "name": "Financial Times",
-      "baseUrl": null,
+      "baseUrl": "https://www.ft.com",
       "tier": "curated",
       "topics": [
         "finance_economics_news"
@@ -2684,5 +2684,9 @@
       "categoryId": "supplemental_types_91_150",
       "notes": "From agent category supplemental_types_91_150"
     }
-  ]
+  ],
+  "stats": {
+    "total": 149,
+    "withBaseUrl": 79
+  }
 }

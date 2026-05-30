@@ -137,7 +137,7 @@ export async function runIntelligenceValidation(args?: {
 export async function materializeApprovedObservations(args?: {
   countryIds?: number[];
   limit?: number;
-}): Promise<{ materialized: number; report: ValidationReport }> {
+}): Promise<{ materialized: number; report: ValidationReport; profilesUpdated?: number }> {
   const report = await runIntelligenceValidation(args);
   const ids = args?.countryIds ?? Object.keys(report.byCountry).map(Number);
 
@@ -150,8 +150,21 @@ export async function materializeApprovedObservations(args?: {
     });
     if (ok) materialized += 1;
   }
+
+  const { materializeCountryWithLineage } = await import(
+    '@/lib/intelligence-pipeline/materialize-generalized'
+  );
+  const generalized = await materializeCountryWithLineage({
+    countryIds: ids,
+    limit: args?.limit,
+  });
+
   report.materialized = materialized;
-  return { materialized, report };
+  return {
+    materialized,
+    report,
+    profilesUpdated: generalized.profiles,
+  };
 }
 
 export { buildFieldConsensus, canPromoteField } from './consensus';

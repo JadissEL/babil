@@ -1,0 +1,45 @@
+# One-shot / manual bootstrap: migration + datafile ingest + taxonomy + discovery enqueue (small batch).
+# Requires: DATABASE_URL, ALLOW_PROD_WRITES=1
+
+name: Intelligence platform bootstrap
+
+on:
+  workflow_dispatch:
+    inputs:
+      discovery_limit:
+        description: Max source_discovery jobs to enqueue
+        required: false
+        default: '15'
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Build enriched datafile master list
+        run: npm run datafile:build-master
+      - name: Apply Prisma migrations
+        run: npm run db:migrate-deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Ingest datafile sources into IntelligenceSource
+        run: npm run datafile:ingest:db
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+      - name: Seed FieldDefinition taxonomy v2
+        run: npm run intelligence:classify-observations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+      - name: Enqueue discovery jobs (bounded batch)
+        run: npx tsx scripts/intelligence-enqueue-discovery-batch.ts --limit=${{ inputs.discovery_limit }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'

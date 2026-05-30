@@ -7,6 +7,8 @@ Ce document complète [country-intelligence-system.md](country-intelligence-syst
 | Déclencheur | Fichier / config | Base de données | Durée typique |
 |-------------|------------------|-----------------|---------------|
 | **Vercel Cron** | [`vercel.json`](../vercel.json) → `GET /api/cron/intelligence-pipeline` (dim. 04:00 UTC) | `DATABASE_URL` du projet Vercel (Production) | Limitée par `maxDuration` (300 s sur la route) |
+| **Vercel Cron change_detect** | `GET /api/cron/intelligence-pipeline?mode=change_detect` (dim. 05:00 UTC) | Idem | Batch limité (`CHANGE_DETECT_LIMIT`, défaut 40) — hash pages indexées, enqueue `deep_collect` si changement |
+| **GHA bootstrap** | [`.github/workflows/intelligence-platform-bootstrap.yml`](../.github/workflows/intelligence-platform-bootstrap.yml) (`workflow_dispatch`) | `DATABASE_URL` + `ALLOW_PROD_WRITES=1` | migrate + `datafile:ingest:db` + taxonomy + discovery enqueue (défaut 15 jobs) |
 | **GitHub Actions** | [`.github/workflows/intelligence-pipeline-weekly.yml`](../.github/workflows/intelligence-pipeline-weekly.yml) | Secret repo **`DATABASE_URL`** | Jusqu’à 45 min |
 | **Webhook signé** | `POST /api/webhooks/ingest` avec `event: intelligence.pipeline.run` (secret **`BABIL_WEBHOOK_INGEST_SECRET`**, signature HMAC — voir [catalogue-e-security.md](catalogue-e-security.md) §E.76) | Même `DATABASE_URL` que l’app qui reçoit le POST | `maxDuration` 300 s sur la route ingest |
 | **Manuel / Render** | `npm run intelligence:world-bank:materialize`, worker, etc. | `DATABASE_URL` de l’environnement shell | Selon machine |

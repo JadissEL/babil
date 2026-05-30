@@ -14,6 +14,11 @@ import {
   readFieldLineage,
   type FieldLineageEntry,
 } from '@/lib/intelligence-validation/promotion-lineage';
+import type { ObservationVerificationStatus } from '@prisma/client';
+import {
+  canShowClaimOnPublicUI,
+  normalizeVerificationStatus,
+} from '@/lib/intelligence-validation/verification-status';
 
 export type SemanticStripItem = {
   path: string;
@@ -90,6 +95,13 @@ export function disputedFieldPathsFromFull(full: Record<string, unknown>): strin
   return raw.filter((p): p is string => typeof p === 'string' && p.length > 0);
 }
 
+function isLineagePublicSafe(meta?: LineageDisplayMeta): boolean {
+  if (!meta?.verificationStatus) return true;
+  return canShowClaimOnPublicUI(
+    normalizeVerificationStatus(meta.verificationStatus as ObservationVerificationStatus),
+  );
+}
+
 export function buildCountryIntelligenceSemanticItems(
   full: Record<string, unknown>,
 ): SemanticStripItem[] {
@@ -106,6 +118,7 @@ export function buildCountryIntelligenceSemanticItems(
 
     const glossary = getIntelligenceFieldPathGlossaryEntry(taxonomyPath);
     const lineageMeta = lineageMetaForFullDataPath(full, target.fullDataPath);
+    if (!isLineagePublicSafe(lineageMeta)) continue;
     const label = glossary?.labelFr ?? target.fullDataPath;
 
     items.push({
@@ -122,6 +135,20 @@ export function buildCountryIntelligenceSemanticItems(
           lineageMeta?.materializedAt ?? (economyFresh ? materializedAtLabel : undefined),
       },
     });
+  }
+
+  const moroccoApplicability = full.morocco_applicability as Record<string, unknown> | undefined;
+  if (moroccoApplicability && typeof moroccoApplicability === 'object') {
+    for (const [key, val] of Object.entries(moroccoApplicability)) {
+      if (val == null || val === '') continue;
+      const text = String(val);
+      if (!/review|à confirmer/i.test(text)) continue;
+      items.push({
+        path: `morocco_applicability.${key}`,
+        value: text,
+        meta: { label: 'Applicabilité Maroc', verificationStatus: 'needs_review' },
+      });
+    }
   }
 
   return items;

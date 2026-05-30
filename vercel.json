@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/intelligence-pipeline?mode=queue",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/intelligence-pipeline?mode=change_detect",
+      "schedule": "0 5 * * 0"
     }
   ]
 }
