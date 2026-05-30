@@ -138,9 +138,15 @@ export function buildFieldConsensus(
 
 export function canPromoteField(consensus: FieldConsensus): boolean {
   if (consensus.disputed || !consensus.winningValueJson) return false;
-  if (consensus.verificationStatus === 'disputed' || consensus.verificationStatus === 'pending') {
-    return false;
-  }
+  const blocked: ObservationVerificationStatus[] = [
+    'disputed',
+    'pending',
+    'needs_review',
+    'contradictory',
+    'outdated',
+    'archived',
+  ];
+  if (blocked.includes(consensus.verificationStatus)) return false;
   if (consensus.confidence < PROMOTION_CONFIDENCE_MIN) return false;
   if (consensus.sourcesConfirmed < PROMOTION_SOURCES_MIN) return false;
   return true;

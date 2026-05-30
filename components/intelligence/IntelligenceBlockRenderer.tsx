@@ -5,6 +5,10 @@ import { EconomyStatPanel } from '@/components/intelligence/blocks/EconomyStatPa
 import { ProvenanceChip } from '@/components/intelligence/blocks/ProvenanceChip';
 import { VerifiedUpdatesFeed } from '@/components/intelligence/blocks/VerifiedUpdatesFeed';
 import { VisaFrictionAlert } from '@/components/intelligence/blocks/VisaFrictionAlert';
+import { ScholarshipTable } from '@/components/intelligence/blocks/ScholarshipTable';
+import { JobSponsorshipCard } from '@/components/intelligence/blocks/JobSponsorshipCard';
+import { BusinessSetupSteps } from '@/components/intelligence/blocks/BusinessSetupSteps';
+import { MoroccoReviewBadge } from '@/components/intelligence/blocks/MoroccoReviewBadge';
 
 export type IntelligenceBlockProps = {
   path: string;
@@ -35,6 +39,18 @@ export function IntelligenceBlockRenderer({ path, value, meta, pattern }: Intell
   }
   if (p === 'verified_updates_feed') {
     return <VerifiedUpdatesFeed value={value} meta={meta} />;
+  }
+  if (p === 'scholarship_table') {
+    return <ScholarshipTable value={value} meta={meta} />;
+  }
+  if (p === 'job_sponsorship_card') {
+    return <JobSponsorshipCard value={value} meta={meta} />;
+  }
+  if (p === 'business_setup_steps') {
+    return <BusinessSetupSteps value={value} meta={meta} />;
+  }
+  if (p === 'morocco_review_badge') {
+    return <MoroccoReviewBadge value={value} />;
   }
   return null;
 }

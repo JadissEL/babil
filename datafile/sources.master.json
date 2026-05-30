@@ -1,0 +1,2688 @@
+{
+  "version": 1,
+  "generatedAt": "2026-05-30T12:29:21.323Z",
+  "sources": [
+    {
+      "id": "world_bank",
+      "name": "World Bank",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "international_monetary_fund_imf",
+      "name": "International Monetary Fund (IMF)",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "oecd",
+      "name": "OECD",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "united_nations",
+      "name": "United Nations",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "unesco",
+      "name": "UNESCO",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "unicef",
+      "name": "UNICEF",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "unhcr",
+      "name": "UNHCR",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "world_health_organization_who",
+      "name": "World Health Organization (WHO)",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "international_labour_organization_ilo",
+      "name": "International Labour Organization (ILO)",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "world_trade_organization_wto",
+      "name": "World Trade Organization (WTO)",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "official_global"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "official_global",
+      "notes": "From agent category official_global"
+    },
+    {
+      "id": "eurostat",
+      "name": "Eurostat",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "numbeo",
+      "name": "Numbeo",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "statista",
+      "name": "Statista",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "trading_economics",
+      "name": "Trading Economics",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "global_economy",
+      "name": "Global Economy",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "nationmaster",
+      "name": "NationMaster",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "data_world",
+      "name": "Data.world",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "european_union_open_data_portal",
+      "name": "European Union Open Data Portal",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "our_world_in_data",
+      "name": "Our World in Data",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "gapminder",
+      "name": "Gapminder",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "statistics_data"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "statistics_data",
+      "notes": "From agent category statistics_data"
+    },
+    {
+      "id": "skyscanner",
+      "name": "Skyscanner",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "google_flights",
+      "name": "Google Flights",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "kayak",
+      "name": "Kayak",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "momondo",
+      "name": "Momondo",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "expedia",
+      "name": "Expedia",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "trip_com",
+      "name": "Trip.com",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "kiwi_com",
+      "name": "Kiwi.com",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "cheapoair",
+      "name": "CheapOair",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "opodo",
+      "name": "Opodo",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "edreams",
+      "name": "eDreams",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "flights_transport"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "flights_transport",
+      "notes": "From agent category flights_transport"
+    },
+    {
+      "id": "airbnb",
+      "name": "Airbnb",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "booking_com",
+      "name": "Booking.com",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "zillow",
+      "name": "Zillow",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "realtor_com",
+      "name": "Realtor.com",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "rightmove",
+      "name": "Rightmove",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "idealista",
+      "name": "Idealista",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "immowelt",
+      "name": "Immowelt",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "seloger",
+      "name": "SeLoger",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "propertyfinder",
+      "name": "PropertyFinder",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "nestpick",
+      "name": "Nestpick",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "housing_cost_of_living"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "housing_cost_of_living",
+      "notes": "From agent category housing_cost_of_living"
+    },
+    {
+      "id": "campus_france",
+      "name": "Campus France",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "daad",
+      "name": "DAAD",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "study_in_canada",
+      "name": "Study in Canada",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "education_usa",
+      "name": "Education USA",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "ucas",
+      "name": "UCAS",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "erasmus",
+      "name": "Erasmus+",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "scholarships_com",
+      "name": "Scholarships.com",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "mastersportal",
+      "name": "Mastersportal",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "phdportal",
+      "name": "PhDportal",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "qs_top_universities_topuniversities",
+      "name": "QS Top Universities (TopUniversities)",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "study_universities"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "study_universities",
+      "notes": "From agent category study_universities"
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "indeed",
+      "name": "Indeed",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "glassdoor",
+      "name": "Glassdoor",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "monster",
+      "name": "Monster",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "ziprecruiter",
+      "name": "ZipRecruiter",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "angellist",
+      "name": "AngelList",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "welcome_to_the_jungle",
+      "name": "Welcome to the Jungle",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "stepstone",
+      "name": "StepStone",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "jobstreet",
+      "name": "JobStreet",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "bayt",
+      "name": "Bayt",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "employment_labour_market"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "employment_labour_market",
+      "notes": "From agent category employment_labour_market"
+    },
+    {
+      "id": "iata_travel_centre",
+      "name": "IATA Travel Centre",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "visahq",
+      "name": "VisaHQ",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "vfs_global",
+      "name": "VFS Global",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "schengen_visa_info",
+      "name": "Schengen Visa Info",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "uk_home_office",
+      "name": "UK Home Office",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "uscis",
+      "name": "USCIS",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "ircc_canada",
+      "name": "IRCC (Canada)",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "australian_government_immigration",
+      "name": "Australian Government Immigration",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "new_zealand_immigration",
+      "name": "New Zealand Immigration",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "france_visas",
+      "name": "France-Visas",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "reddit",
+      "name": "Reddit",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "quora",
+      "name": "Quora",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "expat_com",
+      "name": "Expat.com",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "internations",
+      "name": "InterNations",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "nomad_list",
+      "name": "Nomad List",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "couchsurfing",
+      "name": "Couchsurfing",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "tripadvisor",
+      "name": "TripAdvisor",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "lonely_planet",
+      "name": "Lonely Planet",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "culture_trip",
+      "name": "Culture Trip",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "expat_real_world"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "expat_real_world",
+      "notes": "From agent category expat_real_world"
+    },
+    {
+      "id": "us_cdc",
+      "name": "US CDC",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "health_quality_of_life"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "health_quality_of_life",
+      "notes": "From agent category health_quality_of_life"
+    },
+    {
+      "id": "world_population_review",
+      "name": "World Population Review",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "health_quality_of_life"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "health_quality_of_life",
+      "notes": "From agent category health_quality_of_life"
+    },
+    {
+      "id": "global_peace_index",
+      "name": "Global Peace Index",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "health_quality_of_life"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "health_quality_of_life",
+      "notes": "From agent category health_quality_of_life"
+    },
+    {
+      "id": "transparency_international",
+      "name": "Transparency International",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "health_quality_of_life"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "health_quality_of_life",
+      "notes": "From agent category health_quality_of_life"
+    },
+    {
+      "id": "xe",
+      "name": "XE",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "finance_economics_news"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "finance_economics_news",
+      "notes": "From agent category finance_economics_news"
+    },
+    {
+      "id": "oanda",
+      "name": "OANDA",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "finance_economics_news"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "finance_economics_news",
+      "notes": "From agent category finance_economics_news"
+    },
+    {
+      "id": "bloomberg",
+      "name": "Bloomberg",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "finance_economics_news"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "finance_economics_news",
+      "notes": "From agent category finance_economics_news"
+    },
+    {
+      "id": "reuters",
+      "name": "Reuters",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "finance_economics_news"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "finance_economics_news",
+      "notes": "From agent category finance_economics_news"
+    },
+    {
+      "id": "financial_times",
+      "name": "Financial Times",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "finance_economics_news"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "finance_economics_news",
+      "notes": "From agent category finance_economics_news"
+    },
+    {
+      "id": "official_embassy_websites_origin_destination_corridors",
+      "name": "Official embassy websites (origin ↔ destination corridors)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "consulate_announcements_and_visa_section_pdfs",
+      "name": "Consulate announcements and visa section PDFs",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "local_ministry_of_labour_workforce_portals",
+      "name": "Local ministry of labour / workforce portals",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "ministry_department_of_education_or_higher_ed_regulator",
+      "name": "Ministry / department of education or higher-ed regulator",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "ministry_of_interior_immigration_procedural_guides",
+      "name": "Ministry of interior / immigration procedural guides",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "foreign_affairs_ministry_travel_advisories_host_countries",
+      "name": "Foreign affairs ministry travel advisories (host countries)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "official_university_registrar_and_admissions_pdfs",
+      "name": "Official university registrar and admissions PDFs",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "national_accreditation_or_quality_assurance_agencies_for_he",
+      "name": "National accreditation or quality assurance agencies for HE",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "recognised_doctoral_school_directories_country_specific",
+      "name": "Recognised doctoral school directories (country-specific)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "specialised_expatriate_blogs_single_corridor_or_niche_topic",
+      "name": "Specialised expatriate blogs (single corridor or niche topic)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "country_subreddits_language_specific_forums",
+      "name": "Country subreddits / language-specific forums",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "national_open_government_data_catalogues",
+      "name": "National open-government data catalogues",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "regional_statistical_offices_sub_national",
+      "name": "Regional statistical offices (sub-national)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "bilateral_chambers_of_commerce_publications",
+      "name": "Bilateral chambers of commerce publications",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "host_country_investment_promotion_agencies",
+      "name": "Host-country investment promotion agencies",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "tourism_ministry_practical_guides_beyond_marketing_copy",
+      "name": "Tourism ministry practical guides (beyond marketing copy)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "national_rail_ferry_transit_operator_timetable_apis_or_pdfs",
+      "name": "National rail / ferry / transit operator timetable APIs or PDFs",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "civil_aviation_authority_passenger_rights_pages",
+      "name": "Civil aviation authority passenger rights pages",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "consumer_protection_agencies_landlord_tenant_summaries",
+      "name": "Consumer protection agencies (landlord–tenant summaries)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "national_tax_authority_residency_definitions",
+      "name": "National tax authority residency definitions",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "social_security_bilateral_agreement_texts",
+      "name": "Social security bilateral agreement texts",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "central_bank_fx_inflation_bulletins",
+      "name": "Central bank FX / inflation bulletins",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "national_public_health_traveller_notices",
+      "name": "National public health traveller notices",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "professional_licensing_boards_medicine_engineering_law",
+      "name": "Professional licensing boards (medicine, engineering, law)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "bar_association_referral_pages_for_foreigners",
+      "name": "Bar association referral pages for foreigners",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "national_tenancy_law_plain_language_summaries_ngos_or_bar",
+      "name": "National tenancy law plain-language summaries (NGOs or bar)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "local_telecom_regulator_coverage_maps",
+      "name": "Local telecom regulator coverage maps",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "utility_provider_price_calculators_regulated_tariffs",
+      "name": "Utility provider price calculators (regulated tariffs)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "school_fee_transparency_portals_government_or_watchdog",
+      "name": "School fee transparency portals (government or watchdog)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "scholarship_aggregators_mirrored_by_embassy_confirmation",
+      "name": "Scholarship aggregators mirrored by embassy confirmation",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "national_scholarship_agency_fulbright_equivalents_etc",
+      "name": "National scholarship agency (Fulbright equivalents, etc.)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "phd_vacancy_aggregators_mirrored_by_supervisor_lab_sites",
+      "name": "PhD vacancy aggregators mirrored by supervisor lab sites",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "employer_federation_wage_survey_summaries",
+      "name": "Employer federation wage survey summaries",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "trade_union_federation_sector_briefings",
+      "name": "Trade union federation sector briefings",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "national_minimum_wage_gazettes",
+      "name": "National minimum wage gazettes",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "safety_hygiene_regulator_workplace_pages",
+      "name": "Safety & hygiene regulator workplace pages",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "road_traffic_authority_licence_exchange_faqs",
+      "name": "Road traffic authority licence exchange FAQs",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "automobile_club_international_driving_permit_guidance",
+      "name": "Automobile club international driving permit guidance",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "insurance_regulator_policy_comparability_notices",
+      "name": "Insurance regulator policy comparability notices",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "banking_supervisor_expat_account_rule_summaries",
+      "name": "Banking supervisor expat account rule summaries",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "charity_commissioners_or_ngo_registers_volunteering",
+      "name": "Charity commissioners or NGO registers (volunteering)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "youth_mobility_scheme_official_pages_why_equivalents",
+      "name": "Youth mobility scheme official pages (WHY equivalents)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "seasonal_agricultural_work_programme_portals",
+      "name": "Seasonal agricultural work programme portals",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "artist_entertainer_visa_category_faqs",
+      "name": "Artist / entertainer visa category FAQs",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "startup_founder_visa_incubator_partner_lists",
+      "name": "Startup founder visa incubator partner lists",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "digital_nomad_visa_official_criteria_pages",
+      "name": "Digital nomad visa official criteria pages",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "refugee_complementary_protection_procedural_portals",
+      "name": "Refugee / complementary protection procedural portals",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "stateless_person_travel_document_guidance",
+      "name": "Stateless-person travel document guidance",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "family_reunification_policy_circulars",
+      "name": "Family reunification policy circulars",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "same_sex_partnership_recognition_summaries_official_only",
+      "name": "Same-sex partnership recognition summaries (official only)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "custody_aware_relocation_legal_primers_bar_associations",
+      "name": "Custody-aware relocation legal primers (bar associations)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "pet_import_veterinary_service_portals",
+      "name": "Pet import veterinary service portals",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "customs_traveller_declaration_value_thresholds",
+      "name": "Customs traveller declaration value thresholds",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "import_vat_duties_on_personal_effects_guidance",
+      "name": "Import VAT / duties on personal effects guidance",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "firearms_controlled_goods_traveller_prohibitions",
+      "name": "Firearms / controlled goods traveller prohibitions",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "maritime_arriving_passenger_border_steps",
+      "name": "Maritime arriving passenger border steps",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "port_health_or_yellow_fever_vaccination_points",
+      "name": "Port health or yellow-fever vaccination points",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "language_test_provider_official_band_descriptors",
+      "name": "Language test provider official band descriptors",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "recognised_translators_for_certified_document_lists",
+      "name": "Recognised translators for certified document lists",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    },
+    {
+      "id": "apostille_legalisation_authority_index_pages",
+      "name": "Apostille / legalisation authority index pages",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "supplemental_types_91_150"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "supplemental_types_91_150",
+      "notes": "From agent category supplemental_types_91_150"
+    }
+  ]
+}

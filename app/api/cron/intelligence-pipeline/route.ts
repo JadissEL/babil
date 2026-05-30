@@ -12,6 +12,7 @@ import { runEnrichmentPipeline } from '@/lib/intelligence-pipeline/run-enrichmen
  * - `mode=full` (défaut) : collecte WB + matérialisation
  * - `mode=materialize` : matérialisation seule (rapide, utile si la collecte tourne ailleurs)
  * - `mode=queue` : draine jusqu'à 5 jobs `IntelligencePipelineJob` (worker léger côté Vercel)
+ * - `mode=change_detect` : détection de changements sur `SourcePageIndex` + enqueue re-collect
  *
  * Sur Vercel, les exécutions longues peuvent time-out selon le plan ; pour une collecte
  * complète, préférer un job GitHub Actions ou un worker Render avec `npm run intelligence:world-bank:materialize`.
@@ -36,6 +37,20 @@ export async function GET(req: NextRequest) {
   }
 
   const mode = req.nextUrl.searchParams.get('mode') ?? 'full';
+
+  if (mode === 'change_detect') {
+    try {
+      const { runChangeDetectBatch } = await import('@/lib/source-change-detection');
+      const limit = Number(req.nextUrl.searchParams.get('limit') || 40);
+      const out = await runChangeDetectBatch({ limit });
+      return NextResponse.json({ mode: 'change_detect', ...out });
+    } catch (e) {
+      return NextResponse.json(
+        { error: publicApiErrorMessage(e, 'Change detect failed') },
+        { status: 500 },
+      );
+    }
+  }
 
   if (mode === 'queue') {
     try {

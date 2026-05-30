@@ -12,6 +12,11 @@ export const INTELLIGENCE_JOB_KINDS = {
   travel_signals: 'travel_signals',
   news_trends: 'news_trends',
   stubs_only: 'stubs_only',
+  source_discovery: 'source_discovery',
+  deep_collect: 'deep_collect',
+  pdf_extract: 'pdf_extract',
+  link_follow: 'link_follow',
+  change_detect: 'change_detect',
 } as const;
 
 export type IntelligenceJobKind =
@@ -31,6 +36,10 @@ export type IntelligenceJobPayload = {
   attempt?: number;
   /** ISO timestamp — do not run before this instant (backoff). */
   notBefore?: string;
+  /** Discovery / deep collect target source. */
+  sourceId?: string;
+  sourceSlug?: string;
+  changeDetectUrl?: string;
 };
 
 export function isLlmExtractKind(kind: string): boolean {

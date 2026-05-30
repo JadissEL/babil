@@ -155,6 +155,12 @@ export async function materializeApprovedObservations(args?: {
 }
 
 export { buildFieldConsensus, canPromoteField } from './consensus';
+export {
+  canShowClaimOnPublicUI,
+  normalizeVerificationStatus,
+  publicDisclaimerForStatus,
+} from './verification-status';
+export { runVerificationPipeline, VERIFICATION_PIPELINE_STEPS } from './verification-pipeline';
 export type { FieldConsensus } from './types';
 export { materializeEconomyObservationsForCountry } from '@/lib/intelligence-pipeline/materialize-economy-observations';
 export { runFieldExpectations, expectationsPass } from './expectations-suite';

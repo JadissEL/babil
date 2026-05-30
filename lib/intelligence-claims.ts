@@ -4,6 +4,7 @@
  */
 
 import type { ObservationVerificationStatus } from '@prisma/client';
+import { canShowClaimOnPublicUI } from '@/lib/intelligence-validation/verification-status';
 
 export type IntelligenceClaim = {
   countryId: number;
@@ -19,6 +20,10 @@ export type IntelligenceClaim = {
   valueJson: string;
   valueNumeric?: number | null;
 };
+
+export function isClaimPublicSafe(status: ObservationVerificationStatus): boolean {
+  return canShowClaimOnPublicUI(status);
+}
 
 export function claimFromObservationRow(row: {
   countryId: number;

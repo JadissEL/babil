@@ -427,8 +427,24 @@ export async function POST(req: Request) {
       const rest = recommendations.slice(1);
       const merged = top ? [top, ...rest] : recommendations;
       const ranked = pinCountryFirst(merged, body.focusCountryId);
+      const items = ranked.slice(0, 10);
 
-      return NextResponse.json(ranked.slice(0, 10), {
+      if (body.includeInformationModels && body.focusCountryId != null) {
+        try {
+          const { loadInformationModelsForCountry } = await import(
+            '@/lib/information-models/reco-proba-context'
+          );
+          const informationModels = await loadInformationModelsForCountry(body.focusCountryId);
+          return NextResponse.json(
+            { recommendations: items, informationModels },
+            { headers: engineVersionHeaders('recommendation') },
+          );
+        } catch {
+          /* fall through — array response */
+        }
+      }
+
+      return NextResponse.json(items, {
         headers: engineVersionHeaders('recommendation'),
       });
     } catch (error: unknown) {

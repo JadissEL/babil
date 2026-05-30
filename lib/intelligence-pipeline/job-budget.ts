@@ -37,6 +37,20 @@ export async function assertJobBudgetAllows(kind: string): Promise<void> {
       throw new Error(`Manifest fetch daily cap reached (${MAX_MANIFEST_FETCHES_PER_DAY}).`);
     }
   }
+
+  const discoveryKinds = ['source_discovery', 'deep_collect', 'change_detect'];
+  if (discoveryKinds.includes(kind)) {
+    const maxDiscovery = Math.max(
+      1,
+      Math.floor(Number(process.env.INTELLIGENCE_MAX_DISCOVERY_JOBS_PER_DAY || 60)),
+    );
+    const discovery = await prisma.intelligencePipelineJob.count({
+      where: { kind: { in: discoveryKinds }, createdAt: { gte: since } },
+    });
+    if (discovery >= maxDiscovery) {
+      throw new Error(`Discovery/collect daily cap reached (${maxDiscovery}).`);
+    }
+  }
 }
 
 export function maxManifestUrlsPerJob(): number {

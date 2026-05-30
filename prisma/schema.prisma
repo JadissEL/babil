@@ -67,6 +67,7 @@ model Country {
   favoritedBy        FavoriteCountry[]
   observations       CountryObservation[]
   educationPrograms  CountryEducationProgram[]
+  knowledgeProfile   CountryKnowledgeProfile?
 }
 
 /** I.10x — Education mobility programmes relationalisés depuis `full_data.education_mobility.*`.
@@ -144,18 +145,101 @@ enum ObservationVerificationStatus {
   verified
   estimated
   disputed
+  partially_verified
+  needs_review
+  contradictory
+  outdated
+  archived
+}
+
+enum SourceDiscoveryStatus {
+  pending
+  mapping
+  complete
+  failed
+  procedural_no_fetch
 }
 
 /** Registre des sources fiables (APIs officielles, organisations internationales, jeux curatés). */
 model IntelligenceSource {
-  id           String                 @id @default(cuid())
-  slug         String                 @unique
-  name         String
-  tier         IntelligenceSourceTier
-  baseUrl      String?
-  licenseNote  String?
-  createdAt    DateTime               @default(now())
-  observations CountryObservation[]
+  id                    String                 @id @default(cuid())
+  slug                  String                 @unique
+  name                  String
+  tier                  IntelligenceSourceTier
+  baseUrl               String?
+  licenseNote           String?
+  createdAt             DateTime               @default(now())
+  /** Phase 1 — gate collecte pour nouvelles sources datafile. */
+  discoveryStatus       SourceDiscoveryStatus  @default(pending)
+  requiresDiscoveryGate Boolean                @default(false)
+  datafileSourceId      String?                @unique
+  trustScore            Float?
+  authorityScore        Float?
+  reliabilityLevel      String?
+  updateFrequencyHint   String?
+  countryCoverage       String?
+  informationTypesJson  String?
+  lastVerificationAt    DateTime?
+  capabilitiesJson      String?
+  observations          CountryObservation[]
+  siteInventory         SourceSiteInventory?
+  pageIndex             SourcePageIndex[]
+}
+
+/** Inventaire structurel d’un site source (sitemap, crawl borné). */
+model SourceSiteInventory {
+  id             String                @id @default(cuid())
+  sourceId       String                @unique
+  status         SourceDiscoveryStatus @default(pending)
+  sitemapUrl     String?
+  robotsPolicy   String?
+  capabilitiesJson String?
+  pageCount      Int                   @default(0)
+  discoveredAt   DateTime              @default(now())
+  lastMappedAt   DateTime?
+  errorSummary   String?
+  source         IntelligenceSource    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+}
+
+/** Pages découvertes par source (URL, type, hash pour change_detect). */
+model SourcePageIndex {
+  id          String             @id @default(cuid())
+  sourceId    String
+  url         String
+  pageType    String             @default("other")
+  depth       Int                @default(0)
+  parentUrl   String?
+  title       String?
+  contentHash String?
+  lastSeenAt  DateTime           @default(now())
+  source      IntelligenceSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceId, url])
+  @@index([sourceId])
+  @@index([sourceId, pageType])
+}
+
+/** Taxonomie v2 — définition de champs dynamiques par domaine. */
+model FieldDefinition {
+  id                  String   @id @default(cuid())
+  path                String   @unique
+  domain              String
+  valueType           String
+  unit                String?
+  countryOptional     Boolean  @default(false)
+  presentationPattern String?
+  version             Int      @default(1)
+  createdAt           DateTime @default(now())
+}
+
+/** Profil de connaissance actif par pays (champs matérialisés / attendus). */
+model CountryKnowledgeProfile {
+  id                   String   @id @default(cuid())
+  countryId            Int      @unique
+  activeFieldPathsJson String
+  categoryCountJson    String?
+  updatedAt            DateTime @updatedAt
+  country              Country  @relation(fields: [countryId], references: [id], onDelete: Cascade)
 }
 
 /** Exécution traçable du pipeline (collecte → validation → persistance). */

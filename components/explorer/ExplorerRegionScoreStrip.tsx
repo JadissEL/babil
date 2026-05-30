@@ -1,3 +1,4 @@
+import { ScoreSur100 } from '@/components/ui/ScoreSur100'
 import type { RegionScoreBucket } from '@/lib/explorer-region-score-buckets'
 import { cn } from '@/lib/utils'
 
@@ -43,7 +44,6 @@ export function ExplorerRegionScoreStrip({
         aria-label="Scores moyens par grande zone"
       >
         {display.map((b) => {
-          const scoreDisplay = b.countryCount ? Math.round(b.avgScore) : '—'
           const selected = activeBucketKey != null && activeBucketKey === b.key
           return (
             <div
@@ -55,12 +55,13 @@ export function ExplorerRegionScoreStrip({
               title={`${b.label} : score moyen ${Math.round(b.avgScore)} sur 100, ${b.countryCount} pays`}
             >
               <p className="text-xs font-bold text-muted">{b.label}</p>
-              <p className="mt-1 text-4xl font-black tabular-nums tracking-tight text-[#0D1B3E]">
-                {scoreDisplay}
-              </p>
               {b.countryCount ? (
-                <p className="text-[10px] font-semibold text-muted">sur 100</p>
-              ) : null}
+                <div className="mt-1">
+                  <ScoreSur100 score={b.avgScore} variant="strip" />
+                </div>
+              ) : (
+                <p className="mt-1 text-4xl font-black text-[#0D1B3E]">—</p>
+              )}
             </div>
           )
         })}

@@ -18,6 +18,13 @@ import { runSpecializedManifestJob, runWorldBankMaterializeJob } from './special
 import { checkPromotionLaunchGateSample } from '@/lib/intelligence-validation/promotion-safety';
 import { logIntelligence } from './intelligence-log';
 import { triageDeadLetterJob } from './dlq-triage';
+import {
+  runChangeDetectJob,
+  runDeepCollectJob,
+  runLinkFollowJob,
+  runPdfExtractJob,
+  runSourceDiscoveryJob,
+} from './discovery-job-handlers';
 
 export type IntelligenceJobPayloadLegacy = IntelligenceJobPayload;
 
@@ -114,6 +121,22 @@ async function processJob(
       countryIds: payload.countryIds,
     });
     return { status: 'SUCCEEDED', result: { budget, ...llm } };
+  }
+
+  if (job.kind === INTELLIGENCE_JOB_KINDS.source_discovery) {
+    return runSourceDiscoveryJob(payload);
+  }
+  if (job.kind === INTELLIGENCE_JOB_KINDS.deep_collect) {
+    return runDeepCollectJob(payload);
+  }
+  if (job.kind === INTELLIGENCE_JOB_KINDS.pdf_extract) {
+    return runPdfExtractJob(payload);
+  }
+  if (job.kind === INTELLIGENCE_JOB_KINDS.link_follow) {
+    return runLinkFollowJob(payload);
+  }
+  if (job.kind === INTELLIGENCE_JOB_KINDS.change_detect) {
+    return runChangeDetectJob(payload);
   }
 
   if (

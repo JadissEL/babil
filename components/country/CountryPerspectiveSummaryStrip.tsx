@@ -8,7 +8,8 @@ import {
   NEXUS_TRANSITION,
 } from '@/lib/nexus-chrome'
 import type { PerspectiveContract } from '@/lib/user-objectives/perspective-contract'
-import { appointmentDifficultyLabelFr, formatScoreSur100 } from '@/lib/ui-display-fr'
+import { ScoreSur100 } from '@/components/ui/ScoreSur100'
+import { appointmentDifficultyLabelFr } from '@/lib/ui-display-fr'
 import { cn } from '@/lib/utils'
 
 export type CountryPerspectiveSummaryStripProps = {
@@ -58,8 +59,8 @@ export function CountryPerspectiveSummaryStrip({
           <dt className="text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/55">
             Score tourisme
           </dt>
-          <dd className="mt-0.5 font-serif text-lg font-black text-[#0D1B3E]">
-            {formatScoreSur100(tourismScore)}
+          <dd className="mt-0.5">
+            <ScoreSur100 score={tourismScore} variant="strip" valueClassName="text-2xl sm:text-3xl" />
           </dd>
         </div>
         <div className="rounded-xl border border-[#0D1B3E]/10 bg-white px-3 py-2.5">

@@ -11,7 +11,12 @@ export type IntelligenceUiPattern =
   | 'appointment_audit'
   | 'sourced_entry_list'
   | 'provenance_chip'
-  | 'verified_updates_feed';
+  | 'verified_updates_feed'
+  | 'scholarship_table'
+  | 'job_sponsorship_card'
+  | 'business_setup_steps'
+  | 'visa_document_timeline'
+  | 'morocco_review_badge';
 
 export type UiRegistryEntry = {
   pattern: IntelligenceUiPattern;
@@ -68,7 +73,48 @@ export const INTELLIGENCE_UI_REGISTRY: UiRegistryEntry[] = [
     expectedTypes: ['number', 'string'],
     fullDataPaths: ['_intelligence.economy_materialized_at'],
   },
+  {
+    pattern: 'scholarship_table',
+    domain: 'education',
+    expectedTypes: ['array', 'object'],
+    fullDataPaths: ['education_mobility.language_study', 'education_mobility.short_courses'],
+  },
+  {
+    pattern: 'job_sponsorship_card',
+    domain: 'work',
+    expectedTypes: ['string', 'boolean'],
+    contractKeys: ['work_visa_score'],
+    fullDataPaths: ['visa_system.work'],
+  },
+  {
+    pattern: 'business_setup_steps',
+    domain: 'business',
+    expectedTypes: ['string', 'array'],
+    contractKeys: ['visa_business_setup'],
+    fullDataPaths: ['visa_system.business'],
+  },
+  {
+    pattern: 'visa_document_timeline',
+    domain: 'visa',
+    expectedTypes: ['string', 'array'],
+    fullDataPaths: ['visa_system.tourism', 'morocco_applicability'],
+  },
+  {
+    pattern: 'morocco_review_badge',
+    domain: 'morocco_decision',
+    expectedTypes: ['string'],
+    fullDataPaths: ['morocco_applicability', 'morocco_research_pack'],
+  },
 ];
+
+/** Map information model type → default UI pattern. */
+export const INFORMATION_MODEL_UI_PATTERN: Record<string, IntelligenceUiPattern> = {
+  visa: 'visa_document_timeline',
+  scholarship: 'scholarship_table',
+  job: 'job_sponsorship_card',
+  business: 'business_setup_steps',
+  residence: 'visa_friction_alert',
+};
 
 export function resolveUiPatternForPath(path: string): IntelligenceUiPattern | null {
   for (const entry of INTELLIGENCE_UI_REGISTRY) {

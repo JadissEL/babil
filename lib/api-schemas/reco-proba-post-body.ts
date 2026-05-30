@@ -11,6 +11,8 @@ export const recoProbaPostBodySchema = z
     playground: z.boolean().optional(),
     /** Optional: pin this country first in ranked results (public numeric id only). */
     focusCountryId: z.number().int().positive().optional(),
+    /** When true with focusCountryId, attach verified information models from observations. */
+    includeInformationModels: z.boolean().optional(),
     /**
      * When the caller is **not** authenticated: override demo profile `goal_type` only.
      * Validated against the same enum as stored profiles — no arbitrary injection.

@@ -77,10 +77,16 @@ export function educationAccessLabelFr(access: string | undefined | null): strin
   return EDUCATION_ACCESS_FR[key] ?? displayTokenFr(access.trim())
 }
 
+/** Parties score pour affichage empilé (cartes étroites). */
+export function scoreSur100Parts(score: number): { value: string; scale: string } {
+  const n = Math.round(score)
+  return { value: String(n), scale: 'sur 100' }
+}
+
 /** Score 0–100 lisible (évite « 63/100 » sans contexte). */
 export function formatScoreSur100(score: number): string {
-  const n = Math.round(score)
-  return `${n} sur 100`
+  const { value, scale } = scoreSur100Parts(score)
+  return `${value} ${scale}`
 }
 
 /** Score ou friction sur échelle 0–10. */
@@ -113,6 +119,9 @@ export function scenicPlaceLabelFr(countryName: string, place?: string | null): 
 
 /** Badge image de remplacement (évite « Gén. »). */
 export const GENERIC_IMAGE_LABEL_FR = 'Photo illustrative'
+
+/** Libellé court pour overlays très petits (pastille sur vignette). */
+export const GENERIC_IMAGE_LABEL_SHORT_FR = 'Illustration'
 
 /** Dernier recours : tente une traduction connue, sinon renvoie tel quel. */
 export function displayTokenFr(token: string): string {

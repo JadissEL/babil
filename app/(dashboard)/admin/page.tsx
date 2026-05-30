@@ -14,6 +14,7 @@ import { CountryEditor, type CountryEditorModel } from '@/components/admin/Count
 import { IntelligenceDeadLetterPanel } from '@/components/admin/IntelligenceDeadLetterPanel'
 import { IntelligenceReviewQueuePanel } from '@/components/admin/IntelligenceReviewQueuePanel'
 import { IntelligenceCompletenessPanel } from '@/components/admin/IntelligenceCompletenessPanel'
+import { IntelligenceSourceInventoryPanel } from '@/components/admin/IntelligenceSourceInventoryPanel'
 import { IntelligenceSloPanel } from '@/components/admin/IntelligenceSloPanel'
 import { DashboardPageSkeleton } from '@/components/dashboard/DashboardPageSkeleton'
 import { Button } from '@/components/ui/button'
@@ -1103,6 +1104,7 @@ export default function AdminPage() {
             <>
               <IntelligenceSloPanel />
               <IntelligenceCompletenessPanel />
+              <IntelligenceSourceInventoryPanel />
               <IntelligenceReviewQueuePanel />
               <IntelligenceDeadLetterPanel />
 

@@ -285,6 +285,21 @@ export async function POST(req: Request) {
 
       const ranked = pinCountryFirst(results, body.focusCountryId);
 
+      if (body.includeInformationModels && body.focusCountryId != null) {
+        try {
+          const { loadInformationModelsForCountry } = await import(
+            '@/lib/information-models/reco-proba-context'
+          );
+          const informationModels = await loadInformationModelsForCountry(body.focusCountryId);
+          return NextResponse.json(
+            { probabilities: ranked, informationModels },
+            { headers: engineVersionHeaders('probability') },
+          );
+        } catch {
+          /* fall through */
+        }
+      }
+
       return NextResponse.json(ranked, { headers: engineVersionHeaders('probability') });
     } catch (error: unknown) {
       return NextResponse.json(

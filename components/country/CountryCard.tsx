@@ -7,14 +7,14 @@ import { useMemo, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
+import { ScoreSur100 } from '@/components/ui/ScoreSur100'
 import { COUNTRY_HIGHLIGHTS } from '@/lib/country-highlights'
 import { ATLAS_NAVY } from '@/lib/explorer-atlas-ui'
 import { travelAmbienceImageForSeed } from '@/lib/travel-fallback-images'
 import {
   formatDelaiJours,
-  formatScoreSur100,
   frictionBandLabelFr,
-  GENERIC_IMAGE_LABEL_FR,
+  GENERIC_IMAGE_LABEL_SHORT_FR,
   mobilityTierLabelFr,
   scenicPlaceLabelFr,
 } from '@/lib/ui-display-fr'
@@ -134,16 +134,14 @@ export function CountryCard({
               <h3 className="break-words text-2xl font-black tracking-tight text-[#0D1B3E] md:text-[1.65rem]">
                 {name}
               </h3>
-              <p className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-muted">
-                <Clock className="size-3.5 shrink-0 opacity-80" aria-hidden />
+              <p className="mt-1 flex items-start gap-1.5 text-[11px] font-semibold leading-snug text-muted sm:text-xs">
+                <Clock className="mt-0.5 size-3.5 shrink-0 opacity-80" aria-hidden />
                 <span>
                   Délai visa estimé :{' '}
                   <span className="text-[#0D1B3E]">{formatDelaiJours(days)}</span>
                 </span>
               </p>
-              <p className="mt-auto pt-3 text-3xl font-black tabular-nums text-[#0D1B3E]">
-                {formatScoreSur100(score)}
-              </p>
+              <ScoreSur100 score={score} variant="atlas" />
             </div>
             <div className="relative size-[5.25rem] shrink-0 self-center overflow-hidden rounded-full border-2 border-[#0D1B3E]/15 bg-line/30 md:size-24">
               <Image
@@ -161,8 +159,11 @@ export function CountryCard({
                 }}
               />
               {fallbackUsed ? (
-                <div className="absolute bottom-1 right-1 max-w-[5rem] rounded-full border border-amber-200/80 bg-amber-100/95 px-1.5 py-0.5 text-[8px] font-bold leading-tight text-amber-900">
-                  {GENERIC_IMAGE_LABEL_FR}
+                <div
+                  className="absolute bottom-1 right-1 max-w-[4.5rem] rounded-full border border-amber-200/80 bg-amber-100/95 px-1 py-0.5 text-[7px] font-bold leading-tight text-amber-900"
+                  title="Photo illustrative"
+                >
+                  {GENERIC_IMAGE_LABEL_SHORT_FR}
                 </div>
               ) : null}
             </div>
@@ -228,20 +229,21 @@ export function CountryCard({
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-          <div className="absolute bottom-2 left-3 max-w-[calc(100%-1.25rem)] rounded-full border border-white/40 bg-black/35 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white">
-            <span className="line-clamp-2 break-words whitespace-normal">
-              {scenicLabel} - {name}
-            </span>
+          <div className="absolute bottom-2 left-3 right-14 max-w-[calc(100%-1.25rem)] rounded-full border border-white/40 bg-black/35 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-white sm:text-[10px] sm:tracking-widest">
+            <span className="line-clamp-2 break-words">{scenicLabel}</span>
           </div>
           {fallbackUsed ? (
-            <div className="absolute right-3 top-2 rounded-full border border-amber-200/70 bg-amber-100/90 px-2 py-0.5 text-[10px] font-bold text-amber-900">
-              {GENERIC_IMAGE_LABEL_FR}
+            <div
+              className="absolute right-3 top-2 rounded-full border border-amber-200/70 bg-amber-100/90 px-2 py-0.5 text-[9px] font-bold text-amber-900"
+              title="Photo illustrative"
+            >
+              {GENERIC_IMAGE_LABEL_SHORT_FR}
             </div>
           ) : null}
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-5 px-6 pb-6 pt-5">
-          <div className="flex min-w-0 items-start justify-between gap-3">
+          <div className="flex min-w-0 items-start justify-between gap-2">
             <div className="flex min-w-0 items-center gap-3">
               {iso ? (
                 <span className={cn(`fi fi-${iso}`, 'shrink-0 text-2xl leading-none shadow-sm')} aria-hidden />
@@ -251,8 +253,8 @@ export function CountryCard({
               <h3 className="min-w-0 break-words text-lg font-semibold tracking-tight text-text">{name}</h3>
             </div>
 
-            <Badge className="shrink-0" variant="default">
-              {formatScoreSur100(score)}
+            <Badge className="shrink-0 px-2 py-1.5" variant="default">
+              <ScoreSur100 score={score} variant="badge" />
             </Badge>
           </div>
 
@@ -272,20 +274,31 @@ export function CountryCard({
           </div>
 
           <div className="mt-auto flex min-w-0 flex-wrap gap-2">
-            <Badge className={cn(frictionStripClass(friction), 'font-semibold')} variant="secondary">
+            <Badge
+              className={cn(frictionStripClass(friction), 'max-w-full text-[11px] font-semibold leading-snug')}
+              variant="secondary"
+            >
               {frictionBandLabelFr(friction)}
             </Badge>
             {(primaryFocus === 'tourism' || showSecondaryMobility) && tourism ? (
-              <Badge variant="secondary">Tourisme : {mobilityTierLabelFr(tourism)}</Badge>
+              <Badge className="text-[11px] leading-snug" variant="secondary">
+                Tourisme : {mobilityTierLabelFr(tourism)}
+              </Badge>
             ) : null}
             {(!primaryFocus || showSecondaryMobility || primaryFocus === 'study') && (
-              <Badge variant="secondary">Études : {mobilityTierLabelFr(study)}</Badge>
+              <Badge className="text-[11px] leading-snug" variant="secondary">
+                Études : {mobilityTierLabelFr(study)}
+              </Badge>
             )}
             {(!primaryFocus || showSecondaryMobility || primaryFocus === 'business') && (
-              <Badge variant="secondary">Affaires : {mobilityTierLabelFr(business)}</Badge>
+              <Badge className="text-[11px] leading-snug" variant="secondary">
+                Affaires : {mobilityTierLabelFr(business)}
+              </Badge>
             )}
             {primaryFocus === 'work' && work ? (
-              <Badge variant="secondary">Travail : {mobilityTierLabelFr(work)}</Badge>
+              <Badge className="text-[11px] leading-snug" variant="secondary">
+                Travail : {mobilityTierLabelFr(work)}
+              </Badge>
             ) : null}
           </div>
         </div>

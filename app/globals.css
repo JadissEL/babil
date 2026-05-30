@@ -30,7 +30,7 @@
 body {
   background: var(--bg-base);
   color: var(--text-main);
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   line-height: 1.6;
 }
 
