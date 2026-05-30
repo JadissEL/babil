@@ -237,7 +237,7 @@ function computeRecommendation(
 
   if (frictionScore >= 70) explanations.push('Système de rendez-vous relativement gérable.');
   if (frictionScore < 45)
-    warnings.push('Friction élevée: délais/prise de RDV potentiellement critiques.');
+    warnings.push('Friction élevée : délais et prise de rendez-vous potentiellement critiques.');
 
   // 3) Goal match
   let goalMatch = 50;

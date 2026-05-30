@@ -52,12 +52,15 @@ export function ExplorerRegionScoreStrip({
                 'rounded-2xl border-2 bg-white p-4 shadow-sm transition-colors',
                 selected ? 'border-[#0D1B3E]' : 'border-transparent',
               )}
-              title={`${b.label} : moyenne ${b.avgScore}, ${b.countryCount} pays`}
+              title={`${b.label} : score moyen ${Math.round(b.avgScore)} sur 100, ${b.countryCount} pays`}
             >
               <p className="text-xs font-bold text-muted">{b.label}</p>
               <p className="mt-1 text-4xl font-black tabular-nums tracking-tight text-[#0D1B3E]">
                 {scoreDisplay}
               </p>
+              {b.countryCount ? (
+                <p className="text-[10px] font-semibold text-muted">sur 100</p>
+              ) : null}
             </div>
           )
         })}
@@ -102,6 +105,7 @@ export function ExplorerRegionScoreStrip({
               />
             </div>
             <p className="mt-1.5 text-[10px] font-bold text-muted">
+              {b.countryCount ? `${Math.round(b.avgScore)} sur 100 · ` : ''}
               {b.countryCount} pays{b.countryCount === 1 ? '' : 's'}
             </p>
           </div>

@@ -124,7 +124,7 @@ export const COMPARE_OBJECTIVES: Record<CompareObjectiveId, CompareObjectiveDefi
     shortLabel: 'Événements',
     description: 'Salons, festivals, conférences — mobilité courte et logistique.',
     scoringRationale:
-      'Les événements combinent accès visiteur (tourisme), aspects pro (business) et friction RDV / visa.',
+      'Les événements combinent accès visiteur (tourisme), aspects pro (business) et friction rendez-vous / visa.',
     weights: { ...W.events },
     kpiColumns: ['visa_tourism', 'visa_business', 'friction_tier', 'visa_work', 'education'],
     winBlurb: 'ressort comme la option la plus équilibrée pour allers-retours et démarches liées aux événements.',
@@ -160,7 +160,7 @@ export const COMPARE_OBJECTIVES: Record<CompareObjectiveId, CompareObjectiveDefi
     shortLabel: 'Licence',
     description: 'Premier cycle universitaire et accès visa étudiant.',
     scoringRationale:
-      'Licence : poids fort sur visa études, panier mobilité éducative et friction (RDV, dossiers).',
+      'Licence : poids fort sur visa études, panier mobilité éducative et friction (rendez-vous, dossiers).',
     weights: { ...W.study, study: 0.5, education: 0.22 },
     kpiColumns: ['visa_study', 'education', 'friction_tier', 'visa_tourism', 'lang_access'],
     winBlurb: 'est la meilleure option licence dans votre sélection (études + parcours).',
@@ -335,8 +335,8 @@ const KPI_META: Record<CompareKpiColumnKey, { header: string; tooltip: string }>
       'Score 0–100 : modèle multi-indicateurs (droits affaires, friction, scores officiels, acceptation Maroc, micro-entreprise / street food). Les valeurs DB sont fusionnées seulement si elles divergent fortement.',
   },
   friction_tier: {
-    header: 'Friction RDV',
-    tooltip: 'Facilité perçue des rendez-vous et délais (tiers Low / Medium / High).',
+    header: 'Friction rendez-vous',
+    tooltip: 'Facilité perçue des rendez-vous et délais (facile / moyen / difficile).',
   },
   study_tier: { header: 'Niveau études', tooltip: 'Tranche mobilité études (carte pays).' },
   business_tier: { header: 'Niveau business', tooltip: 'Tranche mobilité affaires.' },

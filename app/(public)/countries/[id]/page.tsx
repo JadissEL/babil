@@ -44,6 +44,11 @@ import { ObjectiveAwareExplorerLink } from '@/components/nav/ObjectiveAwareNavLi
 import { useObjectivePreference } from '@/components/objectives/ObjectivePreferenceProvider';
 import { showConsultantMarketplaceNav } from '@/lib/consultant-nav';
 import { iso2ForCountryNameOrEmpty } from '@/lib/country-card-mappers';
+import {
+  appointmentDifficultyLabelFr,
+  formatScalarSur10,
+  formatScoreSur100,
+} from '@/lib/ui-display-fr';
 import { filterPublicCountryInsights } from '@/lib/country-db-insights';
 import { buildCountryExperienceContent } from '@/lib/country-experience-content';
 import { materializeCountryApiRow } from '@/lib/country-full-data-materialize';
@@ -128,14 +133,22 @@ function moroccoProTipText(full: Record<string, unknown>): string {
 }
 
 function fmtBrutalReality(v: unknown): string {
-  if (typeof v === 'number' && Number.isFinite(v)) return `${v}/10`;
-  if (typeof v === 'string' && v.trim()) return `${v.trim()}/10`;
+  if (typeof v === 'number' && Number.isFinite(v)) return formatScalarSur10(v);
+  if (typeof v === 'string' && v.trim()) {
+    const n = Number(v);
+    if (Number.isFinite(n)) return formatScalarSur10(n);
+    return v.trim();
+  }
   return '—';
 }
 
 function fmtFrictionBlock(v: unknown): string {
-  if (typeof v === 'number' && Number.isFinite(v)) return `${v}/100`;
-  if (typeof v === 'string' && v.trim()) return `${v.trim()}/100`;
+  if (typeof v === 'number' && Number.isFinite(v)) return formatScoreSur100(v);
+  if (typeof v === 'string' && v.trim()) {
+    const n = Number(v);
+    if (Number.isFinite(n)) return formatScoreSur100(n);
+    return v.trim();
+  }
   return '—';
 }
 
@@ -556,16 +569,15 @@ export default function CountryDetailPage() {
                   <p
                     className={`mt-0.5 font-serif text-2xl font-black leading-none ${scoreToneStitch(finalScore)}`}
                   >
-                    {finalScore}
-                    <span className="text-base font-medium text-[#0D1B3E]/55">/100</span>
+                    {formatScoreSur100(finalScore)}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/55">
-                    Status
+                    Zone visa
                   </p>
                   <p className="mt-0.5 font-serif text-sm font-black text-[#0D1B3E]">
-                    {isSchengen ? 'Schengen' : 'Non-Schengen'}
+                    {isSchengen ? 'Espace Schengen' : 'Hors espace Schengen'}
                   </p>
                 </div>
                 <CountryIntelligenceCoverageBadge full={fullRecord} />
@@ -831,8 +843,8 @@ export default function CountryDetailPage() {
                       aria-expanded={showOffPerspectiveScores}
                     >
                       {showOffPerspectiveScores
-                        ? 'Masquer les autres dimensions (hors parcours)'
-                        : `Autres dimensions (hors parcours) · ${secondaryVisaBars.length}`}
+                        ? 'Masquer les autres dimensions (hors objectif)'
+                        : `Autres dimensions (hors objectif) · ${secondaryVisaBars.length}`}
                     </button>
                     {showOffPerspectiveScores ? (
                       <div className="mt-3 grid grid-cols-1 gap-4 opacity-80 md:grid-cols-2">
@@ -879,8 +891,8 @@ export default function CountryDetailPage() {
                     aria-expanded={showOffPerspectiveModules}
                   >
                     {showOffPerspectiveModules
-                      ? 'Masquer les modules hors parcours'
-                      : 'Modules hors parcours · 2'}
+                      ? 'Masquer les modules hors objectif'
+                      : 'Modules hors objectif · 2'}
                   </button>
                 </div>
               ) : null}
@@ -1127,7 +1139,9 @@ export default function CountryDetailPage() {
                               : 'border-[#0D1B3E]/15 bg-[#FDFBF4] text-[#0D1B3E]/75'
                           }`}
                         >
-                          {isStrictTourism ? 'Strict' : tourismDifficulty}
+                          {isStrictTourism
+                            ? 'Exigeant'
+                            : appointmentDifficultyLabelFr(tourismDifficulty)}
                         </span>
                       </dd>
                     </div>
@@ -1340,7 +1354,7 @@ export default function CountryDetailPage() {
           <ul className="list-inside list-disc space-y-1 text-sm text-gray-800">
             <li>Score réalité : {fmtBrutalReality(full.brutal_reality_score)}</li>
             <li>Acceptation (indicateur) : {fmtAcceptanceRate(full.acceptance_rate_morocco)}</li>
-            <li>Friction RDV : {fmtFrictionBlock(full.friction_score)}</li>
+            <li>Complexité des rendez-vous : {fmtFrictionBlock(full.friction_score)}</li>
             <li>Confiance données (fiche) : {fmtConfidencePct(full.confidence_score)}</li>
             {observationConfidenceAggregate ? (
               <li>{formatObservationConfidencePrintFr(observationConfidenceAggregate)}</li>

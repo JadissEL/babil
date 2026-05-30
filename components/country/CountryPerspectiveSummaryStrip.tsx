@@ -8,6 +8,7 @@ import {
   NEXUS_TRANSITION,
 } from '@/lib/nexus-chrome'
 import type { PerspectiveContract } from '@/lib/user-objectives/perspective-contract'
+import { appointmentDifficultyLabelFr, formatScoreSur100 } from '@/lib/ui-display-fr'
 import { cn } from '@/lib/utils'
 
 export type CountryPerspectiveSummaryStripProps = {
@@ -57,13 +58,17 @@ export function CountryPerspectiveSummaryStrip({
           <dt className="text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/55">
             Score tourisme
           </dt>
-          <dd className="mt-0.5 font-serif text-lg font-black text-[#0D1B3E]">{tourismScore}/100</dd>
+          <dd className="mt-0.5 font-serif text-lg font-black text-[#0D1B3E]">
+            {formatScoreSur100(tourismScore)}
+          </dd>
         </div>
         <div className="rounded-xl border border-[#0D1B3E]/10 bg-white px-3 py-2.5">
           <dt className="text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/55">
             Difficulté visa
           </dt>
-          <dd className="mt-0.5 font-serif text-sm font-black text-[#0D1B3E]">{tourismDifficulty}</dd>
+          <dd className="mt-0.5 font-serif text-sm font-black text-[#0D1B3E]">
+            {appointmentDifficultyLabelFr(tourismDifficulty)}
+          </dd>
         </div>
         {processHint ? (
           <div className="rounded-xl border border-[#0D1B3E]/10 bg-white px-3 py-2.5">

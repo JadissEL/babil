@@ -82,6 +82,7 @@
     "db:compact-observations": "tsx scripts/compact-country-observations.ts",
     "test:lib": "tsx scripts/run-lib-tests.ts",
     "test:vitest": "vitest run",
+    "test:scan:ui-copy": "node scripts/scan-opaque-ui-copy.mjs",
     "test:smoke": "node scripts/smoke-all.mjs",
     "test:smoke:objectives": "node scripts/smoke-objective-change.mjs",
     "test:smoke:perspective": "node scripts/smoke-perspective-scope.mjs",

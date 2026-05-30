@@ -157,7 +157,7 @@ export const USER_OBJECTIVES: readonly UserObjectiveDefinition[] = [
     engineGoal: 'short_course',
     explorerGoalDefault: 'short_course',
     homeFeaturePriority: ['compare', 'schengen', 'probability', 'education', 'recommendations', 'community', 'business', 'delegated', 'permis'],
-    focusTopicsFr: ['Visa court séjour événementiel', 'Invitations & preuves', 'Saison & disponibilité des RDV', 'Enchaînements voyage multi-pays'],
+    focusTopicsFr: ['Visa court séjour événementiel', 'Invitations & preuves', 'Saison & disponibilité des rendez-vous', 'Enchaînements voyage multi-pays'],
   }),
   R({
     slug: 'business',
@@ -168,7 +168,7 @@ export const USER_OBJECTIVES: readonly UserObjectiveDefinition[] = [
     engineGoal: 'business',
     explorerGoalDefault: 'business',
     homeFeaturePriority: ['business', 'investment', 'probability', 'compare', 'recommendations', 'schengen', 'delegated', 'community', 'permis'],
-    focusTopicsFr: ['Visa affaires & multi-entrées', 'Friction administrative & RDV', 'Réseaux & marchés', 'Installation longue durée (hors scope immédiat)'],
+    focusTopicsFr: ['Visa affaires & multi-entrées', 'Friction administrative & rendez-vous', 'Réseaux & marchés', 'Installation longue durée (hors scope immédiat)'],
   }),
   R({
     slug: 'investment',

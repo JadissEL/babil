@@ -181,7 +181,7 @@ export const AGENT_RESEARCH_SOURCE_CATEGORIES: readonly AgentResearchCategory[] 
   },
   {
     id: 'visa_immigration',
-    labelFr: '7. Visa & immigration',
+    labelFr: '7. Visa et immigration',
     tier: 'visa',
     priority: 90,
     sources: [
@@ -348,7 +348,7 @@ export const AGENT_MOROCCO_SOURCE_CATEGORIES: readonly AgentResearchCategory[] =
   },
   {
     id: 'ma_visa_corridor_services',
-    labelFr: 'M3. Visa & immigration — prestataires depuis le Maroc (lecture complémentaire)',
+    labelFr: 'M3. Visa et immigration — prestataires depuis le Maroc (lecture complémentaire)',
     tier: 'morocco_visa_corridor',
     priority: 95,
     sources: [

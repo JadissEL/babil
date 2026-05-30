@@ -30,6 +30,7 @@ import {
 } from '@/lib/nexus-chrome';
 import { isPhdPerspectiveRelevant } from '@/lib/user-objectives/perspective-nav';
 import { getObjectiveBySlug } from '@/lib/user-objectives/registry';
+import { educationAccessLabelFr } from '@/lib/ui-display-fr';
 import { cn } from '@/lib/utils';
 
 const shellClass =
@@ -53,6 +54,8 @@ function accessPillLabel(access: string): string {
   const a = access.toLowerCase();
   if (a.includes('facile')) return 'Accès facile';
   if (a.includes('difficile')) return 'Accès sélectif';
+  const mapped = educationAccessLabelFr(access);
+  if (mapped !== access && mapped !== '—') return `Accès ${mapped.toLowerCase()}`;
   return 'Accès moyen';
 }
 

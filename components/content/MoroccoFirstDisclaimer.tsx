@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
  * In-repo editorial rules (Morocco-first, reader clarity):
  * - Inverted pyramid: answer « que faire si je pars du Maroc ? » before secondary context.
  * - Distinguish **orientation** (this site) from **acte juridique** (consulat / TLS / loi).
- * - Every numeric score includes the scale (ex. /100, /10) and must not be read as a guarantee of visa issuance.
+ * - Every numeric score includes the scale (ex. sur 100, sur 10) and must not be read as a guarantee of visa issuance.
  * - Prefer « à vérifier sur la source officielle » to silent placeholders or invented rates.
  * - Attribute Wikipedia/context blocks; flag `non validé` on automated excerpts.
  */

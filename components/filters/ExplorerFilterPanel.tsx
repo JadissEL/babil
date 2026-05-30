@@ -12,10 +12,10 @@ const BUDGET_OPTIONS: { value: ExplorerBudget; label: string }[] = [
 ];
 
 const FRICTION_OPTIONS: { value: ExplorerFrictionBand; label: string }[] = [
-  { value: 'all', label: 'Toute friction' },
-  { value: 'low', label: 'Faible (rapide)' },
-  { value: 'medium', label: 'Modérée' },
-  { value: 'high', label: 'Élevée' },
+  { value: 'all', label: 'Toutes' },
+  { value: 'low', label: 'Démarches faciles' },
+  { value: 'medium', label: 'Démarches moyennes' },
+  { value: 'high', label: 'Démarches difficiles' },
 ];
 
 const DIFFICULTY_OPTIONS = [

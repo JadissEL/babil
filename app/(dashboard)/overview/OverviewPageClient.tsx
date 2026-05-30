@@ -183,7 +183,7 @@ export default function OverviewPageClient() {
         status: 'Prêt',
       },
       {
-        title: 'Moteur reco (pro)',
+        title: 'Recommandations (pro)',
         description: 'Radar, barres et classement — même API que les recommandations.',
         icon: Activity,
         link: '/recommendation-engine',

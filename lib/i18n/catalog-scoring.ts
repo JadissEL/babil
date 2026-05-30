@@ -17,7 +17,7 @@ export const scoringCatalog = {
       profession: 'Situation professionnelle',
       social: 'Liens sociaux / famille',
       countryContext: 'Contexte pays (acceptation + visa)',
-      appointmentEase: 'Facilité RDV / admin',
+      appointmentEase: 'Facilité des rendez-vous',
       riskImmigration: 'Risque immigration perçu',
     },
     /** Paramètres : label, sign, points */

@@ -417,7 +417,7 @@ function RecommendationsPageInner() {
                         label="Économie & objectif"
                         value={chartReco.breakdown.goalMatch}
                       />
-                      <CompassAxisBar label="Visa & immig." value={chartReco.breakdown.visa} />
+                      <CompassAxisBar label="Visa et immigration" value={chartReco.breakdown.visa} />
                       <CompassAxisBar
                         label="Qualité de parcours"
                         value={chartReco.breakdown.friction}

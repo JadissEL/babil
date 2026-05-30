@@ -413,7 +413,9 @@ function ExplorerPageInner() {
       <div className="mx-auto max-w-7xl space-y-8 px-6 py-10 pb-12 sm:px-8">
         <header className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65">ATLAS GLOBAL</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-[#0D1B3E]/65">
+              Explorateur mondial
+            </p>
             <h1 className="mt-1 text-4xl font-black tracking-tight text-[#0D1B3E] md:text-5xl">Explorer</h1>
             <p className="mt-2 max-w-xl text-sm font-medium text-[#0D1B3E]/70">
               Intelligence terrain et mobilité — filtrez et ouvrez une fiche pays. Pour partager cette
@@ -493,7 +495,9 @@ function ExplorerPageInner() {
               }}
             />
             <label className="inline-flex cursor-pointer items-center gap-3 self-stretch rounded-2xl border border-[#0D1B3E]/12 bg-[#FDFBF4] px-4 py-3 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#0D1B3E]/25 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-white xl:self-center">
-              <span className="text-[10px] font-black tracking-[0.18em] text-[#0D1B3E]">SCHENGEN ONLY</span>
+              <span className="text-[10px] font-black tracking-wide text-[#0D1B3E]">
+                Pays Schengen uniquement
+              </span>
               <input
                 type="checkbox"
                 className="size-5 shrink-0 rounded border-[#0D1B3E]/30 text-[#0D1B3E] accent-[#0D1B3E]"

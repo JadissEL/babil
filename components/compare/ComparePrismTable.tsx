@@ -16,6 +16,7 @@ import { COUNTRY_HIGHLIGHTS } from '@/lib/country-highlights'
 import type { EnrichedCountryApi } from '@/lib/enrich-country-api'
 import { atlasVisaDelayDays } from '@/lib/explorer-atlas-ui'
 import { NEXUS_FOCUS_VISIBLE, NEXUS_FOCUS_VISIBLE_ON_INK_SOLID, NEXUS_TRANSITION } from '@/lib/nexus-chrome'
+import { formatDelaiJours, formatScoreSur100 } from '@/lib/ui-display-fr'
 import { cn } from '@/lib/utils'
 
 export type ComparePrismTableProps = {
@@ -107,7 +108,7 @@ export function ComparePrismTable({
 
           {/* Visa */}
           <div className="mt-4 border-t border-[#0D1B3E]/10 bg-[rgba(13,27,62,0.04)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#0D1B3E]/75">
-            Visa & immigration
+            Visa et immigration
           </div>
 
           <div className="grid items-center border-b border-[#0D1B3E]/8 py-3 text-sm" style={gridStyle}>
@@ -123,7 +124,7 @@ export function ComparePrismTable({
                   key={`d-${c.id}`}
                   className="flex items-center justify-center gap-1.5 tabular-nums text-[#0D1B3E]"
                 >
-                  <span className="font-semibold">{d}</span>
+                  <span className="font-semibold">{formatDelaiJours(d)}</span>
                   {trendIcon(t)}
                 </div>
               )
@@ -134,7 +135,7 @@ export function ComparePrismTable({
             <div>
               <div className="text-xs font-bold text-[#0D1B3E]">Taux d&apos;acceptation</div>
               <div className="mt-0.5 text-[10px] font-medium text-[#0D1B3E]/55">
-                {primaryVisa[0]?.header ?? 'Visa'} (score modèle 0–100)
+                {primaryVisa[0]?.header ?? 'Visa'} (score modèle sur 100)
               </div>
             </div>
             {rows.map((r, i) => {
@@ -225,7 +226,7 @@ export function ComparePrismTable({
 
           {/* Mobility score */}
           <div className="border-t border-[#0D1B3E]/10 bg-[rgba(13,27,62,0.04)] px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#0D1B3E]/75">
-            Mobility score
+            Score mobilité
           </div>
 
           <div className="grid items-end gap-y-2 pt-3 pb-1" style={gridStyle}>

@@ -86,7 +86,7 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
         dimensions: ['region', 'schengen', 'difficulty', 'budgetBand'],
         labels: {
           primaryScore: 'Score visa tourisme',
-          difficulty: 'Exigence visa / RDV',
+          difficulty: 'Difficulté visa et rendez-vous',
           budgetBand: 'Budget voyage (indicatif)',
         },
         moduleAccessSignal: undefined,
@@ -99,7 +99,7 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
         dimensions: ['region', 'schengen', 'friction', 'budgetBand'],
         labels: {
           primaryScore: 'Score visa travail',
-          friction: 'Délais & friction RDV',
+          friction: 'Délais et complexité des démarches',
           budgetBand: 'Coût séjour (indicatif)',
         },
         moduleAccessSignal: undefined,
@@ -112,7 +112,7 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
         dimensions: ['region', 'schengen', 'friction', 'budgetBand'],
         labels: {
           primaryScore: 'Score visa études',
-          friction: 'Friction dossier & RDV',
+          friction: 'Complexité du dossier et rendez-vous',
           budgetBand: 'Coût séjour étudiant',
         },
         moduleAccessSignal: undefined,
@@ -125,7 +125,7 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
         dimensions: ['region', 'schengen', 'friction', 'budgetBand', 'moduleAccess'],
         labels: {
           primaryScore: 'Score visa études / recherche',
-          friction: 'Friction dossier & RDV',
+          friction: 'Complexité du dossier et rendez-vous',
           budgetBand: 'Coût séjour doctorat',
           moduleAccess: 'Données doctorat sur la fiche',
         },
@@ -152,7 +152,7 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
         dimensions: ['region', 'schengen', 'friction', 'budgetBand', 'moduleAccess'],
         labels: {
           primaryScore: 'Score visa études / formation',
-          friction: 'Friction dossier & RDV',
+          friction: 'Complexité du dossier et rendez-vous',
           budgetBand: 'Coût formation longue',
           moduleAccess: 'Formation technique (données)',
         },
@@ -209,7 +209,7 @@ function profileForSlug(slug: UserObjectiveSlug): ExplorerFilterProfile {
         dimensions: ['region', 'schengen', 'friction', 'budgetBand', 'moduleAccess'],
         labels: {
           primaryScore: 'Score visa affaires',
-          friction: 'Friction terrain & RDV',
+          friction: 'Complexité terrain et rendez-vous',
           budgetBand: 'Budget lancement',
           moduleAccess: 'Street food / petite structure',
         },
@@ -240,7 +240,7 @@ export const EXPLORER_GENERIC_PROFILE: ExplorerFilterProfile = {
   moduleAccessMin: 0,
   dimensions: ['region', 'schengen', 'difficulty', 'budgetBand'],
   labels: {
-    difficulty: 'Difficulté RDV',
+    difficulty: 'Difficulté des rendez-vous',
     budgetBand: 'Budget indicatif',
   },
   parcoursLabelFr: 'Tous les parcours',

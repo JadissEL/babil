@@ -77,8 +77,8 @@ export function CountryEditor({ country }: { country: CountryEditorModel }) {
           </div>
         </div>
         <div className="space-y-1">
-          <Label>Difficulté RDV</Label>
-          <Input value={difficulty} onChange={(e) => setDifficulty(e.target.value)} placeholder="Low / Medium / High" />
+          <Label>Difficulté rendez-vous</Label>
+          <Input value={difficulty} onChange={(e) => setDifficulty(e.target.value)} placeholder="Facile / Moyenne / Difficile (codes API : Low, Medium, High)" />
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           <Button type="button" onClick={() => void save()} disabled={saving} className="w-full gap-2 sm:w-auto">

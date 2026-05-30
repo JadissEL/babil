@@ -2,7 +2,7 @@ import type { RecommendationResultRow } from '@/components/engine/Recommendation
 import type { ProbabilityCountrySignals } from '@/lib/probability-result-display'
 import { formatCountrySheetSignalsSummary } from '@/lib/probability-result-display'
 import type { ScoreDriver } from '@/lib/score-driver-explain'
-import { englishScoreLevelToFr } from '@/lib/score-level-fr'
+import { englishScoreLevelToFr, formatScoreSur100 } from '@/lib/ui-display-fr'
 
 
 /** Shape returned by `POST /api/recommendation` */
@@ -34,7 +34,7 @@ export function mapApiRecommendationToPanelRow(
   if (r.reason) lines.push(r.reason)
   if (r.breakdown) {
     lines.push(
-      `Piliers · visa ${r.breakdown.visa} · friction ${r.breakdown.friction} · objectif ${r.breakdown.goalMatch} · risque ${r.breakdown.risk}`,
+      `Piliers · visa ${formatScoreSur100(r.breakdown.visa)} · friction ${formatScoreSur100(r.breakdown.friction)} · objectif ${formatScoreSur100(r.breakdown.goalMatch)} · risque ${formatScoreSur100(r.breakdown.risk)}`,
     )
   }
   if (Array.isArray(r.explanation)) {

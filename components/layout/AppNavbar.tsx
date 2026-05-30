@@ -14,7 +14,7 @@ export default function AppNavbar() {
       { key: 'explorer', href: explorerHref, label: 'Explorer' },
       { key: 'compare', href: compareHref, label: 'Comparer' },
       { key: 'schengen', href: '/schengen', label: 'Schengen' },
-      { key: 'probability', href: '/probability', label: 'Moteur visa' },
+      { key: 'probability', href: '/probability', label: 'Probabilités' },
     ],
     [compareHref, explorerHref],
   )

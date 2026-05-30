@@ -26,7 +26,7 @@ export default function AppSidebar() {
       { key: 'explorer', href: explorerHref, label: 'Explorer', icon: Globe },
       { key: 'compare', href: compareHref, label: 'Comparer', icon: Scale },
       { key: 'schengen', href: '/schengen', label: 'Schengen', icon: ShieldCheck },
-      { key: 'probability', href: '/probability', label: 'Moteur visa', icon: Zap },
+      { key: 'probability', href: '/probability', label: 'Probabilités', icon: Zap },
       { key: 'education', href: '/education', label: 'Éducation', icon: GraduationCap },
       { key: 'community', href: '/community', label: 'Communauté', icon: MessagesSquare },
       { key: 'business', href: '/business', label: 'Affaires', icon: Briefcase },

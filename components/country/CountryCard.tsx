@@ -10,6 +10,14 @@ import { Progress } from '@/components/ui/progress'
 import { COUNTRY_HIGHLIGHTS } from '@/lib/country-highlights'
 import { ATLAS_NAVY } from '@/lib/explorer-atlas-ui'
 import { travelAmbienceImageForSeed } from '@/lib/travel-fallback-images'
+import {
+  formatDelaiJours,
+  formatScoreSur100,
+  frictionBandLabelFr,
+  GENERIC_IMAGE_LABEL_FR,
+  mobilityTierLabelFr,
+  scenicPlaceLabelFr,
+} from '@/lib/ui-display-fr'
 import type { CountryScoreFocus } from '@/lib/user-objectives/perspective-contract'
 import { cn } from '@/lib/utils'
 
@@ -85,7 +93,7 @@ export function CountryCard({
   const focusableLink = countryId != null && !interactive
   const curated = COUNTRY_HIGHLIGHTS[iso]
   const scenicImage = highlightImageUrl || curated?.imageUrl || fallbackCountryImageUrl(name)
-  const scenicLabel = highlightPlace || curated?.place || `Signature place in ${name}`
+  const scenicLabel = scenicPlaceLabelFr(name, highlightPlace || curated?.place)
   const guaranteedSrc = useMemo(() => guaranteedImageUrl(name), [name])
   const [imageSrc, setImageSrc] = useState(scenicImage)
   const [fallbackUsed, setFallbackUsed] = useState(false)
@@ -129,12 +137,12 @@ export function CountryCard({
               <p className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-muted">
                 <Clock className="size-3.5 shrink-0 opacity-80" aria-hidden />
                 <span>
-                  Délai visa: <span className="text-[#0D1B3E]">{days}j</span>
+                  Délai visa estimé :{' '}
+                  <span className="text-[#0D1B3E]">{formatDelaiJours(days)}</span>
                 </span>
               </p>
               <p className="mt-auto pt-3 text-3xl font-black tabular-nums text-[#0D1B3E]">
-                {score}
-                <span className="text-base font-bold text-muted">/100</span>
+                {formatScoreSur100(score)}
               </p>
             </div>
             <div className="relative size-[5.25rem] shrink-0 self-center overflow-hidden rounded-full border-2 border-[#0D1B3E]/15 bg-line/30 md:size-24">
@@ -153,8 +161,8 @@ export function CountryCard({
                 }}
               />
               {fallbackUsed ? (
-                <div className="absolute bottom-1 right-1 rounded-full border border-amber-200/80 bg-amber-100/95 px-1.5 py-0.5 text-[8px] font-black uppercase tracking-wider text-amber-800">
-                  Gén.
+                <div className="absolute bottom-1 right-1 max-w-[5rem] rounded-full border border-amber-200/80 bg-amber-100/95 px-1.5 py-0.5 text-[8px] font-bold leading-tight text-amber-900">
+                  {GENERIC_IMAGE_LABEL_FR}
                 </div>
               ) : null}
             </div>
@@ -226,8 +234,8 @@ export function CountryCard({
             </span>
           </div>
           {fallbackUsed ? (
-            <div className="absolute right-3 top-2 rounded-full border border-amber-200/70 bg-amber-100/90 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-amber-700">
-              Image generique
+            <div className="absolute right-3 top-2 rounded-full border border-amber-200/70 bg-amber-100/90 px-2 py-0.5 text-[10px] font-bold text-amber-900">
+              {GENERIC_IMAGE_LABEL_FR}
             </div>
           ) : null}
         </div>
@@ -244,7 +252,7 @@ export function CountryCard({
             </div>
 
             <Badge className="shrink-0" variant="default">
-              {score}/100
+              {formatScoreSur100(score)}
             </Badge>
           </div>
 
@@ -265,19 +273,19 @@ export function CountryCard({
 
           <div className="mt-auto flex min-w-0 flex-wrap gap-2">
             <Badge className={cn(frictionStripClass(friction), 'font-semibold')} variant="secondary">
-              ⚡ {friction}
+              {frictionBandLabelFr(friction)}
             </Badge>
             {(primaryFocus === 'tourism' || showSecondaryMobility) && tourism ? (
-              <Badge variant="secondary">✈️ Tourisme : {tourism}</Badge>
+              <Badge variant="secondary">Tourisme : {mobilityTierLabelFr(tourism)}</Badge>
             ) : null}
             {(!primaryFocus || showSecondaryMobility || primaryFocus === 'study') && (
-              <Badge variant="secondary">🎓 Études : {study}</Badge>
+              <Badge variant="secondary">Études : {mobilityTierLabelFr(study)}</Badge>
             )}
             {(!primaryFocus || showSecondaryMobility || primaryFocus === 'business') && (
-              <Badge variant="secondary">💼 Affaires : {business}</Badge>
+              <Badge variant="secondary">Affaires : {mobilityTierLabelFr(business)}</Badge>
             )}
             {primaryFocus === 'work' && work ? (
-              <Badge variant="secondary">💼 Travail : {work}</Badge>
+              <Badge variant="secondary">Travail : {mobilityTierLabelFr(work)}</Badge>
             ) : null}
           </div>
         </div>

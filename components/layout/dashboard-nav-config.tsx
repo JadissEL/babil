@@ -42,7 +42,7 @@ export const dashboardNav: DashboardNavItem[] = [
   { label: 'Aperçu', href: '/overview', icon: LayoutDashboard },
   { label: 'Historique', href: '/history', icon: History },
   { label: 'Moteur de probabilités', href: '/probability', icon: Brain },
-  { label: 'Moteur reco (pro)', href: '/recommendation-engine', icon: Activity },
+  { label: 'Recommandations (pro)', href: '/recommendation-engine', icon: Activity },
   { label: 'Mes recommandations', href: '/recommendations', icon: Map },
   { label: 'Mon profil', href: '/profile', icon: User },
   {

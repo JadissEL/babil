@@ -65,7 +65,7 @@ export default function HeroWorldCarousel({ slides }: Props) {
   if (VERIFIED_SLIDES.length === 0) {
     return (
       <div className="relative flex h-[260px] items-center justify-center rounded-2xl border border-line bg-[#f8f2e8] p-6 text-center shadow-soft md:h-[320px]">
-        <p className="text-sm font-semibold text-muted">No verified hero photos available yet.</p>
+        <p className="text-sm font-semibold text-muted">Aucune photo vérifiée pour le moment.</p>
       </div>
     )
   }
@@ -88,7 +88,7 @@ export default function HeroWorldCarousel({ slides }: Props) {
         }
       }}
       tabIndex={0}
-      aria-label="World destinations carousel"
+      aria-label="Carrousel des destinations"
     >
       <div className="absolute left-0 right-0 top-0 z-20 h-1.5 bg-black/25">
         <div
@@ -124,14 +124,14 @@ export default function HeroWorldCarousel({ slides }: Props) {
 
       <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Current destination</p>
+          <p className="text-[10px] font-black uppercase tracking-widest text-white/80">Destination actuelle</p>
           {current?.continent ? (
             <p className="mb-1 mt-1 inline-flex rounded-full border border-white/30 bg-white/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-white/90">
               {current.continent}
             </p>
           ) : null}
           <p className="mb-1 inline-flex rounded-full border border-emerald-200/60 bg-emerald-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-emerald-50">
-            Verified location source
+            Source photo vérifiée
           </p>
           <p className="text-lg font-black text-white md:text-xl">{current.place}</p>
           <p className="text-sm font-semibold text-white/90">{current.country}</p>
@@ -155,7 +155,7 @@ export default function HeroWorldCarousel({ slides }: Props) {
             <button
               key={`dot-${dotIndex}`}
               type="button"
-              aria-label={`Go to slide ${dotIndex + 1}`}
+              aria-label={`Aller à la diapositive ${dotIndex + 1}`}
               onClick={() => setIndex(dotIndex)}
               className={cn(
                 'h-2.5 w-2.5 rounded-full border border-white/40 motion-reduce:transition-none',

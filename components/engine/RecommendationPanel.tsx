@@ -1,4 +1,5 @@
 import { Progress } from '@/components/ui/progress'
+import { formatScoreSur100 } from '@/lib/ui-display-fr'
 import { cn } from '@/lib/utils'
 
 function CompassScoreBar({ value }: { value: number }) {
@@ -133,7 +134,7 @@ export function RecommendationPanel({
             <span
               className={cn('shrink-0 text-sm', isCompass ? 'font-black text-[#0D1B3E]' : 'text-gray-400')}
             >
-              {r.score}/100
+              {formatScoreSur100(r.score)}
             </span>
           </div>
 

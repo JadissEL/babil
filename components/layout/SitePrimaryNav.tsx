@@ -136,7 +136,7 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
       },
       {
         href: '/recommendation-engine',
-        label: 'Labo reco',
+        label: 'Recommandations',
         actionable: isNavHrefActionable('/recommendation-engine', contract),
       },
     ];
@@ -244,7 +244,7 @@ export function SitePrimaryNavColumn({ mobileOpen, onMobileClose }: SitePrimaryN
                     ) : null}
                     {!actionable ? (
                       <span className="text-[9px] font-black uppercase tracking-wider text-muted/80">
-                        hors parcours
+                        Hors objectif
                       </span>
                     ) : null}
                   </span>

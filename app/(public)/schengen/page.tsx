@@ -12,6 +12,7 @@ import {
   type CountryApiListRow,
 } from '@/lib/country-full-data-materialize'
 import { isSchengenMember } from '@/lib/schengen-members'
+import { displayTokenFr, formatScoreSur100 } from '@/lib/ui-display-fr'
 
 const CREAM = '#FDFBF4'
 
@@ -316,7 +317,8 @@ export default function SchengenPage() {
                 const frictionN = toNum(full.friction_score, 50)
                 const embassy = typeof full.embassy_behavior === 'string' ? full.embassy_behavior : ''
                 const fa = asFrictionAnalysis(full)
-                const riskLvl = fa?.risk_level != null ? String(fa.risk_level) : '—'
+                const riskLvl =
+                  fa?.risk_level != null ? displayTokenFr(String(fa.risk_level)) : '—'
                 return (
                   <li
                     key={String(c.id)}
@@ -360,7 +362,7 @@ export default function SchengenPage() {
                       <span
                         className={`rounded-lg border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${scoreClassLight(frictionN)}`}
                       >
-                        Friction {frictionN}/100
+                        Friction {formatScoreSur100(frictionN)}
                       </span>
                       <span className="text-xs font-black uppercase tracking-wider text-[#0D1B3E]/55">
                         Risque · {riskLvl}
@@ -388,7 +390,7 @@ export default function SchengenPage() {
                         Acceptation (Maroc)
                       </th>
                       <th className="px-4 py-4 text-center text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/60 lg:px-8 lg:py-5">
-                        Friction RDV
+                        Complexité des rendez-vous
                       </th>
                       <th className="px-4 py-4 text-[10px] font-black uppercase tracking-widest text-[#0D1B3E]/60 lg:px-8 lg:py-5">
                         Niveau de risque
@@ -447,7 +449,9 @@ export default function SchengenPage() {
                             <span
                               className={`inline-block rounded-xl border px-3 py-1.5 font-serif text-sm font-semibold tabular-nums sm:px-4 sm:py-2 ${scoreClassLight(toNum(full.friction_score, 50))}`}
                             >
-                              {`${cellStr(full.friction_score, '—')}/100`}
+                              {Number.isFinite(Number(full.friction_score))
+                                ? formatScoreSur100(Number(full.friction_score))
+                                : cellStr(full.friction_score, '—')}
                             </span>
                           </td>
                           <td className="px-4 py-4 lg:px-8 lg:py-5">
@@ -458,7 +462,7 @@ export default function SchengenPage() {
                                 }`}
                               />
                               <span className="text-xs font-bold uppercase tracking-wider text-[#0D1B3E]">
-                                {risk || '—'}
+                                {risk ? displayTokenFr(risk) : '—'}
                               </span>
                             </div>
                           </td>

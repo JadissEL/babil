@@ -1,5 +1,7 @@
 /** Affichage UI pour les réponses `POST /api/probability` (transparence + breakdown). */
 
+import { formatScalarSur10, formatScoreSur100 } from '@/lib/ui-display-fr'
+
 /** Champs fiche pays absents → le moteur utilise une valeur neutre (50). */
 export type ProbabilitySheetFieldDefault =
   | 'acceptance_rate_morocco'
@@ -59,12 +61,14 @@ export function formatCountrySheetSignalsSummary(
     )
   }
   if (signals.friction_score != null) {
-    parts.push(`Friction administrative : ${signals.friction_score}/100 — plus bas = parcours plus fluide.`)
+    parts.push(
+      `Friction administrative : ${formatScoreSur100(signals.friction_score)} — plus bas = parcours plus fluide.`,
+    )
   } else {
-    parts.push(`Friction administrative : non renseignée — valeur neutre 50/100 utilisée dans le score.`)
+    parts.push(`Friction administrative : non renseignée — valeur neutre ${formatScoreSur100(50)} utilisée dans le score.`)
   }
   if (signals.brutal_reality_score != null) {
-    parts.push(`« Réalité terrain » (échelle interne 0–10) : ${signals.brutal_reality_score}/10.`)
+    parts.push(`« Réalité terrain » : ${formatScalarSur10(signals.brutal_reality_score)}.`)
   } else {
     parts.push(
       `« Réalité terrain » : non renseigné — valeur neutre utilisée dans le score (milieu d’échelle).`,
@@ -93,7 +97,7 @@ const LABELS: Record<ProbabilityBreakdownKey, string> = {
   acceptance: 'Acceptation (indicateur fiche)',
   visaEase: 'Facilité visa (moyenne)',
   countryContext: 'Contexte pays (agrégé)',
-  appointmentEase: 'Facilité RDV / admin',
+  appointmentEase: 'Facilité des rendez-vous',
   riskImmigration: 'Marge vs risque migratoire perçu',
 }
 

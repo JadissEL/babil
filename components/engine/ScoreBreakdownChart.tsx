@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from 'recharts'
 import { RECO_RADAR_AXIS_DESCRIPTIONS } from '@/lib/recommendation-radar-axes'
+import { formatScoreSur100 } from '@/lib/ui-display-fr'
 import { cn } from '@/lib/utils'
 
 function useCompactViewport() {
@@ -75,7 +76,7 @@ function RadarAxisTooltip({
       {p.description ? (
         <p className="mt-1 text-[11px] font-medium leading-snug text-slate-300">{p.description}</p>
       ) : null}
-      <p className="mt-2 text-[11px] font-bold text-slate-200">{p.value}/100</p>
+      <p className="mt-2 text-[11px] font-bold text-slate-200">{formatScoreSur100(p.value)}</p>
     </div>
   )
 }

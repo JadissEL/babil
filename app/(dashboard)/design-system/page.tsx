@@ -379,9 +379,9 @@ export default function DesignSystemPage() {
                       <div className="flex flex-wrap gap-2">
                         <Badge>Default</Badge>
                         <Badge variant="secondary">Neutral</Badge>
-                        <Badge variant="success">Easy</Badge>
-                        <Badge variant="warning">Medium</Badge>
-                        <Badge variant="danger">Hard</Badge>
+                        <Badge variant="success">Facile</Badge>
+                        <Badge variant="warning">Moyen</Badge>
+                        <Badge variant="danger">Difficile</Badge>
                       </div>
                     </div>
                   </div>
