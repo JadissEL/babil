@@ -82,6 +82,15 @@ export function extractFieldsFromExcerpt(excerpt: string, pageType: string): Ext
     })
   }
 
+  const fee2 = /\b(\d{2,4})\s*(€|EUR|USD|\$|MAD|DH)\b/i.exec(excerpt)
+  if (fee2?.[1] && isVisaPage && !out.some((f) => f.fieldPath.includes('fees'))) {
+    out.push({
+      fieldPath: 'full_data.visa_system.tourism.fees',
+      value: cleanCapture(fee2[0]),
+      confidence: 0.66,
+    })
+  }
+
   if (out.length === 0 && isVisaPage && excerpt.length > 200) {
     const days = excerpt.match(/\b(\d{1,3})\s*(business\s+)?days?\b/i)
     if (days?.[0]) {

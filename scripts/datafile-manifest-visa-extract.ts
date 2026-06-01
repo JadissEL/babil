@@ -16,6 +16,7 @@ async function main() {
   const report = await runManifestVisaExtraction({
     schengenOnly: args.includes('--schengen'),
     allCountries: args.includes('--all-countries'),
+    moroccoCorridor: args.includes('--corridor-maroc'),
     countryIds: countryIdsArg
       ? countryIdsArg
           .split('=')[1]

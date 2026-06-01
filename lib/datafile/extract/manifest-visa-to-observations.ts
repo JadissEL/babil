@@ -13,6 +13,7 @@ import { upsertCountryObservation } from '@/lib/intelligence-pipeline/observatio
 import { logIntelligence } from '@/lib/intelligence-pipeline/intelligence-log'
 import prisma from '@/lib/prisma'
 import { assertProdWritesAllowed } from '@/lib/prod-write-guard'
+import { MOROCCO_CORRIDOR_DESTINATION_NAMES } from '@/lib/datafile/extract/morocco-corridor-destinations'
 
 const VISA_CATEGORY_IDS = ['visa_immigration', 'morocco_visa_corridor'] as const
 
@@ -29,6 +30,8 @@ export type ManifestVisaExtractOptions = {
   schengenOnly?: boolean
   /** When true, process every country (optional limit). */
   allCountries?: boolean
+  /** Morocco corridor: France, Spain, Canada, UK, US, etc. */
+  moroccoCorridor?: boolean
   limit?: number
   writeDb?: boolean
   llmFill?: boolean
@@ -91,7 +94,12 @@ export async function runManifestVisaExtraction(
     ...(opts.countryIds?.length ? { where: { id: { in: opts.countryIds } } } : {}),
   })
 
-  if (opts.schengenOnly) {
+  if (opts.moroccoCorridor) {
+    const want = new Set(
+      MOROCCO_CORRIDOR_DESTINATION_NAMES.map((n) => n.toLowerCase()),
+    )
+    countries = countries.filter((c) => want.has(c.name.toLowerCase()))
+  } else if (opts.schengenOnly) {
     countries = countries.filter((c) => c.schengen_flag)
   } else if (!opts.countryIds?.length && !opts.allCountries) {
     countries = countries.filter((c) => c.schengen_flag)

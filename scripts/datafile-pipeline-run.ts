@@ -34,7 +34,11 @@ async function main() {
   if (!args.includes('--skip-manifest')) {
     steps.manifest = await runManifestVisaExtraction({
       allCountries: args.includes('--all-countries'),
-      schengenOnly: args.includes('--schengen') && !args.includes('--all-countries'),
+      moroccoCorridor: args.includes('--corridor-maroc'),
+      schengenOnly:
+        args.includes('--schengen') &&
+        !args.includes('--all-countries') &&
+        !args.includes('--corridor-maroc'),
       limit: args.find((a) => a.startsWith('--limit='))
         ? Number(args.find((a) => a.startsWith('--limit='))!.split('=')[1])
         : undefined,
