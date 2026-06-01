@@ -29,6 +29,7 @@ function cleanCapture(s: string): string {
   return s.replace(/\s+/g, ' ').trim().slice(0, 280)
 }
 
+/** Looser extraction when manifest HTML is noisy but visa-related. */
 export function extractFieldsFromExcerpt(excerpt: string, pageType: string): ExtractedField[] {
   if (!excerpt || excerpt.length < 40) return []
   const out: ExtractedField[] = []
@@ -79,6 +80,25 @@ export function extractFieldsFromExcerpt(excerpt: string, pageType: string): Ext
       value: cleanCapture(diff[1]),
       confidence: 0.6,
     })
+  }
+
+  if (out.length === 0 && isVisaPage && excerpt.length > 200) {
+    const days = excerpt.match(/\b(\d{1,3})\s*(business\s+)?days?\b/i)
+    if (days?.[0]) {
+      out.push({
+        fieldPath: 'visa_processing_time',
+        value: cleanCapture(days[0]),
+        confidence: 0.5,
+      })
+    }
+    const weeks = excerpt.match(/\b(\d{1,2})\s*(to|-|à|a)\s*(\d{1,2})\s*weeks?\b/i)
+    if (weeks?.[0] && !out.some((f) => f.fieldPath === 'visa_processing_time')) {
+      out.push({
+        fieldPath: 'full_data.appointment_audit.avg_wait_time',
+        value: cleanCapture(weeks[0]),
+        confidence: 0.48,
+      })
+    }
   }
 
   const seen = new Set<string>()

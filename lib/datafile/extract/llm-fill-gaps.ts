@@ -57,7 +57,12 @@ export async function llmFillFieldGaps(
     }),
   })
 
-  if (!res.ok) return []
+  if (!res.ok) {
+    if (process.env.DATAFILE_LLM_DEBUG === '1') {
+      console.warn('[llm-fill-gaps] OpenAI error', res.status, await res.text().catch(() => ''))
+    }
+    return []
+  }
 
   const body = (await res.json()) as { choices?: { message?: { content?: string } }[] }
   const raw = body.choices?.[0]?.message?.content?.trim()

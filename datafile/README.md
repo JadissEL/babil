@@ -37,12 +37,24 @@ npm run datafile:scrape -- --write-db --resume --run-id=run_... --retry-failed
 
 ## 3. Extraction structurée → observations pays
 
+### 3a. Bronze scrape → observations
+
 [`lib/datafile/extract/`](../lib/datafile/extract/) — règles d’abord, `--llm-fill` optionnel sur les trous.
 
 ```bash
 npm run datafile:bronze-to-observations -- --run-id=run_2026-05-30T... --write-db
 npm run datafile:bronze-to-observations -- --run-id=... --write-db --llm-fill
 ```
+
+### 3b. Manifest visa par pays (recommandé pour visa/délais/frais)
+
+URLs avec `{country}` dans le manifest — une requête par pays Schengen :
+
+```bash
+npm run datafile:manifest-visa-extract -- --schengen --limit=15 --write-db --llm-fill
+```
+
+Requiert `OPENAI_API_KEY` pour `--llm-fill` (sinon règles seules ; un avertissement s’affiche).
 
 Puis validation et materialisation :
 

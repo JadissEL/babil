@@ -7,6 +7,7 @@ import type { ScrapePageRecord } from '@/lib/datafile/scraper/types'
 import { slugFromDatafileId } from '@/lib/datafile/load-master-list'
 import { extractFieldsFromExcerpt } from '@/lib/datafile/extract/field-extractors'
 import { llmFillFieldGaps } from '@/lib/datafile/extract/llm-fill-gaps'
+import { resolveLlmBudget } from '@/lib/datafile/extract/resolve-llm-budget'
 import {
   buildCountryLookup,
   isLowSignalScrapePage,
@@ -41,6 +42,7 @@ export type BronzeToObservationsReport = {
   pagesConsidered: number
   observationsWritten: number
   llmCalls: number
+  llmSkipReason?: string
   byFieldPath: Record<string, number>
 }
 
@@ -105,8 +107,9 @@ export async function bronzeScrapeRunToObservations(
     byFieldPath: {},
   }
 
-  const tokenBudget =
-    opts.llmTokenBudget ?? Number(process.env.AGENT_LLM_TOKEN_BUDGET_PER_TASK || 0)
+  const llm = resolveLlmBudget({ llmFill: !!opts.llmFill, explicitBudget: opts.llmTokenBudget })
+  const tokenBudget = llm.budget
+  report.llmSkipReason = llm.skipReason
 
   for (const sourceResult of results) {
     if (!['complete', 'partial'].includes(sourceResult.status)) continue
@@ -125,9 +128,7 @@ export async function bronzeScrapeRunToObservations(
 
       let bundles = processPage(page, lookup, countryFilter, sourceHintIds)
       const needsLlm =
-        opts.llmFill &&
-        tokenBudget > 0 &&
-        (bundles.length === 0 || bundles.every((b) => b.fields.length === 0))
+        llm.enabled && (bundles.length === 0 || bundles.every((b) => b.fields.length === 0))
 
       if (needsLlm) {
         const countryIds =

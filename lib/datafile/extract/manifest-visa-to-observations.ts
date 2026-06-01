@@ -1,0 +1,204 @@
+/**
+ * Per-country manifest fetch (visa categories) + rule/LLM extraction → contract field observations.
+ */
+
+import { runManifestUrlFetchBatch } from '@/lib/agent-manifest-source-fetch'
+import { loadRunMemory, saveRunMemory, orchestrationSlugForCountry } from '@/lib/agent-run-memory'
+import { slugFromDatafileId } from '@/lib/datafile/load-master-list'
+import { extractFieldsFromExcerpt } from '@/lib/datafile/extract/field-extractors'
+import { llmFillFieldGaps } from '@/lib/datafile/extract/llm-fill-gaps'
+import { resolveLlmBudget } from '@/lib/datafile/extract/resolve-llm-budget'
+import { resolveSourceSlugForManifestLabel } from '@/lib/intelligence-manifest-source-bridge'
+import { upsertCountryObservation } from '@/lib/intelligence-pipeline/observation-writer'
+import { logIntelligence } from '@/lib/intelligence-pipeline/intelligence-log'
+import prisma from '@/lib/prisma'
+import { assertProdWritesAllowed } from '@/lib/prod-write-guard'
+
+const VISA_CATEGORY_IDS = ['visa_immigration', 'morocco_visa_corridor'] as const
+
+const STRUCTURED_FIELD_PATHS = [
+  'visa_processing_time',
+  'full_data.appointment_audit.avg_wait_time',
+  'full_data.friction_analysis.real_delay',
+  'full_data.visa_system.tourism.fees',
+  'appointment_difficulty',
+]
+
+export type ManifestVisaExtractOptions = {
+  countryIds?: number[]
+  schengenOnly?: boolean
+  limit?: number
+  writeDb?: boolean
+  llmFill?: boolean
+  llmTokenBudget?: number
+  manifestBatchSize?: number
+}
+
+export type ManifestVisaExtractReport = {
+  countriesProcessed: number
+  fetchesOk: number
+  observationsWritten: number
+  sourcesUnresolved: number
+  llmCalls: number
+  llmSkipReason?: string
+  byFieldPath: Record<string, number>
+}
+
+function slugifyLabel(label: string): string {
+  return label
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '')
+    .slice(0, 72)
+}
+
+async function resolveSourceIdForLabel(sourceLabel: string): Promise<string | null> {
+  const slugCandidates = [
+    resolveSourceSlugForManifestLabel(sourceLabel),
+    slugFromDatafileId(slugifyLabel(sourceLabel)),
+    `manifest_${slugifyLabel(sourceLabel)}`,
+  ]
+  for (const slug of slugCandidates) {
+    const row = await prisma.intelligenceSource.findUnique({ where: { slug }, select: { id: true } })
+    if (row) return row.id
+  }
+  const byName = await prisma.intelligenceSource.findFirst({
+    where: { name: { equals: sourceLabel, mode: 'insensitive' } },
+    select: { id: true },
+  })
+  return byName?.id ?? null
+}
+
+export async function runManifestVisaExtraction(
+  opts: ManifestVisaExtractOptions,
+): Promise<ManifestVisaExtractReport> {
+  if (opts.writeDb) assertProdWritesAllowed('datafile:manifest-visa-extract')
+
+  const llm = resolveLlmBudget({ llmFill: !!opts.llmFill, explicitBudget: opts.llmTokenBudget })
+
+  let countries = await prisma.country.findMany({
+    select: { id: true, name: true, region: true, schengen_flag: true },
+    ...(opts.countryIds?.length ? { where: { id: { in: opts.countryIds } } } : {}),
+  })
+
+  if (opts.schengenOnly) {
+    countries = countries.filter((c) => c.schengen_flag)
+  }
+  if (opts.limit != null) countries = countries.slice(0, opts.limit)
+
+  let enrichmentRunId: string | undefined
+  if (opts.writeDb) {
+    const run = await prisma.enrichmentRun.create({
+      data: { status: 'RUNNING', trigger: 'datafile:manifest-visa-extract' },
+    })
+    enrichmentRunId = run.id
+  }
+
+  const report: ManifestVisaExtractReport = {
+    countriesProcessed: 0,
+    fetchesOk: 0,
+    observationsWritten: 0,
+    sourcesUnresolved: 0,
+    llmCalls: 0,
+    llmSkipReason: llm.skipReason,
+    byFieldPath: {},
+  }
+
+  for (const country of countries) {
+    report.countriesProcessed += 1
+    const mem = await loadRunMemory(country.name)
+    const batch = await runManifestUrlFetchBatch({
+      country: country.name,
+      region: country.region,
+      memory: mem,
+      perCycle: opts.manifestBatchSize ?? 18,
+      categoryIds: [...VISA_CATEGORY_IDS],
+      refetchTtlMs: Number(process.env.DATAFILE_MANIFEST_REFETCH_TTL_MS ?? 0),
+      logVerbose: () => {},
+    })
+    await saveRunMemory(mem)
+
+    for (const item of batch.results) {
+      if (!item.ok || !item.excerpt || item.excerpt.length < 80) continue
+      report.fetchesOk += 1
+
+      const sourceId = opts.writeDb ? await resolveSourceIdForLabel(item.sourceLabel) : null
+      if (opts.writeDb && !sourceId) {
+        report.sourcesUnresolved += 1
+        continue
+      }
+
+      let fields = extractFieldsFromExcerpt(item.excerpt, 'visa')
+
+      if (fields.length === 0 && llm.enabled) {
+        report.llmCalls += 1
+        const llmFields = await llmFillFieldGaps(
+          {
+            countryName: country.name,
+            excerpt: item.excerpt,
+            candidateFieldPaths: STRUCTURED_FIELD_PATHS,
+          },
+          llm.budget,
+        )
+        fields = llmFields.map((f) => ({
+          fieldPath: f.fieldPath,
+          value: f.value,
+          confidence: f.confidence,
+        }))
+      }
+
+      if (
+        fields.length === 0 &&
+        item.excerpt.length > 400 &&
+        /visa|schengen|appointment|rendez-vous|processing|délai|delai|fee|frais/i.test(item.excerpt)
+      ) {
+        fields = [
+          {
+            fieldPath: 'visa_processing_time',
+            value: item.excerpt.slice(0, 240).replace(/\s+/g, ' ').trim(),
+            confidence: 0.38,
+          },
+        ]
+      }
+
+      for (const field of fields) {
+        report.byFieldPath[field.fieldPath] = (report.byFieldPath[field.fieldPath] ?? 0) + 1
+        if (!opts.writeDb || !sourceId || !enrichmentRunId) continue
+
+        await upsertCountryObservation({
+          countryId: country.id,
+          sourceId,
+          runId: enrichmentRunId,
+          fieldPath: field.fieldPath,
+          valueJson: JSON.stringify({
+            value: field.value,
+            summary: item.excerpt.slice(0, 400),
+            source: 'manifest_visa_extract',
+          }),
+          confidence: field.confidence,
+          verificationStatus: 'pending',
+          sourceUrl: item.url,
+          rawExcerpt: item.excerpt.slice(0, 2000),
+          dedupeKey: `manifest-visa:${country.id}:${field.fieldPath}:${orchestrationSlugForCountry(country.name)}:${item.sourceLabel}`,
+        })
+        report.observationsWritten += 1
+      }
+    }
+  }
+
+  if (enrichmentRunId) {
+    await prisma.enrichmentRun.update({
+      where: { id: enrichmentRunId },
+      data: {
+        status: 'SUCCEEDED',
+        finishedAt: new Date(),
+        statsJson: JSON.stringify(report),
+      },
+    })
+  }
+
+  logIntelligence('info', 'datafile_manifest_visa_extract_done', report)
+  return report
+}
