@@ -16,6 +16,7 @@ tsconfig.tsbuildinfo
 datafile/scrape-runs/
 datafile/scrape-full-run.log
 datafile/scrape-retry-failed.log
+datafile/pipeline-run.log
 .tmp-datafile-*.json
 
 # Optional URL map for agent manifest fetches (may contain internal endpoints)

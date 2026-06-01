@@ -56,10 +56,19 @@ npm run datafile:manifest-visa-extract -- --schengen --limit=15 --write-db --llm
 
 Requiert `OPENAI_API_KEY` pour `--llm-fill` (sinon règles seules ; un avertissement s’affiche).
 
-Puis validation et materialisation :
+### 3c. Pipeline complet (local / prod)
+
+```bash
+npm run datafile:pipeline -- --run-id=run_2026-05-30T13-18-10-318Z_c9a3e772 --all-countries --materialize --llm-fill
+```
+
+Étapes : bronze scrape → manifest visa (pays) → validation → materialisation `Country.full_data`.
+
+Puis validation seule :
 
 ```bash
 npm run intelligence:validate
+npm run intelligence:materialize-approved
 ```
 
 ## 4. CI batch (optionnel)

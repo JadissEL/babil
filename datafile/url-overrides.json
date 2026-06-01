@@ -1,4 +1,13 @@
 {
   "_comment": "Manual baseUrl overrides by datafile source id (slug). Highest priority in datafile:build-master.",
-  "overrides": {}
+  "overrides": {
+    "oecd": "https://stats.oecd.org",
+    "united_nations": "https://data.un.org",
+    "unicef": "https://www.unicef.org",
+    "world_health_organization_who": "https://www.who.int",
+    "global_economy": "https://www.global-economy.com",
+    "schengen_visa_info": "https://www.schengenvisainfo.com",
+    "campus_france": "https://www.campusfrance.org",
+    "education_usa": "https://educationusa.state.gov"
+  }
 }

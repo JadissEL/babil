@@ -27,11 +27,19 @@ const STRUCTURED_FIELD_PATHS = [
 export type ManifestVisaExtractOptions = {
   countryIds?: number[]
   schengenOnly?: boolean
+  /** When true, process every country (optional limit). */
+  allCountries?: boolean
   limit?: number
   writeDb?: boolean
   llmFill?: boolean
   llmTokenBudget?: number
   manifestBatchSize?: number
+}
+
+function verificationForField(confidence: number): 'pending' | 'estimated' | 'needs_review' {
+  if (confidence >= 0.65) return 'estimated'
+  if (confidence >= 0.5) return 'needs_review'
+  return 'pending'
 }
 
 export type ManifestVisaExtractReport = {
@@ -84,6 +92,8 @@ export async function runManifestVisaExtraction(
   })
 
   if (opts.schengenOnly) {
+    countries = countries.filter((c) => c.schengen_flag)
+  } else if (!opts.countryIds?.length && !opts.allCountries) {
     countries = countries.filter((c) => c.schengen_flag)
   }
   if (opts.limit != null) countries = countries.slice(0, opts.limit)
@@ -154,11 +164,13 @@ export async function runManifestVisaExtraction(
         item.excerpt.length > 400 &&
         /visa|schengen|appointment|rendez-vous|processing|délai|delai|fee|frais/i.test(item.excerpt)
       ) {
+        const snippet = item.excerpt.slice(0, 240).replace(/\s+/g, ' ').trim()
+        const rich = item.excerpt.length > 900
         fields = [
           {
             fieldPath: 'visa_processing_time',
-            value: item.excerpt.slice(0, 240).replace(/\s+/g, ' ').trim(),
-            confidence: 0.38,
+            value: snippet,
+            confidence: rich ? 0.68 : 0.48,
           },
         ]
       }
@@ -178,7 +190,7 @@ export async function runManifestVisaExtraction(
             source: 'manifest_visa_extract',
           }),
           confidence: field.confidence,
-          verificationStatus: 'pending',
+          verificationStatus: verificationForField(field.confidence),
           sourceUrl: item.url,
           rawExcerpt: item.excerpt.slice(0, 2000),
           dedupeKey: `manifest-visa:${country.id}:${field.fieldPath}:${orchestrationSlugForCountry(country.name)}:${item.sourceLabel}`,

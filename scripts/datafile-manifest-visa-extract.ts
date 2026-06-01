@@ -15,6 +15,7 @@ const limitArg = args.find((a) => a.startsWith('--limit='))
 async function main() {
   const report = await runManifestVisaExtraction({
     schengenOnly: args.includes('--schengen'),
+    allCountries: args.includes('--all-countries'),
     countryIds: countryIdsArg
       ? countryIdsArg
           .split('=')[1]

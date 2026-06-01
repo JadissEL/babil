@@ -33,6 +33,9 @@ async function main() {
     countryIds,
   })
   console.log(JSON.stringify(report, null, 2))
+  if (report.llmSkipReason && args.includes('--llm-fill')) {
+    console.warn(`[datafile:bronze-to-observations] LLM skipped: ${report.llmSkipReason}`)
+  }
 }
 
 main().catch((e) => {
