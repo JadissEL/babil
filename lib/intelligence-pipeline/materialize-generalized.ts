@@ -1,8 +1,7 @@
 /**
- * Generalized materialization entry — economy + knowledge profile + lineage stamp.
+ * Knowledge profile upsert for countries (no validation loop — called from materializeApprovedObservations).
  */
 
-import { materializeApprovedObservations } from '@/lib/intelligence-validation'
 import { upsertCountryKnowledgeProfile } from '@/lib/intelligence-pipeline/taxonomy-v2'
 import { COUNTRY_INTELLIGENCE_CONTRACT_V2 } from '@/lib/country-intelligence-contract'
 import prisma from '@/lib/prisma'
@@ -11,11 +10,6 @@ export async function materializeCountryWithLineage(args?: {
   countryIds?: number[]
   limit?: number
 }): Promise<{ materialized: number; profiles: number }> {
-  const report = await materializeApprovedObservations({
-    countryIds: args?.countryIds,
-    limit: args?.limit,
-  })
-
   const criticalPaths = COUNTRY_INTELLIGENCE_CONTRACT_V2.filter((f) => f.critical).map(
     (f) => f.path,
   )
@@ -43,5 +37,5 @@ export async function materializeCountryWithLineage(args?: {
     profiles++
   }
 
-  return { materialized: report.materialized ?? 0, profiles }
+  return { materialized: 0, profiles }
 }

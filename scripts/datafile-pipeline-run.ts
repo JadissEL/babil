@@ -58,10 +58,15 @@ async function main() {
     })
     steps.observationsBumpedToEstimated = bumped.count
 
-    const countryCount = await prisma.country.count()
-    steps.materialize = await materializeApprovedObservations({
-      limit: countryCount,
+    const visaCountryRows = await prisma.countryObservation.findMany({
+      where: { dedupeKey: { startsWith: 'manifest-visa:' } },
+      distinct: ['countryId'],
+      select: { countryId: true },
     })
+    const countryIds = visaCountryRows.map((r) => r.countryId)
+    steps.materialize = await materializeApprovedObservations(
+      countryIds.length > 0 ? { countryIds } : { limit: 250 },
+    )
   }
 
   console.log(JSON.stringify(steps, null, 2))

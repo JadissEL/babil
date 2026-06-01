@@ -87,6 +87,7 @@
     "datafile:manifest-visa-extract": "tsx scripts/datafile-manifest-visa-extract.ts",
     "datafile:pipeline": "tsx scripts/datafile-pipeline-run.ts",
     "datafile:status": "node scripts/datafile-status-report.mjs",
+    "datafile:materialize-visa-countries": "tsx scripts/datafile-materialize-visa-countries.ts",
     "intelligence:enqueue-discovery": "tsx scripts/intelligence-enqueue-discovery-batch.ts",
     "intelligence:platform-bootstrap": "tsx scripts/intelligence-platform-bootstrap-local.ts",
     "db:prune-observations:dry": "tsx scripts/prune-country-observations.ts --dry-run --older-than-days=730",
