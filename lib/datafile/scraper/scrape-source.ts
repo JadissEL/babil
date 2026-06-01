@@ -8,6 +8,10 @@ import {
   originFromBaseUrl,
   parseSitemapLocUrls,
 } from '@/lib/source-discovery/robots-sitemap'
+import {
+  discoverPageUrlsFromSitemap,
+  isSitemapXmlUrl,
+} from '@/lib/datafile/scraper/discover-page-urls'
 import { extractFromHtml } from '@/lib/datafile/scraper/extract-content'
 import { fetchPageText, isRootDisallowed } from '@/lib/datafile/scraper/fetch-respectful'
 import { fallbackUrlsForOrigin } from '@/lib/datafile/scraper/host-fallbacks'
@@ -23,10 +27,16 @@ async function discoverUrls(baseUrl: string): Promise<{ urls: string[]; robots: 
   const robots = await fetchRobotsPolicy(baseUrl)
   if (isRootDisallowed(robots)) return { urls: [], robots }
 
+  const limit = maxPagesPerSource()
   const sitemapCandidates = extractSitemapUrls(robots, origin)
   let urls: string[] = []
   for (const sm of sitemapCandidates) {
-    const locs = await parseSitemapLocUrls(sm, maxPagesPerSource())
+    let locs = await discoverPageUrlsFromSitemap(sm, limit)
+    if (locs.length === 0) {
+      const raw = await parseSitemapLocUrls(sm, limit * 2)
+      locs = raw.filter((u) => !isSitemapXmlUrl(u))
+      if (locs.length === 0) locs = raw.slice(0, limit)
+    }
     if (locs.length > 0) {
       urls = locs
       break
@@ -35,7 +45,6 @@ async function discoverUrls(baseUrl: string): Promise<{ urls: string[]; robots: 
 
   if (urls.length === 0) urls = [baseUrl]
 
-  const limit = maxPagesPerSource()
   const filtered = urls.filter((u) => {
     try {
       return new URL(u).origin === origin

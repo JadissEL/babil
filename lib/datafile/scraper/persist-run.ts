@@ -57,3 +57,29 @@ export function readAllSourceResults(runId: string, cwd = process.cwd()): Scrape
     .map((id) => readSourceResultIfExists(runId, id, cwd))
     .filter((r): r is ScrapeSourceResult => r != null)
 }
+
+export function readRunManifestIfExists(
+  runId: string,
+  cwd = process.cwd(),
+): ScrapeRunManifest | null {
+  const p = path.join(runDirForId(runId, cwd), 'run.json')
+  if (!fs.existsSync(p)) return null
+  return JSON.parse(fs.readFileSync(p, 'utf8')) as ScrapeRunManifest
+}
+
+/** Recompute aggregate stats from all per-source JSON in a run folder. */
+export function recomputeRunStatsFromDisk(
+  runId: string,
+  sourcesTotal: number,
+  cwd = process.cwd(),
+): ScrapeRunManifest['stats'] {
+  const results = readAllSourceResults(runId, cwd)
+  return {
+    sourcesTotal,
+    sourcesAttempted: results.length,
+    sourcesComplete: results.filter((r) => r.status === 'complete').length,
+    sourcesSkipped: results.filter((r) => r.status === 'skipped').length,
+    sourcesFailed: results.filter((r) => r.status === 'failed').length,
+    pagesScraped: results.reduce((sum, r) => sum + (r.pagesScraped ?? 0), 0),
+  }
+}

@@ -7,7 +7,9 @@ import { randomUUID } from 'node:crypto'
 import { loadDatafileMasterList } from '@/lib/datafile/load-master-list'
 import type { DatafileMasterSource } from '@/lib/datafile/types'
 import {
+  readRunManifestIfExists,
   readSourceResultIfExists,
+  recomputeRunStatsFromDisk,
   writeRunManifest,
   writeSourceResult,
 } from '@/lib/datafile/scraper/persist-run'
@@ -47,9 +49,14 @@ export async function runDatafileScrapeAlgorithm(
   if (opts.sourceId) sources = sources.filter((s) => s.id === opts.sourceId)
   if (opts.limit != null) sources = sources.slice(0, opts.limit)
 
+  const existingManifest = opts.runId ? readRunManifestIfExists(runId, cwd) : null
+  const allScrapeableIds = master.sources
+    .filter((s) => s.baseUrl && s.requiresDiscoveryGate !== false)
+    .map((s) => s.id)
+
   const manifest: ScrapeRunManifest = {
     runId,
-    startedAt: new Date().toISOString(),
+    startedAt: existingManifest?.startedAt ?? new Date().toISOString(),
     config: {
       maxPagesPerSource: Number(process.env.DATAFILE_SCRAPE_MAX_PAGES_PER_SOURCE || 40),
       delayMsBetweenRequests: Number(process.env.DATAFILE_SCRAPE_DELAY_MS || 1500),
@@ -63,7 +70,7 @@ export async function runDatafileScrapeAlgorithm(
       sourcesFailed: 0,
       pagesScraped: 0,
     },
-    sourceIds: sources.map((s) => s.id),
+    sourceIds: opts.sourceId ? sources.map((s) => s.id) : allScrapeableIds,
   }
 
   writeRunManifest(manifest, cwd)
@@ -123,6 +130,7 @@ export async function runDatafileScrapeAlgorithm(
     })
   }
 
+  manifest.stats = recomputeRunStatsFromDisk(runId, master.sources.length, cwd)
   manifest.finishedAt = new Date().toISOString()
   writeRunManifest(manifest, cwd)
 
