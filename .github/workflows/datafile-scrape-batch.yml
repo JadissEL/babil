@@ -1,0 +1,42 @@
+name: Datafile scrape batch
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: Max sources to scrape this run
+        required: false
+        default: '20'
+      write_db:
+        description: Persist to database
+        type: boolean
+        default: true
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Build master list
+        run: npm run datafile:build-master
+      - name: Ingest sources
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: '1'
+        run: npm run datafile:ingest:db
+      - name: Scrape batch
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ALLOW_PROD_WRITES: ${{ inputs.write_db && '1' || '' }}
+          DATAFILE_SCRAPE_MAX_PAGES_PER_SOURCE: '25'
+          DATAFILE_SCRAPE_DELAY_MS: '1200'
+        run: |
+          EXTRA=""
+          if [ "${{ inputs.write_db }}" = "true" ]; then EXTRA="--write-db"; fi
+          npm run datafile:scrape -- --limit=${{ inputs.limit }} $EXTRA

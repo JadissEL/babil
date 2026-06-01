@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-05-30T12:46:14.403Z",
+  "generatedAt": "2026-06-01T20:54:25.138Z",
   "sources": [
     {
       "id": "world_bank",
@@ -1276,9 +1276,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "youtube",
@@ -1294,9 +1294,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "quora",
@@ -1312,9 +1312,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "expat_com",
@@ -1330,9 +1330,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "internations",
@@ -1348,9 +1348,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "nomad_list",
@@ -1366,9 +1366,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "couchsurfing",
@@ -1384,9 +1384,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "tripadvisor",
@@ -1402,9 +1402,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "lonely_planet",
@@ -1420,9 +1420,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "culture_trip",
@@ -1438,9 +1438,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "expat_real_world",
-      "notes": "From agent category expat_real_world"
+      "notes": "tier_skipped:expat_qualitative"
     },
     {
       "id": "us_cdc",
@@ -1618,9 +1618,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "consulate_announcements_and_visa_section_pdfs",
@@ -1636,9 +1636,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "local_ministry_of_labour_workforce_portals",
@@ -1654,9 +1654,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "ministry_department_of_education_or_higher_ed_regulator",
@@ -1672,9 +1672,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "ministry_of_interior_immigration_procedural_guides",
@@ -1690,9 +1690,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "foreign_affairs_ministry_travel_advisories_host_countries",
@@ -1708,9 +1708,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "official_university_registrar_and_admissions_pdfs",
@@ -1726,9 +1726,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "national_accreditation_or_quality_assurance_agencies_for_he",
@@ -1744,9 +1744,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "recognised_doctoral_school_directories_country_specific",
@@ -1762,9 +1762,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "specialised_expatriate_blogs_single_corridor_or_niche_topic",
@@ -1780,9 +1780,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "country_subreddits_language_specific_forums",
@@ -1798,9 +1798,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "national_open_government_data_catalogues",
@@ -1816,9 +1816,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "regional_statistical_offices_sub_national",
@@ -1834,9 +1834,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "bilateral_chambers_of_commerce_publications",
@@ -1852,9 +1852,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "host_country_investment_promotion_agencies",
@@ -1870,9 +1870,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "tourism_ministry_practical_guides_beyond_marketing_copy",
@@ -1888,9 +1888,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "national_rail_ferry_transit_operator_timetable_apis_or_pdfs",
@@ -1906,9 +1906,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "civil_aviation_authority_passenger_rights_pages",
@@ -1924,9 +1924,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "consumer_protection_agencies_landlord_tenant_summaries",
@@ -1942,9 +1942,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "national_tax_authority_residency_definitions",
@@ -1960,9 +1960,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "social_security_bilateral_agreement_texts",
@@ -1978,9 +1978,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "central_bank_fx_inflation_bulletins",
@@ -1996,9 +1996,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "national_public_health_traveller_notices",
@@ -2014,9 +2014,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "professional_licensing_boards_medicine_engineering_law",
@@ -2032,9 +2032,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "bar_association_referral_pages_for_foreigners",
@@ -2050,9 +2050,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "national_tenancy_law_plain_language_summaries_ngos_or_bar",
@@ -2068,9 +2068,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "local_telecom_regulator_coverage_maps",
@@ -2086,9 +2086,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "utility_provider_price_calculators_regulated_tariffs",
@@ -2104,9 +2104,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "school_fee_transparency_portals_government_or_watchdog",
@@ -2122,9 +2122,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "scholarship_aggregators_mirrored_by_embassy_confirmation",
@@ -2140,9 +2140,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "national_scholarship_agency_fulbright_equivalents_etc",
@@ -2158,9 +2158,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "phd_vacancy_aggregators_mirrored_by_supervisor_lab_sites",
@@ -2176,9 +2176,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "employer_federation_wage_survey_summaries",
@@ -2194,9 +2194,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "trade_union_federation_sector_briefings",
@@ -2212,9 +2212,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "national_minimum_wage_gazettes",
@@ -2230,9 +2230,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "safety_hygiene_regulator_workplace_pages",
@@ -2248,9 +2248,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "road_traffic_authority_licence_exchange_faqs",
@@ -2266,9 +2266,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "automobile_club_international_driving_permit_guidance",
@@ -2284,9 +2284,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "insurance_regulator_policy_comparability_notices",
@@ -2302,9 +2302,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "banking_supervisor_expat_account_rule_summaries",
@@ -2320,9 +2320,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "charity_commissioners_or_ngo_registers_volunteering",
@@ -2338,9 +2338,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "youth_mobility_scheme_official_pages_why_equivalents",
@@ -2356,9 +2356,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "seasonal_agricultural_work_programme_portals",
@@ -2374,9 +2374,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "artist_entertainer_visa_category_faqs",
@@ -2392,9 +2392,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "startup_founder_visa_incubator_partner_lists",
@@ -2410,9 +2410,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "digital_nomad_visa_official_criteria_pages",
@@ -2428,9 +2428,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "refugee_complementary_protection_procedural_portals",
@@ -2446,9 +2446,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "stateless_person_travel_document_guidance",
@@ -2464,9 +2464,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "family_reunification_policy_circulars",
@@ -2482,9 +2482,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "same_sex_partnership_recognition_summaries_official_only",
@@ -2500,9 +2500,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "custody_aware_relocation_legal_primers_bar_associations",
@@ -2518,9 +2518,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "pet_import_veterinary_service_portals",
@@ -2536,9 +2536,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "customs_traveller_declaration_value_thresholds",
@@ -2554,9 +2554,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "import_vat_duties_on_personal_effects_guidance",
@@ -2572,9 +2572,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "firearms_controlled_goods_traveller_prohibitions",
@@ -2590,9 +2590,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "maritime_arriving_passenger_border_steps",
@@ -2608,9 +2608,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "port_health_or_yellow_fever_vaccination_points",
@@ -2626,9 +2626,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "language_test_provider_official_band_descriptors",
@@ -2644,9 +2644,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "recognised_translators_for_certified_document_lists",
@@ -2662,9 +2662,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
     },
     {
       "id": "apostille_legalisation_authority_index_pages",
@@ -2680,13 +2680,2517 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "supplemental_types_91_150",
-      "notes": "From agent category supplemental_types_91_150"
+      "notes": "tier_skipped:supplemental_types"
+    },
+    {
+      "id": "ministere_des_affaires_etrangeres_de_la_cooperation_africaine_et_des_mar",
+      "name": "Ministère des Affaires Étrangères, de la Coopération Africaine et des Marocains Résidant à l’Étranger (MAECME)",
+      "baseUrl": "https://www.diplomatie.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "portail_consulat_ma_services_consulaires_royaume_du_maroc",
+      "name": "Portail Consulat.ma / services consulaires Royaume du Maroc",
+      "baseUrl": "https://www.consulat.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "direction_generale_de_la_surete_nationale_dgsn_pieces_d_identite_formali",
+      "name": "Direction Générale de la Sûreté Nationale (DGSN) — pièces d’identité & formalités",
+      "baseUrl": "https://www.dgsn.gov.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "office_des_changes_transferts_et_reglementation_devise",
+      "name": "Office des Changes — transferts et réglementation devise",
+      "baseUrl": "https://www.oc.gov.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "anapec_emploi_formation_au_maroc",
+      "name": "ANAPEC — emploi & formation au Maroc",
+      "baseUrl": "https://www.anapec.org",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "ministere_du_travail_et_de_l_insertion_professionnelle_maroc",
+      "name": "Ministère du Travail et de l’Insertion Professionnelle (Maroc)",
+      "baseUrl": "https://www.emploi.gov.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "ministere_de_l_education_nationale_du_prescolaire_et_des_sports_maroc",
+      "name": "Ministère de l’Éducation Nationale, du Préscolaire et des Sports (Maroc)",
+      "baseUrl": "https://www.education.gov.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "portail_national_du_maroc_services_publics_numeriques_agreges",
+      "name": "Portail national du Maroc (services publics numériques agrégés)",
+      "baseUrl": "https://www.service-public.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "plateforme_e_visa_maroc_procedures_d_entree_voyageurs",
+      "name": "Plateforme e-visa Maroc / procédures d’entrée (voyageurs)",
+      "baseUrl": "https://www.acces-maroc.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "reseau_des_ambassades_et_consulats_du_maroc_a_l_etranger_sites_officiels",
+      "name": "Réseau des ambassades et consulats du Maroc à l’étranger — sites officiels par pays",
+      "baseUrl": "https://www.diplomatie.ma",
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_official",
+      "notes": "From agent category ma_official"
+    },
+    {
+      "id": "important_faire_valider_visas_et_quotas_par_autorites_officielles_mae_de",
+      "name": "Important: faire valider visas et quotas par autorités officielles (MAE destination + représentations au Maroc)",
+      "baseUrl": null,
+      "tier": "official",
+      "topics": [
+        "ma_official"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_official",
+      "notes": "procedural_no_fetch"
+    },
+    {
+      "id": "ambassade_de_france_au_maroc_section_visas_services",
+      "name": "Ambassade de France au Maroc — section visas & services",
+      "baseUrl": "https://ma.ambafrance.org",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_d_espagne_au_maroc_section_visas",
+      "name": "Ambassade d’Espagne au Maroc — section visas",
+      "baseUrl": "https://www.exteriores.gob.es",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_du_canada_au_maroc_visas_immigration",
+      "name": "Ambassade du Canada au Maroc — visas & immigration",
+      "baseUrl": "https://www.canada.ca",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_d_allemagne_au_maroc_visas_schengen_national",
+      "name": "Ambassade d’Allemagne au Maroc — visas Schengen national",
+      "baseUrl": "https://rabat.diplo.de",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_des_etats_unis_au_maroc_visas_non_immigrant_immigrant",
+      "name": "Ambassade des États-Unis au Maroc — visas non-immigrant / immigrant",
+      "baseUrl": "https://ma.usembassy.gov",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_de_turkiye_au_maroc_visas_formalites",
+      "name": "Ambassade de Türkiye au Maroc — visas & formalités",
+      "baseUrl": "https://rabat.emb.mfa.gov.tr",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_des_emirats_arabes_unis_au_maroc",
+      "name": "Ambassade des Émirats arabes unis au Maroc",
+      "baseUrl": "https://www.uae-embassy.ma",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_de_chine_au_maroc_visas_formalites",
+      "name": "Ambassade de Chine au Maroc — visas & formalités",
+      "baseUrl": "https://ma.china-embassy.gov.cn",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_de_russie_au_maroc_visas_formalites",
+      "name": "Ambassade de Russie au Maroc — visas & formalités",
+      "baseUrl": "https://morocco.mid.ru",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "ambassade_du_royaume_uni_au_maroc_visas",
+      "name": "Ambassade du Royaume-Uni au Maroc — visas",
+      "baseUrl": "https://www.gov.uk",
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "From agent category ma_embassies_in_morocco"
+    },
+    {
+      "id": "pattern_cartographier_toutes_les_ambassades_consulats_du_pays_destinatio",
+      "name": "Pattern: cartographier toutes les ambassades / consulats du pays destination accrédités au Maroc pour le dossier utilisateur",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "procedural_no_fetch"
+    },
+    {
+      "id": "important_reglementations_bilaterales_uniquement_via_communiques_consula",
+      "name": "Important: réglementations bilatérales — uniquement via communiqués consulaires officiels ou portails États",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_embassies_in_morocco"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_embassies_in_morocco",
+      "notes": "procedural_no_fetch"
+    },
+    {
+      "id": "tlscontact_centres_visas_rendez_vous_depot_depuis_maroc_selon_corridor",
+      "name": "TLScontact — centres visas (rendez-vous dépôt depuis Maroc, selon corridor)",
+      "baseUrl": "https://www.tlscontact.com",
+      "tier": "curated",
+      "topics": [
+        "ma_visa_corridor_services"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_visa_corridor_services",
+      "notes": "From agent category ma_visa_corridor_services"
+    },
+    {
+      "id": "bls_international_prestations_visa_hors_schengen_depuis_maroc",
+      "name": "BLS International — prestations visa hors Schengen depuis Maroc",
+      "baseUrl": "https://www.blsinternational.com",
+      "tier": "curated",
+      "topics": [
+        "ma_visa_corridor_services"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_visa_corridor_services",
+      "notes": "From agent category ma_visa_corridor_services"
+    },
+    {
+      "id": "vfs_global_agendas_check_lists_locales_toujours_recouper_avec_ambassade",
+      "name": "VFS Global — agendas & check-lists locales (toujours recouper avec ambassade)",
+      "baseUrl": "https://www.vfsglobal.com",
+      "tier": "curated",
+      "topics": [
+        "ma_visa_corridor_services"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_visa_corridor_services",
+      "notes": "From agent category ma_visa_corridor_services"
+    },
+    {
+      "id": "france_visas_formulaires_dossier_theorique_pour_depot_maroc_rabat_casabl",
+      "name": "France-Visas — formulaires & dossier théorique pour dépôt Maroc/Rabat/Casablanca",
+      "baseUrl": "https://france-visas.gouv.fr",
+      "tier": "curated",
+      "topics": [
+        "ma_visa_corridor_services"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_visa_corridor_services",
+      "notes": "From agent category ma_visa_corridor_services"
+    },
+    {
+      "id": "schengen_visa_info_vulgarisation_uniquement_tant_que_corroboree_par_pays",
+      "name": "Schengen Visa Info — vulgarisation uniquement tant que corroborée par pays émetteur",
+      "baseUrl": "https://www.schengenvisainfo.com",
+      "tier": "curated",
+      "topics": [
+        "ma_visa_corridor_services"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_visa_corridor_services",
+      "notes": "From agent category ma_visa_corridor_services"
+    },
+    {
+      "id": "iata_travel_centre_conseils_sante_documentation_voyage_a_confirmer_avec_",
+      "name": "IATA Travel Centre — conseils santé/documentation voyage à confirmer avec compagnie & immigration",
+      "baseUrl": "https://www.iatatravelcentre.com",
+      "tier": "curated",
+      "topics": [
+        "ma_visa_corridor_services"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_visa_corridor_services",
+      "notes": "From agent category ma_visa_corridor_services"
+    },
+    {
+      "id": "important_changements_frequents_verifier_systematiquement_avec_consulat_",
+      "name": "Important: changements fréquents — vérifier systématiquement avec consulat compétent la veille du dépôt",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_visa_corridor_services"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_visa_corridor_services",
+      "notes": "procedural_no_fetch"
+    },
+    {
+      "id": "facebook_groups_thematiques_ex_marocains_au_canada_refus_visas_emploi_lo",
+      "name": "Facebook groups thématiques (ex.: Marocains au Canada — refus visas, emploi, logement)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_communities"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_communities",
+      "notes": "tier_skipped:morocco_community"
+    },
+    {
+      "id": "facebook_groups_thematiques_ex_marocains_en_france_espagne_usa_turkiye",
+      "name": "Facebook groups thématiques (ex.: Marocains en France / Espagne / USA / Türkiye)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_communities"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_communities",
+      "notes": "tier_skipped:morocco_community"
+    },
+    {
+      "id": "facebook_groups_mre_orientation_expatriation",
+      "name": "Facebook groups MRE orientation & expatriation",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_communities"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_communities",
+      "notes": "tier_skipped:morocco_community"
+    },
+    {
+      "id": "reddit_fils_morocco_destination_pour_retours_vecu_moderes",
+      "name": "Reddit — fils Morocco ↔ destination pour retours vécu moderés",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_communities"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_communities",
+      "notes": "tier_skipped:morocco_community"
+    },
+    {
+      "id": "youtube_chaines_maroc_expatriation_attribuer_titre_chaine_date",
+      "name": "YouTube — chaînes Maroc/expatriation (attribuer titre, chaîne, date)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_communities"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_communities",
+      "notes": "tier_skipped:morocco_community"
+    },
+    {
+      "id": "tiktok_micro_temoignages_toujours_tertiaires_trianguler_avant_conclusion",
+      "name": "TikTok — micro-témoignages (toujours tertiaires; trianguler avant conclusion)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_communities"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_communities",
+      "notes": "tier_skipped:morocco_community"
+    },
+    {
+      "id": "important_signal_vecu_discrimination_refus_visas_corroboration_obligatoi",
+      "name": "Important: signal vécu discrimination / refus visas — corroboration obligatoire (stats officielles / jurisprudence / ONG reconnues)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_communities"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_communities",
+      "notes": "procedural_no_fetch"
+    },
+    {
+      "id": "expat_com_discussions_maroc_pays_cible",
+      "name": "Expat.com — discussions Maroc pays cible",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_forums"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_forums",
+      "notes": "tier_skipped:morocco_forums_qualitative"
+    },
+    {
+      "id": "internations_clubs_maroc_pays_destination",
+      "name": "InterNations — clubs Maroc & pays destination",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_forums"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_forums",
+      "notes": "tier_skipped:morocco_forums_qualitative"
+    },
+    {
+      "id": "quora_q_r_migration_maroc_pays_cible_dates_profils_utilisateurs",
+      "name": "Quora — Q/R migration Maroc ↔ pays cible (dates & profils utilisateurs)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_forums"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_forums",
+      "notes": "tier_skipped:morocco_forums_qualitative"
+    },
+    {
+      "id": "tripadvisor_retours_voyages_residents_maroc_vers_destination_temporaire",
+      "name": "TripAdvisor — retours voyages résidents Maroc vers destination temporaire",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_forums"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_forums",
+      "notes": "tier_skipped:morocco_forums_qualitative"
+    },
+    {
+      "id": "lonely_planet_guides_contexte_general_puis_validation_officielle",
+      "name": "Lonely Planet / guides — contexte général puis validation officielle",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_forums"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_forums",
+      "notes": "tier_skipped:morocco_forums_qualitative"
+    },
+    {
+      "id": "royal_air_maroc_hubs_corridors_internationaux",
+      "name": "Royal Air Maroc — hubs & corridors internationaux",
+      "baseUrl": "https://www.royalairmaroc.com",
+      "tier": "curated",
+      "topics": [
+        "ma_air_transport"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_air_transport",
+      "notes": "From agent category ma_air_transport"
+    },
+    {
+      "id": "air_arabia_maroc_destinations_low_cost_depuis_maroc",
+      "name": "Air Arabia Maroc — destinations low-cost depuis Maroc",
+      "baseUrl": "https://www.airarabia.com",
+      "tier": "curated",
+      "topics": [
+        "ma_air_transport"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_air_transport",
+      "notes": "From agent category ma_air_transport"
+    },
+    {
+      "id": "ryanair_liaisons_eu_maroc_saisonnalite_bagages",
+      "name": "Ryanair — liaisons EU ↔ Maroc (saisonnalité, bagages)",
+      "baseUrl": "https://www.ryanair.com",
+      "tier": "curated",
+      "topics": [
+        "ma_air_transport"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_air_transport",
+      "notes": "From agent category ma_air_transport"
+    },
+    {
+      "id": "easyjet_liaisons_ponctuelles_eu_maroc",
+      "name": "easyJet — liaisons ponctuelles EU ↔ Maroc",
+      "baseUrl": "https://www.easyjet.com",
+      "tier": "curated",
+      "topics": [
+        "ma_air_transport"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_air_transport",
+      "notes": "From agent category ma_air_transport"
+    },
+    {
+      "id": "skyscanner_comparaison_vols_verif_prix_final_sur_site_compagnie",
+      "name": "Skyscanner — comparaison vols (vérif prix final sur site compagnie)",
+      "baseUrl": "https://www.skyscanner.net",
+      "tier": "curated",
+      "topics": [
+        "ma_air_transport"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_air_transport",
+      "notes": "From agent category ma_air_transport"
+    },
+    {
+      "id": "avito_maroc",
+      "name": "Avito Maroc",
+      "baseUrl": "https://www.avito.ma",
+      "tier": "curated",
+      "topics": [
+        "ma_housing_listings"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_housing_listings",
+      "notes": "From agent category ma_housing_listings"
+    },
+    {
+      "id": "mubawab_maroc",
+      "name": "Mubawab Maroc",
+      "baseUrl": "https://www.mubawab.ma",
+      "tier": "curated",
+      "topics": [
+        "ma_housing_listings"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_housing_listings",
+      "notes": "From agent category ma_housing_listings"
+    },
+    {
+      "id": "le_bon_coin_france_scouting_avant_relocation",
+      "name": "Le bon coin (France) — scouting avant relocation",
+      "baseUrl": "https://www.leboncoin.fr",
+      "tier": "curated",
+      "topics": [
+        "ma_housing_listings"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_housing_listings",
+      "notes": "From agent category ma_housing_listings"
+    },
+    {
+      "id": "idealista_espagne_logement_hors_residence_etudiante",
+      "name": "Idealista — Espagne logement hors résidence étudiante",
+      "baseUrl": "https://www.idealista.com",
+      "tier": "curated",
+      "topics": [
+        "ma_housing_listings"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_housing_listings",
+      "notes": "From agent category ma_housing_listings"
+    },
+    {
+      "id": "rightmove_uk_scouting_hypothetique_puis_validation_legal_residence",
+      "name": "Rightmove — UK scouting hypothétique puis validation légal résidence",
+      "baseUrl": "https://www.rightmove.co.uk",
+      "tier": "curated",
+      "topics": [
+        "ma_housing_listings"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_housing_listings",
+      "notes": "From agent category ma_housing_listings"
+    },
+    {
+      "id": "campus_france_parcours_candidats_depuis_maroc",
+      "name": "Campus France — parcours candidats depuis Maroc",
+      "baseUrl": "https://www.campusfrance.org",
+      "tier": "multilateral",
+      "topics": [
+        "ma_education_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_education_corridor",
+      "notes": "From agent category ma_education_corridor"
+    },
+    {
+      "id": "daad_licences_allemagne_criteres_aps_post_diplome",
+      "name": "DAAD — licences Allemagne & critères APS post-diplôme",
+      "baseUrl": "https://www.daad.de",
+      "tier": "multilateral",
+      "topics": [
+        "ma_education_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_education_corridor",
+      "notes": "From agent category ma_education_corridor"
+    },
+    {
+      "id": "erasmus_mobilites_documentees_depuis_etablissements_marocains_partenaire",
+      "name": "Erasmus+ mobilités documentées depuis établissements marocains partenaires",
+      "baseUrl": "https://erasmus-plus.ec.europa.eu",
+      "tier": "multilateral",
+      "topics": [
+        "ma_education_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_education_corridor",
+      "notes": "From agent category ma_education_corridor"
+    },
+    {
+      "id": "education_usa_admissions_financements_usa_pour_candidats_maroc",
+      "name": "Education USA — Admissions & financements USA pour candidats Maroc",
+      "baseUrl": "https://educationusa.state.gov",
+      "tier": "multilateral",
+      "topics": [
+        "ma_education_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_education_corridor",
+      "notes": "From agent category ma_education_corridor"
+    },
+    {
+      "id": "study_in_canada_guides_federation_programmes_provinciaux",
+      "name": "Study in Canada — guides fédération & programmes provinciaux",
+      "baseUrl": "https://www.educanada.ca",
+      "tier": "multilateral",
+      "topics": [
+        "ma_education_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_education_corridor",
+      "notes": "From agent category ma_education_corridor"
+    },
+    {
+      "id": "universites_officielles_du_pays_destination_brochures_admission_internat",
+      "name": "Universités officielles du pays destination — brochures admission internationale",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "ma_education_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_education_corridor",
+      "notes": "procedural_no_fetch"
+    },
+    {
+      "id": "linkedin_offres_compatibles_teletravail_depuis_maroc_relocation_sponsori",
+      "name": "LinkedIn — offres compatibles télétravail depuis Maroc / relocation sponsorisée",
+      "baseUrl": "https://www.linkedin.com",
+      "tier": "multilateral",
+      "topics": [
+        "ma_employment_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_employment_corridor",
+      "notes": "From agent category ma_employment_corridor"
+    },
+    {
+      "id": "indeed_pays_destination",
+      "name": "Indeed pays destination",
+      "baseUrl": "https://www.indeed.com",
+      "tier": "multilateral",
+      "topics": [
+        "ma_employment_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_employment_corridor",
+      "notes": "From agent category ma_employment_corridor"
+    },
+    {
+      "id": "glassdoor_insights_salaires_a_calibrer_officiel",
+      "name": "Glassdoor insights salaires (à calibrer officiel)",
+      "baseUrl": "https://www.glassdoor.com",
+      "tier": "multilateral",
+      "topics": [
+        "ma_employment_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_employment_corridor",
+      "notes": "From agent category ma_employment_corridor"
+    },
+    {
+      "id": "bayt_pour_bassin_mena_puis_pays_eu_na",
+      "name": "Bayt pour bassin MENA puis pays EU/NA",
+      "baseUrl": "https://www.bayt.com",
+      "tier": "multilateral",
+      "topics": [
+        "ma_employment_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_employment_corridor",
+      "notes": "From agent category ma_employment_corridor"
+    },
+    {
+      "id": "welcome_to_the_jungle_startups_eu_recrutant_internationaux",
+      "name": "Welcome to the Jungle — startups EU recrutant internationaux",
+      "baseUrl": "https://www.welcometothejungle.com",
+      "tier": "multilateral",
+      "topics": [
+        "ma_employment_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_employment_corridor",
+      "notes": "From agent category ma_employment_corridor"
+    },
+    {
+      "id": "contrats_cdi_toujours_valider_conditions_legales_travail_visa_associe_mi",
+      "name": "Contrats/CDI: toujours valider conditions légales travail & visa associé (ministère destination)",
+      "baseUrl": null,
+      "tier": "multilateral",
+      "topics": [
+        "ma_employment_corridor"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 78,
+      "authorityScore": 82,
+      "reliabilityLevel": "medium",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_employment_corridor",
+      "notes": "procedural_no_fetch"
+    },
+    {
+      "id": "numbeo_indices_comparatifs_qualite_donnee_variable_recouper_ocde_banques",
+      "name": "Numbeo — indices comparatifs (qualité donnée variable: recouper OCDE / banques centrales)",
+      "baseUrl": "https://www.numbeo.com",
+      "tier": "curated",
+      "topics": [
+        "ma_cost_of_living"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_cost_of_living",
+      "notes": "From agent category ma_cost_of_living"
+    },
+    {
+      "id": "expatistan_budgets_expatries_indicatifs",
+      "name": "Expatistan — budgets expatriés indicatifs",
+      "baseUrl": "https://www.expatistan.com",
+      "tier": "curated",
+      "topics": [
+        "ma_cost_of_living"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_cost_of_living",
+      "notes": "From agent category ma_cost_of_living"
+    },
+    {
+      "id": "world_bank_indicateurs_macro_parite_pouvoir",
+      "name": "World Bank — indicateurs macro & parité pouvoir",
+      "baseUrl": "https://api.worldbank.org",
+      "tier": "curated",
+      "topics": [
+        "ma_cost_of_living"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_cost_of_living",
+      "notes": "From agent category ma_cost_of_living"
+    },
+    {
+      "id": "oecd_donnees_revenus_fiscalite_quand_pays_membre",
+      "name": "OECD — données revenus & fiscalité quand pays membre",
+      "baseUrl": "https://www.oecd.org",
+      "tier": "curated",
+      "topics": [
+        "ma_cost_of_living"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_cost_of_living",
+      "notes": "From agent category ma_cost_of_living"
+    },
+    {
+      "id": "trading_economics_series_publiques_synchronisees_verifier_source_primair",
+      "name": "Trading Economics — séries publiques synchronisées (vérifier source primaire citée)",
+      "baseUrl": "https://tradingeconomics.com",
+      "tier": "curated",
+      "topics": [
+        "ma_cost_of_living"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": true,
+      "categoryId": "ma_cost_of_living",
+      "notes": "From agent category ma_cost_of_living"
+    },
+    {
+      "id": "blogs_personnels_immigrer_au_canada_depuis_le_maroc",
+      "name": "Blogs personnels « immigrer au Canada depuis le Maroc »",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "blogs_visa_france_maroc_refus_acceptations_avec_pieces_jointes_anonymise",
+      "name": "Blogs « visa France Maroc — refus / acceptations » avec pièces jointes anonymisées",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "sites_expat_maroc_europe_regroupant_check_lists_valider_chaque_point",
+      "name": "Sites « expat Maroc Europe » regroupant check-lists (valider chaque point)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "plateformes_freelancing_portage_salarial_mentionnant_relocation_maroc_eu",
+      "name": "Plateformes freelancing & portage salarial mentionnant relocation Maroc → EU/NA",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "chaines_youtube_marocaines_immigration_sponsorings_publicites_biais_decl",
+      "name": "Chaînes YouTube marocaines immigration (sponsorings, publicités = biais déclaré)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "influenceurs_marocains_expatries_stories_comment_j_ai_obtenu_mon_visa_pr",
+      "name": "Influenceurs marocains expatriés — stories « comment j’ai obtenu mon visa » (preuve documentaire requise)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "forums_etudiants_marocains_bac_mobilite_logement_bourses",
+      "name": "Forums étudiants marocains (bac+ mobilité, logement, bourses)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "groupes_telegram_immigration_moderation_faible_triangulation_renforcee",
+      "name": "Groupes Telegram immigration (modération faible — triangulation renforcée)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "sites_d_avocats_specialises_mobilite_internationale_interpretation_jurid",
+      "name": "Sites d’avocats spécialisés mobilité internationale (interprétation juridique, pas substitut texte loi)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "agences_visa_locales_au_maroc_procedures_commerciales_vs_obligations_off",
+      "name": "Agences visa locales au Maroc — procédures commerciales vs obligations officielles",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "sites_d_orientation_scolaire_et_universitaire_maroc_office_public_academ",
+      "name": "Sites d’orientation scolaire et universitaire Maroc (office public, académies — vérifier reconnaissance)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "portails_diaspora_mre_programmes_de_retour_financement_pme",
+      "name": "Portails diaspora & MRE (programmes de retour, financement PME)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "journaux_marocains_economie_immigration_le_desk_telquel_etc_date_auteur",
+      "name": "Journaux marocains économie & immigration (Le Desk, TelQuel, etc. — date & auteur)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "plateformes_temoignages_video_migration_transcription_metadonnees",
+      "name": "Plateformes témoignages vidéo migration (transcription + métadonnées)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "comparateurs_assurance_voyage_assurance_sante_expatriation",
+      "name": "Comparateurs assurance voyage & assurance santé expatriation",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "sites_d_aide_visa_etudiants_check_lists_recouper_universite_consulat",
+      "name": "Sites d’aide visa étudiants (check-lists — recouper université + consulat)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "portails_ong_migration_droits_humains_rapports_dates",
+      "name": "Portails ONG migration & droits humains (rapports datés)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "bases_open_data_nationales_du_pays_destination_liees_a_l_emploi_des_etra",
+      "name": "Bases open data nationales du pays destination liées à l’emploi des étrangers",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "plateformes_volontariat_international_conditions_visa_volontaire_legales",
+      "name": "Plateformes volontariat international (conditions visa « volontaire » légales)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "sites_bourses_niche_stem_islamic_finance_cooperation_sud_sud",
+      "name": "Sites bourses niche (STEM, islamic finance, coopération Sud-Sud)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "webinaires_cci_france_maroc_giz_banques_partenaires_supports_pdf_officie",
+      "name": "Webinaires CCI France-Maroc / GIZ / banques partenaires (supports PDF officiels)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "programmes_talent_passport_equivalents_eu_pages_ministeres_destinataires",
+      "name": "Programmes Talent passport / equivalents EU — pages ministères destinataires",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "associations_etudiants_mar_a_l_etranger_guides_d_accueil",
+      "name": "Associations étudiants MAR à l’étranger — guides d’accueil",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "carnets_diplomatiques_locales_consultations_mobiles_consulaires",
+      "name": "Carnets diplomatiques locales (consultations mobiles consulaires)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "apis_cours_de_change_officielles_bank_al_maghrib_vs_banques_commerciales",
+      "name": "APIs cours de change officielles Bank Al-Maghrib vs banques commerciales",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "rapports_hcp_haut_commissariat_au_plan_maroc_sur_demobilite_potentielle",
+      "name": "Rapports HCP (Haut Commissariat au Plan Maroc) sur démobilité potentielle",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "enquetes_ondh_instances_droits_locales_sur_discriminations_signalees",
+      "name": "Enquêtes ONDH / instances droits locales sur discriminations signalées",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "guides_cci_export_mobilite_professionnelle_version_pdf_certifiee",
+      "name": "Guides CCI export & mobilité professionnelle (version PDF certifiée)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "coworking_labels_remote_work_friendly_au_maroc_signal_marche_freelances",
+      "name": "Coworking labels remote-work friendly au Maroc (signal marché freelances)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "marketplaces_cours_en_ligne_mar_clients_eu_compliance_fiscal_transfronti",
+      "name": "Marketplaces cours en ligne MAR → clients EU (compliance fiscal transfrontière)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "podcasts_diaspora_mar_citations_avec_timestamp",
+      "name": "Podcasts diaspora MAR (citations avec timestamp)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "newsletters_avocats_specialises_corridor_schengen_us_ca",
+      "name": "Newsletters avocats spécialisés corridor Schengen/US/CA",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "google_scholar_articles_migrations_maghreb_eu_pour_contexte_socio_econom",
+      "name": "Google Scholar — articles migrations Maghreb↔EU pour contexte socio-économique",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "statistiques_consulaires_francaises_sur_delivrance_visas_datasets_annuel",
+      "name": "Statistiques consulaires françaises sur délivrance visas (datasets annuels)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "eurostat_mig_demographie_stocks_migrants_origine_maghreb",
+      "name": "Eurostat mig démographie — stocks migrants origine MAGHREB",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "ocde_migration_outlook_chapitres_maroc_lorsque_disponibles",
+      "name": "OCDE migration outlook chapitres Maroc lorsque disponibles",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "plateformes_logement_courte_duree_scout_avant_cdi_sponsorise",
+      "name": "Plateformes logement courte durée scout avant CDI sponsorisé",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "simulateurs_fiscalite_inversion_residence_mar_eu",
+      "name": "simulateurs fiscalité inversion résidence MAR ↔ EU",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "cartes_zones_tension_logement_ville_destination_plans_urbanisme_officiel",
+      "name": "Cartes zones tension logement ville destination (plans urbanisme officiels)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "watchlists_medias_independants_sur_refus_quotas_visa_etudiants",
+      "name": "Watchlists médias indépendants sur refus quotas visa étudiants",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "syntheses_syndicats_etudiants_internationaux_unef_esu_versions_officiell",
+      "name": "Synthèses syndicats étudiants internationaux (UNEF, ESU — versions officielles)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "repertoire_traducteurs_assermentes_maroc_pays_destination",
+      "name": "Répertoire traducteurs assermentés Maroc pays destination",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "guides_sante_vaccination_voyage_iamat_sante_voyage_mae_ue",
+      "name": "Guides santé vaccination voyage IAMAT / santé voyage MAE UE",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "check_lists_apostille_legalisation_hague_pour_diplomes_marocains",
+      "name": "Check-lists apostille/Legalisation Hague pour diplômes marocains",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "faq_transport_animaux_domestiques_depuis_maroc_ministeres_agriculture_bi",
+      "name": "FAQ transport animaux domestiques depuis Maroc (ministères agriculture bilateral)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "donnees_climat_saisonnieres_impact_couts_billets_sources_meteo_nationale",
+      "name": "Données climat saisonnières impact coûts billets (sources météo nationales)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "cartographie_escales_visa_transit_aeroports_eu_pour_residents_mar",
+      "name": "Cartographie escales Visa Transit aéroports EU pour résidents MAR",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "ressources_femise_ecdpm_corridor_eu_mediterranee",
+      "name": "Ressources FEMISE / ECDPM corridor EU-Méditerranée",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "papers_carnegie_brookings_region_mena_mobility_contexte_geopolitique",
+      "name": "Papers Carnegie / Brookings région MENA mobility (contexte géopolitique)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "rapports_transparency_maroc_correles_perception_corruption_mobilite",
+      "name": "Rapports Transparency Maroc corrélés perception corruption mobilité",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "briefings_ambassades_ue_publiques_sur_mobilite_circulaire",
+      "name": "Briefings ambassades UE publiques sur mobilité circulaire",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "syntheses_un_desa_migrations_internationales_extraits_tableau_par_corrid",
+      "name": "Synthèses UN DESA migrations internationales (extraits tableau par corridor)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "guides_handicap_accessibilite_transport_maroc_pays_destination",
+      "name": "Guides handicap & accessibilité transport Maroc pays destination",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "portails_aides_familiales_transfert_fonds_officiel_vs_informal_channels_",
+      "name": "Portails aides familiales transfert fonds officiel vs informal channels risks",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "simulateurs_aides_caf_equivalents_pays_eu_pour_anciens_residents_mar",
+      "name": "Simulateurs aides CAF equivalents pays EU pour anciens résidents MAR",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "guides_creation_sci_holding_relocation_patrimoine_conseiller_fiscal_agre",
+      "name": "Guides création SCI / holding relocation patrimoine (conseiller fiscal agréé)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "faq_double_imposition_mar_france_espagne_us_conventions_officielles_pdf",
+      "name": "FAQ double imposition MAR–France/Espagne/US (conventions officielles PDF)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "archives_medias_television_publique_mar_reportages_migration_legale",
+      "name": "Archives médias télévision publique MAR reportages migration légale",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "stories_linkedin_recruiter_insights_mobilite_maghreb_biais_marche",
+      "name": "Stories LinkedIn recruiter insights mobilité Maghreb (biais marché)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "donnees_start_up_nation_programmes_remote_visa_emirats_estonie_vs_reside",
+      "name": "Données start-up nation programmes remote visa (Emirats, Estonie…) vs résidence MAR",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "catalogues_aides_micro_finance_diaspora_cofinancees_institutions_mar",
+      "name": "Catalogues aides micro-finance Diaspora cofinancées institutions MAR",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "syntheses_greco_greta_anti_corruption_documents_voyage",
+      "name": "Synthèses GRECO / GRETA anti-corruption documents voyage",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "ressources_sante_mentale_migrants_ong_reconnues_pas_conseil_medical",
+      "name": "Ressources santé mentale migrants — ONG reconnues (pas conseil médical)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "referentiels_ethiques_collecte_temoignages_migration_protection_donnees_",
+      "name": "Référentiels éthiques collecte témoignages migration (protection données RGPD où applicable)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "crowdfunding_etudes_passeports_talents_conditions_legales_pays_hote_uniq",
+      "name": "Crowdfunding études & passeports talents — conditions légales pays hôte uniquement via source primaire",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "repertoires_officiels_mediateurs_consommation_voyage_transport_aerien_ma",
+      "name": "Répertoires officiels médiateurs consommation voyage & transport aérien MAR/UE",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "guides_primes_relocation_employeur_versus_impot_sur_traitement_frontalie",
+      "name": "Guides primes relocation employeur versus impôt sur traitement frontalier",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "tableaux_quotas_etudiants_par_etablissement_brochures_officielles_vs_rum",
+      "name": "Tableaux quotas étudiants par établissement (brochures officielles vs rumeurs réseaux)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "syntheses_think_tanks_europeens_sur_mobilite_circulaire_maroc_ue_notes_d",
+      "name": "Synthèses think tanks européens sur mobilité circulaire Maroc UE (notes de politiques publiques)",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
+    },
+    {
+      "id": "plateformes_comparateurs_contrats_mobiles_eu_pour_residents_longue_duree",
+      "name": "Plateformes comparateurs contrats mobiles EU pour résidents longue durée issus MAR",
+      "baseUrl": null,
+      "tier": "curated",
+      "topics": [
+        "ma_migration_supplemental_81_150"
+      ],
+      "countryScope": "morocco_corridor",
+      "language": "fr",
+      "trustScore": 55,
+      "authorityScore": 50,
+      "reliabilityLevel": "low",
+      "updateFrequencyHint": "variable",
+      "requiresDiscoveryGate": false,
+      "categoryId": "ma_migration_supplemental_81_150",
+      "notes": "tier_skipped:morocco_migration_supplemental"
     }
   ],
   "stats": {
-    "total": 149,
-    "withBaseUrl": 79
+    "total": 288,
+    "withBaseUrl": 130,
+    "proceduralNoFetch": 7,
+    "tierSkipped": 151
   }
 }

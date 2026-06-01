@@ -1,45 +1,57 @@
-# Master list des sources (datafile)
+# Datafile — master list & algorithme de scrape (~300 sites)
 
-## Fichier canonique
+Ce dossier est le **centre de l’intelligence sources** : liste canonique des sites de confiance, scrape borné, extraction structurée vers les fiches pays.
 
-- **`sources.master.json`** — liste des ~300 sources de confiance (format v1 ci-dessous).
+## Fichiers
 
-## Schéma `sources.master.json`
+| Fichier / dossier | Rôle |
+|-------------------|------|
+| `sources.master.json` | ~288 sources (global + corridor Maroc) |
+| `url-overrides.json` | URLs manuelles par `source id` (priorité max au build) |
+| `scrape-runs/{runId}/` | Sortie bronze par run (JSON par source, **gitignoré**) |
+| `ingest-report.json` | Rapport dedupe vs manifest |
 
-```json
-{
-  "version": 1,
-  "generatedAt": "ISO-8601",
-  "sources": [
-    {
-      "id": "world_bank",
-      "name": "World Bank",
-      "baseUrl": "https://www.worldbank.org",
-      "tier": "official",
-      "topics": ["statistics", "economy"],
-      "countryScope": "global",
-      "language": "en",
-      "trustScore": 95,
-      "authorityScore": 98,
-      "reliabilityLevel": "high",
-      "updateFrequencyHint": "quarterly",
-      "notes": "optional",
-      "requiresDiscoveryGate": true
-    }
-  ]
-}
-```
-
-## Commandes
+## 1. Construire la master list
 
 ```bash
-# Générer sources.master.json depuis lib/agent-research-sources.ts (si vide)
-npm run datafile:build-master
-
-# Valider + dédupliquer vs manifest Prisma
-npm run datafile:ingest
+npm run datafile:build-master   # templates + resolveManifestUrlTemplate + overrides
+npm run datafile:report-urls    # sources sans URL (hors procedural/skipped)
+npm run datafile:ingest:db      # upsert IntelligenceSource
 ```
 
-## Piste parallèle
+## 2. Scrape (bronze)
 
-Les sources avec `requiresDiscoveryGate: true` ne sont **pas collectées** tant que `SourceSiteInventory.status !== complete` (sauf `procedural_no_fetch` documenté en admin).
+Implémentation : [`lib/datafile/scraper/`](../lib/datafile/scraper/)
+
+```bash
+npm run datafile:scrape -- --limit=10
+npm run datafile:scrape -- --write-db --resume --run-id=run_... --retry-failed
+```
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `DATAFILE_SCRAPE_MAX_PAGES_PER_SOURCE` | 40 | Pages max par site |
+| `DATAFILE_SCRAPE_DELAY_MS` | 1500 | Pause entre requêtes |
+| `DATAFILE_SCRAPE_RETRY_MS` | 2000 | Retry sur 403/429/502 |
+| `DATAFILE_SCRAPE_FETCH_MS` | 14000 | Timeout fetch |
+
+## 3. Extraction structurée → observations pays
+
+[`lib/datafile/extract/`](../lib/datafile/extract/) — règles d’abord, `--llm-fill` optionnel sur les trous.
+
+```bash
+npm run datafile:bronze-to-observations -- --run-id=run_2026-05-30T... --write-db
+npm run datafile:bronze-to-observations -- --run-id=... --write-db --llm-fill
+```
+
+Puis validation et materialisation :
+
+```bash
+npm run intelligence:validate
+```
+
+## 4. CI batch (optionnel)
+
+Workflow `datafile-scrape-batch.yml` — `workflow_dispatch`, `--limit=20`, `--write-db`.
+
+Production : `ALLOW_PROD_WRITES=1` + `DATABASE_URL`.

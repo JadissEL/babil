@@ -13,6 +13,9 @@ tsconfig.tsbuildinfo
 .vercel
 
 .tmp-user-audit/
+datafile/scrape-runs/
+datafile/scrape-full-run.log
+.tmp-datafile-*.json
 
 # Optional URL map for agent manifest fetches (may contain internal endpoints)
 data/agent-manifest-url-map.json

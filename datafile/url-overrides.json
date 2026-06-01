@@ -1,0 +1,4 @@
+{
+  "_comment": "Manual baseUrl overrides by datafile source id (slug). Highest priority in datafile:build-master.",
+  "overrides": {}
+}
