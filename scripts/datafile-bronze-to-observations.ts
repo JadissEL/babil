@@ -10,7 +10,7 @@ import { bronzeScrapeRunToObservations } from '@/lib/datafile/extract/bronze-to-
 
 const args = process.argv.slice(2)
 const runIdArg = args.find((a) => a.startsWith('--run-id='))
-const runId = runIdArg?.split('=')[1]
+const runId = runIdArg?.split('=')[1] ?? ''
 if (!runId) {
   console.error('Missing --run-id=')
   process.exit(1)

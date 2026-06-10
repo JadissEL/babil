@@ -88,7 +88,7 @@ export function matchCountriesFromSourceHint(
       if (tokenInText(label, row.name)) hits.add(row.id)
     }
   }
-  return [...hits]
+  return Array.from(hits)
 }
 
 export function isLowSignalScrapePage(url: string, excerpt: string | null): boolean {
@@ -124,5 +124,5 @@ export function matchCountriesFromPage(
     }
   }
 
-  return [...hits].slice(0, 3)
+  return Array.from(hits).slice(0, 3)
 }
