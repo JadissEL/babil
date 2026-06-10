@@ -1,0 +1,62 @@
+{
+  "_comment": "Curated visa baselines with explicit provenance. Schengen values from EU Visa Code (Regulation EC 810/2009, amended 2024: fee 90 EUR). Non-Schengen values from official published guidance. Used as authoritative fallback observations (estimated, confidence 0.72); fresher manifest/LLM extractions override via precedence.",
+  "schengenBaseline": {
+    "sourceLabel": "EU Visa Code (Regulation 810/2009)",
+    "sourceUrl": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A02009R0810-20240611",
+    "fields": {
+      "visa_processing_time": "15 jours calendaires (extensible à 45 jours si examen approfondi)",
+      "full_data.visa_system.tourism.fees": "90 EUR (adulte), 45 EUR (enfant 6-12 ans)",
+      "full_data.appointment_audit.avg_wait_time": "2 à 6 semaines selon centre TLScontact / VFS / BLS"
+    }
+  },
+  "countries": {
+    "United Kingdom": {
+      "sourceLabel": "UK Home Office",
+      "sourceUrl": "https://www.gov.uk/standard-visitor",
+      "fields": {
+        "visa_processing_time": "3 semaines (Standard Visitor visa)",
+        "full_data.visa_system.tourism.fees": "127 GBP (Standard Visitor 6 mois)"
+      }
+    },
+    "United States": {
+      "sourceLabel": "US Department of State",
+      "sourceUrl": "https://travel.state.gov/content/travel/en/us-visas/tourism-visit/visitor.html",
+      "fields": {
+        "visa_processing_time": "Variable selon entretien consulaire B1/B2 (souvent plusieurs mois d'attente de rendez-vous)",
+        "full_data.visa_system.tourism.fees": "185 USD (B1/B2)"
+      }
+    },
+    "Canada": {
+      "sourceLabel": "IRCC (Canada)",
+      "sourceUrl": "https://www.canada.ca/en/immigration-refugees-citizenship/services/application/check-processing-times.html",
+      "fields": {
+        "visa_processing_time": "Visiteur (VRT) : délais publiés par IRCC, typiquement 1 à 3 mois depuis le Maroc",
+        "full_data.visa_system.tourism.fees": "100 CAD + 85 CAD biométrie"
+      }
+    },
+    "Australia": {
+      "sourceLabel": "Australian Government Immigration",
+      "sourceUrl": "https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/visitor-600",
+      "fields": {
+        "visa_processing_time": "Visitor 600 : majorité des dossiers sous 30 jours",
+        "full_data.visa_system.tourism.fees": "à partir de 195 AUD (Visitor 600)"
+      }
+    },
+    "Turkey": {
+      "sourceLabel": "Türkiye e-Visa",
+      "sourceUrl": "https://www.evisa.gov.tr",
+      "fields": {
+        "visa_processing_time": "e-Visa en ligne : délivrance immédiate à 24h",
+        "full_data.visa_system.tourism.fees": "selon nationalité (e-Visa)"
+      }
+    },
+    "United Arab Emirates": {
+      "sourceLabel": "UAE Government",
+      "sourceUrl": "https://u.ae/en/information-and-services/visa-and-emirates-id",
+      "fields": {
+        "visa_processing_time": "Visa touristique via compagnies/hôtels : 2 à 5 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "350 à 650 AED selon durée"
+      }
+    }
+  }
+}

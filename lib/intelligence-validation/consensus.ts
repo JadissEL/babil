@@ -43,9 +43,13 @@ function valuesContradict(a: number, b: number): boolean {
 export function buildFieldConsensus(
   countryId: number,
   fieldPath: string,
-  rows: RawObservationRow[],
+  allRows: RawObservationRow[],
   opts?: { sourceReliabilityBySlug?: Map<string, number> },
 ): FieldConsensus {
+  // Low-confidence noise must not dilute strong signals: when at least one
+  // observation clears the promotion bar, ignore rows far below it.
+  const strong = allRows.filter((r) => r.confidence >= PROMOTION_CONFIDENCE_MIN)
+  const rows = strong.length > 0 ? allRows.filter((r) => r.confidence >= 0.6) : allRows;
   if (rows.length === 0) {
     return {
       fieldPath,

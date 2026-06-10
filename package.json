@@ -89,6 +89,7 @@
     "datafile:status": "node scripts/datafile-status-report.mjs",
     "datafile:materialize-visa-countries": "tsx scripts/datafile-materialize-visa-countries.ts",
     "datafile:verify-fiches": "tsx scripts/datafile-verify-fiches.ts",
+    "datafile:seed-curated-visa": "tsx scripts/datafile-seed-curated-visa.ts",
     "intelligence:enqueue-discovery": "tsx scripts/intelligence-enqueue-discovery-batch.ts",
     "intelligence:platform-bootstrap": "tsx scripts/intelligence-platform-bootstrap-local.ts",
     "db:prune-observations:dry": "tsx scripts/prune-country-observations.ts --dry-run --older-than-days=730",

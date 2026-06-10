@@ -15,6 +15,12 @@ const NumericValueJsonSchema = z
   })
   .passthrough();
 
+const StringValueJsonSchema = z
+  .object({
+    value: z.string().min(2).max(300),
+  })
+  .passthrough();
+
 const ManifestSnapshotSchema = z
   .object({
     ok: z.boolean().optional(),
@@ -66,6 +72,20 @@ export function validateObservationDataContract(input: {
   }
 
   const materialize = MATERIALIZE_TARGETS[path];
+  if (materialize && materialize.kind === 'string') {
+    try {
+      const parsed = StringValueJsonSchema.safeParse(JSON.parse(input.valueJson));
+      if (!parsed.success) {
+        violations.push({
+          code: 'materialize_value_shape',
+          message: `${path} requires { value: string (2-300 chars) } in valueJson`,
+        });
+      }
+    } catch {
+      violations.push({ code: 'invalid_json', message: 'valueJson must be valid JSON' });
+    }
+    return { valid: violations.length === 0, violations };
+  }
   if (materialize) {
     let numeric: number | null =
       input.valueNumeric != null && Number.isFinite(input.valueNumeric) ? input.valueNumeric : null;

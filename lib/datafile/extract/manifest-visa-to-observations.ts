@@ -184,22 +184,9 @@ export async function runManifestVisaExtraction(
         }))
       }
 
-      if (
-        fields.length === 0 &&
-        text.length > 400 &&
-        /visa|schengen|appointment|rendez-vous|processing|délai|delai|fee|frais/i.test(text)
-      ) {
-        const snippet = text.slice(0, 240).trim()
-        const rich = text.length > 900
-        fields = [
-          {
-            fieldPath: 'visa_processing_time',
-            value: snippet,
-            // Excerpt fallback is unverified context, never auto-promotable.
-            confidence: rich ? 0.55 : 0.45,
-          },
-        ]
-      }
+      // No excerpt fallback: low-confidence snippet rows dilute field consensus
+      // and block promotion of curated/LLM values. Pages without extractable
+      // facts simply contribute nothing.
 
       for (const field of fields) {
         report.byFieldPath[field.fieldPath] = (report.byFieldPath[field.fieldPath] ?? 0) + 1
