@@ -48,15 +48,27 @@ npm run datafile:bronze-to-observations -- --run-id=... --write-db --llm-fill
 
 ### 3b. Manifest visa par pays (recommandé pour visa/délais/frais)
 
-URLs avec `{country}` dans le manifest — une requête par pays Schengen :
+URLs templatées (`{country}`, `{slug}`, `{encodedCountry}`) — inclut Wikipedia Visa Policy / Wikivoyage / VisaHQ par pays :
 
 ```bash
 npm run datafile:manifest-visa-extract -- --schengen --limit=15 --write-db --llm-fill
+npm run datafile:manifest-visa-extract -- --corridor-maroc --write-db --llm-fill
+npm run datafile:manifest-visa-extract -- --all-countries --write-db --llm-fill
 ```
 
-Requiert `OPENAI_API_KEY` pour `--llm-fill` (sinon règles seules ; un avertissement s’affiche).
+LLM : `OPENROUTER_API_KEY` (recommandé, modèle `openai/gpt-4o-mini`) ou `OPENAI_API_KEY`.
+Endpoint/modèle configurables via `INTELLIGENCE_LLM_BASE_URL` / `INTELLIGENCE_LLM_MODEL`.
+`AGENT_MANIFEST_EXCERPT_CHARS=60000` recommandé pour capturer le corps des pages.
 
-### 3c. Pipeline complet (local / prod)
+### 3c. Baselines visa curées (Schengen + corridor)
+
+Valeurs officielles (Code des visas UE 810/2009, guidances UK/US/CA/AU/TR/UAE) écrites comme observations `estimated` :
+
+```bash
+npm run datafile:seed-curated-visa
+```
+
+### 3d. Pipeline complet (local / prod)
 
 ```bash
 npm run datafile:pipeline -- --run-id=run_2026-05-30T13-18-10-318Z_c9a3e772 --all-countries --materialize --llm-fill
@@ -64,14 +76,15 @@ npm run datafile:pipeline -- --run-id=run_2026-05-30T13-18-10-318Z_c9a3e772 --al
 
 Étapes : bronze scrape → manifest visa (pays) → validation → materialisation `Country.full_data`.
 
-Puis validation seule :
+### 4. Matérialiser + vérifier les fiches
 
 ```bash
-npm run intelligence:validate
-npm run intelligence:materialize-approved
+npm run datafile:materialize-visa-countries   # promeut manifest-visa + curated-visa, matérialise full_data
+npm run datafile:verify-fiches                # échantillon 10 Schengen + 5 corridor
+npm run datafile:status                       # métriques globales
 ```
 
-## 4. CI batch (optionnel)
+## 5. CI batch (optionnel)
 
 Workflow `datafile-scrape-batch.yml` — `workflow_dispatch`, `--limit=20`, `--write-db`.
 
