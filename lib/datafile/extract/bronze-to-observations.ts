@@ -6,6 +6,7 @@ import { readAllSourceResults } from '@/lib/datafile/scraper/persist-run'
 import type { ScrapePageRecord } from '@/lib/datafile/scraper/types'
 import { slugFromDatafileId } from '@/lib/datafile/load-master-list'
 import { extractFieldsFromExcerpt } from '@/lib/datafile/extract/field-extractors'
+import { normalizeExcerpt } from '@/lib/datafile/extract/html-to-text'
 import { llmFillFieldGaps } from '@/lib/datafile/extract/llm-fill-gaps'
 import { resolveLlmBudget } from '@/lib/datafile/extract/resolve-llm-budget'
 import {
@@ -124,9 +125,11 @@ export async function bronzeScrapeRunToObservations(
 
     for (const page of sourceResult.pages) {
       if (!page.excerpt || isLowSignalScrapePage(page.url, page.excerpt)) continue
+      const normalizedPage = { ...page, excerpt: normalizeExcerpt(page.excerpt) }
+      if (normalizedPage.excerpt.length < 80) continue
       report.pagesConsidered += 1
 
-      let bundles = processPage(page, lookup, countryFilter, sourceHintIds)
+      let bundles = processPage(normalizedPage, lookup, countryFilter, sourceHintIds)
       const needsLlm =
         llm.enabled && (bundles.length === 0 || bundles.every((b) => b.fields.length === 0))
 
@@ -136,9 +139,9 @@ export async function bronzeScrapeRunToObservations(
             ? bundles.map((b) => b.countryId)
             : [
                 ...matchCountriesFromPage(lookup, {
-                  url: page.url,
-                  title: page.title,
-                  excerpt: page.excerpt,
+                  url: normalizedPage.url,
+                  title: normalizedPage.title,
+                  excerpt: normalizedPage.excerpt,
                 }),
                 ...sourceHintIds,
               ].filter((id, i, arr) => arr.indexOf(id) === i)
@@ -151,7 +154,7 @@ export async function bronzeScrapeRunToObservations(
           const llmFields = await llmFillFieldGaps(
             {
               countryName: country.name,
-              excerpt: page.excerpt,
+              excerpt: normalizedPage.excerpt,
               candidateFieldPaths: LLM_CANDIDATE_PATHS,
             },
             tokenBudget,
@@ -182,11 +185,14 @@ export async function bronzeScrapeRunToObservations(
             sourceId: sourceDbId,
             runId: enrichmentRunId,
             fieldPath: field.fieldPath,
-            valueJson: JSON.stringify({ value: field.value, summary: page.excerpt.slice(0, 400) }),
+            valueJson: JSON.stringify({
+              value: field.value,
+              summary: normalizedPage.excerpt.slice(0, 400),
+            }),
             confidence: field.confidence,
             verificationStatus: 'pending',
             sourceUrl: page.url,
-            rawExcerpt: page.excerpt.slice(0, 2000),
+            rawExcerpt: normalizedPage.excerpt.slice(0, 2000),
             dedupeKey: `datafile-extract:${bundle.countryId}:${field.fieldPath}:${page.url}`,
           })
           report.observationsWritten += 1

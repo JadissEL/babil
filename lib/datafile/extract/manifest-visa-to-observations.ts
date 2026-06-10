@@ -6,6 +6,7 @@ import { runManifestUrlFetchBatch } from '@/lib/agent-manifest-source-fetch'
 import { loadRunMemory, saveRunMemory, orchestrationSlugForCountry } from '@/lib/agent-run-memory'
 import { slugFromDatafileId } from '@/lib/datafile/load-master-list'
 import { extractFieldsFromExcerpt } from '@/lib/datafile/extract/field-extractors'
+import { normalizeExcerpt } from '@/lib/datafile/extract/html-to-text'
 import { llmFillFieldGaps } from '@/lib/datafile/extract/llm-fill-gaps'
 import { resolveLlmBudget } from '@/lib/datafile/extract/resolve-llm-budget'
 import { resolveSourceSlugForManifestLabel } from '@/lib/intelligence-manifest-source-bridge'
@@ -140,6 +141,8 @@ export async function runManifestVisaExtraction(
 
     for (const item of batch.results) {
       if (!item.ok || !item.excerpt || item.excerpt.length < 80) continue
+      const text = normalizeExcerpt(item.excerpt)
+      if (text.length < 80) continue
       report.fetchesOk += 1
 
       const sourceId = opts.writeDb ? await resolveSourceIdForLabel(item.sourceLabel) : null
@@ -148,14 +151,14 @@ export async function runManifestVisaExtraction(
         continue
       }
 
-      let fields = extractFieldsFromExcerpt(item.excerpt, 'visa')
+      let fields = extractFieldsFromExcerpt(text, 'visa')
 
       if (fields.length === 0 && llm.enabled) {
         report.llmCalls += 1
         const llmFields = await llmFillFieldGaps(
           {
             countryName: country.name,
-            excerpt: item.excerpt,
+            excerpt: text,
             candidateFieldPaths: STRUCTURED_FIELD_PATHS,
           },
           llm.budget,
@@ -169,16 +172,17 @@ export async function runManifestVisaExtraction(
 
       if (
         fields.length === 0 &&
-        item.excerpt.length > 400 &&
-        /visa|schengen|appointment|rendez-vous|processing|délai|delai|fee|frais/i.test(item.excerpt)
+        text.length > 400 &&
+        /visa|schengen|appointment|rendez-vous|processing|délai|delai|fee|frais/i.test(text)
       ) {
-        const snippet = item.excerpt.slice(0, 240).replace(/\s+/g, ' ').trim()
-        const rich = item.excerpt.length > 900
+        const snippet = text.slice(0, 240).trim()
+        const rich = text.length > 900
         fields = [
           {
             fieldPath: 'visa_processing_time',
             value: snippet,
-            confidence: rich ? 0.68 : 0.48,
+            // Excerpt fallback is unverified context, never auto-promotable.
+            confidence: rich ? 0.55 : 0.45,
           },
         ]
       }
@@ -194,13 +198,13 @@ export async function runManifestVisaExtraction(
           fieldPath: field.fieldPath,
           valueJson: JSON.stringify({
             value: field.value,
-            summary: item.excerpt.slice(0, 400),
+            summary: text.slice(0, 400),
             source: 'manifest_visa_extract',
           }),
           confidence: field.confidence,
           verificationStatus: verificationForField(field.confidence),
           sourceUrl: item.url,
-          rawExcerpt: item.excerpt.slice(0, 2000),
+          rawExcerpt: text.slice(0, 2000),
           dedupeKey: `manifest-visa:${country.id}:${field.fieldPath}:${orchestrationSlugForCountry(country.name)}:${item.sourceLabel}`,
         })
         report.observationsWritten += 1

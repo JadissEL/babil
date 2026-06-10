@@ -1,3 +1,5 @@
+import { resolveLlmApiConfig } from '@/lib/datafile/extract/llm-config'
+
 export type LlmBudgetResolution = {
   budget: number
   enabled: boolean
@@ -13,9 +15,8 @@ export function resolveLlmBudget(opts: {
     return { budget: 0, enabled: false, skipReason: 'llm_fill_not_requested' }
   }
 
-  const apiKey = process.env.OPENAI_API_KEY?.trim()
-  if (!apiKey) {
-    return { budget: 0, enabled: false, skipReason: 'missing_openai_api_key' }
+  if (!resolveLlmApiConfig()) {
+    return { budget: 0, enabled: false, skipReason: 'missing_llm_api_key' }
   }
 
   let budget =
