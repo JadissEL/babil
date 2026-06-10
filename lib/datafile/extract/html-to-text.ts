@@ -68,3 +68,30 @@ export function normalizeExcerpt(excerpt: string): string {
   const text = looksLikeHtml(excerpt) ? htmlToText(excerpt) : excerpt
   return stripCssResidue(text)
 }
+
+const VISA_KEYWORDS =
+  /visa|schengen|appointment|rendez[- ]?vous|processing|traitement|délai|delai|fee|frais|tarif|wait|attente|biometric|consulate|consulat|embassy|ambassade/i
+
+/**
+ * Concatenate sentence windows around visa-related keywords so downstream
+ * rules/LLM see relevant content instead of page headers and alerts.
+ */
+export function focusVisaText(text: string, maxChars = 3500): string {
+  if (text.length <= maxChars) return text
+  const sentences = text.split(/(?<=[.!?])\s+/)
+  const picked: string[] = []
+  let total = 0
+  for (let i = 0; i < sentences.length && total < maxChars; i++) {
+    if (!VISA_KEYWORDS.test(sentences[i])) continue
+    // Include one sentence of context after the hit.
+    const chunk = [sentences[i], sentences[i + 1] ?? '']
+      .join(' ')
+      .trim()
+    if (chunk.length < 25) continue
+    picked.push(chunk)
+    total += chunk.length
+    i++
+  }
+  const focused = picked.join(' ').slice(0, maxChars)
+  return focused.length >= 120 ? focused : text.slice(0, maxChars)
+}

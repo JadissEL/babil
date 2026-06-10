@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-06-01T20:54:25.138Z",
+  "generatedAt": "2026-06-10T20:38:55.669Z",
   "sources": [
     {
       "id": "world_bank",
@@ -41,7 +41,7 @@
     {
       "id": "oecd",
       "name": "OECD",
-      "baseUrl": "https://www.oecd.org",
+      "baseUrl": "https://stats.oecd.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -113,7 +113,7 @@
     {
       "id": "unhcr",
       "name": "UNHCR",
-      "baseUrl": "https://www.unhcr.org",
+      "baseUrl": "https://data.unhcr.org",
       "tier": "official",
       "topics": [
         "official_global"
@@ -257,7 +257,7 @@
     {
       "id": "global_economy",
       "name": "Global Economy",
-      "baseUrl": "https://www.global-economy.com",
+      "baseUrl": "https://www.theglobaleconomy.com",
       "tier": "multilateral",
       "topics": [
         "statistics_data"
@@ -448,9 +448,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "flights_transport",
-      "notes": "From agent category flights_transport"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "trip_com",
@@ -502,9 +502,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "flights_transport",
-      "notes": "From agent category flights_transport"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "opodo",
@@ -610,9 +610,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "housing_cost_of_living",
-      "notes": "From agent category housing_cost_of_living"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "rightmove",
@@ -646,9 +646,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "housing_cost_of_living",
-      "notes": "From agent category housing_cost_of_living"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "immowelt",
@@ -682,9 +682,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "housing_cost_of_living",
-      "notes": "From agent category housing_cost_of_living"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "propertyfinder",
@@ -880,9 +880,9 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "study_universities",
-      "notes": "From agent category study_universities"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "qs_top_universities_topuniversities",
@@ -934,9 +934,9 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "employment_labour_market",
-      "notes": "From agent category employment_labour_market"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "glassdoor",
@@ -952,9 +952,9 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "employment_labour_market",
-      "notes": "From agent category employment_labour_market"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "monster",
@@ -970,9 +970,9 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "employment_labour_market",
-      "notes": "From agent category employment_labour_market"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "ziprecruiter",
@@ -1078,14 +1078,14 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "employment_labour_market",
-      "notes": "From agent category employment_labour_market"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "iata_travel_centre",
       "name": "IATA Travel Centre",
-      "baseUrl": "https://www.iatatravelcentre.com",
+      "baseUrl": "https://www.iata.org",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1211,7 +1211,7 @@
     {
       "id": "australian_government_immigration",
       "name": "Australian Government Immigration",
-      "baseUrl": "https://immi.homeaffairs.gov.au",
+      "baseUrl": "https://immi.homeaffairs.gov.au/visas",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -1229,7 +1229,7 @@
     {
       "id": "new_zealand_immigration",
       "name": "New Zealand Immigration",
-      "baseUrl": "https://www.immigration.govt.nz",
+      "baseUrl": "https://www.immigration.govt.nz/new-zealand-visas",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -2687,7 +2687,7 @@
     {
       "id": "ministere_des_affaires_etrangeres_de_la_cooperation_africaine_et_des_mar",
       "name": "Ministère des Affaires Étrangères, de la Coopération Africaine et des Marocains Résidant à l’Étranger (MAECME)",
-      "baseUrl": "https://www.diplomatie.ma",
+      "baseUrl": "https://www.diplomatie.ma/fr",
       "tier": "official",
       "topics": [
         "ma_official"
@@ -2759,7 +2759,7 @@
     {
       "id": "anapec_emploi_formation_au_maroc",
       "name": "ANAPEC — emploi & formation au Maroc",
-      "baseUrl": "https://www.anapec.org",
+      "baseUrl": "https://anapec.ma",
       "tier": "official",
       "topics": [
         "ma_official"
@@ -2777,7 +2777,7 @@
     {
       "id": "ministere_du_travail_et_de_l_insertion_professionnelle_maroc",
       "name": "Ministère du Travail et de l’Insertion Professionnelle (Maroc)",
-      "baseUrl": "https://www.emploi.gov.ma",
+      "baseUrl": "https://www.mtip.gov.ma",
       "tier": "official",
       "topics": [
         "ma_official"
@@ -2813,7 +2813,7 @@
     {
       "id": "portail_national_du_maroc_services_publics_numeriques_agreges",
       "name": "Portail national du Maroc (services publics numériques agrégés)",
-      "baseUrl": "https://www.service-public.ma",
+      "baseUrl": "https://www.idarati.ma",
       "tier": "official",
       "topics": [
         "ma_official"
@@ -2849,7 +2849,7 @@
     {
       "id": "reseau_des_ambassades_et_consulats_du_maroc_a_l_etranger_sites_officiels",
       "name": "Réseau des ambassades et consulats du Maroc à l’étranger — sites officiels par pays",
-      "baseUrl": "https://www.diplomatie.ma",
+      "baseUrl": "https://www.consulat.ma",
       "tier": "official",
       "topics": [
         "ma_official"
@@ -2975,7 +2975,7 @@
     {
       "id": "ambassade_de_turkiye_au_maroc_visas_formalites",
       "name": "Ambassade de Türkiye au Maroc — visas & formalités",
-      "baseUrl": "https://rabat.emb.mfa.gov.tr",
+      "baseUrl": "https://rabat.be.mfa.gov.tr",
       "tier": "curated",
       "topics": [
         "ma_embassies_in_morocco"
@@ -2993,7 +2993,7 @@
     {
       "id": "ambassade_des_emirats_arabes_unis_au_maroc",
       "name": "Ambassade des Émirats arabes unis au Maroc",
-      "baseUrl": "https://www.uae-embassy.ma",
+      "baseUrl": "https://www.mofa.gov.ae/en/missions/rabat",
       "tier": "curated",
       "topics": [
         "ma_embassies_in_morocco"
@@ -3155,7 +3155,7 @@
     {
       "id": "france_visas_formulaires_dossier_theorique_pour_depot_maroc_rabat_casabl",
       "name": "France-Visas — formulaires & dossier théorique pour dépôt Maroc/Rabat/Casablanca",
-      "baseUrl": "https://france-visas.gouv.fr",
+      "baseUrl": "https://france-visas.gouv.fr/en/web/france-visas",
       "tier": "curated",
       "topics": [
         "ma_visa_corridor_services"
@@ -3191,7 +3191,7 @@
     {
       "id": "iata_travel_centre_conseils_sante_documentation_voyage_a_confirmer_avec_",
       "name": "IATA Travel Centre — conseils santé/documentation voyage à confirmer avec compagnie & immigration",
-      "baseUrl": "https://www.iatatravelcentre.com",
+      "baseUrl": "https://www.iata.org",
       "tier": "curated",
       "topics": [
         "ma_visa_corridor_services"
@@ -3508,9 +3508,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "ma_air_transport",
-      "notes": "From agent category ma_air_transport"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "skyscanner_comparaison_vols_verif_prix_final_sur_site_compagnie",
@@ -3544,9 +3544,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "ma_housing_listings",
-      "notes": "From agent category ma_housing_listings"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "mubawab_maroc",
@@ -3580,9 +3580,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "ma_housing_listings",
-      "notes": "From agent category ma_housing_listings"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "idealista_espagne_logement_hors_residence_etudiante",
@@ -3598,9 +3598,9 @@
       "authorityScore": 50,
       "reliabilityLevel": "low",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "ma_housing_listings",
-      "notes": "From agent category ma_housing_listings"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "rightmove_uk_scouting_hypothetique_puis_validation_legal_residence",
@@ -3760,9 +3760,9 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "ma_employment_corridor",
-      "notes": "From agent category ma_employment_corridor"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "glassdoor_insights_salaires_a_calibrer_officiel",
@@ -3778,9 +3778,9 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "ma_employment_corridor",
-      "notes": "From agent category ma_employment_corridor"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "bayt_pour_bassin_mena_puis_pays_eu_na",
@@ -3796,9 +3796,9 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "ma_employment_corridor",
-      "notes": "From agent category ma_employment_corridor"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "welcome_to_the_jungle_startups_eu_recrutant_internationaux",
@@ -3875,7 +3875,7 @@
     {
       "id": "world_bank_indicateurs_macro_parite_pouvoir",
       "name": "World Bank — indicateurs macro & parité pouvoir",
-      "baseUrl": "https://api.worldbank.org",
+      "baseUrl": "https://data.worldbank.org",
       "tier": "curated",
       "topics": [
         "ma_cost_of_living"
@@ -3893,7 +3893,7 @@
     {
       "id": "oecd_donnees_revenus_fiscalite_quand_pays_membre",
       "name": "OECD — données revenus & fiscalité quand pays membre",
-      "baseUrl": "https://www.oecd.org",
+      "baseUrl": "https://stats.oecd.org",
       "tier": "curated",
       "topics": [
         "ma_cost_of_living"
@@ -5191,6 +5191,6 @@
     "total": 288,
     "withBaseUrl": 130,
     "proceduralNoFetch": 7,
-    "tierSkipped": 151
+    "tierSkipped": 168
   }
 }

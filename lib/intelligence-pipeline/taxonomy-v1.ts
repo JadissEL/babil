@@ -33,7 +33,10 @@ export const WORLD_BANK_INDICATORS = {
   urbanPopulationPct: 'SP.URB.TOTL.IN.ZS',
 } as const;
 
-export const MATERIALIZE_TARGETS: Record<string, { fullDataPath: string; kind: 'number' }> = {
+export const MATERIALIZE_TARGETS: Record<
+  string,
+  { fullDataPath: string; kind: 'number' | 'string' }
+> = {
   [FIELD_ECONOMY_GDP_USD_CURRENT]: { fullDataPath: 'economy.gdp_usd', kind: 'number' },
   [FIELD_GENERAL_POPULATION_TOTAL]: { fullDataPath: 'economy.population_wb', kind: 'number' },
   [FIELD_ECONOMY_GDP_PER_CAPITA_USD_CURRENT]: {
@@ -52,4 +55,19 @@ export const MATERIALIZE_TARGETS: Record<string, { fullDataPath: string; kind: '
     fullDataPath: 'demographics.urban_population_wb_pct',
     kind: 'number',
   },
+  // Visa / friction string fields (datafile manifest extraction).
+  visa_processing_time: { fullDataPath: 'visa_processing_time', kind: 'string' },
+  'full_data.visa_system.tourism.fees': {
+    fullDataPath: 'visa_system.tourism.fees',
+    kind: 'string',
+  },
+  'full_data.appointment_audit.avg_wait_time': {
+    fullDataPath: 'appointment_audit.avg_wait_time',
+    kind: 'string',
+  },
+  'full_data.friction_analysis.real_delay': {
+    fullDataPath: 'friction_analysis.real_delay',
+    kind: 'string',
+  },
+  appointment_difficulty: { fullDataPath: 'appointment_difficulty', kind: 'string' },
 };

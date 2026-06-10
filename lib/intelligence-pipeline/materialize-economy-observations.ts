@@ -82,7 +82,21 @@ export async function materializeEconomyObservationsForCountry(
   let changed = false;
   winners.forEach(({ valueJson, row: winner }, fieldPath) => {
     const target = MATERIALIZE_TARGETS[fieldPath];
-    if (!target || target.kind !== 'number') return;
+    if (!target) return;
+
+    if (target.kind === 'string') {
+      try {
+        const j = JSON.parse(valueJson) as { value?: unknown };
+        const s = typeof j.value === 'string' ? j.value.trim() : '';
+        if (s.length < 2 || s.length > 300) return;
+        setDeep(full, target.fullDataPath, s);
+        changed = true;
+      } catch {
+        /* skip malformed */
+      }
+      return;
+    }
+
     let num = winner.valueNumeric;
     if (num == null || !Number.isFinite(num)) {
       try {

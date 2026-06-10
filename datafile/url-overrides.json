@@ -1,13 +1,47 @@
 {
-  "_comment": "Manual baseUrl overrides by datafile source id (slug). Highest priority in datafile:build-master.",
+  "_comment": "Manual baseUrl overrides by datafile source id (slug). Highest priority in datafile:build-master. 'skips' marks sources as non-scrapeable (anti-bot/commercial) -> requiresDiscoveryGate=false.",
   "overrides": {
     "oecd": "https://stats.oecd.org",
     "united_nations": "https://data.un.org",
-    "unicef": "https://www.unicef.org",
+    "unicef": "https://data.unicef.org",
     "world_health_organization_who": "https://www.who.int",
-    "global_economy": "https://www.global-economy.com",
+    "global_economy": "https://www.theglobaleconomy.com",
     "schengen_visa_info": "https://www.schengenvisainfo.com",
     "campus_france": "https://www.campusfrance.org",
-    "education_usa": "https://educationusa.state.gov"
-  }
+    "education_usa": "https://educationusa.state.gov",
+    "unhcr": "https://data.unhcr.org",
+    "world_bank_indicateurs_macro_parite_pouvoir": "https://data.worldbank.org",
+    "oecd_donnees_revenus_fiscalite_quand_pays_membre": "https://stats.oecd.org",
+    "iata_travel_centre": "https://www.iata.org",
+    "iata_travel_centre_conseils_sante_documentation_voyage_a_confirmer_avec_": "https://www.iata.org",
+    "australian_government_immigration": "https://immi.homeaffairs.gov.au/visas",
+    "new_zealand_immigration": "https://www.immigration.govt.nz/new-zealand-visas",
+    "france_visas_formulaires_dossier_theorique_pour_depot_maroc_rabat_casabl": "https://france-visas.gouv.fr/en/web/france-visas",
+    "ministere_des_affaires_etrangeres_de_la_cooperation_africaine_et_des_mar": "https://www.diplomatie.ma/fr",
+    "reseau_des_ambassades_et_consulats_du_maroc_a_l_etranger_sites_officiels": "https://www.consulat.ma",
+    "portail_national_du_maroc_services_publics_numeriques_agreges": "https://www.idarati.ma",
+    "ministere_du_travail_et_de_l_insertion_professionnelle_maroc": "https://www.mtip.gov.ma",
+    "anapec_emploi_formation_au_maroc": "https://anapec.ma",
+    "ambassade_de_turkiye_au_maroc_visas_formalites": "https://rabat.be.mfa.gov.tr",
+    "ambassade_des_emirats_arabes_unis_au_maroc": "https://www.mofa.gov.ae/en/missions/rabat"
+  },
+  "skips": [
+    "glassdoor",
+    "glassdoor_insights_salaires_a_calibrer_officiel",
+    "indeed",
+    "indeed_pays_destination",
+    "monster",
+    "bayt",
+    "bayt_pour_bassin_mena_puis_pays_eu_na",
+    "expedia",
+    "cheapoair",
+    "easyjet_liaisons_ponctuelles_eu_maroc",
+    "realtor_com",
+    "idealista",
+    "idealista_espagne_logement_hors_residence_etudiante",
+    "seloger",
+    "le_bon_coin_france_scouting_avant_relocation",
+    "avito_maroc",
+    "phdportal"
+  ]
 }

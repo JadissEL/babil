@@ -6,7 +6,7 @@ import { runManifestUrlFetchBatch } from '@/lib/agent-manifest-source-fetch'
 import { loadRunMemory, saveRunMemory, orchestrationSlugForCountry } from '@/lib/agent-run-memory'
 import { slugFromDatafileId } from '@/lib/datafile/load-master-list'
 import { extractFieldsFromExcerpt } from '@/lib/datafile/extract/field-extractors'
-import { normalizeExcerpt } from '@/lib/datafile/extract/html-to-text'
+import { focusVisaText, normalizeExcerpt } from '@/lib/datafile/extract/html-to-text'
 import { llmFillFieldGaps } from '@/lib/datafile/extract/llm-fill-gaps'
 import { resolveLlmBudget } from '@/lib/datafile/extract/resolve-llm-budget'
 import { resolveSourceSlugForManifestLabel } from '@/lib/intelligence-manifest-source-bridge'
@@ -141,7 +141,7 @@ export async function runManifestVisaExtraction(
 
     for (const item of batch.results) {
       if (!item.ok || !item.excerpt || item.excerpt.length < 80) continue
-      const text = normalizeExcerpt(item.excerpt)
+      const text = focusVisaText(normalizeExcerpt(item.excerpt))
       if (text.length < 80) continue
       report.fetchesOk += 1
 

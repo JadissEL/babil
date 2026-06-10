@@ -30,13 +30,48 @@ const RANGE_RULES: Record<string, { min?: number; max?: number }> = {
   'demographics.urban_population_pct': { min: 0, max: 100 },
 };
 
+function parseStringValue(valueJson: string | null): string | null {
+  if (!valueJson) return null;
+  try {
+    const j = JSON.parse(valueJson) as { value?: unknown };
+    if (typeof j.value === 'string' && j.value.trim().length > 0) return j.value.trim();
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 /** Validate a winning observation value against taxonomy expectations. */
 export function runFieldExpectations(args: {
   fieldPath: string;
   valueJson: string | null;
   valueNumeric: number | null;
 }): ExpectationViolation[] {
-  if (!(args.fieldPath in MATERIALIZE_TARGETS)) return [];
+  const target = MATERIALIZE_TARGETS[args.fieldPath];
+  if (!target) return [];
+
+  if (target.kind === 'string') {
+    const s = parseStringValue(args.valueJson);
+    if (!s) {
+      return [
+        {
+          fieldPath: args.fieldPath,
+          code: 'expect_value_present',
+          message: 'non-empty string value required for materialize field',
+        },
+      ];
+    }
+    if (s.length > 300) {
+      return [
+        {
+          fieldPath: args.fieldPath,
+          code: 'expect_max_length',
+          message: `string value too long (${s.length} chars) for UI field`,
+        },
+      ];
+    }
+    return [];
+  }
 
   const n = args.valueJson ? parseNumeric(args.valueJson, args.valueNumeric) : args.valueNumeric;
   const violations: ExpectationViolation[] = [];

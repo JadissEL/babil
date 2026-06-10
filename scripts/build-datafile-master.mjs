@@ -158,9 +158,11 @@ if (fs.existsSync(MANIFEST_COMMITTED)) {
 }
 
 const urlOverrides = {};
+const manualSkips = new Set();
 if (fs.existsSync(URL_OVERRIDES)) {
   const raw = JSON.parse(fs.readFileSync(URL_OVERRIDES, 'utf8'));
   Object.assign(urlOverrides, raw.overrides ?? raw);
+  for (const id of raw.skips ?? []) manualSkips.add(id);
 }
 
 const sources = [];
@@ -189,7 +191,8 @@ for (const cat of ALL_CATEGORIES) {
 
     const override = urlOverrides[id];
     if (override && /^https?:\/\//i.test(String(override))) {
-      baseUrl = baseUrlFromTemplate(String(override)) ?? String(override).replace(/\/$/, '');
+      // Keep the full override URL (path included) so deep entry points survive.
+      baseUrl = String(override).replace(/\/$/, '');
     }
     if (!baseUrl) {
       const tpl = resolved.template ?? null;
@@ -204,6 +207,11 @@ for (const cat of ALL_CATEGORIES) {
       notes = procedural ? 'procedural_no_fetch' : `tier_skipped:${cat.tier}`;
       if (procedural) proceduralCount++;
       else skippedTierCount++;
+    }
+    if (manualSkips.has(id)) {
+      requiresDiscoveryGate = false;
+      notes = 'manual_skip:anti_bot_or_commercial';
+      skippedTierCount++;
     }
 
     if (baseUrl) withUrl++;

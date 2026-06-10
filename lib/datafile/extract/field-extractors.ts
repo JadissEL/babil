@@ -9,15 +9,20 @@ export type ExtractedField = {
 }
 
 const PROCESSING_TIME =
-  /(?:processing|traitement|délai|delai|lead[- ]?time)[^.]{0,80}?(\d+\s*(?:to|-|à|a)\s*\d+\s*(?:days?|jours|weeks?|semaines|months?|mois)|\d+\s*(?:business\s+)?days?|\d+\s*jours|\d+\s*semaines)/i
+  /(?:processing|traitement|délai|delai|lead[- ]?time)[^.]{0,80}?(\d+\s*(?:to|-|à|a)\s*\d+\s*(?:days?|jours|weeks?|semaines|months?|mois)|\d+\s*(?:business\s+|calendar\s+|working\s+)?days?|\d+\s*jours(?:\s+ouvrables)?|\d+\s*semaines)/i
 
 const WAIT_TIME =
-  /(?:wait(?:ing)?|attente|rendez[- ]?vous|appointment)[^.]{0,100}?(\d+\s*(?:to|-|à|a)\s*\d+\s*(?:days?|jours|weeks?|semaines)|\d+\s*(?:days?|jours|weeks?|semaines))/i
+  /(?:wait(?:ing)?|attente|rendez[- ]?vous|appointment|next\s+available|prochain\s+(?:créneau|creneau|rdv))[^.]{0,100}?(\d+\s*(?:to|-|à|a)\s*\d+\s*(?:days?|jours|weeks?|semaines|months?|mois)|\d+\s*(?:days?|jours|weeks?|semaines|months?|mois))/i
 
 const VISA_FEE =
-  /(?:visa\s+fee|frais\s+(?:de\s+)?visa|application\s+fee|tarif)[^.]{0,60}?(\d+[\d,.]*\s*(?:EUR|USD|MAD|€|\$|DH|dirhams?))/i
+  /(?:visa\s+fee|frais\s+(?:de\s+)?(?:visa|dossier)|application\s+fee|tarif|coût|cout)[^.]{0,60}?(\d+[\d,.]*\s*(?:EUR|USD|MAD|GBP|CAD|€|\$|£|DH|dirhams?))/i
 
-const GENERIC_FEE = /(\d+[\d,.]*\s*(?:EUR|USD|MAD|€|\$|DH))\s*(?:per|par|\/)\s*(?:application|demande|visa)?/i
+/** Currency symbol/code before the amount: "EUR 90", "€80", "MAD 1.200". */
+const VISA_FEE_CURRENCY_FIRST =
+  /(?:visa\s+fee|frais\s+(?:de\s+)?(?:visa|dossier)|application\s+fee|tarif|coût|cout)[^.]{0,60}?((?:EUR|USD|MAD|GBP|CAD|€|\$|£|DH)\s?\d+[\d,.]*)/i
+
+const GENERIC_FEE =
+  /(\d+[\d,.]*\s*(?:EUR|USD|MAD|GBP|CAD|€|\$|£|DH))\s*(?:per|par|\/)\s*(?:application|demande|visa)?/i
 
 const DELAY_NARRATIVE =
   /(?:delay|retard|backlog)[^.]{0,80}?(\d+\s*(?:days?|jours|weeks?|semaines|months?|mois)[^.]{0,40})/i
@@ -26,7 +31,7 @@ const DIFFICULTY =
   /(?:difficulty|difficulté|difficulte|hard to get|slots? (?:are )?scarce)[^.]{0,60}?(easy|moderate|medium|hard|difficult|élevé|faible|moyen)/i
 
 function cleanCapture(s: string): string {
-  return s.replace(/\s+/g, ' ').trim().slice(0, 280)
+  return s.replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '').slice(0, 280)
 }
 
 /** Looser extraction when manifest HTML is noisy but visa-related. */
@@ -55,12 +60,15 @@ export function extractFieldsFromExcerpt(excerpt: string, pageType: string): Ext
     })
   }
 
-  const fee = VISA_FEE.exec(excerpt) ?? (isVisaPage ? GENERIC_FEE.exec(excerpt) : null)
+  const fee =
+    VISA_FEE.exec(excerpt) ??
+    VISA_FEE_CURRENCY_FIRST.exec(excerpt) ??
+    (isVisaPage ? GENERIC_FEE.exec(excerpt) : null)
   if (fee?.[1]) {
     out.push({
       fieldPath: 'full_data.visa_system.tourism.fees',
       value: cleanCapture(fee[1]),
-      confidence: 0.65,
+      confidence: isVisaPage ? 0.7 : 0.65,
     })
   }
 
