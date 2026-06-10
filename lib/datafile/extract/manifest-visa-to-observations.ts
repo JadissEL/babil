@@ -80,7 +80,21 @@ async function resolveSourceIdForLabel(sourceLabel: string): Promise<string | nu
     where: { name: { equals: sourceLabel, mode: 'insensitive' } },
     select: { id: true },
   })
-  return byName?.id ?? null
+  if (byName) return byName.id
+
+  // New manifest labels (e.g. Wikipedia Visa Policy) get a reference-tier source row.
+  const created = await prisma.intelligenceSource.upsert({
+    where: { slug: `manifest_${slugifyLabel(sourceLabel)}` },
+    update: {},
+    create: {
+      slug: `manifest_${slugifyLabel(sourceLabel)}`,
+      name: sourceLabel,
+      tier: 'TIER_C_CURATED',
+      licenseNote: 'auto-created from manifest visa extraction label',
+    },
+    select: { id: true },
+  })
+  return created.id
 }
 
 export async function runManifestVisaExtraction(

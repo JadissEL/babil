@@ -2182,6 +2182,27 @@
       "urlTemplate": "",
       "skipped": true,
       "skipReason": "tier_morocco_migration_supplemental_qualitative_no_stable_url"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "Wikipedia Visa Policy",
+      "method": "GET",
+      "urlTemplate": "https://en.wikipedia.org/wiki/Visa_policy_of_{encodedCountry}",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "Wikivoyage",
+      "method": "GET",
+      "urlTemplate": "https://en.wikivoyage.org/wiki/{encodedCountry}",
+      "responseKind": "text"
+    },
+    {
+      "categoryId": "visa_immigration",
+      "sourceLabel": "VisaHQ",
+      "method": "GET",
+      "urlTemplate": "https://www.visahq.com/{slug}/",
+      "responseKind": "text"
     }
   ]
 }

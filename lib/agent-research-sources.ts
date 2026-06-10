@@ -195,6 +195,8 @@ export const AGENT_RESEARCH_SOURCE_CATEGORIES: readonly AgentResearchCategory[] 
       'Australian Government Immigration',
       'New Zealand Immigration',
       'France-Visas',
+      'Wikipedia Visa Policy',
+      'Wikivoyage',
     ],
   },
   {
