@@ -48,9 +48,10 @@ async function main() {
   }
 
   if (args.includes('--materialize') || args.includes('--validate')) {
+    const visaDedupe = [{ startsWith: 'manifest-visa:' }, { startsWith: 'curated-visa:' }]
     const bumped = await prisma.countryObservation.updateMany({
       where: {
-        dedupeKey: { startsWith: 'manifest-visa:' },
+        OR: visaDedupe.map((d) => ({ dedupeKey: d })),
         verificationStatus: { in: ['pending', 'needs_review'] },
         confidence: { gte: 0.65 },
       },
@@ -59,7 +60,7 @@ async function main() {
     steps.observationsBumpedToEstimated = bumped.count
 
     const visaCountryRows = await prisma.countryObservation.findMany({
-      where: { dedupeKey: { startsWith: 'manifest-visa:' } },
+      where: { OR: visaDedupe.map((d) => ({ dedupeKey: d })) },
       distinct: ['countryId'],
       select: { countryId: true },
     })

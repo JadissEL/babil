@@ -7,7 +7,7 @@ import { loadRunMemory, saveRunMemory, orchestrationSlugForCountry } from '@/lib
 import { slugFromDatafileId } from '@/lib/datafile/load-master-list'
 import { extractFieldsFromExcerpt } from '@/lib/datafile/extract/field-extractors'
 import { focusVisaText, normalizeExcerpt } from '@/lib/datafile/extract/html-to-text'
-import { llmFillFieldGaps } from '@/lib/datafile/extract/llm-fill-gaps'
+import { llmFillFieldGaps, llmCreditsExhaustedThisRun, resetLlmCreditsExhaustedFlag } from '@/lib/datafile/extract/llm-fill-gaps'
 import { resolveLlmBudget } from '@/lib/datafile/extract/resolve-llm-budget'
 import { resolveSourceSlugForManifestLabel } from '@/lib/intelligence-manifest-source-bridge'
 import { upsertCountryObservation } from '@/lib/intelligence-pipeline/observation-writer'
@@ -102,6 +102,7 @@ export async function runManifestVisaExtraction(
 ): Promise<ManifestVisaExtractReport> {
   if (opts.writeDb) assertProdWritesAllowed('datafile:manifest-visa-extract')
 
+  resetLlmCreditsExhaustedFlag()
   const llm = resolveLlmBudget({ llmFill: !!opts.llmFill, explicitBudget: opts.llmTokenBudget })
 
   let countries = await prisma.country.findMany({
@@ -167,21 +168,29 @@ export async function runManifestVisaExtraction(
 
       let fields = extractFieldsFromExcerpt(text, 'visa')
 
-      if (fields.length === 0 && llm.enabled) {
+      if (fields.length === 0 && llm.enabled && !llmCreditsExhaustedThisRun()) {
         report.llmCalls += 1
-        const llmFields = await llmFillFieldGaps(
-          {
-            countryName: country.name,
-            excerpt: text,
-            candidateFieldPaths: STRUCTURED_FIELD_PATHS,
-          },
-          llm.budget,
-        )
-        fields = llmFields.map((f) => ({
-          fieldPath: f.fieldPath,
-          value: f.value,
-          confidence: f.confidence,
-        }))
+        try {
+          const llmFields = await llmFillFieldGaps(
+            {
+              countryName: country.name,
+              excerpt: text,
+              candidateFieldPaths: STRUCTURED_FIELD_PATHS,
+            },
+            llm.budget,
+          )
+          fields = llmFields.map((f) => ({
+            fieldPath: f.fieldPath,
+            value: f.value,
+            confidence: f.confidence,
+          }))
+        } catch (err) {
+          logIntelligence('warn', 'datafile_manifest_llm_fill_failed', {
+            country: country.name,
+            source: item.sourceLabel,
+            error: err instanceof Error ? err.message : String(err),
+          })
+        }
       }
 
       // No excerpt fallback: low-confidence snippet rows dilute field consensus

@@ -46,6 +46,17 @@ export type LlmFillInput = {
 
 export type LlmFillResult = { fieldPath: string; value: string; confidence: number }[]
 
+/** Set when OpenRouter/OpenAI returns 402 — callers should skip further LLM calls this run. */
+let creditsExhausted = false
+
+export function llmCreditsExhaustedThisRun(): boolean {
+  return creditsExhausted
+}
+
+export function resetLlmCreditsExhaustedFlag(): void {
+  creditsExhausted = false
+}
+
 export async function llmFillFieldGaps(
   input: LlmFillInput,
   tokenBudget: number,
@@ -66,26 +77,47 @@ export async function llmFillFieldGaps(
     `Excerpt:\n${input.excerpt.slice(0, 3500)}`,
   ].join('\n')
 
-  const res = await fetch(config.endpoint, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${config.apiKey}`,
-      'Content-Type': 'application/json',
-      ...config.headers,
-    },
-    body: JSON.stringify({
-      model: config.model,
-      max_tokens: maxTokens,
-      temperature: 0.1,
-      response_format: { type: 'json_object' },
-      messages: [
-        { role: 'system', content: 'You extract structured visa and appointment facts. JSON only.' },
-        { role: 'user', content: prompt },
-      ],
-    }),
-  })
+  let res: Response | null = null
+  let lastErr: unknown
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      res = await fetch(config.endpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`,
+          'Content-Type': 'application/json',
+          ...config.headers,
+        },
+        body: JSON.stringify({
+          model: config.model,
+          max_tokens: maxTokens,
+          temperature: 0.1,
+          response_format: { type: 'json_object' },
+          messages: [
+            { role: 'system', content: 'You extract structured visa and appointment facts. JSON only.' },
+            { role: 'user', content: prompt },
+          ],
+        }),
+      })
+      break
+    } catch (err) {
+      lastErr = err
+      if (attempt < 2) {
+        await new Promise((r) => setTimeout(r, 800 * (attempt + 1)))
+        continue
+      }
+    }
+  }
+
+  if (!res) {
+    if (process.env.DATAFILE_LLM_DEBUG === '1') {
+      console.warn('[llm-fill-gaps] LLM fetch failed after retries', lastErr)
+    }
+    return []
+  }
 
   if (!res.ok) {
+    if (res.status === 402) creditsExhausted = true
     if (process.env.DATAFILE_LLM_DEBUG === '1') {
       console.warn('[llm-fill-gaps] LLM API error', res.status, await res.text().catch(() => ''))
     }
