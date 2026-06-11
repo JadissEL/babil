@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-06-11T00:22:56.650Z",
+  "generatedAt": "2026-06-11T02:43:14.971Z",
   "sources": [
     {
       "id": "world_bank",
@@ -916,9 +916,9 @@
       "authorityScore": 82,
       "reliabilityLevel": "medium",
       "updateFrequencyHint": "variable",
-      "requiresDiscoveryGate": true,
+      "requiresDiscoveryGate": false,
       "categoryId": "employment_labour_market",
-      "notes": "From agent category employment_labour_market"
+      "notes": "manual_skip:anti_bot_or_commercial"
     },
     {
       "id": "indeed",
@@ -2831,7 +2831,7 @@
     {
       "id": "ministere_de_l_education_nationale_du_prescolaire_et_des_sports_maroc",
       "name": "Ministère de l’Éducation Nationale, du Préscolaire et des Sports (Maroc)",
-      "baseUrl": "https://www.education.gov.ma",
+      "baseUrl": "https://www.men.gov.ma",
       "tier": "official",
       "topics": [
         "ma_official"
@@ -3029,7 +3029,7 @@
     {
       "id": "ambassade_des_emirats_arabes_unis_au_maroc",
       "name": "Ambassade des Émirats arabes unis au Maroc",
-      "baseUrl": "https://www.mofa.gov.ae/en/missions/rabat",
+      "baseUrl": "https://www.uae-embassy.ma",
       "tier": "curated",
       "topics": [
         "ma_embassies_in_morocco"
@@ -3191,7 +3191,7 @@
     {
       "id": "france_visas_formulaires_dossier_theorique_pour_depot_maroc_rabat_casabl",
       "name": "France-Visas — formulaires & dossier théorique pour dépôt Maroc/Rabat/Casablanca",
-      "baseUrl": "https://france-visas.gouv.fr/en/web/france-visas",
+      "baseUrl": "https://france-visas.gouv.fr/en/web/france-visas/ma-ro-visa-application",
       "tier": "curated",
       "topics": [
         "ma_visa_corridor_services"
@@ -5227,6 +5227,6 @@
     "total": 290,
     "withBaseUrl": 132,
     "proceduralNoFetch": 7,
-    "tierSkipped": 168
+    "tierSkipped": 169
   }
 }

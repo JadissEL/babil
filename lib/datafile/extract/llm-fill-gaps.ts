@@ -57,26 +57,24 @@ export function resetLlmCreditsExhaustedFlag(): void {
   creditsExhausted = false
 }
 
-export async function llmFillFieldGaps(
-  input: LlmFillInput,
-  tokenBudget: number,
-): Promise<LlmFillResult> {
-  const config = resolveLlmApiConfig()
-  if (!config || tokenBudget < 800 || input.excerpt.length < 120) return []
+function parseAffordableTokensFrom402(body: string): number | null {
+  const m = body.match(/can only afford (\d+)/i)
+  if (!m) return null
+  const n = Number(m[1])
+  return Number.isFinite(n) && n > 0 ? n : null
+}
 
-  const maxTokens = Math.min(600, Math.max(200, Math.floor(tokenBudget / 4)))
+function resolveMaxTokens(tokenBudget: number): number {
+  const envCap = Number(process.env.DATAFILE_LLM_MAX_TOKENS || 0)
+  if (Number.isFinite(envCap) && envCap >= 64) return Math.floor(envCap)
+  return Math.min(600, Math.max(200, Math.floor(tokenBudget / 4)))
+}
 
-  const prompt = [
-    'Extract immigration facts from the excerpt for the given country.',
-    'Return JSON only, exactly this shape:',
-    '{ "fields": [{ "fieldPath": "<one allowed path>", "value": "<short factual value>" }] }',
-    'Example: { "fields": [{ "fieldPath": "visa_processing_time", "value": "15 calendar days" }] }',
-    'Only include fields explicitly supported by the excerpt. Empty array if none.',
-    `Allowed fieldPath values: ${input.candidateFieldPaths.join(', ')}`,
-    `Country: ${input.countryName}`,
-    `Excerpt:\n${input.excerpt.slice(0, 3500)}`,
-  ].join('\n')
-
+async function chatCompletion(
+  config: NonNullable<ReturnType<typeof resolveLlmApiConfig>>,
+  prompt: string,
+  maxTokens: number,
+): Promise<{ ok: true; content: string } | { ok: false; status: number; body: string }> {
   let res: Response | null = null
   let lastErr: unknown
   for (let attempt = 0; attempt < 3; attempt += 1) {
@@ -113,19 +111,63 @@ export async function llmFillFieldGaps(
     if (process.env.DATAFILE_LLM_DEBUG === '1') {
       console.warn('[llm-fill-gaps] LLM fetch failed after retries', lastErr)
     }
-    return []
+    return { ok: false, status: 0, body: '' }
   }
 
-  if (!res.ok) {
-    if (res.status === 402) creditsExhausted = true
-    if (process.env.DATAFILE_LLM_DEBUG === '1') {
-      console.warn('[llm-fill-gaps] LLM API error', res.status, await res.text().catch(() => ''))
+  const body = await res.text()
+  if (!res.ok) return { ok: false, status: res.status, body }
+
+  try {
+    const json = JSON.parse(body) as { choices?: { message?: { content?: string } }[] }
+    const content = json.choices?.[0]?.message?.content?.trim() ?? ''
+    return { ok: true, content }
+  } catch {
+    return { ok: false, status: res.status, body }
+  }
+}
+
+export async function llmFillFieldGaps(
+  input: LlmFillInput,
+  tokenBudget: number,
+): Promise<LlmFillResult> {
+  const config = resolveLlmApiConfig()
+  if (!config || tokenBudget < 800 || input.excerpt.length < 120) return []
+
+  const maxTokens = resolveMaxTokens(tokenBudget)
+
+  const prompt = [
+    'Extract immigration facts from the excerpt for the given country.',
+    'Return JSON only, exactly this shape:',
+    '{ "fields": [{ "fieldPath": "<one allowed path>", "value": "<short factual value>" }] }',
+    'Example: { "fields": [{ "fieldPath": "visa_processing_time", "value": "15 calendar days" }] }',
+    'Only include fields explicitly supported by the excerpt. Empty array if none.',
+    `Allowed fieldPath values: ${input.candidateFieldPaths.join(', ')}`,
+    `Country: ${input.countryName}`,
+    `Excerpt:\n${input.excerpt.slice(0, 2000)}`,
+  ].join('\n')
+
+  let result = await chatCompletion(config, prompt, maxTokens)
+
+  if (!result.ok && result.status === 402) {
+    const affordable = parseAffordableTokensFrom402(result.body)
+    const reduced = affordable != null ? Math.max(64, affordable - 24) : 120
+    if (reduced >= 64 && reduced < maxTokens) {
+      if (process.env.DATAFILE_LLM_DEBUG === '1') {
+        console.warn(`[llm-fill-gaps] 402 — retry with max_tokens=${reduced}`)
+      }
+      result = await chatCompletion(config, prompt, reduced)
+    }
+    if (!result.ok && result.status === 402) creditsExhausted = true
+  }
+
+  if (!result.ok) {
+    if (process.env.DATAFILE_LLM_DEBUG === '1' && result.status !== 402) {
+      console.warn('[llm-fill-gaps] LLM API error', result.status, result.body.slice(0, 400))
     }
     return []
   }
 
-  const body = (await res.json()) as { choices?: { message?: { content?: string } }[] }
-  let raw = body.choices?.[0]?.message?.content?.trim()
+  let raw = result.content
   if (!raw) return []
   // Some providers wrap JSON in markdown fences despite response_format.
   raw = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')

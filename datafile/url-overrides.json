@@ -23,7 +23,9 @@
     "ministere_du_travail_et_de_l_insertion_professionnelle_maroc": "https://www.mtip.gov.ma",
     "anapec_emploi_formation_au_maroc": "https://anapec.ma",
     "ambassade_de_turkiye_au_maroc_visas_formalites": "https://rabat.be.mfa.gov.tr",
-    "ambassade_des_emirats_arabes_unis_au_maroc": "https://www.mofa.gov.ae/en/missions/rabat"
+    "direction_generale_de_la_surete_nationale_dgsn_pieces_d_identite_formali": "https://www.dgsn.gov.ma",
+    "ministere_de_l_education_nationale_du_prescolaire_et_des_sports_maroc": "https://www.men.gov.ma",
+    "france_visas_formulaires_dossier_theorique_pour_depot_maroc_rabat_casabl": "https://france-visas.gouv.fr/en/web/france-visas/ma-ro-visa-application"
   },
   "skips": [
     "glassdoor",
@@ -42,6 +44,8 @@
     "seloger",
     "le_bon_coin_france_scouting_avant_relocation",
     "avito_maroc",
-    "phdportal"
+    "phdportal",
+    "monster",
+    "linkedin"
   ]
 }
