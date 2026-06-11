@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-06-10T20:38:55.669Z",
+  "generatedAt": "2026-06-11T00:22:56.650Z",
   "sources": [
     {
       "id": "world_bank",
@@ -1248,6 +1248,42 @@
       "id": "france_visas",
       "name": "France-Visas",
       "baseUrl": "https://france-visas.gouv.fr",
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "wikipedia_visa_policy",
+      "name": "Wikipedia Visa Policy",
+      "baseUrl": "https://en.wikipedia.org",
+      "tier": "official",
+      "topics": [
+        "visa_immigration"
+      ],
+      "countryScope": "global",
+      "language": "en",
+      "trustScore": 92,
+      "authorityScore": 95,
+      "reliabilityLevel": "high",
+      "updateFrequencyHint": "monthly",
+      "requiresDiscoveryGate": true,
+      "categoryId": "visa_immigration",
+      "notes": "From agent category visa_immigration"
+    },
+    {
+      "id": "wikivoyage",
+      "name": "Wikivoyage",
+      "baseUrl": "https://en.wikivoyage.org",
       "tier": "official",
       "topics": [
         "visa_immigration"
@@ -5188,8 +5224,8 @@
     }
   ],
   "stats": {
-    "total": 288,
-    "withBaseUrl": 130,
+    "total": 290,
+    "withBaseUrl": 132,
     "proceduralNoFetch": 7,
     "tierSkipped": 168
   }

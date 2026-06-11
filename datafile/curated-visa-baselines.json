@@ -57,6 +57,198 @@
         "visa_processing_time": "Visa touristique via compagnies/hôtels : 2 à 5 jours ouvrables",
         "full_data.visa_system.tourism.fees": "350 à 650 AED selon durée"
       }
+    },
+    "China": {
+      "sourceLabel": "China Visa Application Service Center",
+      "sourceUrl": "https://www.visaforchina.org",
+      "fields": {
+        "visa_processing_time": "4 à 5 jours ouvrables (L visa touristique, dépôt complet)",
+        "full_data.visa_system.tourism.fees": "selon type (environ 140 USD équivalent)"
+      }
+    },
+    "Brazil": {
+      "sourceLabel": "Brazil eVisa / consulat",
+      "sourceUrl": "https://www.gov.br/mre/pt-br",
+      "fields": {
+        "visa_processing_time": "e-Visa touristique : 5 jours ouvrables en moyenne",
+        "full_data.visa_system.tourism.fees": "80 USD (e-Visa touristique, selon barème publié)"
+      }
+    },
+    "Mexico": {
+      "sourceLabel": "Secretaría de Relaciones Exteriores (Mexico)",
+      "sourceUrl": "https://www.gob.mx/sre",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 10 jours ouvrables après entretien consulaire",
+        "full_data.visa_system.tourism.fees": "53 USD (visa touristique)"
+      }
+    },
+    "Russia": {
+      "sourceLabel": "Ministry of Foreign Affairs (Russia)",
+      "sourceUrl": "https://electronic-visa.kdmid.ru",
+      "fields": {
+        "visa_processing_time": "e-Visa éligible : 4 jours calendaires ; visa classique : 20 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon nationalité et type"
+      }
+    },
+    "South Korea": {
+      "sourceLabel": "Korea Visa Portal",
+      "sourceUrl": "https://www.visa.go.kr",
+      "fields": {
+        "visa_processing_time": "Visa C-3 touristique : 5 à 7 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "40 USD (C-3 court séjour, barème publié)"
+      }
+    },
+    "Saudi Arabia": {
+      "sourceLabel": "Saudi eVisa",
+      "sourceUrl": "https://visa.visitsaudi.com",
+      "fields": {
+        "visa_processing_time": "e-Visa touristique : délivrance en quelques minutes à 24h",
+        "full_data.visa_system.tourism.fees": "535 SAR (e-Visa touristique multi-entrées)"
+      }
+    },
+    "Ireland": {
+      "sourceLabel": "Irish Immigration Service",
+      "sourceUrl": "https://www.irishimmigration.ie",
+      "fields": {
+        "visa_processing_time": "Visa visiteur : 8 semaines ouvrables (délais publiés)",
+        "full_data.visa_system.tourism.fees": "60 EUR (visa visiteur court séjour)"
+      }
+    },
+    "Israel": {
+      "sourceLabel": "Population and Immigration Authority (Israel)",
+      "sourceUrl": "https://www.gov.il/en/departments/population_and_immigration_authority",
+      "fields": {
+        "visa_processing_time": "Visa B/2 touristique : 2 à 4 semaines",
+        "full_data.visa_system.tourism.fees": "selon type et durée"
+      }
+    },
+    "New Zealand": {
+      "sourceLabel": "Immigration New Zealand",
+      "sourceUrl": "https://www.immigration.govt.nz/new-zealand-visas",
+      "fields": {
+        "visa_processing_time": "Visitor visa : 80 % des dossiers sous 6 semaines",
+        "full_data.visa_system.tourism.fees": "341 NZD (Visitor visa, barème publié)"
+      }
+    },
+    "Singapore": {
+      "sourceLabel": "Immigration & Checkpoints Authority (Singapore)",
+      "sourceUrl": "https://www.ica.gov.sg",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 3 jours ouvrables en moyenne",
+        "full_data.visa_system.tourism.fees": "30 SGD (visa touristique)"
+      }
+    },
+    "South Africa": {
+      "sourceLabel": "Department of Home Affairs (South Africa)",
+      "sourceUrl": "https://www.dha.gov.za",
+      "fields": {
+        "visa_processing_time": "Visa visiteur : 10 à 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon type (environ 425 ZAR équivalent)"
+      }
+    },
+    "Tunisia": {
+      "sourceLabel": "Ministère des Affaires Étrangères (Tunisie)",
+      "sourceUrl": "https://www.diplomatie.gov.tn",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon nationalité et durée"
+      }
+    },
+    "Colombia": {
+      "sourceLabel": "Ministerio de Relaciones Exteriores (Colombia)",
+      "sourceUrl": "https://www.cancilleria.gov.co",
+      "fields": {
+        "visa_processing_time": "Visa V touristique : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "55 USD (visa V touristique)"
+      }
+    },
+    "Philippines": {
+      "sourceLabel": "Department of Foreign Affairs (Philippines)",
+      "sourceUrl": "https://www.dfa.gov.ph",
+      "fields": {
+        "visa_processing_time": "Visa touristique 9(a) : 7 à 14 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "27 USD (visa touristique 9(a))"
+      }
+    },
+    "Morocco": {
+      "sourceLabel": "Ministère des Affaires Étrangères (Maroc)",
+      "sourceUrl": "https://www.diplomatie.ma",
+      "fields": {
+        "visa_processing_time": "Entrée Maroc : passeport valide ; séjour > 90 jours : autorisation ou visa selon motif",
+        "full_data.visa_system.tourism.fees": "exempt pour nombreuses nationalités (vérifier liste officielle)"
+      }
+    },
+    "Albania": {
+      "sourceLabel": "Ministry for Europe and Foreign Affairs (Albania)",
+      "sourceUrl": "https://punetejashtme.gov.al",
+      "fields": {
+        "visa_processing_time": "Visa type C : 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire publié"
+      }
+    },
+    "Bosnia and Herzegovina": {
+      "sourceLabel": "Ministry of Foreign Affairs (BiH)",
+      "sourceUrl": "https://www.mvp.gov.ba",
+      "fields": {
+        "visa_processing_time": "Visa C : 7 à 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Serbia": {
+      "sourceLabel": "Ministry of Foreign Affairs (Serbia)",
+      "sourceUrl": "https://www.mfa.gov.rs",
+      "fields": {
+        "visa_processing_time": "Visa C : 5 à 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Montenegro": {
+      "sourceLabel": "Ministry of Foreign Affairs (Montenegro)",
+      "sourceUrl": "https://www.gov.me/en/diplomacy",
+      "fields": {
+        "visa_processing_time": "Visa C : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Ukraine": {
+      "sourceLabel": "Ministry of Foreign Affairs (Ukraine)",
+      "sourceUrl": "https://mfa.gov.ua",
+      "fields": {
+        "visa_processing_time": "Visa C : 5 à 10 jours ouvrables (hors zones restreintes)",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Hong Kong": {
+      "sourceLabel": "Immigration Department (Hong Kong)",
+      "sourceUrl": "https://www.immd.gov.hk",
+      "fields": {
+        "visa_processing_time": "Visa/entry permit : 4 semaines en moyenne",
+        "full_data.visa_system.tourism.fees": "230 HKD (visa/entry permit standard)"
+      }
+    },
+    "Kuwait": {
+      "sourceLabel": "Ministry of Interior (Kuwait)",
+      "sourceUrl": "https://www.moi.gov.kw",
+      "fields": {
+        "visa_processing_time": "e-Visa touristique : 1 à 3 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "3 KWD (e-Visa touristique)"
+      }
+    },
+    "Georgia": {
+      "sourceLabel": "Ministry of Foreign Affairs (Georgia)",
+      "sourceUrl": "https://www.mfa.gov.ge",
+      "fields": {
+        "visa_processing_time": "e-Visa : 5 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "20 USD (e-Visa court séjour)"
+      }
+    },
+    "Moldova": {
+      "sourceLabel": "Ministry of Foreign Affairs (Moldova)",
+      "sourceUrl": "https://mfa.gov.md",
+      "fields": {
+        "visa_processing_time": "Visa C : 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "40 EUR (visa C court séjour)"
+      }
     }
   }
 }
