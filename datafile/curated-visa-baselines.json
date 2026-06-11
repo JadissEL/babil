@@ -250,5 +250,12 @@
         "full_data.visa_system.tourism.fees": "40 EUR (visa C court séjour)"
       }
     }
+  },
+  "fillMissingBaseline": {
+    "sourceLabel": "Wikipedia — Visa requirements by nationality (reference)",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Visa_requirements_by_nationality",
+    "fields": {
+      "visa_processing_time": "Exigences et délais variables selon nationalité — consulter « Visa policy of [pays] » et le portail consulaire officiel"
+    }
   }
 }

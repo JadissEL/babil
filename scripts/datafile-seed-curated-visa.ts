@@ -22,6 +22,8 @@ type BaselineBlock = {
 type BaselineFile = {
   schengenBaseline: BaselineBlock
   countries: Record<string, BaselineBlock>
+  /** Applied to countries still missing visa_processing_time after named entries (real countries only). */
+  fillMissingBaseline?: BaselineBlock
 }
 
 function slugify(label: string): string {
@@ -54,6 +56,7 @@ async function writeBlock(
   countryId: number,
   block: BaselineBlock,
   runId: string,
+  opts?: { confidence?: number; verificationStatus?: 'estimated' | 'needs_review' | 'pending' },
 ): Promise<number> {
   const sourceId = await sourceIdForLabel(block.sourceLabel)
   let written = 0
@@ -64,8 +67,8 @@ async function writeBlock(
       runId,
       fieldPath,
       valueJson: JSON.stringify({ value, source: 'curated_visa_baseline' }),
-      confidence: 0.72,
-      verificationStatus: 'estimated',
+      confidence: opts?.confidence ?? 0.72,
+      verificationStatus: opts?.verificationStatus ?? 'estimated',
       sourceUrl: block.sourceUrl,
       rawExcerpt: value,
       dedupeKey: `curated-visa:${countryId}:${fieldPath}`,
@@ -74,6 +77,9 @@ async function writeBlock(
   }
   return written
 }
+
+const TERRITORY_NAME =
+  /island|territor|antarctica|ocean|atoll|svalbard|guadeloupe|martinique|réunion|mayotte|french guiana|virgin|samoa|tokelau|niue|pitcairn|barthélemy|sint maarten|bonaire|curaçao|falkland|greenland|åland|gibraltar|guam|macau|jersey|guernsey|man\b|helene|miquelon|mariana|outlying|wallis|futuna|southern and antarctic/i
 
 async function main() {
   assertProdWritesAllowed('datafile:seed-curated-visa')
@@ -104,13 +110,42 @@ async function main() {
     written += await writeBlock(c.id, block, run.id)
   }
 
+  let fillMissingCountries = 0
+  if (file.fillMissingBaseline) {
+    const withVisaTime = new Set(
+      (
+        await prisma.countryObservation.findMany({
+          where: { fieldPath: 'visa_processing_time' },
+          select: { countryId: true },
+          distinct: ['countryId'],
+        })
+      ).map((r) => r.countryId),
+    )
+    const missing = await prisma.country.findMany({
+      where: { id: { notIn: [...withVisaTime] } },
+      select: { id: true, name: true },
+    })
+    for (const c of missing) {
+      if (TERRITORY_NAME.test(c.name)) continue
+      written += await writeBlock(c.id, file.fillMissingBaseline, run.id, {
+        confidence: 0.58,
+        verificationStatus: 'needs_review',
+      })
+      fillMissingCountries += 1
+    }
+  }
+
   await prisma.enrichmentRun.update({
     where: { id: run.id },
     data: { status: 'SUCCESS', finishedAt: new Date() },
   })
 
   console.log(
-    JSON.stringify({ schengenCountries: schengen.length, observationsWritten: written }),
+    JSON.stringify({
+      schengenCountries: schengen.length,
+      fillMissingCountries,
+      observationsWritten: written,
+    }),
   )
   await prisma.$disconnect()
 }
