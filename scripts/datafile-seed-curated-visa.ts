@@ -88,6 +88,12 @@ async function main() {
     fs.readFileSync(path.join(process.cwd(), 'datafile', 'curated-visa-baselines.json'), 'utf8'),
   ) as BaselineFile
 
+  const tier2Path = path.join(process.cwd(), 'datafile', 'curated-visa-tier2-countries.json')
+  if (fs.existsSync(tier2Path)) {
+    const tier2 = JSON.parse(fs.readFileSync(tier2Path, 'utf8')) as { countries?: Record<string, BaselineBlock> }
+    file.countries = { ...file.countries, ...(tier2.countries ?? {}) }
+  }
+
   const run = await prisma.enrichmentRun.create({
     data: { status: 'RUNNING', trigger: 'datafile:seed-curated-visa' },
   })

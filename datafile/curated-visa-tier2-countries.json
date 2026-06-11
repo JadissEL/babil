@@ -1,0 +1,445 @@
+{
+  "_comment": "Tier-2 curated baselines for countries previously on fillMissingBaseline only. Merged at seed time; overrides generic needs_review rows.",
+  "countries": {
+    "Afghanistan": {
+      "sourceLabel": "Ministry of Foreign Affairs (Afghanistan)",
+      "sourceUrl": "https://mfa.gov.af",
+      "fields": {
+        "visa_processing_time": "Visa électronique ou consulaire : délais variables, souvent 5 à 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon type et barème consulaire publié"
+      }
+    },
+    "Armenia": {
+      "sourceLabel": "Ministry of Foreign Affairs (Armenia)",
+      "sourceUrl": "https://www.mfa.am",
+      "fields": {
+        "visa_processing_time": "e-Visa : 3 jours ouvrables en moyenne",
+        "full_data.visa_system.tourism.fees": "à partir de 16 USD (e-Visa)"
+      }
+    },
+    "Bahamas": {
+      "sourceLabel": "Department of Immigration (Bahamas)",
+      "sourceUrl": "https://www.immigration.gov.bs",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "25 BSD (visa touristique)"
+      }
+    },
+    "Barbados": {
+      "sourceLabel": "Ministry of Home Affairs (Barbados)",
+      "sourceUrl": "https://www.barbados.gov.bb",
+      "fields": {
+        "visa_processing_time": "Visa visiteur : 2 à 4 semaines",
+        "full_data.visa_system.tourism.fees": "107 BBD (visa visiteur)"
+      }
+    },
+    "Belize": {
+      "sourceLabel": "Belize Immigration Department",
+      "sourceUrl": "https://immigration.gov.bz",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Bhutan": {
+      "sourceLabel": "Department of Immigration (Bhutan)",
+      "sourceUrl": "https://www.mfa.gov.bt",
+      "fields": {
+        "visa_processing_time": "Visa touristique pré-approuvé : 72 heures avant voyage",
+        "full_data.visa_system.tourism.fees": "40 USD/jour (redevance touristique) + visa"
+      }
+    },
+    "Bolivia": {
+      "sourceLabel": "Ministerio de Relaciones Exteriores (Bolivia)",
+      "sourceUrl": "https://www.rree.gob.bo",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "30 USD (visa touristique)"
+      }
+    },
+    "Brunei": {
+      "sourceLabel": "Department of Immigration (Brunei)",
+      "sourceUrl": "https://www.immigration.gov.bn",
+      "fields": {
+        "visa_processing_time": "Visa visiteur : 3 à 5 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "20 BND (visa visiteur)"
+      }
+    },
+    "Costa Rica": {
+      "sourceLabel": "Dirección General de Migración (Costa Rica)",
+      "sourceUrl": "https://www.migracion.go.cr",
+      "fields": {
+        "visa_processing_time": "Visa consulaire : 30 jours calendaires en moyenne",
+        "full_data.visa_system.tourism.fees": "selon nationalité et type"
+      }
+    },
+    "Cuba": {
+      "sourceLabel": "Ministerio de Relaciones Exteriores (Cuba)",
+      "sourceUrl": "https://misiones.minrex.gob.cu",
+      "fields": {
+        "visa_processing_time": "Visa touristique (tarjeta) : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon consulat (environ 25-30 USD équivalent)"
+      }
+    },
+    "DR Congo": {
+      "sourceLabel": "Direction Générale de Migration (RDC)",
+      "sourceUrl": "https://www.dgm.cd",
+      "fields": {
+        "visa_processing_time": "Visa : 7 à 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Dominican Republic": {
+      "sourceLabel": "Dirección General de Migración (República Dominicana)",
+      "sourceUrl": "https://www.migracion.gob.do",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 10 à 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon nationalité (e-Ticket + visa si requis)"
+      }
+    },
+    "El Salvador": {
+      "sourceLabel": "Ministerio de Relaciones Exteriores (El Salvador)",
+      "sourceUrl": "https://www.rree.gob.sv",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Fiji": {
+      "sourceLabel": "Department of Immigration (Fiji)",
+      "sourceUrl": "https://www.immigration.gov.fj",
+      "fields": {
+        "visa_processing_time": "Visa visiteur : 3 semaines en moyenne",
+        "full_data.visa_system.tourism.fees": "91 FJD (visa visiteur)"
+      }
+    },
+    "Grenada": {
+      "sourceLabel": "Ministry of Foreign Affairs (Grenada)",
+      "sourceUrl": "https://www.gov.gd",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Guatemala": {
+      "sourceLabel": "Instituto Guatemalteco de Migración",
+      "sourceUrl": "https://igm.gob.gt",
+      "fields": {
+        "visa_processing_time": "Visa : 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Guinea-Bissau": {
+      "sourceLabel": "Ministério dos Negócios Estrangeiros (Guinée-Bissau)",
+      "sourceUrl": "https://www.mne.gov.gw",
+      "fields": {
+        "visa_processing_time": "Visa : 7 à 14 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Haiti": {
+      "sourceLabel": "Ministère des Affaires Étrangères (Haïti)",
+      "sourceUrl": "https://www.diplomatie.gouv.ht",
+      "fields": {
+        "visa_processing_time": "Visa : délais consulaires variables (souvent 2 à 4 semaines)",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Iran": {
+      "sourceLabel": "Ministry of Foreign Affairs (Iran)",
+      "sourceUrl": "https://evisa.mfa.ir",
+      "fields": {
+        "visa_processing_time": "e-Visa touristique : 5 à 7 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon nationalité (e-Visa)"
+      }
+    },
+    "Kyrgyzstan": {
+      "sourceLabel": "Ministry of Foreign Affairs (Kyrgyzstan)",
+      "sourceUrl": "https://www.evisa.e-gov.kg",
+      "fields": {
+        "visa_processing_time": "e-Visa : 3 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "à partir de 41 USD (e-Visa)"
+      }
+    },
+    "Liberia": {
+      "sourceLabel": "Ministry of Foreign Affairs (Liberia)",
+      "sourceUrl": "https://www.mofa.gov.lr",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Maldives": {
+      "sourceLabel": "Maldives Immigration",
+      "sourceUrl": "https://immigration.gov.mv",
+      "fields": {
+        "visa_processing_time": "Visa à l'arrivée (VOA) : immédiat si éligible",
+        "full_data.visa_system.tourism.fees": "VOA ~50 USD (30 jours)"
+      }
+    },
+    "Mali": {
+      "sourceLabel": "Ministère des Affaires Étrangères (Mali)",
+      "sourceUrl": "https://www.diplomatie.ml",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Monaco": {
+      "sourceLabel": "Direction de l'Immigration (Monaco)",
+      "sourceUrl": "https://service-public-entreprises.gouv.mc",
+      "fields": {
+        "visa_processing_time": "Schengen via France : 15 jours calendaires (Code visas UE)",
+        "full_data.visa_system.tourism.fees": "90 EUR (visa Schengen adulte)"
+      }
+    },
+    "Mongolia": {
+      "sourceLabel": "Ministry of Foreign Affairs (Mongolia)",
+      "sourceUrl": "https://www.evisa.mn",
+      "fields": {
+        "visa_processing_time": "e-Visa : 3 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "à partir de 51 USD (e-Visa)"
+      }
+    },
+    "Palestine": {
+      "sourceLabel": "Palestinian Authority — visa via Israel/Jordan entry rules",
+      "sourceUrl": "https://www.visitpalestine.ps",
+      "fields": {
+        "visa_processing_time": "Entrée via points de passage : réglementation israélienne/jordanienne applicable",
+        "full_data.visa_system.tourism.fees": "selon modalité d'entrée (Allenby, etc.)"
+      }
+    },
+    "Peru": {
+      "sourceLabel": "Superintendencia Nacional de Migraciones (Peru)",
+      "sourceUrl": "https://www.gob.pe/migraciones",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon nationalité (exempt pour nombreuses nationalités)"
+      }
+    },
+    "Republic of the Congo": {
+      "sourceLabel": "Direction Générale de Migration (Congo-Brazzaville)",
+      "sourceUrl": "https://www.dgm-congo.org",
+      "fields": {
+        "visa_processing_time": "Visa : 7 à 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Sierra Leone": {
+      "sourceLabel": "Ministry of Foreign Affairs (Sierra Leone)",
+      "sourceUrl": "https://www.mfa.gov.sl",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Sudan": {
+      "sourceLabel": "Ministry of Interior (Sudan)",
+      "sourceUrl": "https://www.moi.gov.sd",
+      "fields": {
+        "visa_processing_time": "Visa : délais consulaires variables (vérifier situation sécuritaire)",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Syria": {
+      "sourceLabel": "Ministry of Foreign Affairs (Syria)",
+      "sourceUrl": "https://www.mofaex.gov.sy",
+      "fields": {
+        "visa_processing_time": "Visa consulaire : délais variables selon consulat",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Tajikistan": {
+      "sourceLabel": "Ministry of Foreign Affairs (Tajikistan)",
+      "sourceUrl": "https://www.evisa.tj",
+      "fields": {
+        "visa_processing_time": "e-Visa : 2 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "50 USD (e-Visa 45 jours)"
+      }
+    },
+    "Trinidad and Tobago": {
+      "sourceLabel": "Ministry of National Security (Trinidad and Tobago)",
+      "sourceUrl": "https://www.gov.tt",
+      "fields": {
+        "visa_processing_time": "Visa : 10 à 15 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Venezuela": {
+      "sourceLabel": "Ministerio del Poder Popular para Relaciones Exteriores",
+      "sourceUrl": "https://mppre.gob.ve",
+      "fields": {
+        "visa_processing_time": "Visa touristique : 10 à 20 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Yemen": {
+      "sourceLabel": "Ministry of Foreign Affairs (Yemen)",
+      "sourceUrl": "https://www.mofa.gov.ye",
+      "fields": {
+        "visa_processing_time": "Visa consulaire : délais variables (situation sécuritaire)",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Vatican City": {
+      "sourceLabel": "Holy See — accès via Schengen/Italie",
+      "sourceUrl": "https://www.vatican.va",
+      "fields": {
+        "visa_processing_time": "Accès via territoire italien (Schengen) : 15 jours calendaires",
+        "full_data.visa_system.tourism.fees": "90 EUR (visa Schengen via Italie)"
+      }
+    },
+    "Antigua and Barbuda": {
+      "sourceLabel": "Antigua and Barbuda Immigration",
+      "sourceUrl": "https://immigration.gov.ag",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Saint Lucia": {
+      "sourceLabel": "Saint Lucia Immigration Department",
+      "sourceUrl": "https://www.stlucia.org",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Saint Vincent and the Grenadines": {
+      "sourceLabel": "Immigration and Passport Office (SVG)",
+      "sourceUrl": "https://www.gov.vc",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Saint Kitts and Nevis": {
+      "sourceLabel": "Saint Kitts and Nevis Immigration",
+      "sourceUrl": "https://www.gov.kn",
+      "fields": {
+        "visa_processing_time": "Visa : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Anguilla": {
+      "sourceLabel": "Anguilla Immigration",
+      "sourceUrl": "https://www.gov.ai",
+      "fields": {
+        "visa_processing_time": "Visa ou autorisation : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème UK/overseas territory"
+      }
+    },
+    "Aruba": {
+      "sourceLabel": "DIMAS Aruba",
+      "sourceUrl": "https://www.dimasaruba.com",
+      "fields": {
+        "visa_processing_time": "Embarkation/disembarkation card ; visa Schengen NL si requis",
+        "full_data.visa_system.tourism.fees": "selon nationalité"
+      }
+    },
+    "Bermuda": {
+      "sourceLabel": "Department of Immigration (Bermuda)",
+      "sourceUrl": "https://www.gov.bm",
+      "fields": {
+        "visa_processing_time": "Autorisation de voyage : 5 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème publié"
+      }
+    },
+    "Caribbean Netherlands": {
+      "sourceLabel": "Netherlands Caribbean — RCN",
+      "sourceUrl": "https://www.rcn.com",
+      "fields": {
+        "visa_processing_time": "Schengen NL ou visa Caribéen néerlandais selon île",
+        "full_data.visa_system.tourism.fees": "selon type"
+      }
+    },
+    "French Polynesia": {
+      "sourceLabel": "French Polynesia — visa via France/Schengen",
+      "sourceUrl": "https://www.polynesie-francaise.gouv.fr",
+      "fields": {
+        "visa_processing_time": "Territoire français : exempt Schengen pour séjour court si passeport éligible",
+        "full_data.visa_system.tourism.fees": "90 EUR si visa Schengen requis"
+      }
+    },
+    "Kiribati": {
+      "sourceLabel": "Ministry of Foreign Affairs (Kiribati)",
+      "sourceUrl": "https://www.mfa.gov.ki",
+      "fields": {
+        "visa_processing_time": "Visa à l'arrivée ou consulaire : 5 à 10 jours",
+        "full_data.visa_system.tourism.fees": "selon barème consulaire"
+      }
+    },
+    "Montserrat": {
+      "sourceLabel": "Montserrat Immigration",
+      "sourceUrl": "https://www.gov.ms",
+      "fields": {
+        "visa_processing_time": "Visa UK/overseas : délais consulaires variables",
+        "full_data.visa_system.tourism.fees": "selon barème"
+      }
+    },
+    "New Caledonia": {
+      "sourceLabel": "New Caledonia — visa via France",
+      "sourceUrl": "https://www.gouv.nc",
+      "fields": {
+        "visa_processing_time": "Territoire français : règles Schengen/France applicables",
+        "full_data.visa_system.tourism.fees": "90 EUR si visa requis"
+      }
+    },
+    "North Korea": {
+      "sourceLabel": "DPRK — tour organisé obligatoire",
+      "sourceUrl": "https://www.nknews.org",
+      "fields": {
+        "visa_processing_time": "Visa touristique via agence agréée : 4 à 6 semaines",
+        "full_data.visa_system.tourism.fees": "inclus forfait tour (visa séparé rare)"
+      }
+    },
+    "Palau": {
+      "sourceLabel": "Republic of Palau — Immigration",
+      "sourceUrl": "https://www.palaugov.pw",
+      "fields": {
+        "visa_processing_time": "Visa à l'arrivée : immédiat si éligible (30/50 USD)",
+        "full_data.visa_system.tourism.fees": "50 USD (visa 30 jours)"
+      }
+    },
+    "Puerto Rico": {
+      "sourceLabel": "US CBP — Puerto Rico (US territory)",
+      "sourceUrl": "https://www.cbp.gov",
+      "fields": {
+        "visa_processing_time": "ESTA ou visa US B1/B2 requis selon nationalité",
+        "full_data.visa_system.tourism.fees": "185 USD (B1/B2) ou 21 USD (ESTA)"
+      }
+    },
+    "Saint Helena, Ascension and Tristan da Cunha": {
+      "sourceLabel": "St Helena Government",
+      "sourceUrl": "https://www.sainthelena.gov.sh",
+      "fields": {
+        "visa_processing_time": "Entry permit : 5 à 10 jours ouvrables",
+        "full_data.visa_system.tourism.fees": "selon barème publié"
+      }
+    },
+    "Saint Martin": {
+      "sourceLabel": "Collectivité de Saint-Martin",
+      "sourceUrl": "https://www.com-saint-martin.fr",
+      "fields": {
+        "visa_processing_time": "France/Schengen : 15 jours calendaires si visa requis",
+        "full_data.visa_system.tourism.fees": "90 EUR (visa Schengen)"
+      }
+    },
+    "South Georgia": {
+      "sourceLabel": "Government of South Georgia",
+      "sourceUrl": "https://www.gov.gs",
+      "fields": {
+        "visa_processing_time": "Permis d'entrée : demande préalable obligatoire",
+        "full_data.visa_system.tourism.fees": "selon barème GSGSSI"
+      }
+    },
+    "Western Sahara": {
+      "sourceLabel": "Territoire disputé — formalités via Maroc",
+      "sourceUrl": "https://www.diplomatie.ma",
+      "fields": {
+        "visa_processing_time": "Accès via contrôles marocains ; pas de visa séparé",
+        "full_data.visa_system.tourism.fees": "n/a (contrôle frontière Maroc)"
+      }
+    }
+  }
+}
