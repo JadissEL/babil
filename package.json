@@ -114,7 +114,7 @@
   "description": "",
   "dependencies": {
     "@clerk/nextjs": "^6.39.3",
-    "@prisma/client": "^6.19.3",
+    "@prisma/client": "^7.8.0",
     "@sentry/nextjs": "^10.52.0",
     "clsx": "^2.1.1",
     "cors": "^2.8.6",
