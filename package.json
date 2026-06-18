@@ -125,7 +125,7 @@
     "next": "^14.2.35",
     "prisma": "^6.19.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react-dom": "^19.2.6",
     "recharts": "^3.8.1",
     "stripe": "^17.0.0",
     "tailwind-merge": "^2.3.0",
@@ -134,7 +134,7 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "autoprefixer": "^10.4.19",
