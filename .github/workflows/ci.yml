@@ -28,7 +28,7 @@ jobs:
       NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_babil_ci_placeholder
       CLERK_SECRET_KEY: sk_test_babil_ci_placeholder
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
@@ -99,7 +99,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
